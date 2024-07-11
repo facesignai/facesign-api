@@ -1,5 +1,5 @@
 {
-  "name": "facesign-api",
+  "name": "@facesignai/api",
   "version": "1.0.0",
   "description": "Facesign API wrapper",
   "repository": "git@github.com:facesignai/facesign-api.git",
