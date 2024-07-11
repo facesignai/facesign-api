@@ -6,11 +6,11 @@
   "author": "Facesign <support@facesign.co> (https://facesign.co/)",
   "license": "MIT",
   "private": false,
-  "main": "./build/src",
-  "types": "./build/src/index.d.ts",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": [
     "build/package.json",
-    "build/src/**"
+    "build/**"
   ],
   "engines": {
     "node": ">=12"
