@@ -1,3 +1,19 @@
+export enum ILogLevel {
+  TRACE = 'TRACE',
+  DEBUG = ' DEBUG',
+  INFO = 'INFO',
+  TIME = 'TIME',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+  OFF = 'OFF',
+}
+
+export interface ClientOptions {
+  auth?: string
+  timeoutMs?: number
+  logLevel?: ILogLevel
+}
+
 export enum Method {
   GET = 'get',
   POST = 'post',

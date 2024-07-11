@@ -1,6 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSessionEndpoint = exports.Method = void 0;
+exports.createSessionEndpoint = exports.Method = exports.ILogLevel = void 0;
+var ILogLevel;
+(function (ILogLevel) {
+    ILogLevel["TRACE"] = "TRACE";
+    ILogLevel["DEBUG"] = " DEBUG";
+    ILogLevel["INFO"] = "INFO";
+    ILogLevel["TIME"] = "TIME";
+    ILogLevel["WARN"] = "WARN";
+    ILogLevel["ERROR"] = "ERROR";
+    ILogLevel["OFF"] = "OFF";
+})(ILogLevel = exports.ILogLevel || (exports.ILogLevel = {}));
 var Method;
 (function (Method) {
     Method["GET"] = "get";

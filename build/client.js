@@ -12,22 +12,11 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _Client_auth, _Client_timeoutMs, _Client_facesignVersion, _Client_fetch;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ILogLevel = void 0;
 const js_logger_1 = require("js-logger");
 const node_fetch_1 = require("node-fetch");
 const helpers_1 = require("./helpers");
 const api_endpoints_1 = require("./api-endpoints");
 const utils_1 = require("./utils");
-var ILogLevel;
-(function (ILogLevel) {
-    ILogLevel["TRACE"] = "TRACE";
-    ILogLevel["DEBUG"] = " DEBUG";
-    ILogLevel["INFO"] = "INFO";
-    ILogLevel["TIME"] = "TIME";
-    ILogLevel["WARN"] = "WARN";
-    ILogLevel["ERROR"] = "ERROR";
-    ILogLevel["OFF"] = "OFF";
-})(ILogLevel = exports.ILogLevel || (exports.ILogLevel = {}));
 const FACESIGN_URL = 'https://api.facefile.co';
 class Client {
     constructor(options) {
@@ -60,31 +49,31 @@ class Client {
     }
     setLogLevel(logLevel) {
         switch (logLevel) {
-            case ILogLevel.DEBUG: {
+            case api_endpoints_1.ILogLevel.DEBUG: {
                 js_logger_1.default.setLevel(js_logger_1.default.DEBUG);
                 break;
             }
-            case ILogLevel.TRACE: {
+            case api_endpoints_1.ILogLevel.TRACE: {
                 js_logger_1.default.setLevel(js_logger_1.default.TRACE);
                 break;
             }
-            case ILogLevel.INFO: {
+            case api_endpoints_1.ILogLevel.INFO: {
                 js_logger_1.default.setLevel(js_logger_1.default.INFO);
                 break;
             }
-            case ILogLevel.TIME: {
+            case api_endpoints_1.ILogLevel.TIME: {
                 js_logger_1.default.setLevel(js_logger_1.default.TIME);
                 break;
             }
-            case ILogLevel.WARN: {
+            case api_endpoints_1.ILogLevel.WARN: {
                 js_logger_1.default.setLevel(js_logger_1.default.WARN);
                 break;
             }
-            case ILogLevel.ERROR: {
+            case api_endpoints_1.ILogLevel.ERROR: {
                 js_logger_1.default.setLevel(js_logger_1.default.ERROR);
                 break;
             }
-            case ILogLevel.OFF: {
+            case api_endpoints_1.ILogLevel.OFF: {
                 js_logger_1.default.setLevel(js_logger_1.default.OFF);
                 break;
             }

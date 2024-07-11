@@ -6,24 +6,10 @@ import {
   CreateSessionParameters,
   CreateSessionResponse,
   Method,
+  ILogLevel,
+  ClientOptions,
 } from './api-endpoints'
 import { pick } from './utils'
-
-export enum ILogLevel {
-  TRACE = 'TRACE',
-  DEBUG = ' DEBUG',
-  INFO = 'INFO',
-  TIME = 'TIME',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-  OFF = 'OFF',
-}
-
-export interface ClientOptions {
-  auth?: string
-  timeoutMs?: number
-  logLevel?: ILogLevel
-}
 
 type QueryParams = Record<string, string | number | string[]> | URLSearchParams
 

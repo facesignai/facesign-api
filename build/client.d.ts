@@ -1,19 +1,5 @@
 /// <reference types="node" />
-import { CreateSessionParameters, CreateSessionResponse, Method } from './api-endpoints';
-export declare enum ILogLevel {
-    TRACE = "TRACE",
-    DEBUG = " DEBUG",
-    INFO = "INFO",
-    TIME = "TIME",
-    WARN = "WARN",
-    ERROR = "ERROR",
-    OFF = "OFF"
-}
-export interface ClientOptions {
-    auth?: string;
-    timeoutMs?: number;
-    logLevel?: ILogLevel;
-}
+import { CreateSessionParameters, CreateSessionResponse, Method, ClientOptions } from './api-endpoints';
 type QueryParams = Record<string, string | number | string[]> | URLSearchParams;
 export interface RequestParameters {
     path: string;
