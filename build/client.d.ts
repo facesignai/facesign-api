@@ -26,8 +26,8 @@ declare class Client {
     #private;
     constructor(options?: ClientOptions);
     private setLogLevel;
-    request<ResponseBody>({ path, method, query, body, }: RequestParameters): Promise<ResponseBody>;
-    readonly createSession: {
+    private request;
+    readonly session: {
         /**
          * Create an identity verification session
          */

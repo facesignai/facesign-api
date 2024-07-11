@@ -36,7 +36,7 @@ class Client {
         _Client_timeoutMs.set(this, 10000);
         _Client_facesignVersion.set(this, '2024-10-11');
         _Client_fetch.set(this, node_fetch_1.default);
-        this.createSession = {
+        this.session = {
             /**
              * Create an identity verification session
              */
