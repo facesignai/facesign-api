@@ -12,7 +12,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _Client_auth, _Client_timeoutMs, _Client_facesignVersion, _Client_fetch;
 Object.defineProperty(exports, "__esModule", { value: true });
-const js_logger_1 = require("js-logger");
+const loglevel_1 = require("loglevel");
 const node_fetch_1 = require("node-fetch");
 const helpers_1 = require("./helpers");
 const api_endpoints_1 = require("./api-endpoints");
@@ -40,62 +40,48 @@ class Client {
         };
         __classPrivateFieldSet(this, _Client_auth, options === null || options === void 0 ? void 0 : options.auth, "f");
         __classPrivateFieldSet(this, _Client_timeoutMs, (_a = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _a !== void 0 ? _a : 10000, "f");
-        const consoleHandler = js_logger_1.default.createDefaultHandler({
-            formatter: function (messages, context) {
-                // prefix each log message with a timestamp.
-                messages.unshift(`${context.level.name}:`);
-            },
-        });
-        js_logger_1.default.setHandler(function (messages, context) {
-            consoleHandler(messages, context);
-        });
-        js_logger_1.default.useDefaults();
         if (options && options.logLevel) {
             this.setLogLevel(options.logLevel);
         }
         else {
-            js_logger_1.default.setLevel(js_logger_1.default.OFF);
+            loglevel_1.default.disableAll();
         }
     }
     setLogLevel(logLevel) {
         switch (logLevel) {
             case api_endpoints_1.ILogLevel.DEBUG: {
-                js_logger_1.default.setLevel(js_logger_1.default.DEBUG);
+                loglevel_1.default.setLevel(loglevel_1.default.levels.DEBUG);
                 break;
             }
             case api_endpoints_1.ILogLevel.TRACE: {
-                js_logger_1.default.setLevel(js_logger_1.default.TRACE);
+                loglevel_1.default.setLevel(loglevel_1.default.levels.TRACE);
                 break;
             }
             case api_endpoints_1.ILogLevel.INFO: {
-                js_logger_1.default.setLevel(js_logger_1.default.INFO);
-                break;
-            }
-            case api_endpoints_1.ILogLevel.TIME: {
-                js_logger_1.default.setLevel(js_logger_1.default.TIME);
+                loglevel_1.default.setLevel(loglevel_1.default.levels.INFO);
                 break;
             }
             case api_endpoints_1.ILogLevel.WARN: {
-                js_logger_1.default.setLevel(js_logger_1.default.WARN);
+                loglevel_1.default.setLevel(loglevel_1.default.levels.WARN);
                 break;
             }
             case api_endpoints_1.ILogLevel.ERROR: {
-                js_logger_1.default.setLevel(js_logger_1.default.ERROR);
+                loglevel_1.default.setLevel(loglevel_1.default.levels.ERROR);
                 break;
             }
             case api_endpoints_1.ILogLevel.OFF: {
-                js_logger_1.default.setLevel(js_logger_1.default.OFF);
+                loglevel_1.default.disableAll();
                 break;
             }
         }
     }
     async request({ path, method, query, body, }) {
-        js_logger_1.default.log('request start', { method, path });
+        loglevel_1.default.debug('request start', { method, path });
         const bodyAsJsonString = !body || Object.entries(body).length === 0
             ? undefined
             : JSON.stringify(body);
         const url = new URL(`${FACESIGN_URL}${path}`);
-        js_logger_1.default.log('endpoint url', url);
+        loglevel_1.default.debug('endpoint url', url);
         if (query) {
             for (const [key, value] of Object.entries(query)) {
                 if (value !== undefined) {
@@ -125,7 +111,7 @@ class Client {
             }), __classPrivateFieldGet(this, _Client_timeoutMs, "f"));
             const responseText = await response.text();
             if (!response.ok) {
-                js_logger_1.default.error('request error', {
+                loglevel_1.default.error('request error', {
                     status: response.status,
                     statusText: response.statusText,
                     responseText,
@@ -133,11 +119,11 @@ class Client {
                 throw new Error(responseText);
             }
             const responseJson = JSON.parse(responseText);
-            js_logger_1.default.log('request success', { method, path });
+            loglevel_1.default.debug('request success', { method, path });
             return responseJson;
         }
         catch (error) {
-            js_logger_1.default.warn('request fail', {
+            loglevel_1.default.warn('request fail', {
                 error,
             });
             throw error;

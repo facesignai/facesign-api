@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.10",
-    "js-logger": "^1.6.1",
+    "loglevel": "^1.9.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {

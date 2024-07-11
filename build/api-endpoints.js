@@ -6,7 +6,6 @@ var ILogLevel;
     ILogLevel["TRACE"] = "TRACE";
     ILogLevel["DEBUG"] = " DEBUG";
     ILogLevel["INFO"] = "INFO";
-    ILogLevel["TIME"] = "TIME";
     ILogLevel["WARN"] = "WARN";
     ILogLevel["ERROR"] = "ERROR";
     ILogLevel["OFF"] = "OFF";

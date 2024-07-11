@@ -1,4 +1,4 @@
-import jsLogger from 'js-logger'
+import log from 'loglevel'
 import nodeFetch from 'node-fetch'
 import { rejectAfterTimeout } from './helpers'
 import {
@@ -33,53 +33,37 @@ class Client {
     this.#auth = options?.auth
     this.#timeoutMs = options?.timeoutMs ?? 10000
 
-    const consoleHandler = jsLogger.createDefaultHandler({
-      formatter: function (messages, context) {
-        // prefix each log message with a timestamp.
-        messages.unshift(`${context.level.name}:`)
-      },
-    })
-    jsLogger.setHandler(function (messages, context) {
-      consoleHandler(messages, context)
-    })
-
-    jsLogger.useDefaults()
-
     if (options && options.logLevel) {
       this.setLogLevel(options.logLevel)
     } else {
-      jsLogger.setLevel(jsLogger.OFF)
+      log.disableAll()
     }
   }
 
   private setLogLevel (logLevel: ILogLevel) {
     switch (logLevel) {
       case ILogLevel.DEBUG: {
-        jsLogger.setLevel(jsLogger.DEBUG)
+        log.setLevel(log.levels.DEBUG)
         break
       }
       case ILogLevel.TRACE: {
-        jsLogger.setLevel(jsLogger.TRACE)
+        log.setLevel(log.levels.TRACE)
         break
       }
       case ILogLevel.INFO: {
-        jsLogger.setLevel(jsLogger.INFO)
-        break
-      }
-      case ILogLevel.TIME: {
-        jsLogger.setLevel(jsLogger.TIME)
+        log.setLevel(log.levels.INFO)
         break
       }
       case ILogLevel.WARN: {
-        jsLogger.setLevel(jsLogger.WARN)
+        log.setLevel(log.levels.WARN)
         break
       }
       case ILogLevel.ERROR: {
-        jsLogger.setLevel(jsLogger.ERROR)
+        log.setLevel(log.levels.ERROR)
         break
       }
       case ILogLevel.OFF: {
-        jsLogger.setLevel(jsLogger.OFF)
+        log.disableAll()
         break
       }
     }
@@ -91,7 +75,7 @@ class Client {
     query,
     body,
   }: RequestParameters): Promise<ResponseBody> {
-    jsLogger.log('request start', { method, path })
+    log.debug('request start', { method, path })
 
     const bodyAsJsonString =
       !body || Object.entries(body).length === 0
@@ -99,7 +83,7 @@ class Client {
         : JSON.stringify(body)
 
     const url = new URL(`${FACESIGN_URL}${path}`)
-    jsLogger.log('endpoint url', url)
+    log.debug('endpoint url', url)
     if (query) {
       for (const [key, value] of Object.entries(query)) {
         if (value !== undefined) {
@@ -137,7 +121,7 @@ class Client {
 
       const responseText = await response.text()
       if (!response.ok) {
-        jsLogger.error('request error', {
+        log.error('request error', {
           status: response.status,
           statusText: response.statusText,
           responseText,
@@ -146,10 +130,10 @@ class Client {
       }
 
       const responseJson: ResponseBody = JSON.parse(responseText)
-      jsLogger.log('request success', { method, path })
+      log.debug('request success', { method, path })
       return responseJson
     } catch (error: unknown) {
-      jsLogger.warn('request fail', {
+      log.warn('request fail', {
         error,
       })
 
