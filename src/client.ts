@@ -1,6 +1,13 @@
 import jsLogger from 'js-logger'
 import nodeFetch from 'node-fetch'
 import { rejectAfterTimeout } from './helpers'
+import {
+  createSessionEndpoint,
+  CreateSessionParameters,
+  CreateSessionResponse,
+  Method,
+} from './api-endpoints'
+import { pick } from './utils'
 
 export enum ILogLevel {
   TRACE = 'TRACE',
@@ -18,7 +25,6 @@ export interface ClientOptions {
   logLevel?: ILogLevel
 }
 
-type Method = 'get' | 'post' | 'patch' | 'delete'
 type QueryParams = Record<string, string | number | string[]> | URLSearchParams
 
 const FACESIGN_URL = 'https://api.facefile.co'
@@ -150,6 +156,20 @@ class Client {
 
       throw error
     }
+  }
+
+  public readonly createSession = {
+    /**
+     * Create an identity verification session
+     */
+    create: (args: CreateSessionParameters): Promise<CreateSessionResponse> => {
+      return this.request<CreateSessionResponse>({
+        path: createSessionEndpoint.path(),
+        method: createSessionEndpoint.method,
+        query: pick(args, createSessionEndpoint.queryParams),
+        body: pick(args, createSessionEndpoint.bodyParams),
+      })
+    },
   }
 }
 
