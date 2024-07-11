@@ -87,7 +87,7 @@ class Client {
     }
   }
 
-  public async request<ResponseBody> ({
+  private async request<ResponseBody> ({
     path,
     method,
     query,
@@ -158,7 +158,7 @@ class Client {
     }
   }
 
-  public readonly createSession = {
+  public readonly session = {
     /**
      * Create an identity verification session
      */
