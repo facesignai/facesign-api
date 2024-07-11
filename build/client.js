@@ -40,6 +40,16 @@ class Client {
         };
         __classPrivateFieldSet(this, _Client_auth, options === null || options === void 0 ? void 0 : options.auth, "f");
         __classPrivateFieldSet(this, _Client_timeoutMs, (_a = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _a !== void 0 ? _a : 10000, "f");
+        const consoleHandler = js_logger_1.default.createDefaultHandler({
+            formatter: function (messages, context) {
+                // prefix each log message with a timestamp.
+                messages.unshift(`${context.level.name}:`);
+            },
+        });
+        js_logger_1.default.setHandler(function (messages, context) {
+            consoleHandler(messages, context);
+        });
+        js_logger_1.default.useDefaults();
         if (options && options.logLevel) {
             this.setLogLevel(options.logLevel);
         }
@@ -85,6 +95,7 @@ class Client {
             ? undefined
             : JSON.stringify(body);
         const url = new URL(`${FACESIGN_URL}${path}`);
+        js_logger_1.default.log('endpoint url', url);
         if (query) {
             for (const [key, value] of Object.entries(query)) {
                 if (value !== undefined) {

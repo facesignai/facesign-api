@@ -33,6 +33,18 @@ class Client {
     this.#auth = options?.auth
     this.#timeoutMs = options?.timeoutMs ?? 10000
 
+    const consoleHandler = jsLogger.createDefaultHandler({
+      formatter: function (messages, context) {
+        // prefix each log message with a timestamp.
+        messages.unshift(`${context.level.name}:`)
+      },
+    })
+    jsLogger.setHandler(function (messages, context) {
+      consoleHandler(messages, context)
+    })
+
+    jsLogger.useDefaults()
+
     if (options && options.logLevel) {
       this.setLogLevel(options.logLevel)
     } else {
@@ -87,6 +99,7 @@ class Client {
         : JSON.stringify(body)
 
     const url = new URL(`${FACESIGN_URL}${path}`)
+    jsLogger.log('endpoint url', url)
     if (query) {
       for (const [key, value] of Object.entries(query)) {
         if (value !== undefined) {
