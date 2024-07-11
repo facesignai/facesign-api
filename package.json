@@ -1,0 +1,45 @@
+{
+  "name": "facesign-api",
+  "version": "1.0.0",
+  "description": "Facesign API wrapper",
+  "repository": "git@github.com:facesignai/facesign-api.git",
+  "author": "Facesign <support@facesign.co> (https://facesign.co/)",
+  "license": "MIT",
+  "private": false,
+  "main": "./build/src",
+  "types": "./build/src/index.d.ts",
+  "files": [
+    "build/package.json",
+    "build/src/**"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run checkLoggedIn && npm run lint && npm run test",
+    "build": "tsc",
+    "prettier": "prettier --write .",
+    "lint": "prettier --check . && eslint . --ext .ts && cspell '**/*' ",
+    "test": "jest ./test",
+    "prebuild": "npm run clean",
+    "clean": "rm -rf ./build",
+    "checkLoggedIn": "./scripts/verifyLoggedIn.sh"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.5.10",
+    "js-logger": "^1.6.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.4",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
+    "cspell": "^5.4.1",
+    "eslint": "^7.24.0",
+    "jest": "^28.1.2",
+    "prettier": "^2.8.8",
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.8.4"
+  }
+}
