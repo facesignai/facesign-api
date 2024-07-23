@@ -35,6 +35,7 @@ export type CreateSessionParameters = {
 export type CreateSessionResponse = {
     id: string;
     url: string;
+    clientSecret: string;
 };
 export declare const createSessionEndpoint: {
     readonly method: Method.POST;
