@@ -37,6 +37,17 @@ class Client {
                     body: (0, utils_1.pick)(args, api_endpoints_1.createSessionEndpoint.bodyParams),
                 });
             },
+            /**
+             * Retrieve the identity verification session
+             */
+            retrieve: (args) => {
+                return this.request({
+                    path: api_endpoints_1.getSessionEndpoint.path(args),
+                    method: api_endpoints_1.getSessionEndpoint.method,
+                    query: (0, utils_1.pick)(args, api_endpoints_1.getSessionEndpoint.queryParams),
+                    body: (0, utils_1.pick)(args, api_endpoints_1.getSessionEndpoint.bodyParams),
+                });
+            },
         };
         __classPrivateFieldSet(this, _Client_auth, options === null || options === void 0 ? void 0 : options.auth, "f");
         __classPrivateFieldSet(this, _Client_timeoutMs, (_a = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _a !== void 0 ? _a : 10000, "f");

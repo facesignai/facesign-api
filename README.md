@@ -12,3 +12,18 @@
 npm install @facesign/api
 yarn add @facesign/api
 ```
+
+## Usage
+
+Import and initialize a client using an **integration token**
+
+```js
+const { Client } = require('@facesignai/api')
+
+// Initializing a client
+const facesignClient = new Client({
+  auth: process.env.FACESIGN_TOKEN,
+})
+```
+
+Make a request to any Notion API endpoint.

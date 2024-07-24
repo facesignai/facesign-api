@@ -8,6 +8,9 @@ import {
   Method,
   ILogLevel,
   ClientOptions,
+  GeteSessionParameters,
+  GetSessionResponse,
+  getSessionEndpoint,
 } from './api-endpoints'
 import { pick } from './utils'
 
@@ -151,6 +154,17 @@ class Client {
         method: createSessionEndpoint.method,
         query: pick(args, createSessionEndpoint.queryParams),
         body: pick(args, createSessionEndpoint.bodyParams),
+      })
+    },
+    /**
+     * Retrieve the identity verification session
+     */
+    retrieve: (args: GeteSessionParameters): Promise<GetSessionResponse> => {
+      return this.request<GetSessionResponse>({
+        path: getSessionEndpoint.path(args),
+        method: getSessionEndpoint.method,
+        query: pick(args, getSessionEndpoint.queryParams),
+        body: pick(args, getSessionEndpoint.bodyParams),
       })
     },
   }

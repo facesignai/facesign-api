@@ -29,6 +29,36 @@ export type VerificationParam = {
   value?: string | null
 }
 
+export type GeteSessionParameters = {
+  sessionId: string
+}
+
+export type Phrase = {
+  id: string
+  createdAt: number
+  text: string
+  isAvatar: boolean
+}
+
+export enum SessionStatus {
+  RequiresInput = 'requiresInput',
+  Processing = 'processing',
+  Canceled = 'canceled',
+  Complete = 'complete',
+}
+
+export type GetSessionResponse = {
+  id: string
+  createdAt: number
+  startedAt?: number
+  finishedAt?: number
+  transcript: Phrase[]
+  status: SessionStatus
+  params: CreateSessionParameters
+  version?: string
+  data: Record<string, string>
+}
+
 export type CreateSessionParameters = {
   clientReferenceId: string
   metadata: object
@@ -57,4 +87,17 @@ export const createSessionEndpoint = {
     'finalPhrase',
   ],
   path: (): string => '/identity/verification_sessions',
+} as const
+
+type GetSessionPathParameters = {
+  sessionId: string
+}
+
+export const getSessionEndpoint = {
+  method: Method.GET,
+  pathParams: ['sessionId'],
+  queryParams: [],
+  bodyParams: [],
+  path: (p: GetSessionPathParameters): string =>
+    `/identity/verification_sessions/${p.sessionId}`,
 } as const
