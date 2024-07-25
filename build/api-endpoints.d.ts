@@ -57,6 +57,7 @@ export type CreateSessionParameters = {
     avatar?: AvatarType;
     initialPhrase?: string;
     finalPhrase?: string;
+    providedData?: Record<string, string>;
 };
 export type CreateSessionResponse = {
     id: string;
