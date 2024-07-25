@@ -72,7 +72,7 @@ export declare const createSessionEndpoint: {
     readonly method: Method.POST;
     readonly pathParams: readonly [];
     readonly queryParams: readonly [];
-    readonly bodyParams: readonly ["clientReferenceId", "metadata", "verificationParams", "avatar", "initialPhrase", "finalPhrase"];
+    readonly bodyParams: readonly ["clientReferenceId", "metadata", "verificationParams", "avatar", "initialPhrase", "finalPhrase", "providedData"];
     readonly path: () => string;
 };
 type GetSessionPathParameters = {

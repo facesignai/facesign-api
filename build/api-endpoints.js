@@ -35,6 +35,7 @@ exports.createSessionEndpoint = {
         'avatar',
         'initialPhrase',
         'finalPhrase',
+        'providedData',
     ],
     path: () => '/identity/verification_sessions',
 };

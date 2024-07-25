@@ -91,6 +91,7 @@ export const createSessionEndpoint = {
     'avatar',
     'initialPhrase',
     'finalPhrase',
+    'providedData',
   ],
   path: (): string => '/identity/verification_sessions',
 } as const
