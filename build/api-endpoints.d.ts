@@ -50,6 +50,10 @@ export type GetSessionResponse = {
     version?: string;
     data: Record<string, string>;
 };
+export type ProvidedData = {
+    key: string;
+    value: string;
+};
 export type CreateSessionParameters = {
     clientReferenceId: string;
     metadata: object;
@@ -57,7 +61,7 @@ export type CreateSessionParameters = {
     avatar?: AvatarType;
     initialPhrase?: string;
     finalPhrase?: string;
-    providedData?: Record<string, string>;
+    providedData?: ProvidedData[];
 };
 export type CreateSessionResponse = {
     id: string;
