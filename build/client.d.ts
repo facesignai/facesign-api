@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { CreateSessionParameters, CreateSessionResponse, Method, ClientOptions, GeteSessionParameters, GetSessionResponse } from './api-endpoints';
+import { CreateSessionParameters, CreateSessionResponse, Method, ClientOptions, GetSessionParameters, GetSessionResponse, CreateClientSecretParameters, ClientSecret } from './api-endpoints';
 type QueryParams = Record<string, string | number | string[]> | URLSearchParams;
 export interface RequestParameters {
     path: string;
@@ -21,7 +21,11 @@ declare class Client {
         /**
          * Retrieve the identity verification session
          */
-        retrieve: (args: GeteSessionParameters) => Promise<GetSessionResponse>;
+        retrieve: (args: GetSessionParameters) => Promise<GetSessionResponse>;
+        /**
+         * Generate client secret for the specified session
+         */
+        createClientSecret: (args: CreateClientSecretParameters) => Promise<ClientSecret>;
     };
 }
 export default Client;

@@ -29,7 +29,11 @@ export type VerificationParam = {
   value?: string | null
 }
 
-export type GeteSessionParameters = {
+export type GetSessionParameters = {
+  sessionId: string
+}
+
+export type CreateClientSecretParameters = {
   sessionId: string
 }
 
@@ -47,7 +51,15 @@ export enum SessionStatus {
   Complete = 'complete',
 }
 
-export type GetSessionResponse = {
+export interface ClientSecret {
+  secret: string
+  createdAt: number
+  expireAt: number
+  url: string
+  usedAt?: number
+}
+
+export type Session = {
   id: string
   createdAt: number
   startedAt?: number
@@ -57,6 +69,11 @@ export type GetSessionResponse = {
   params: CreateSessionParameters
   version?: string
   data: Record<string, string>
+}
+
+export type GetSessionResponse = {
+  session: Session
+  clientSecret: ClientSecret
 }
 
 export type ProvidedData = {
@@ -75,9 +92,8 @@ export type CreateSessionParameters = {
 }
 
 export type CreateSessionResponse = {
-  id: string
-  url: string
-  clientSecret: string
+  session: Session
+  clientSecret: ClientSecret
 }
 
 export const createSessionEndpoint = {
@@ -93,7 +109,7 @@ export const createSessionEndpoint = {
     'finalPhrase',
     'providedData',
   ],
-  path: (): string => '/identity/verification_sessions',
+  path: (): string => '/identity/sessions',
 } as const
 
 type GetSessionPathParameters = {
@@ -106,5 +122,14 @@ export const getSessionEndpoint = {
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string =>
-    `/identity/verification_sessions/${p.sessionId}`,
+    `/identity/sessions/${p.sessionId}`,
+} as const
+
+export const createClientSecretEndpoint = {
+  method: Method.GET,
+  pathParams: ['sessionId'],
+  queryParams: [],
+  bodyParams: [],
+  path: (p: GetSessionPathParameters): string =>
+    `/identity/sessions/${p.sessionId}/client_secret`,
 } as const

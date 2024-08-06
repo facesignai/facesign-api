@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSessionEndpoint = exports.createSessionEndpoint = exports.SessionStatus = exports.Method = exports.ILogLevel = void 0;
+exports.createClientSecretEndpoint = exports.getSessionEndpoint = exports.createSessionEndpoint = exports.SessionStatus = exports.Method = exports.ILogLevel = void 0;
 var ILogLevel;
 (function (ILogLevel) {
     ILogLevel["TRACE"] = "TRACE";
@@ -37,13 +37,19 @@ exports.createSessionEndpoint = {
         'finalPhrase',
         'providedData',
     ],
-    path: () => '/identity/verification_sessions',
+    path: () => '/identity/sessions',
 };
 exports.getSessionEndpoint = {
     method: Method.GET,
     pathParams: ['sessionId'],
     queryParams: [],
     bodyParams: [],
-    path: (p) => `/identity/verification_sessions/${p.sessionId}`,
+    path: (p) => `/identity/sessions/${p.sessionId}`,
 };
-//# sourceMappingURL=api-endpoints.js.map
+exports.createClientSecretEndpoint = {
+    method: Method.GET,
+    pathParams: ['sessionId'],
+    queryParams: [],
+    bodyParams: [],
+    path: (p) => `/identity/sessions/${p.sessionId}/client_secret`,
+};

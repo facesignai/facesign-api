@@ -24,7 +24,10 @@ export type VerificationParam = {
     description?: string;
     value?: string | null;
 };
-export type GeteSessionParameters = {
+export type GetSessionParameters = {
+    sessionId: string;
+};
+export type CreateClientSecretParameters = {
     sessionId: string;
 };
 export type Phrase = {
@@ -39,7 +42,14 @@ export declare enum SessionStatus {
     Canceled = "canceled",
     Complete = "complete"
 }
-export type GetSessionResponse = {
+export interface ClientSecret {
+    secret: string;
+    createdAt: number;
+    expireAt: number;
+    url: string;
+    usedAt?: number;
+}
+export type Session = {
     id: string;
     createdAt: number;
     startedAt?: number;
@@ -49,6 +59,10 @@ export type GetSessionResponse = {
     params: CreateSessionParameters;
     version?: string;
     data: Record<string, string>;
+};
+export type GetSessionResponse = {
+    session: Session;
+    clientSecret: ClientSecret;
 };
 export type ProvidedData = {
     key: string;
@@ -64,9 +78,8 @@ export type CreateSessionParameters = {
     providedData?: ProvidedData[];
 };
 export type CreateSessionResponse = {
-    id: string;
-    url: string;
-    clientSecret: string;
+    session: Session;
+    clientSecret: ClientSecret;
 };
 export declare const createSessionEndpoint: {
     readonly method: Method.POST;
@@ -79,6 +92,13 @@ type GetSessionPathParameters = {
     sessionId: string;
 };
 export declare const getSessionEndpoint: {
+    readonly method: Method.GET;
+    readonly pathParams: readonly ["sessionId"];
+    readonly queryParams: readonly [];
+    readonly bodyParams: readonly [];
+    readonly path: (p: GetSessionPathParameters) => string;
+};
+export declare const createClientSecretEndpoint: {
     readonly method: Method.GET;
     readonly pathParams: readonly ["sessionId"];
     readonly queryParams: readonly [];

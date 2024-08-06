@@ -16,8 +16,8 @@
 
     // Emit sourcemaps
     "declarationMap": true,
-    "sourceMap": true,
-    "inlineSources": true,
+    "sourceMap": false,
+    // "inlineSources": true,
 
     // Emit type definitions
     "declaration": true,

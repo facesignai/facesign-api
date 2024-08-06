@@ -8,9 +8,12 @@ import {
   Method,
   ILogLevel,
   ClientOptions,
-  GeteSessionParameters,
+  GetSessionParameters,
   GetSessionResponse,
+  CreateClientSecretParameters,
   getSessionEndpoint,
+  ClientSecret,
+  createClientSecretEndpoint,
 } from './api-endpoints'
 import { pick } from './utils'
 
@@ -159,12 +162,23 @@ class Client {
     /**
      * Retrieve the identity verification session
      */
-    retrieve: (args: GeteSessionParameters): Promise<GetSessionResponse> => {
+    retrieve: (args: GetSessionParameters): Promise<GetSessionResponse> => {
       return this.request<GetSessionResponse>({
         path: getSessionEndpoint.path(args),
         method: getSessionEndpoint.method,
         query: pick(args, getSessionEndpoint.queryParams),
         body: pick(args, getSessionEndpoint.bodyParams),
+      })
+    },
+    /**
+     * Generate client secret for the specified session
+     */
+    createClientSecret: (args: CreateClientSecretParameters) => {
+      return this.request<ClientSecret>({
+        path: createClientSecretEndpoint.path(args),
+        method: createClientSecretEndpoint.method,
+        query: pick(args, createClientSecretEndpoint.queryParams),
+        body: pick(args, createClientSecretEndpoint.bodyParams),
       })
     },
   }

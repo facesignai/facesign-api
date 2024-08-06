@@ -14,4 +14,3 @@ const rejectAfterTimeout = (promise, timeoutMS) => {
     });
 };
 exports.rejectAfterTimeout = rejectAfterTimeout;
-//# sourceMappingURL=helpers.js.map

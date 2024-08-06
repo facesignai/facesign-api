@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;AAAA,qCAA6B;AAC7B,kDAA+B;AAC/B,kBAAe,gBAAM,CAAA","sourcesContent":["import client from './client'\nexport * from './api-endpoints'\nexport default client\n"]}

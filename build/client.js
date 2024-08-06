@@ -48,6 +48,17 @@ class Client {
                     body: (0, utils_1.pick)(args, api_endpoints_1.getSessionEndpoint.bodyParams),
                 });
             },
+            /**
+             * Generate client secret for the specified session
+             */
+            createClientSecret: (args) => {
+                return this.request({
+                    path: api_endpoints_1.createClientSecretEndpoint.path(args),
+                    method: api_endpoints_1.createClientSecretEndpoint.method,
+                    query: (0, utils_1.pick)(args, api_endpoints_1.createClientSecretEndpoint.queryParams),
+                    body: (0, utils_1.pick)(args, api_endpoints_1.createClientSecretEndpoint.bodyParams),
+                });
+            },
         };
         __classPrivateFieldSet(this, _Client_auth, options === null || options === void 0 ? void 0 : options.auth, "f");
         __classPrivateFieldSet(this, _Client_timeoutMs, (_a = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _a !== void 0 ? _a : 10000, "f");
@@ -143,4 +154,3 @@ class Client {
 }
 _Client_auth = new WeakMap(), _Client_timeoutMs = new WeakMap(), _Client_facesignVersion = new WeakMap(), _Client_fetch = new WeakMap();
 exports.default = Client;
-//# sourceMappingURL=client.js.map

@@ -6,4 +6,3 @@ var ClientErrorCode;
     ClientErrorCode["RequestTimeout"] = "facesign_client_request_timeout";
     ClientErrorCode["ResponseError"] = "facesign_client_response_error";
 })(ClientErrorCode = exports.ClientErrorCode || (exports.ClientErrorCode = {}));
-//# sourceMappingURL=errors.js.map

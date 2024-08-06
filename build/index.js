@@ -17,4 +17,3 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("./client");
 __exportStar(require("./api-endpoints"), exports);
 exports.default = client_1.default;
-//# sourceMappingURL=index.js.map
