@@ -3,7 +3,7 @@ import nodeFetch from 'node-fetch'
 import { rejectAfterTimeout } from './helpers'
 import {
   createSessionEndpoint,
-  CreateSessionParameters,
+  SessionSettings,
   CreateSessionResponse,
   Method,
   ILogLevel,
@@ -151,7 +151,7 @@ class Client {
     /**
      * Create an identity verification session
      */
-    create: (args: CreateSessionParameters): Promise<CreateSessionResponse> => {
+    create: (args: SessionSettings): Promise<CreateSessionResponse> => {
       return this.request<CreateSessionResponse>({
         path: createSessionEndpoint.path(),
         method: createSessionEndpoint.method,

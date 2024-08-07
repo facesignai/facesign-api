@@ -47,7 +47,6 @@ export interface ClientSecret {
     createdAt: number;
     expireAt: number;
     url: string;
-    usedAt?: number;
 }
 export type Session = {
     id: string;
@@ -56,7 +55,7 @@ export type Session = {
     finishedAt?: number;
     transcript: Phrase[];
     status: SessionStatus;
-    params: CreateSessionParameters;
+    params: SessionSettings;
     version?: string;
     data: Record<string, string>;
 };
@@ -68,7 +67,7 @@ export type ProvidedData = {
     key: string;
     value: string;
 };
-export type CreateSessionParameters = {
+export type SessionSettings = {
     clientReferenceId: string;
     metadata: object;
     verificationParams: VerificationParam[];
