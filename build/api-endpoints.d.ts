@@ -18,11 +18,10 @@ export declare enum Method {
     DELTE = "delete"
 }
 export type AvatarType = 'heygen' | 'azure' | 'custom';
-export type VerificationParam = {
+export type RequestedData = {
     key: string;
     isRequired?: boolean;
     description?: string;
-    value?: string | null;
 };
 export type GetSessionParameters = {
     sessionId: string;
@@ -63,18 +62,14 @@ export type GetSessionResponse = {
     session: Session;
     clientSecret: ClientSecret;
 };
-export type ProvidedData = {
-    key: string;
-    value: string;
-};
 export type SessionSettings = {
     clientReferenceId: string;
     metadata: object;
-    verificationParams: VerificationParam[];
+    requestedData: RequestedData[];
     avatar?: AvatarType;
     initialPhrase?: string;
     finalPhrase?: string;
-    providedData?: ProvidedData[];
+    providedData?: Record<string, string>;
 };
 export type CreateSessionResponse = {
     session: Session;
@@ -84,7 +79,7 @@ export declare const createSessionEndpoint: {
     readonly method: Method.POST;
     readonly pathParams: readonly [];
     readonly queryParams: readonly [];
-    readonly bodyParams: readonly ["clientReferenceId", "metadata", "verificationParams", "avatar", "initialPhrase", "finalPhrase", "providedData"];
+    readonly bodyParams: readonly ["clientReferenceId", "metadata", "requestedData", "avatar", "initialPhrase", "finalPhrase", "providedData"];
     readonly path: () => string;
 };
 type GetSessionPathParameters = {

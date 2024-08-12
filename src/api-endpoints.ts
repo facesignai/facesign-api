@@ -22,11 +22,10 @@ export enum Method {
 
 export type AvatarType = 'heygen' | 'azure' | 'custom'
 
-export type VerificationParam = {
+export type RequestedData = {
   key: string
   isRequired?: boolean
   description?: string
-  value?: string | null
 }
 
 export type GetSessionParameters = {
@@ -75,19 +74,14 @@ export type GetSessionResponse = {
   clientSecret: ClientSecret
 }
 
-export type ProvidedData = {
-  key: string
-  value: string
-}
-
 export type SessionSettings = {
   clientReferenceId: string
   metadata: object
-  verificationParams: VerificationParam[]
+  requestedData: RequestedData[]
   avatar?: AvatarType
   initialPhrase?: string
   finalPhrase?: string
-  providedData?: ProvidedData[]
+  providedData?: Record<string, string>
 }
 
 export type CreateSessionResponse = {
@@ -102,7 +96,7 @@ export const createSessionEndpoint = {
   bodyParams: [
     'clientReferenceId',
     'metadata',
-    'verificationParams',
+    'requestedData',
     'avatar',
     'initialPhrase',
     'finalPhrase',

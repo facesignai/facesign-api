@@ -31,7 +31,7 @@ exports.createSessionEndpoint = {
     bodyParams: [
         'clientReferenceId',
         'metadata',
-        'verificationParams',
+        'requestedData',
         'avatar',
         'initialPhrase',
         'finalPhrase',
