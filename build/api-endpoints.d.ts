@@ -54,7 +54,7 @@ export type Session = {
     finishedAt?: number;
     transcript: Phrase[];
     status: SessionStatus;
-    params: SessionSettings;
+    settings: SessionSettings;
     version?: string;
     data: Record<string, string>;
 };

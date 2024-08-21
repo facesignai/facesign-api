@@ -37,19 +37,19 @@ exports.createSessionEndpoint = {
         'finalPhrase',
         'providedData',
     ],
-    path: () => '/identity/sessions',
+    path: () => '/sessions',
 };
 exports.getSessionEndpoint = {
     method: Method.GET,
     pathParams: ['sessionId'],
     queryParams: [],
     bodyParams: [],
-    path: (p) => `/identity/sessions/${p.sessionId}`,
+    path: (p) => `/sessions/${p.sessionId}`,
 };
 exports.createClientSecretEndpoint = {
     method: Method.GET,
     pathParams: ['sessionId'],
     queryParams: [],
     bodyParams: [],
-    path: (p) => `/identity/sessions/${p.sessionId}/client_secret`,
+    path: (p) => `/sessions/${p.sessionId}/refresh`,
 };

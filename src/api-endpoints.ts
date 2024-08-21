@@ -64,7 +64,7 @@ export type Session = {
   finishedAt?: number
   transcript: Phrase[]
   status: SessionStatus
-  params: SessionSettings
+  settings: SessionSettings
   version?: string
   data: Record<string, string>
 }
@@ -102,7 +102,7 @@ export const createSessionEndpoint = {
     'finalPhrase',
     'providedData',
   ],
-  path: (): string => '/identity/sessions',
+  path: (): string => '/sessions',
 } as const
 
 type GetSessionPathParameters = {
@@ -114,8 +114,7 @@ export const getSessionEndpoint = {
   pathParams: ['sessionId'],
   queryParams: [],
   bodyParams: [],
-  path: (p: GetSessionPathParameters): string =>
-    `/identity/sessions/${p.sessionId}`,
+  path: (p: GetSessionPathParameters): string => `/sessions/${p.sessionId}`,
 } as const
 
 export const createClientSecretEndpoint = {
@@ -124,5 +123,5 @@ export const createClientSecretEndpoint = {
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string =>
-    `/identity/sessions/${p.sessionId}/client_secret`,
+    `/sessions/${p.sessionId}/refresh`,
 } as const
