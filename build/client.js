@@ -10,14 +10,13 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Client_auth, _Client_timeoutMs, _Client_facesignVersion, _Client_fetch;
+var _Client_auth, _Client_timeoutMs, _Client_facesignVersion, _Client_fetch, _Client_serverUrl;
 Object.defineProperty(exports, "__esModule", { value: true });
 const loglevel_1 = require("loglevel");
 const node_fetch_1 = require("node-fetch");
 const helpers_1 = require("./helpers");
 const api_endpoints_1 = require("./api-endpoints");
 const utils_1 = require("./utils");
-const FACESIGN_URL = 'https://api.facefile.co';
 class Client {
     constructor(options) {
         var _a;
@@ -25,6 +24,7 @@ class Client {
         _Client_timeoutMs.set(this, 10000);
         _Client_facesignVersion.set(this, '2024-10-11');
         _Client_fetch.set(this, node_fetch_1.default);
+        _Client_serverUrl.set(this, 'https://api.facesign.ai');
         this.session = {
             /**
              * Create an identity verification session
@@ -62,6 +62,9 @@ class Client {
         };
         __classPrivateFieldSet(this, _Client_auth, options === null || options === void 0 ? void 0 : options.auth, "f");
         __classPrivateFieldSet(this, _Client_timeoutMs, (_a = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _a !== void 0 ? _a : 10000, "f");
+        if (options === null || options === void 0 ? void 0 : options.serverUrl) {
+            __classPrivateFieldSet(this, _Client_serverUrl, options.serverUrl, "f");
+        }
         if (options && options.logLevel) {
             this.setLogLevel(options.logLevel);
         }
@@ -102,7 +105,7 @@ class Client {
         const bodyAsJsonString = !body || Object.entries(body).length === 0
             ? undefined
             : JSON.stringify(body);
-        const url = new URL(`${FACESIGN_URL}${path}`);
+        const url = new URL(`${__classPrivateFieldGet(this, _Client_serverUrl, "f")}${path}`);
         loglevel_1.default.debug('endpoint url', url);
         if (query) {
             for (const [key, value] of Object.entries(query)) {
@@ -152,5 +155,5 @@ class Client {
         }
     }
 }
-_Client_auth = new WeakMap(), _Client_timeoutMs = new WeakMap(), _Client_facesignVersion = new WeakMap(), _Client_fetch = new WeakMap();
+_Client_auth = new WeakMap(), _Client_timeoutMs = new WeakMap(), _Client_facesignVersion = new WeakMap(), _Client_fetch = new WeakMap(), _Client_serverUrl = new WeakMap();
 exports.default = Client;

@@ -19,8 +19,6 @@ import { pick } from './utils'
 
 type QueryParams = Record<string, string | number | string[]> | URLSearchParams
 
-const FACESIGN_URL = 'https://api.facefile.co'
-
 export interface RequestParameters {
   path: string
   method: Method
@@ -34,10 +32,15 @@ class Client {
   #timeoutMs = 10000
   #facesignVersion = '2024-10-11'
   #fetch = nodeFetch
+  #serverUrl = 'https://api.facesign.ai'
 
   public constructor (options?: ClientOptions) {
     this.#auth = options?.auth
     this.#timeoutMs = options?.timeoutMs ?? 10000
+
+    if (options?.serverUrl) {
+      this.#serverUrl = options.serverUrl
+    }
 
     if (options && options.logLevel) {
       this.setLogLevel(options.logLevel)
@@ -88,7 +91,7 @@ class Client {
         ? undefined
         : JSON.stringify(body)
 
-    const url = new URL(`${FACESIGN_URL}${path}`)
+    const url = new URL(`${this.#serverUrl}${path}`)
     log.debug('endpoint url', url)
     if (query) {
       for (const [key, value] of Object.entries(query)) {

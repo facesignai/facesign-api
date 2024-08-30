@@ -11,6 +11,7 @@ export interface ClientOptions {
   auth?: string
   timeoutMs?: number
   logLevel?: ILogLevel
+  serverUrl?: string
 }
 
 export enum Method {
