@@ -1,15 +1,15 @@
 {
   "name": "@facesignai/api",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Facesign API wrapper",
   "repository": "git@github.com:facesignai/facesign-api.git",
   "author": "Facesign <support@facesign.co> (https://facesign.co/)",
   "license": "MIT",
   "private": false,
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "files": [
-    "build/package.json",
+    "build/src/package.json",
     "build/**"
   ],
   "engines": {
