@@ -26,6 +26,7 @@ declare class Client {
          * Generate client secret for the specified session
          */
         createClientSecret: (args: CreateClientSecretParameters) => Promise<ClientSecret>;
+        apiVersion: string;
     };
 }
 export default Client;

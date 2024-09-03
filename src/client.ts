@@ -16,6 +16,7 @@ import {
   createClientSecretEndpoint,
 } from './api-endpoints'
 import { pick } from './utils'
+import packageJson from '../package.json'
 
 type QueryParams = Record<string, string | number | string[]> | URLSearchParams
 
@@ -118,6 +119,9 @@ class Client {
     if (bodyAsJsonString !== undefined) {
       headers['content-type'] = 'application/json'
     }
+
+    headers['x-facesign-api-version'] = packageJson.version
+
     try {
       const response = await rejectAfterTimeout(
         this.#fetch(url.toString(), {
@@ -184,6 +188,7 @@ class Client {
         body: pick(args, createClientSecretEndpoint.bodyParams),
       })
     },
+    apiVersion: packageJson.version,
   }
 }
 

@@ -27,7 +27,7 @@
 
     // Allow import package.json
     "resolveJsonModule": true,
-
+    "esModuleInterop": true,
     // Linter style rules
     "noUnusedLocals": false, // Disabled because we use eslint for this.
     "noUnusedParameters": true,
@@ -36,7 +36,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "forceConsistentCasingInFileNames": true
-  },
+  }
 
-  "include": ["src/**/*"]
+  // "include": ["src/**/*"]
 }

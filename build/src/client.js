@@ -10,13 +10,17 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _Client_auth, _Client_timeoutMs, _Client_facesignVersion, _Client_fetch, _Client_serverUrl;
 Object.defineProperty(exports, "__esModule", { value: true });
-const loglevel_1 = require("loglevel");
-const node_fetch_1 = require("node-fetch");
+const loglevel_1 = __importDefault(require("loglevel"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const helpers_1 = require("./helpers");
 const api_endpoints_1 = require("./api-endpoints");
 const utils_1 = require("./utils");
+const package_json_1 = __importDefault(require("../package.json"));
 class Client {
     constructor(options) {
         var _a;
@@ -59,6 +63,7 @@ class Client {
                     body: (0, utils_1.pick)(args, api_endpoints_1.createClientSecretEndpoint.bodyParams),
                 });
             },
+            apiVersion: package_json_1.default.version,
         };
         __classPrivateFieldSet(this, _Client_auth, options === null || options === void 0 ? void 0 : options.auth, "f");
         __classPrivateFieldSet(this, _Client_timeoutMs, (_a = options === null || options === void 0 ? void 0 : options.timeoutMs) !== null && _a !== void 0 ? _a : 10000, "f");
@@ -128,6 +133,7 @@ class Client {
         if (bodyAsJsonString !== undefined) {
             headers['content-type'] = 'application/json';
         }
+        headers['x-facesign-api-version'] = package_json_1.default.version;
         try {
             const response = await (0, helpers_1.rejectAfterTimeout)(__classPrivateFieldGet(this, _Client_fetch, "f").call(this, url.toString(), {
                 method: method.toUpperCase(),
