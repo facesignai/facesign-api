@@ -36,6 +36,8 @@ exports.createSessionEndpoint = {
         'initialPhrase',
         'finalPhrase',
         'providedData',
+        'avatarId',
+        'voiceId',
     ],
     path: () => '/sessions',
 };

@@ -104,6 +104,8 @@ export const createSessionEndpoint = {
     'initialPhrase',
     'finalPhrase',
     'providedData',
+    'avatarId',
+    'voiceId',
   ],
   path: (): string => '/sessions',
 } as const
