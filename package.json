@@ -1,6 +1,6 @@
 {
   "name": "@facesignai/api",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Facesign API wrapper",
   "repository": "git@github.com:facesignai/facesign-api.git",
   "author": "Facesign <support@facesign.co> (https://facesign.co/)",

@@ -71,6 +71,8 @@ export type SessionSettings = {
     initialPhrase?: string;
     finalPhrase?: string;
     providedData?: Record<string, string>;
+    avatarId?: string;
+    voiceId?: string;
 };
 export type CreateSessionResponse = {
     session: Session;
