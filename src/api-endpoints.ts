@@ -23,21 +23,21 @@ export enum Method {
 
 export type AvatarType = 'heygen' | 'azure' | 'custom'
 
-export type RequestedData = {
+export interface RequestedData {
   key: string
   isRequired?: boolean
   description?: string
 }
 
-export type GetSessionParameters = {
+export interface GetSessionParameters {
   sessionId: string
 }
 
-export type CreateClientSecretParameters = {
+export interface CreateClientSecretParameters {
   sessionId: string
 }
 
-export type Phrase = {
+export interface Phrase {
   id: string
   createdAt: number
   text: string
@@ -58,7 +58,7 @@ export interface ClientSecret {
   url: string
 }
 
-export type Session = {
+export interface Session {
   id: string
   createdAt: number
   startedAt?: number
@@ -70,12 +70,15 @@ export type Session = {
   data: Record<string, string>
 }
 
-export type GetSessionResponse = {
+export interface GetSessionResponse {
   session: Session
   clientSecret: ClientSecret
 }
 
-export type SessionSettings = {
+export type Lang = 'en' | 'fr' | 'de' | 'es'
+export type Zone = 'es' | 'eu'
+
+export interface SessionSettings {
   clientReferenceId: string
   metadata: object
   requestedData: RequestedData[]
@@ -85,9 +88,11 @@ export type SessionSettings = {
   providedData?: Record<string, string>
   avatarId?: string
   voiceId?: string
+  lang?: Lang
+  zone?: Zone
 }
 
-export type CreateSessionResponse = {
+export interface CreateSessionResponse {
   session: Session
   clientSecret: ClientSecret
 }
@@ -106,6 +111,8 @@ export const createSessionEndpoint = {
     'providedData',
     'avatarId',
     'voiceId',
+    'lang',
+    'zone',
   ],
   path: (): string => '/sessions',
 } as const

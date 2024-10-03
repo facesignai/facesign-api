@@ -1,9 +1,13 @@
 {
   "name": "@facesignai/api",
-  "version": "1.0.14",
+  "package-name": "@facesignai/api",
+  "version": "1.0.2",
   "description": "Facesign API wrapper",
-  "repository": "git@github.com:facesignai/facesign-api.git",
-  "author": "Facesign <support@facesign.co> (https://facesign.co/)",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/facesignai/facesign-api.git"
+  },
+  "author": "Facesign <support@facesign.ai> (https://facesign.ai/)",
   "license": "MIT",
   "private": false,
   "main": "./build/src/index.js",
@@ -17,14 +21,12 @@
   },
   "scripts": {
     "prepare": "npm run build",
-    "prepublishOnly": "npm run checkLoggedIn && npm run lint && npm run test",
     "build": "tsc",
     "prettier": "prettier --write .",
     "lint": "prettier --check . && eslint . --ext .ts && cspell '**/*' ",
     "test": "jest ./test",
     "prebuild": "npm run clean",
-    "clean": "rm -rf ./build",
-    "checkLoggedIn": "./scripts/verifyLoggedIn.sh"
+    "clean": "rm -rf ./build"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.10",
@@ -41,5 +43,9 @@
     "prettier": "^2.8.8",
     "ts-jest": "^28.0.5",
     "typescript": "^4.8.4"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/facesignai/facesign-api/issues"
+  },
+  "homepage": "https://github.com/facesignai/facesign-api#readme"
 }

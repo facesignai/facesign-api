@@ -1,7 +1,7 @@
 <div align="center">
 	<h1>Facesign SDK for Node JS</h1>
 	<p>
-		<b>A simple and easy to use client for the <a href="https://developers.facesign.co">Facesign API</a></b>
+		<b>A simple and easy to use client for the <a href="https://docs.facesign.ai">Facesign API</a></b>
 	</p>
 	<br>
 </div>
@@ -26,4 +26,4 @@ const facesignClient = new Client({
 })
 ```
 
-Make a request to any Notion API endpoint.
+Make a request to any Facesign API endpoint.
