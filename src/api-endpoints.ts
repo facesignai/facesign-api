@@ -78,18 +78,67 @@ export interface GetSessionResponse {
 export type Lang = 'en' | 'fr' | 'de' | 'es'
 export type Zone = 'es' | 'eu'
 
+export enum ModuleType {
+  EmailVerification = 'emailVerification',
+  SmsVerification = 'smsVerification',
+  IdentityVerification = 'identityVerification',
+  DocumentAuthentication = 'documentAuthentication',
+  AgeEstimation = 'ageEstimation',
+  ProofOfIntent = 'proofOfIntent',
+  KnowledgeVerify = 'knowledgeVerify',
+}
+
+export type EmailVerification = {
+  type: ModuleType.EmailVerification
+}
+
+export type SmsVerification = {
+  type: ModuleType.SmsVerification
+}
+
+export type IdentityVerification = {
+  type: ModuleType.IdentityVerification
+}
+
+export type DocumentAuthentication = {
+  type: ModuleType.DocumentAuthentication
+}
+
+export type AgeEstimation = {
+  type: ModuleType.AgeEstimation
+  age: number
+}
+
+export type ProofOfIntent = {
+  type: ModuleType.ProofOfIntent
+  requestedData: RequestedData[]
+}
+
+export type KnowledgeVerify = {
+  type: ModuleType.KnowledgeVerify
+}
+
+export type Module =
+  | EmailVerification
+  | SmsVerification
+  | IdentityVerification
+  | DocumentAuthentication
+  | AgeEstimation
+  | ProofOfIntent
+  | KnowledgeVerify
+
 export interface SessionSettings {
   clientReferenceId: string
   metadata: object
-  requestedData: RequestedData[]
   avatar?: AvatarType
   initialPhrase?: string
   finalPhrase?: string
   providedData?: Record<string, string>
   avatarId?: string
   voiceId?: string
-  lang?: Lang
+  langs?: Lang
   zone?: Zone
+  modules: Module[]
 }
 
 export interface CreateSessionResponse {
@@ -104,15 +153,15 @@ export const createSessionEndpoint = {
   bodyParams: [
     'clientReferenceId',
     'metadata',
-    'requestedData',
     'avatar',
     'initialPhrase',
     'finalPhrase',
     'providedData',
     'avatarId',
     'voiceId',
-    'lang',
+    'langs',
     'zone',
+    'modules',
   ],
   path: (): string => '/sessions',
 } as const
