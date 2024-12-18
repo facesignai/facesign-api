@@ -75,7 +75,14 @@ export interface GetSessionResponse {
   clientSecret: ClientSecret
 }
 
-export type Lang = 'en' | 'fr' | 'de' | 'es'
+export type Lang = {
+  id: string
+  title: string
+}
+export interface GetLangsResponse {
+  langs: Lang[]
+}
+
 export type Zone = 'es' | 'eu'
 
 export enum ModuleType {
@@ -90,10 +97,12 @@ export enum ModuleType {
 
 export type EmailVerification = {
   type: ModuleType.EmailVerification
+  email?: string
 }
 
 export type SmsVerification = {
   type: ModuleType.SmsVerification
+  phone?: string
 }
 
 export type IdentityVerification = {
@@ -136,7 +145,8 @@ export interface SessionSettings {
   providedData?: Record<string, string>
   avatarId?: string
   voiceId?: string
-  langs?: Lang
+  langs?: string[]
+  defaultLang?: string
   zone?: Zone
   modules: Module[]
 }
@@ -160,6 +170,7 @@ export const createSessionEndpoint = {
     'avatarId',
     'voiceId',
     'langs',
+    'defaultLang',
     'zone',
     'modules',
   ],
@@ -176,6 +187,14 @@ export const getSessionEndpoint = {
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string => `/sessions/${p.sessionId}`,
+} as const
+
+export const getLangsEndpoint = {
+  method: Method.GET,
+  pathParams: [],
+  queryParams: [],
+  bodyParams: [],
+  path: (): string => '/langs',
 } as const
 
 export const createClientSecretEndpoint = {

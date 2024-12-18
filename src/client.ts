@@ -14,6 +14,8 @@ import {
   getSessionEndpoint,
   ClientSecret,
   createClientSecretEndpoint,
+  GetLangsResponse,
+  getLangsEndpoint,
 } from './api-endpoints'
 import { pick } from './utils'
 import packageJson from '../package.json'
@@ -31,7 +33,7 @@ export interface RequestParameters {
 class Client {
   #auth?: string
   #timeoutMs = 10000
-  #facesignVersion = '2024-10-11'
+  #facesignVersion = '2024-12-18'
   #fetch = nodeFetch
   #serverUrl = 'https://api.facesign.ai'
 
@@ -189,6 +191,20 @@ class Client {
       })
     },
     apiVersion: packageJson.version,
+  }
+
+  public readonly langs = {
+    /**
+     * Retrieve supported langs
+     */
+    retrieve: (): Promise<GetLangsResponse> => {
+      return this.request<GetLangsResponse>({
+        path: getLangsEndpoint.path(),
+        method: getLangsEndpoint.method,
+        query: {},
+        body: {},
+      })
+    },
   }
 }
 
