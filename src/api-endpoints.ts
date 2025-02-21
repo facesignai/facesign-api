@@ -97,7 +97,9 @@ export enum ModuleType {
 
 export type EmailVerification = {
   type: ModuleType.EmailVerification
+  name?: string
   email?: string
+  publicRecognitionEnabled?: boolean
 }
 
 export type SmsVerification = {

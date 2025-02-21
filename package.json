@@ -1,7 +1,7 @@
 {
   "name": "@facesignai/api",
   "package-name": "@facesignai/api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Facesign API wrapper",
   "repository": {
     "type": "git",
@@ -26,8 +26,7 @@
     "lint": "prettier --check . && eslint . --ext .ts && cspell '**/*' ",
     "test": "jest ./test",
     "prebuild": "npm run clean",
-    "clean": "rm -rf ./build",
-    "publish": "npm publish"
+    "clean": "rm -rf ./build"
   },
   "dependencies": {
     "@types/node-fetch": "^2.5.10",
