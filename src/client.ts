@@ -16,6 +16,7 @@ import {
   createClientSecretEndpoint,
   GetLangsResponse,
   getLangsEndpoint,
+  getAvatarsEndpoint,
 } from './api-endpoints'
 import { pick } from './utils'
 import packageJson from '../package.json'
@@ -201,6 +202,20 @@ class Client {
       return this.request<GetLangsResponse>({
         path: getLangsEndpoint.path(),
         method: getLangsEndpoint.method,
+        query: {},
+        body: {},
+      })
+    },
+  }
+
+  public readonly avatars = {
+    /**
+     * Retrieve supported langs
+     */
+    retrieve: (): Promise<GetLangsResponse> => {
+      return this.request<GetLangsResponse>({
+        path: getAvatarsEndpoint.path(),
+        method: getAvatarsEndpoint.method,
         query: {},
         body: {},
       })

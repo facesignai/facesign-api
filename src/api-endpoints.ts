@@ -129,6 +129,13 @@ export type KnowledgeVerify = {
   type: ModuleType.KnowledgeVerify
 }
 
+export type Avatar = {
+  id: string
+  name: string
+  gender: 'male' | 'female' | 'unknown'
+  imageUrl: string
+}
+
 export type Module =
   | EmailVerification
   | SmsVerification
@@ -197,6 +204,14 @@ export const getLangsEndpoint = {
   queryParams: [],
   bodyParams: [],
   path: (): string => '/langs',
+} as const
+
+export const getAvatarsEndpoint = {
+  method: Method.GET,
+  pathParams: [],
+  queryParams: [],
+  bodyParams: [],
+  path: (): string => '/avatars',
 } as const
 
 export const createClientSecretEndpoint = {
