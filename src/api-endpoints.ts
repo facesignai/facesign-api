@@ -21,8 +21,6 @@ export enum Method {
   DELTE = 'delete',
 }
 
-export type AvatarType = 'heygen' | 'azure' | 'custom'
-
 export interface RequestedData {
   key: string
   isRequired?: boolean
@@ -148,7 +146,6 @@ export type Module =
 export interface SessionSettings {
   clientReferenceId: string
   metadata: object
-  avatar?: AvatarType
   initialPhrase?: string
   finalPhrase?: string
   providedData?: Record<string, string>
@@ -172,7 +169,6 @@ export const createSessionEndpoint = {
   bodyParams: [
     'clientReferenceId',
     'metadata',
-    'avatar',
     'initialPhrase',
     'finalPhrase',
     'providedData',
