@@ -1,3 +1,6 @@
+import { Device } from './types/deviceDetails'
+import { Location } from './types/location'
+
 export enum ILogLevel {
   TRACE = 'TRACE',
   DEBUG = ' DEBUG',
@@ -56,16 +59,45 @@ export interface ClientSecret {
   url: string
 }
 
+export type SessionReportAIAnalysisSection = {
+  title: string
+  shortDescription: string
+  longDescription: string
+}
+
+export type SessionReportAIAnalysis = {
+  ageMin: number
+  ageMax: number
+  sex: 'male' | 'female'
+  realPersonOrVirtual: 'real' | 'virtual' | 'noface'
+  overallSummary: string
+  analysis: SessionReportAIAnalysisSection[]
+}
+export interface SessionReport {
+  transcript: Phrase[]
+  aiAnalysis?: SessionReportAIAnalysis
+  location?: Location
+  device?: Device
+  livenessDetected?: boolean
+  lang?: string
+  extractedData?: Record<string, string>
+  screenshots?: string[]
+  videos?: {
+    avatarVideoUrl?: string
+    userVideoUrl?: string
+  }
+  isVerified?: boolean
+}
+
 export interface Session {
   id: string
   createdAt: number
   startedAt?: number
   finishedAt?: number
-  transcript: Phrase[]
   status: SessionStatus
   settings: SessionSettings
   version?: string
-  data: Record<string, string>
+  report?: SessionReport
 }
 
 export interface GetSessionResponse {
