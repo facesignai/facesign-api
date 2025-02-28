@@ -182,7 +182,6 @@ export interface SessionSettings {
   finalPhrase?: string
   providedData?: Record<string, string>
   avatarId?: string
-  voiceId?: string
   langs?: string[]
   defaultLang?: string
   zone?: Zone
@@ -205,7 +204,6 @@ export const createSessionEndpoint = {
     'finalPhrase',
     'providedData',
     'avatarId',
-    'voiceId',
     'langs',
     'defaultLang',
     'zone',
