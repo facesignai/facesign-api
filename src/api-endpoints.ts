@@ -1,5 +1,6 @@
 import { Device } from './types/deviceDetails'
 import { Location } from './types/location'
+import { FSEdge, FSNode } from './types/nodes'
 
 export enum ILogLevel {
   TRACE = 'TRACE',
@@ -186,6 +187,10 @@ export interface SessionSettings {
   defaultLang?: string
   zone?: Zone
   modules: Module[]
+  flow?: {
+    nodes: FSNode[]
+    edges: FSEdge[]
+  }
 }
 
 export interface CreateSessionResponse {
