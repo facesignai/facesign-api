@@ -1,7 +1,7 @@
 export enum FSNodeType {
   START = 'start',
   END = 'end',
-  CONVERSATION = 'CONVERSATION',
+  CONVERSATION = 'conversation',
 }
 
 export interface FSNodeBase {

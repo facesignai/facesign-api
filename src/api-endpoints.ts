@@ -2,6 +2,10 @@ import { Device } from './types/deviceDetails'
 import { Location } from './types/location'
 import { FSEdge, FSNode } from './types/nodes'
 
+export * from './types/deviceDetails'
+export * from './types/location'
+export * from './types/nodes'
+
 export enum ILogLevel {
   TRACE = 'TRACE',
   DEBUG = ' DEBUG',
