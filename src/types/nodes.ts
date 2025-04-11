@@ -6,11 +6,11 @@ export enum FSNodeType {
 
 export interface FSNodeBase {
   id: string
-  nodeType: FSNodeType
+  type: FSNodeType
 }
 
 export interface FSStartNode extends FSNodeBase {
-  nodeType: FSNodeType.START
+  type: FSNodeType.START
 }
 
 export interface FSNodeTransition {
@@ -25,7 +25,7 @@ export interface FSConversationNode extends FSNodeBase {
 }
 
 export interface FSEndNode extends FSNodeBase {
-  nodeType: FSNodeType.END
+  type: FSNodeType.END
 }
 
 export type FSNode = FSStartNode | FSConversationNode | FSEndNode
