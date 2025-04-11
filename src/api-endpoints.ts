@@ -217,6 +217,7 @@ export const createSessionEndpoint = {
     'defaultLang',
     'zone',
     'modules',
+    'flow',
   ],
   path: (): string => '/sessions',
 } as const
