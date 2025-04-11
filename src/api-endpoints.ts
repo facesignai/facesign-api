@@ -180,6 +180,11 @@ export type Module =
   | ProofOfIntent
   | KnowledgeVerify
 
+export type FSFlow = {
+  nodes: FSNode[]
+  edges: FSEdge[]
+}
+
 export interface SessionSettings {
   clientReferenceId: string
   metadata: object
@@ -191,10 +196,7 @@ export interface SessionSettings {
   defaultLang?: string
   zone?: Zone
   modules: Module[]
-  flow?: {
-    nodes: FSNode[]
-    edges: FSEdge[]
-  }
+  flow?: FSFlow
 }
 
 export interface CreateSessionResponse {
