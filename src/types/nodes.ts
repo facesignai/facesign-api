@@ -19,7 +19,7 @@ export interface FSNodeTransition {
 }
 
 export interface FSConversationNode extends FSNodeBase {
-  nodeType: FSNodeType.CONVERSATION
+  type: FSNodeType.CONVERSATION
   prompt: string
   transitions: FSNodeTransition[]
 }
