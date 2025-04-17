@@ -2,6 +2,7 @@ export enum FSNodeType {
   START = 'start',
   END = 'end',
   CONVERSATION = 'conversation',
+  LIVENESS_DETECTION = 'liveness_detection'
 }
 
 export interface FSNodeBase {
@@ -22,6 +23,10 @@ export interface FSConversationNode extends FSNodeBase {
   type: FSNodeType.CONVERSATION
   prompt: string
   transitions: FSNodeTransition[]
+}
+
+export interface FSLivenessDetectionNode extends FSNodeBase {
+  type: FSNodeType.LIVENESS_DETECTION;
 }
 
 export interface FSEndNode extends FSNodeBase {
