@@ -27,11 +27,13 @@ export interface FSConversationNode extends FSNodeBase {
 }
 
 export interface FSLivenessDetectionNode extends FSNodeBase {
-  type: FSNodeType.LIVENESS_DETECTION;
+  type: FSNodeType.LIVENESS_DETECTION
+  transitions: FSNodeTransition[]
 }
 
 export interface FSEnterEmailNode extends FSNodeBase {
-  type: FSNodeType.ENTER_EMAIL;
+  type: FSNodeType.ENTER_EMAIL
+  transitions: FSNodeTransition[]
 }
 
 export interface FSEndNode extends FSNodeBase {
