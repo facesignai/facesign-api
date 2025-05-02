@@ -3,7 +3,8 @@ export enum FSNodeType {
   END = 'end',
   CONVERSATION = 'conversation',
   LIVENESS_DETECTION = 'liveness_detection',
-  ENTER_EMAIL = 'enter_email'
+  ENTER_EMAIL = 'enter_email',
+  DATA_VALIDATION = 'data_validation'
 }
 
 export interface FSNodeBase {
@@ -36,11 +37,21 @@ export interface FSEnterEmailNode extends FSNodeBase {
   transitions: FSNodeTransition[]
 }
 
+export interface FSDataValidationNode extends FSNodeBase {
+  type: FSNodeType.DATA_VALIDATION
+  transitions: FSNodeTransition[]
+  validation: {
+    field: string
+    action: string
+    value?: string
+  }
+}
+
 export interface FSEndNode extends FSNodeBase {
   type: FSNodeType.END
 }
 
-export type FSNode = FSStartNode | FSConversationNode | FSEndNode | FSEnterEmailNode | FSLivenessDetectionNode
+export type FSNode = FSStartNode | FSConversationNode | FSEndNode | FSEnterEmailNode | FSLivenessDetectionNode | FSDataValidationNode
 
 export type FSEdge = {
   id: string
