@@ -30,7 +30,7 @@ export interface FSConversationNode extends FSNodeBase {
 
 export enum FSLivenessDetectionOutcome {
   LIVENESS_DETECTED = 'livenessDetected',
-  DEEPFAKE_DETECTED = 'deepfaceDetected',
+  DEEPFAKE_DETECTED = 'deepfakeDetected',
   NO_FACE = 'noFace',
 }
 export interface FSLivenessDetectionNode extends FSNodeBase {
