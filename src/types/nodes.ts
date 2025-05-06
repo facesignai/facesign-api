@@ -4,7 +4,7 @@ export enum FSNodeType {
   CONVERSATION = 'conversation',
   LIVENESS_DETECTION = 'liveness_detection',
   ENTER_EMAIL = 'enter_email',
-  DATA_VALIDATION = 'data_validation'
+  DATA_VALIDATION = 'data_validation',
 }
 
 export interface FSNodeBase {
@@ -12,6 +12,7 @@ export interface FSNodeBase {
   type: FSNodeType
 }
 
+export type FSTransitionId = string
 export interface FSStartNode extends FSNodeBase {
   type: FSNodeType.START
 }
@@ -27,14 +28,23 @@ export interface FSConversationNode extends FSNodeBase {
   transitions: FSNodeTransition[]
 }
 
+export enum FSLivenessDetectionOutcome {
+  LIVENESS_DETECTED = 'livenessDetected',
+  DEEPFAKE_DETECTED = 'deepfaceDetected',
+  NO_FACE = 'noFace',
+}
 export interface FSLivenessDetectionNode extends FSNodeBase {
   type: FSNodeType.LIVENESS_DETECTION
-  transitions: FSNodeTransition[]
+  outcomes: Record<FSLivenessDetectionOutcome, FSTransitionId>
 }
 
+export enum FSEnterEmailOutcome {
+  EMAIL_ENTERED = 'emailEntered',
+  CANCELED = 'canceled',
+}
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
-  transitions: FSNodeTransition[]
+  outcomes: Record<FSEnterEmailOutcome, FSTransitionId>
 }
 
 export interface FSDataValidationNode extends FSNodeBase {
@@ -51,7 +61,13 @@ export interface FSEndNode extends FSNodeBase {
   type: FSNodeType.END
 }
 
-export type FSNode = FSStartNode | FSConversationNode | FSEndNode | FSEnterEmailNode | FSLivenessDetectionNode | FSDataValidationNode
+export type FSNode =
+  | FSStartNode
+  | FSConversationNode
+  | FSEndNode
+  | FSEnterEmailNode
+  | FSLivenessDetectionNode
+  | FSDataValidationNode
 
 export type FSEdge = {
   id: string
