@@ -114,9 +114,6 @@ export type Lang = {
   id: string
   title: string
 }
-export interface GetLangsResponse {
-  langs: Lang[]
-}
 
 export type Zone = 'es' | 'eu'
 
@@ -236,6 +233,10 @@ export const getSessionEndpoint = {
   path: (p: GetSessionPathParameters): string => `/sessions/${p.sessionId}`,
 } as const
 
+export interface GetLangsResponse {
+  langs: Lang[]
+}
+
 export const getLangsEndpoint = {
   method: Method.GET,
   pathParams: [],
@@ -243,6 +244,10 @@ export const getLangsEndpoint = {
   bodyParams: [],
   path: (): string => '/langs',
 } as const
+
+export interface GetAvatarsResponse {
+  avatars: Avatar[]
+}
 
 export const getAvatarsEndpoint = {
   method: Method.GET,

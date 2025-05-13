@@ -17,6 +17,7 @@ import {
   GetLangsResponse,
   getLangsEndpoint,
   getAvatarsEndpoint,
+  GetAvatarsResponse,
 } from './api-endpoints'
 import { pick } from './utils'
 import packageJson from '../package.json'
@@ -210,10 +211,10 @@ class Client {
 
   public readonly avatars = {
     /**
-     * Retrieve supported langs
+     * Retrieve supported avatars
      */
-    retrieve: (): Promise<GetLangsResponse> => {
-      return this.request<GetLangsResponse>({
+    retrieve: (): Promise<GetAvatarsResponse> => {
+      return this.request<GetAvatarsResponse>({
         path: getAvatarsEndpoint.path(),
         method: getAvatarsEndpoint.method,
         query: {},
