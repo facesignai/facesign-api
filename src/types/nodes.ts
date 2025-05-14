@@ -5,6 +5,7 @@ export enum FSNodeType {
   LIVENESS_DETECTION = 'liveness_detection',
   ENTER_EMAIL = 'enter_email',
   DATA_VALIDATION = 'data_validation',
+  DOCUMENT_SCAN = 'document_scan',
 }
 
 export interface FSNodeBase {
@@ -57,6 +58,34 @@ export interface FSDataValidationNode extends FSNodeBase {
   }
 }
 
+export enum MicroblinkDocumentType {
+  UNKNOWN = 'MRTD_TYPE_UNKNOWN',
+  IDENTITY_CARD = 'MRTD_TYPE_IDENITY_CARD',
+  PASSPORT = 'MRTD_TYPE_PASSPORT',
+  VISA = 'MRTD_TYPE_VISA',
+  GREEN_CARD = 'MRTD_TYPE_GREEN_CARD',
+  MYS_PASS_IMM13P = 'MRTD_TYPE_MYS_PASS_IMM13P',
+  DL = 'MRTD_TYPE_DL',
+  INTERNAL_TRAVEL_DOCUMENT = 'MRTD_TYPE_INTERNAL_TRAVEL_DOCUMENT',
+  BORDER_CROSSING_CARD = 'MRTD_TYPE_BORDER_CROSSING_CARD',
+}
+
+export enum FSDocumentScanOutcome {
+  SCAN_SUCCESS = 'scanSuccess',
+  SCAN_FAILURE = 'scanFailure',
+  USER_CANCELLED = 'userCancelled',
+  TIMEOUT = 'scanTimeout',
+  PARTIAL_DATA = 'partialDataExtracted',
+  VALIDATION_FAILURE = 'validationFailure'
+}
+
+export interface FSDocumentScanNode extends FSNodeBase {
+  type: FSNodeType.DOCUMENT_SCAN;
+  allowedDocumentTypes: MicroblinkDocumentType[]; // Configuration for selectable document types
+  // Other configurations like scan region, specific recognizers can be added here later
+  outcomes: Record<FSDocumentScanOutcome, FSTransitionId>; // Fixed outcomes for flow branching
+}
+
 export interface FSEndNode extends FSNodeBase {
   type: FSNodeType.END
 }
@@ -68,6 +97,7 @@ export type FSNode =
   | FSEnterEmailNode
   | FSLivenessDetectionNode
   | FSDataValidationNode
+  | FSDocumentScanNode
 
 export type FSEdge = {
   id: string
