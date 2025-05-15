@@ -76,14 +76,14 @@ export enum FSDocumentScanOutcome {
   USER_CANCELLED = 'userCancelled',
   TIMEOUT = 'scanTimeout',
   PARTIAL_DATA = 'partialDataExtracted',
-  VALIDATION_FAILURE = 'validationFailure'
+  VALIDATION_FAILURE = 'validationFailure',
 }
 
 export interface FSDocumentScanNode extends FSNodeBase {
-  type: FSNodeType.DOCUMENT_SCAN;
-  allowedDocumentTypes: MicroblinkDocumentType[]; // Configuration for selectable document types
+  type: FSNodeType.DOCUMENT_SCAN
+  allowedDocumentTypes: MicroblinkDocumentType[] // Configuration for selectable document types
   // Other configurations like scan region, specific recognizers can be added here later
-  outcomes: Record<FSDocumentScanOutcome, FSTransitionId>; // Fixed outcomes for flow branching
+  outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
 }
 
 export interface FSEndNode extends FSNodeBase {
