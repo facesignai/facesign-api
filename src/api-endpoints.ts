@@ -1,10 +1,12 @@
 import { Device } from './types/deviceDetails'
 import { Location } from './types/location'
 import { FSEdge, FSNode } from './types/nodes'
+import { PhraseAction } from './types/actions'
 
 export * from './types/deviceDetails'
 export * from './types/location'
 export * from './types/nodes'
+export * from './types/actions'
 
 export enum ILogLevel {
   TRACE = 'TRACE',
@@ -265,3 +267,10 @@ export const createClientSecretEndpoint = {
   path: (p: GetSessionPathParameters): string =>
     `/sessions/${p.sessionId}/refresh`,
 } as const
+
+export interface SubmitReplyResponse {
+  phrase: Phrase;
+  isOver: boolean;
+  steps: Phrase[];
+  action?: PhraseAction;
+}
