@@ -6,6 +6,7 @@ export enum FSNodeType {
   ENTER_EMAIL = 'enter_email',
   DATA_VALIDATION = 'data_validation',
   DOCUMENT_SCAN = 'document_scan',
+  RECOGNITION = 'recognition'
 }
 
 export interface FSNodeBase {
@@ -34,6 +35,7 @@ export enum FSLivenessDetectionOutcome {
   DEEPFAKE_DETECTED = 'deepfakeDetected',
   NO_FACE = 'noFace',
 }
+
 export interface FSLivenessDetectionNode extends FSNodeBase {
   type: FSNodeType.LIVENESS_DETECTION
   outcomes: Record<FSLivenessDetectionOutcome, FSTransitionId>
@@ -56,6 +58,17 @@ export interface FSDataValidationNode extends FSNodeBase {
     action: string
     value?: string
   }
+}
+
+export enum FSRecognitionOutcome {
+  RECOGNIZED = 'recognized',
+  NEW_USER = 'newUser',
+  NO_FACE = 'noFace',
+}
+
+export interface FSRecognitionNode extends FSNodeBase {
+  type: FSNodeType.RECOGNITION
+  outcomes: Record<FSRecognitionOutcome, FSTransitionId>
 }
 
 export enum MicroblinkDocumentType {
@@ -98,6 +111,7 @@ export type FSNode =
   | FSLivenessDetectionNode
   | FSDataValidationNode
   | FSDocumentScanNode
+  | FSRecognitionNode
 
 export type FSEdge = {
   id: string
