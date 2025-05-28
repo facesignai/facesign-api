@@ -6,7 +6,7 @@ export enum FSNodeType {
   ENTER_EMAIL = 'enter_email',
   DATA_VALIDATION = 'data_validation',
   DOCUMENT_SCAN = 'document_scan',
-  RECOGNITION = 'recognition'
+  RECOGNITION = 'recognition',
 }
 
 export interface FSNodeBase {
@@ -85,11 +85,11 @@ export enum MicroblinkDocumentType {
 
 export enum FSDocumentScanOutcome {
   SCAN_SUCCESS = 'scanSuccess',
-  SCAN_FAILURE = 'scanFailure',
+  // SCAN_FAILURE = 'scanFailure',
   USER_CANCELLED = 'userCancelled',
   TIMEOUT = 'scanTimeout',
-  PARTIAL_DATA = 'partialDataExtracted',
-  VALIDATION_FAILURE = 'validationFailure',
+  // PARTIAL_DATA = 'partialDataExtracted',
+  // VALIDATION_FAILURE = 'validationFailure',
 }
 
 export interface FSDocumentScanNode extends FSNodeBase {
