@@ -71,7 +71,7 @@ export interface FSRecognitionNode extends FSNodeBase {
   outcomes: Record<FSRecognitionOutcome, FSTransitionId>
 }
 
-export enum DocumentType {
+export enum FSDocumentType {
   UNKNOWN = 'MRTD_TYPE_UNKNOWN',
   IDENTITY_CARD = 'MRTD_TYPE_IDENITY_CARD',
   PASSPORT = 'MRTD_TYPE_PASSPORT',
@@ -101,7 +101,7 @@ export enum FSDocumentScanMode {
 export interface FSDocumentScanNode extends FSNodeBase {
   type: FSNodeType.DOCUMENT_SCAN
   scanningMode: FSDocumentScanMode
-  allowedDocumentTypes: DocumentType[] // Configuration for selectable document types
+  allowedDocumentTypes: FSDocumentType[] // Configuration for selectable document types
   // Other configurations like scan region, specific recognizers can be added here later
   outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
 }
