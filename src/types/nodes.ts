@@ -71,7 +71,7 @@ export interface FSRecognitionNode extends FSNodeBase {
   outcomes: Record<FSRecognitionOutcome, FSTransitionId>
 }
 
-export enum MicroblinkDocumentType {
+export enum DocumentType {
   UNKNOWN = 'MRTD_TYPE_UNKNOWN',
   IDENTITY_CARD = 'MRTD_TYPE_IDENITY_CARD',
   PASSPORT = 'MRTD_TYPE_PASSPORT',
@@ -92,9 +92,16 @@ export enum FSDocumentScanOutcome {
   // VALIDATION_FAILURE = 'validationFailure',
 }
 
+export enum FSDocumentScanMode {
+  SINGLE_SIDE = 'SINGLE_SIDE',
+  MULTI_SIDE = 'MULTI_SIDE',
+  BARCODE = 'BARCODE',
+}
+
 export interface FSDocumentScanNode extends FSNodeBase {
   type: FSNodeType.DOCUMENT_SCAN
-  allowedDocumentTypes: MicroblinkDocumentType[] // Configuration for selectable document types
+  scanningMode: FSDocumentScanMode
+  allowedDocumentTypes: DocumentType[] // Configuration for selectable document types
   // Other configurations like scan region, specific recognizers can be added here later
   outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
 }
