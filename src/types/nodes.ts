@@ -104,6 +104,8 @@ export interface FSDocumentScanNode extends FSNodeBase {
   allowedDocumentTypes: FSDocumentType[] // Configuration for selectable document types
   // Other configurations like scan region, specific recognizers can be added here later
   outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
+  showTorchButton?: boolean      // Default: true
+  showCameraSwitch?: boolean      // Default: true
 }
 
 export interface FSEndNode extends FSNodeBase {
