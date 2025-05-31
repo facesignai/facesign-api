@@ -197,6 +197,8 @@ export interface SessionSettings {
   permissionsButtonText?: string
   permissionsBackgroundType?: 'avatar' | 'color'
   permissionsBackgroundColor?: string
+  permissionsMainHeading?: string
+  permissionsSubheading?: string
 }
 
 export interface CreateSessionResponse {
@@ -223,6 +225,8 @@ export const createSessionEndpoint = {
     'permissionsButtonText',
     'permissionsBackgroundType',
     'permissionsBackgroundColor',
+    'permissionsMainHeading',
+    'permissionsSubheading',
   ],
   path: (): string => '/sessions',
 } as const
