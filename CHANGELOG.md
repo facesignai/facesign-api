@@ -4,6 +4,14 @@ All notable changes to the Facesign API will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.11] - 2025-01-27
+
+### Added
+- Permissions screen customization options to `SessionSettings`:
+  - `permissionsButtonText` - Custom text for the permissions request button
+  - `permissionsBackgroundType` - Choose between 'avatar' or 'color' background
+  - `permissionsBackgroundColor` - Custom color when using solid color background
+
 ## [1.0.10] - 2024-05-20
 
 ### Added

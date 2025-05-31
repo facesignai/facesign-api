@@ -194,6 +194,9 @@ export interface SessionSettings {
   zone?: Zone
   modules: Module[]
   flow?: FSFlow
+  permissionsButtonText?: string
+  permissionsBackgroundType?: 'avatar' | 'color'
+  permissionsBackgroundColor?: string
 }
 
 export interface CreateSessionResponse {
@@ -217,6 +220,9 @@ export const createSessionEndpoint = {
     'zone',
     'modules',
     'flow',
+    'permissionsButtonText',
+    'permissionsBackgroundType',
+    'permissionsBackgroundColor',
   ],
   path: (): string => '/sessions',
 } as const
