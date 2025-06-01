@@ -4,6 +4,25 @@ All notable changes to the Facesign API will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.13] - 2025-01-28
+
+### Added
+- Face Scan mode enum (`FSFaceScanMode`) with CAPTURE and COMPARE modes
+- Enhanced `FSFaceScanNode` interface with mode-based configuration
+- `saveToField` option for capture-only mode to store face image URL
+- `CAPTURED` outcome for capture-only face scan mode
+
+### Changed
+- Reorganized `FSFaceScanOutcome` enum to separate capture and compare mode outcomes
+- Updated `FSFaceScanNode` to support both capture-only and capture+compare modes
+
+## [1.0.12] - 2025-01-27
+
+### Added
+- Face Scan node type (`FACE_SCAN`) for 1:1 biometric face matching
+- `FSFaceScanOutcome` enum with match outcomes (match, noMatch, noFace, error)
+- `FSFaceScanNode` interface with configuration for reference image sources and matching threshold
+
 ## [1.0.11] - 2025-01-27
 
 ### Added

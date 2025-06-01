@@ -7,6 +7,7 @@ export enum FSNodeType {
   DATA_VALIDATION = 'data_validation',
   DOCUMENT_SCAN = 'document_scan',
   RECOGNITION = 'recognition',
+  FACE_SCAN = 'face_scan',
 }
 
 export interface FSNodeBase {
@@ -112,6 +113,41 @@ export interface FSEndNode extends FSNodeBase {
   type: FSNodeType.END
 }
 
+export enum FSFaceScanMode {
+  CAPTURE = 'capture',      // Only capture face image
+  COMPARE = 'compare',      // Capture and compare with reference
+}
+
+export enum FSFaceScanOutcome {
+  // Capture mode outcomes
+  CAPTURED = 'captured',
+  NO_FACE = 'noFace',
+  ERROR = 'error',
+  
+  // Compare mode outcomes (when mode === 'compare')
+  MATCH = 'match',
+  NO_MATCH = 'noMatch',
+}
+
+export interface FSFaceScanNode extends FSNodeBase {
+  type: FSNodeType.FACE_SCAN
+  outcomes: Record<FSFaceScanOutcome, FSTransitionId>
+  
+  // Core configuration
+  mode: FSFaceScanMode // Determines capture-only or capture+compare
+  
+  // Capture configuration (always used)
+  captureInstructions?: string
+  saveToField?: string // Where to save captured face URL in session data
+  requireLiveness?: boolean
+  
+  // Compare configuration (only used when mode === 'compare')
+  referenceImageSource?: 'session' | 'providedData' | 'url'
+  referenceImageKey?: string
+  referenceImageUrl?: string
+  similarityThreshold?: number
+}
+
 export type FSNode =
   | FSStartNode
   | FSConversationNode
@@ -121,6 +157,7 @@ export type FSNode =
   | FSDataValidationNode
   | FSDocumentScanNode
   | FSRecognitionNode
+  | FSFaceScanNode
 
 export type FSEdge = {
   id: string
