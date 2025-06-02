@@ -4,6 +4,31 @@ All notable changes to the Facesign API will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.15] - 2025-01-28
+
+### Added
+- Advanced configuration options for Face Scan node:
+  - `captureDelay` - Configurable countdown before capture (0 for immediate)
+  - `detectionInterval` - How often to check for faces (performance tuning)
+  - `qualityThreshold` - Overall face quality score requirement
+  - `blurThreshold` - Clarity detection threshold (lower = stricter)
+  - `minFaceSize` / `maxFaceSize` - Acceptable face size range in pixels
+  - `enableSound` - Toggle audio feedback
+  - `enableHaptics` - Toggle haptic feedback on mobile
+  - `useWebGL` - Control WebGL acceleration usage
+  - `maxRetries` - Maximum capture attempts allowed
+
+## [1.0.14] - 2025-01-28
+
+### Added
+- Localization support for permissions screen text:
+  - `permissionsButtonTextTranslates` - Localized button text per language
+  - `permissionsMainHeadingTranslates` - Localized main heading per language
+  - `permissionsSubheadingTranslates` - Localized subheading per language
+
+### Changed
+- Kept original non-localized fields for backward compatibility
+
 ## [1.0.13] - 2025-01-28
 
 ### Added
