@@ -94,6 +94,23 @@ export interface SessionReport {
   isVerified?: boolean
 }
 
+// Permissions screen customization options
+export interface Customization {
+  permissionsPage?: {
+    buttonText?: string
+    backgroundType?: 'avatar' | 'color'
+    backgroundColor?: string
+    mainHeading?: string
+    subheading?: string
+    buttonTextTranslates?: Record<string, string>
+    mainHeadingTranslates?: Record<string, string>
+    subheadingTranslates?: Record<string, string>
+  }
+  controls?: {
+    showUxControls?: boolean
+  }
+}
+
 export interface Session {
   id: string
   createdAt: number
@@ -194,6 +211,8 @@ export interface SessionSettings {
   zone?: Zone
   modules: Module[]
   flow?: FSFlow
+  customization?: Customization
+  // Legacy fields for backward compatibility
   permissionsButtonText?: string
   permissionsBackgroundType?: 'avatar' | 'color'
   permissionsBackgroundColor?: string
@@ -225,6 +244,7 @@ export const createSessionEndpoint = {
     'zone',
     'modules',
     'flow',
+    'customization',
     'permissionsButtonText',
     'permissionsBackgroundType',
     'permissionsBackgroundColor',
