@@ -6,12 +6,12 @@ export enum BackgroundType {
 export type PermissionsPageCustomization = {
   buttonText?: string
   backgroundType?: BackgroundType
-  permissionsBackgroundColor?: string
-  permissionsMainHeading?: string
-  permissionsSubheading?: string
-  permissionsButtonTextTranslates?: Record<string, string>
-  permissionsMainHeadingTranslates?: Record<string, string>
-  permissionsSubheadingTranslates?: Record<string, string>
+  backgroundColor?: string
+  mainHeading?: string
+  subheading?: string
+  buttonTextTranslates?: Record<string, string>
+  mainHeadingTranslates?: Record<string, string>
+  subheadingTranslates?: Record<string, string>
 }
 
 export type Customization = {
