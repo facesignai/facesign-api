@@ -1,10 +1,12 @@
 import { Device } from './types/deviceDetails'
 import { Location } from './types/location'
 import { FSEdge, FSNode } from './types/nodes'
+import { Customization } from './types/customization'
 
 export * from './types/deviceDetails'
 export * from './types/location'
 export * from './types/nodes'
+export * from './types/customization'
 
 export enum ILogLevel {
   TRACE = 'TRACE',
@@ -194,14 +196,7 @@ export interface SessionSettings {
   zone?: Zone
   modules: Module[]
   flow?: FSFlow
-  permissionsButtonText?: string
-  permissionsBackgroundType?: 'avatar' | 'color'
-  permissionsBackgroundColor?: string
-  permissionsMainHeading?: string
-  permissionsSubheading?: string
-  permissionsButtonTextTranslates?: Record<string, string>
-  permissionsMainHeadingTranslates?: Record<string, string>
-  permissionsSubheadingTranslates?: Record<string, string>
+  customization?: Customization
 }
 
 export interface CreateSessionResponse {
@@ -225,14 +220,7 @@ export const createSessionEndpoint = {
     'zone',
     'modules',
     'flow',
-    'permissionsButtonText',
-    'permissionsBackgroundType',
-    'permissionsBackgroundColor',
-    'permissionsMainHeading',
-    'permissionsSubheading',
-    'permissionsButtonTextTranslates',
-    'permissionsMainHeadingTranslates',
-    'permissionsSubheadingTranslates',
+    'customization',
   ],
   path: (): string => '/sessions',
 } as const
