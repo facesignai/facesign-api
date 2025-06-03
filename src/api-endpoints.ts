@@ -281,3 +281,190 @@ export const createClientSecretEndpoint = {
   path: (p: GetSessionPathParameters): string =>
     `/sessions/${p.sessionId}/refresh`,
 } as const
+
+// Session list filtering options
+export interface GetSessionsParameters {
+  // Pagination
+  limit?: number           // Default: 25, max: 100
+  cursor?: string         // For cursor-based pagination
+  
+  // Filtering
+  flowId?: string         // Filter by specific flow/form (maps to videoFormId in DB)
+  clientReferenceId?: string
+  status?: SessionStatus | SessionStatus[]
+  fromDate?: number       // Unix timestamp
+  toDate?: number         // Unix timestamp
+  
+  // Sorting
+  sortBy?: 'createdAt' | 'status' | 'finishedAt'  // Default: 'createdAt'
+  sortOrder?: 'asc' | 'desc'  // Default: 'desc'
+  
+  // Search
+  search?: string         // Search in metadata, client reference, etc.
+  
+  // Options
+  includeTotal?: boolean  // Include total count (expensive, default: false)
+}
+
+// Response types
+export interface SessionListItem {
+  id: string
+  createdAt: number
+  startedAt?: number
+  finishedAt?: number
+  status: SessionStatus
+  clientReferenceId: string
+  metadata: object
+  flowId?: string  // Maps to videoFormId in database
+  
+  // Expanded session data (excluding sensitive fields)
+  clientId: string
+  apiKeyId: string
+  conversation: string[]
+  moduleIndex: number
+  settings: SessionSettings
+  apiVersion?: string
+  data: Record<string, string>
+  attempts: Record<string, {
+    startedAt: number
+    conversation: string[]
+    lastUserPhraseAppliedAt?: number
+    lastAvatarPhraseAppliedAt?: number
+    clientVersion?: string
+    isLocalhost?: boolean
+    userVideoUrl?: string
+    avatarVideoUrl?: string
+    userVideoMimeType?: string
+    avatarVideoMimeType?: string
+  }>
+  webhookUrl?: string
+  modulesData?: {
+    emailVerification?: {
+      verificationId?: string
+      userId?: string
+      emailInputSkipped?: boolean
+      livenessDetected?: boolean
+      userName?: string
+      isVerified?: boolean
+      isNotNew?: boolean
+      email?: string
+    }
+  }
+  lang?: string
+  slackNotificationsDisabled?: boolean
+  aiAnalysisFirst?: SessionReportAIAnalysis
+  aiAnalysis?: SessionReportAIAnalysis
+  device?: {
+    userAgent?: string
+    platform?: string
+    vendor?: string
+    language?: string
+    languages?: string[]
+    online?: boolean
+    cookieEnabled?: boolean
+    doNotTrack?: string
+    maxTouchPoints?: number
+    hardwareConcurrency?: number
+    deviceMemory?: number
+    webdriver?: boolean
+    pdfViewerEnabled?: boolean
+    screen?: {
+      width?: number
+      height?: number
+      availWidth?: number
+      availHeight?: number
+      colorDepth?: number
+      pixelDepth?: number
+    }
+  }
+  ip?: string
+  location?: {
+    city?: {
+      geoname_id?: number
+      names?: Record<string, string>
+    }
+    continent?: {
+      code?: string
+      geoname_id?: number
+      names?: Record<string, string>
+    }
+    country?: {
+      geoname_id?: number
+      iso_code?: string
+      names?: Record<string, string>
+    }
+    subdivisions?: Array<{
+      geoname_id?: number
+      iso_code?: string
+      names?: Record<string, string>
+    }>
+    postal?: {
+      code?: string
+    }
+    location?: {
+      accuracy_radius?: number
+      latitude?: number
+      longitude?: number
+      metro_code?: number
+      time_zone?: string
+    }
+  }
+  phrases: Record<string, {
+    id: string
+    text: string
+    lang: string
+    isAvatar: boolean
+    duration?: number
+    createdAt: number
+    interruptedAt?: number
+    moduleIndex?: number
+    moduleCompleted?: boolean
+    flags?: { key: string; value: string }[]
+    stage?: string
+    latencies?: Record<string, number>
+    passedNodes?: Array<{
+      nodeId: string
+      transitionId: string
+    }>
+    nodeId?: string
+    action?: {
+      type: string
+      [key: string]: any
+    }
+  }>
+  
+  // Legacy summary field for backwards compatibility
+  summary?: {
+    duration?: number
+    moduleResults?: Record<string, boolean>
+    errorMessage?: string
+  }
+}
+
+export interface GetSessionsResponse {
+  sessions: SessionListItem[]
+  nextCursor?: string
+  totalCount?: number  // Only included if includeTotal=true
+  hasMore: boolean
+}
+
+// List sessions endpoint
+export const getSessionsEndpoint = {
+  method: Method.GET,
+  pathParams: [],
+  queryParams: [
+    'limit',
+    'cursor',
+    'flowId',
+    'clientReferenceId',
+    'status',
+    'fromDate',
+    'toDate',
+    'sortBy',
+    'sortOrder',
+    'search',
+    'includeTotal'
+  ],
+  bodyParams: [],
+  path: (): string => '/sessions',
+} as const

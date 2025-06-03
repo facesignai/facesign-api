@@ -18,6 +18,9 @@ import {
   getLangsEndpoint,
   getAvatarsEndpoint,
   GetAvatarsResponse,
+  GetSessionsParameters,
+  GetSessionsResponse,
+  getSessionsEndpoint,
 } from './api-endpoints'
 import { pick } from './utils'
 import packageJson from '../package.json'
@@ -190,6 +193,29 @@ class Client {
         method: createClientSecretEndpoint.method,
         query: pick(args, createClientSecretEndpoint.queryParams),
         body: pick(args, createClientSecretEndpoint.bodyParams),
+      })
+    },
+    /**
+     * List sessions with filtering and pagination
+     */
+    list: (args?: GetSessionsParameters): Promise<GetSessionsResponse> => {
+      return this.request<GetSessionsResponse>({
+        path: getSessionsEndpoint.path(),
+        method: getSessionsEndpoint.method,
+        query: args ? {
+          ...(args.limit !== undefined && { limit: args.limit }),
+          ...(args.cursor && { cursor: args.cursor }),
+          ...(args.flowId && { flowId: args.flowId }),
+          ...(args.clientReferenceId && { clientReferenceId: args.clientReferenceId }),
+          ...(args.status && { status: args.status }),
+          ...(args.fromDate !== undefined && { fromDate: args.fromDate }),
+          ...(args.toDate !== undefined && { toDate: args.toDate }),
+          ...(args.sortBy && { sortBy: args.sortBy }),
+          ...(args.sortOrder && { sortOrder: args.sortOrder }),
+          ...(args.search && { search: args.search }),
+          ...(args.includeTotal !== undefined && { includeTotal: String(args.includeTotal) }),
+        } : {},
+        body: {},
       })
     },
     apiVersion: packageJson.version,
