@@ -14,6 +14,11 @@ export type PermissionsPageCustomization = {
   subheadingTranslates?: Record<string, string>
 }
 
+export type ControlsCustomization = {
+  showUxControls?: boolean
+}
+
 export type Customization = {
   permissionsPage?: PermissionsPageCustomization
+  controls?: ControlsCustomization
 }
