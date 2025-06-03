@@ -95,20 +95,24 @@ export interface SessionReport {
 }
 
 // Permissions screen customization options
+export interface PermissionsPageCustomization {
+  buttonText?: string
+  backgroundType?: 'avatar' | 'color'
+  backgroundColor?: string
+  mainHeading?: string
+  subheading?: string
+  buttonTextTranslates?: Record<string, string>
+  mainHeadingTranslates?: Record<string, string>
+  subheadingTranslates?: Record<string, string>
+}
+
+export interface ControlsCustomization {
+  showUxControls?: boolean
+}
+
 export interface Customization {
-  permissionsPage?: {
-    buttonText?: string
-    backgroundType?: 'avatar' | 'color'
-    backgroundColor?: string
-    mainHeading?: string
-    subheading?: string
-    buttonTextTranslates?: Record<string, string>
-    mainHeadingTranslates?: Record<string, string>
-    subheadingTranslates?: Record<string, string>
-  }
-  controls?: {
-    showUxControls?: boolean
-  }
+  permissionsPage?: PermissionsPageCustomization
+  controls?: ControlsCustomization
 }
 
 export interface Session {
