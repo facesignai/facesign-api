@@ -8,6 +8,7 @@ export enum FSNodeType {
   DOCUMENT_SCAN = 'document_scan',
   RECOGNITION = 'recognition',
   FACE_SCAN = 'face_scan',
+  TWO_FACTOR = 'two_factor',
 }
 
 export interface FSNodeBase {
@@ -160,6 +161,53 @@ export interface FSFaceScanNode extends FSNodeBase {
   maxRetries?: number // Maximum capture attempts (default: 3)
 }
 
+export enum FSTwoFactorChannel {
+  EMAIL = 'email',
+  SMS = 'sms',
+}
+
+export enum FSTwoFactorContactSource {
+  SESSION_DATA = 'session_data',
+  MODULE_SETTINGS = 'module_settings',
+  RECOGNITION_MATCH = 'recognition_match',
+}
+
+export enum FSTwoFactorOutcome {
+  VERIFIED = 'verified',
+  DELIVERY_FAILED = 'delivery_failed',
+  FAILED_UNVERIFIED = 'failed_unverified',
+  CANCELLED = 'cancelled',
+  ERROR = 'error',
+}
+
+export interface FSTwoFactorNode extends FSNodeBase {
+  type: FSNodeType.TWO_FACTOR
+  outcomes: Record<FSTwoFactorOutcome, FSTransitionId>
+  
+  // Core configuration
+  channels: FSTwoFactorChannel[] // Email, SMS, or both
+  
+  // Contact configuration
+  contactSource: FSTwoFactorContactSource
+  emailField?: string // For session_data source
+  phoneField?: string // For session_data source
+  staticEmail?: string // For module_settings source
+  staticPhone?: string // For module_settings source
+  
+  // Templates (support variables like {{userName}}, {{code}}, {{companyName}})
+  emailTemplate?: string
+  smsTemplate?: string
+  
+  // Verification settings
+  otpLength?: number // 4-8 digits, default 6
+  expirySeconds?: number // default 300 (5 minutes)
+  maxAttempts?: number // default 3
+  resendAfterSeconds?: number // optional min delay before "Resend" enabled
+  
+  // UI settings
+  showUI?: boolean // Show on-screen toast notification, default true
+}
+
 export type FSNode =
   | FSStartNode
   | FSConversationNode
@@ -170,6 +218,7 @@ export type FSNode =
   | FSDocumentScanNode
   | FSRecognitionNode
   | FSFaceScanNode
+  | FSTwoFactorNode
 
 export type FSEdge = {
   id: string

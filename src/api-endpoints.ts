@@ -94,10 +94,16 @@ export interface SessionReport {
   isVerified?: boolean
 }
 
+// Background type enum for permissions screen
+export enum BackgroundType {
+  AVATAR = 'avatar',
+  COLOR = 'color'
+}
+
 // Permissions screen customization options
 export interface PermissionsPageCustomization {
   buttonText?: string
-  backgroundType?: 'avatar' | 'color'
+  backgroundType?: BackgroundType
   backgroundColor?: string
   mainHeading?: string
   subheading?: string
@@ -218,7 +224,7 @@ export interface SessionSettings {
   customization?: Customization
   // Legacy fields for backward compatibility
   permissionsButtonText?: string
-  permissionsBackgroundType?: 'avatar' | 'color'
+  permissionsBackgroundType?: BackgroundType
   permissionsBackgroundColor?: string
   permissionsMainHeading?: string
   permissionsSubheading?: string
