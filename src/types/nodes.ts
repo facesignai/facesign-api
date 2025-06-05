@@ -178,6 +178,7 @@ export enum FSTwoFactorOutcome {
   FAILED_UNVERIFIED = 'failed_unverified',
   CANCELLED = 'cancelled',
   ERROR = 'error',
+  MISSING_CONTACT = 'missing_contact',
 }
 
 export interface FSTwoFactorNode extends FSNodeBase {
