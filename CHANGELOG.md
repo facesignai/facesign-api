@@ -4,11 +4,21 @@ All notable changes to the Facesign API will be documented in this file.
 
 ## [Unreleased]
 
-## [1.0.16] - 2025-06-03
 
-### Changed
+## [1.0.16] - 2025-01-29
 
-- Session settings related to UI customization moved to separate types.
+### Added
+- Two-Factor Authentication node support:
+  - `FSTwoFactorChannel` enum with EMAIL and SMS channel options
+  - `FSTwoFactorContactSource` enum for session_data, module_settings, and recognition_match sources
+  - `FSTwoFactorOutcome` enum with verified, delivery_failed, failed_unverified, cancelled, and error outcomes
+  - `FSTwoFactorNode` interface with comprehensive configuration options including:
+    - Multi-channel delivery (Email via Resend, SMS via Twilio)
+    - Contact source configuration with field mapping
+    - Template system with variable support ({{userName}}, {{code}}, {{companyName}})
+    - Verification settings (OTP length, expiry, max attempts, resend delay)
+  - `FSPhraseAction.START_TWO_FACTOR_VERIFICATION` action for conversation flow integration
+  - `FSClientEvent.TWO_FACTOR_CODE_SPOKEN` event for spoken code verification
 
 ## [1.0.15] - 2025-01-28
 

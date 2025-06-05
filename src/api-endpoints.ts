@@ -96,6 +96,11 @@ export interface SessionReport {
   isVerified?: boolean
 }
 
+// Background type enum for permissions screen
+export enum BackgroundType {
+  AVATAR = 'avatar',
+  COLOR = 'color',
+}
 export interface Session {
   id: string
   createdAt: number
@@ -268,4 +273,56 @@ export const createClientSecretEndpoint = {
   bodyParams: [],
   path: (p: GetSessionPathParameters): string =>
     `/sessions/${p.sessionId}/refresh`,
+} as const
+
+// Session list filtering options
+export interface GetSessionsParameters {
+  // Pagination
+  limit?: number // Default: 25, max: 100
+  cursor?: string // For cursor-based pagination
+
+  // Filtering
+  flowId?: string // Filter by specific flow/form (maps to videoFormId in DB)
+  clientReferenceId?: string
+  status?: SessionStatus | SessionStatus[]
+  fromDate?: number // Unix timestamp
+  toDate?: number // Unix timestamp
+
+  // Sorting
+  sortBy?: 'createdAt' | 'status' | 'finishedAt' // Default: 'createdAt'
+  sortOrder?: 'asc' | 'desc' // Default: 'desc'
+
+  // Search
+  search?: string // Search in metadata, client reference, etc.
+
+  // Options
+  includeTotal?: boolean // Include total count (expensive, default: false)
+}
+
+export interface GetSessionsResponse {
+  sessions: Session[]
+  nextCursor?: string
+  totalCount?: number // Only included if includeTotal=true
+  hasMore: boolean
+}
+
+// List sessions endpoint
+export const getSessionsEndpoint = {
+  method: Method.GET,
+  pathParams: [],
+  queryParams: [
+    'limit',
+    'cursor',
+    'flowId',
+    'clientReferenceId',
+    'status',
+    'fromDate',
+    'toDate',
+    'sortBy',
+    'sortOrder',
+    'search',
+    'includeTotal',
+  ],
+  bodyParams: [],
+  path: (): string => '/sessions',
 } as const
