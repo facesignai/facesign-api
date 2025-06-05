@@ -189,8 +189,6 @@ export interface FSTwoFactorNode extends FSNodeBase {
   
   // Contact configuration
   contactSource: FSTwoFactorContactSource
-  emailField?: string // For session_data source
-  phoneField?: string // For session_data source
   staticEmail?: string // For module_settings source
   staticPhone?: string // For module_settings source
   

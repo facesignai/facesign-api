@@ -4,6 +4,15 @@ All notable changes to the Facesign API will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.18] - 2025-01-29
+
+### Changed
+- **Breaking Change**: Standardized Two-Factor Authentication contact field names
+  - Removed support for custom field mapping (`emailField` and `phoneField` properties)
+  - When using `SESSION_DATA` as contact source, the system now always looks for standardized `email` and `phone` fields
+  - This ensures consistent data structure across all integrations
+  - Customers must map their data to use standard field names: `email` and `phone`
+
 
 ## [1.0.16] - 2025-01-29
 
@@ -14,7 +23,7 @@ All notable changes to the Facesign API will be documented in this file.
   - `FSTwoFactorOutcome` enum with verified, delivery_failed, failed_unverified, cancelled, and error outcomes
   - `FSTwoFactorNode` interface with comprehensive configuration options including:
     - Multi-channel delivery (Email via Resend, SMS via Twilio)
-    - Contact source configuration with field mapping
+    - Contact source configuration (session_data, module_settings, recognition_match)
     - Template system with variable support ({{userName}}, {{code}}, {{companyName}})
     - Verification settings (OTP length, expiry, max attempts, resend delay)
   - `FSPhraseAction.START_TWO_FACTOR_VERIFICATION` action for conversation flow integration
