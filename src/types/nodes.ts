@@ -50,6 +50,7 @@ export enum FSEnterEmailOutcome {
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
   outcomes: Record<FSEnterEmailOutcome, FSTransitionId>
+  transitions?: FSNodeTransition[]
 }
 
 export interface FSDataValidationNode extends FSNodeBase {
@@ -205,6 +206,13 @@ export interface FSTwoFactorNode extends FSNodeBase {
   
   // UI settings
   showUI?: boolean // Show on-screen toast notification, default true
+  
+  // Test mode configuration
+  testMode?: {
+    enabled: boolean
+    email?: string
+    phone?: string
+  }
 }
 
 export type FSNode =
