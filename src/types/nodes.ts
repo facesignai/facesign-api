@@ -106,8 +106,8 @@ export interface FSDocumentScanNode extends FSNodeBase {
   allowedDocumentTypes: FSDocumentType[] // Configuration for selectable document types
   // Other configurations like scan region, specific recognizers can be added here later
   outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
-  showTorchButton?: boolean      // Default: true
-  showCameraSwitch?: boolean      // Default: true
+  showTorchButton?: boolean // Default: true
+  showCameraSwitch?: boolean // Default: true
 }
 
 export interface FSEndNode extends FSNodeBase {
@@ -115,8 +115,8 @@ export interface FSEndNode extends FSNodeBase {
 }
 
 export enum FSFaceScanMode {
-  CAPTURE = 'capture',      // Only capture face image
-  COMPARE = 'compare',      // Capture and compare with reference
+  CAPTURE = 'capture', // Only capture face image
+  COMPARE = 'compare', // Capture and compare with reference
 }
 
 export enum FSFaceScanOutcome {
@@ -124,7 +124,7 @@ export enum FSFaceScanOutcome {
   CAPTURED = 'captured',
   NO_FACE = 'noFace',
   ERROR = 'error',
-  
+
   // Compare mode outcomes (when mode === 'compare')
   MATCH = 'match',
   NO_MATCH = 'noMatch',
@@ -133,21 +133,20 @@ export enum FSFaceScanOutcome {
 export interface FSFaceScanNode extends FSNodeBase {
   type: FSNodeType.FACE_SCAN
   outcomes: Record<FSFaceScanOutcome, FSTransitionId>
-  
+
   // Core configuration
   mode: FSFaceScanMode // Determines capture-only or capture+compare
-  
+
   // Capture configuration (always used)
   captureInstructions?: string
-  saveToField?: string // Where to save captured face URL in session data
   requireLiveness?: boolean
-  
+
   // Compare configuration (only used when mode === 'compare')
   referenceImageSource?: 'session' | 'providedData' | 'url'
   referenceImageKey?: string
   referenceImageUrl?: string
   similarityThreshold?: number
-  
+
   // Advanced configuration
   captureDelay?: number // Milliseconds before capture (default: 3000)
   detectionInterval?: number // How often to check for faces (default: 150ms)
@@ -166,12 +165,6 @@ export enum FSTwoFactorChannel {
   SMS = 'sms',
 }
 
-export enum FSTwoFactorContactSource {
-  SESSION_DATA = 'session_data',
-  MODULE_SETTINGS = 'module_settings',
-  RECOGNITION_MATCH = 'recognition_match',
-}
-
 export enum FSTwoFactorOutcome {
   VERIFIED = 'verified',
   DELIVERY_FAILED = 'delivery_failed',
@@ -183,27 +176,19 @@ export enum FSTwoFactorOutcome {
 export interface FSTwoFactorNode extends FSNodeBase {
   type: FSNodeType.TWO_FACTOR
   outcomes: Record<FSTwoFactorOutcome, FSTransitionId>
-  
   // Core configuration
   channels: FSTwoFactorChannel[] // Email, SMS, or both
-  
-  // Contact configuration
-  contactSource: FSTwoFactorContactSource
-  emailField?: string // For session_data source
-  phoneField?: string // For session_data source
-  staticEmail?: string // For module_settings source
-  staticPhone?: string // For module_settings source
-  
+
   // Templates (support variables like {{userName}}, {{code}}, {{companyName}})
   emailTemplate?: string
   smsTemplate?: string
-  
+
   // Verification settings
   otpLength?: number // 4-8 digits, default 6
   expirySeconds?: number // default 300 (5 minutes)
   maxAttempts?: number // default 3
   resendAfterSeconds?: number // optional min delay before "Resend" enabled
-  
+
   // UI settings
   showUI?: boolean // Show on-screen toast notification, default true
 }
