@@ -1,0 +1,176 @@
+---
+title: Authentication
+description: Learn how to authenticate with the FaceSign API using API keys.
+---
+
+# Authentication
+
+The FaceSign API uses API keys to authenticate requests. API keys are passed via the `Authorization` header using Bearer authentication.
+
+## API Key Types
+
+FaceSign provides two types of API keys:
+
+### Test Keys
+- Prefix: `sk_test_`
+- Use for development and testing
+- Sessions created are in sandbox mode
+- No charges incurred
+
+### Live Keys
+- Prefix: `sk_live_`
+- Use for production
+- Sessions are billable
+- Real identity verifications
+
+## Getting Your API Keys
+
+1. Log in to the [FaceSign Dashboard](https://dashboard.facesign.ai)
+2. Navigate to **API Keys** section
+3. Copy your test or live key
+
+## Using API Keys
+
+### HTTP Header
+
+Include your API key in the `Authorization` header:
+
+```http
+Authorization: Bearer sk_test_your_api_key_here
+```
+
+### SDK Usage
+
+```typescript
+// Node.js/TypeScript
+import { Client } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+```
+
+### Environment Variables
+
+Always store API keys in environment variables:
+
+```bash
+# .env
+FACESIGN_API_KEY=sk_test_your_api_key_here
+```
+
+## Security Best Practices
+
+### 1. Never Expose Keys in Client Code
+
+❌ **Wrong**: Embedding in frontend
+```javascript
+// NEVER DO THIS
+const apiKey = 'sk_live_abc123'
+```
+
+✅ **Correct**: Server-side only
+```javascript
+// Server-side code
+const apiKey = process.env.FACESIGN_API_KEY
+```
+
+### 2. Use Environment Variables
+
+```bash
+# Production
+export FACESIGN_API_KEY=sk_live_production_key
+
+# Development
+export FACESIGN_API_KEY=sk_test_development_key
+```
+
+### 3. Rotate Keys Regularly
+
+1. Generate a new key in the dashboard
+2. Update your application
+3. Revoke the old key
+
+### 4. Restrict Key Permissions
+
+Configure key permissions in the dashboard:
+- Read-only access
+- IP allowlisting
+- Expiration dates
+
+## Error Responses
+
+### Invalid API Key
+
+```json
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "Invalid API key provided"
+  }
+}
+```
+
+### Missing API Key
+
+```json
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "No API key provided"
+  }
+}
+```
+
+### Expired API Key
+
+```json
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "API key has expired"
+  }
+}
+```
+
+## Testing Authentication
+
+Test your API key with a simple request:
+
+```bash
+curl https://api.facesign.ai/langs \
+  -H "Authorization: Bearer sk_test_your_api_key"
+```
+
+Successful response:
+```json
+{
+  "langs": [
+    { "id": "en", "title": "English" },
+    { "id": "es", "title": "Spanish" }
+  ]
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"Invalid API key"**
+   - Check for typos
+   - Ensure you're using the correct environment (test vs live)
+   - Verify the key hasn't been revoked
+
+2. **"No API key provided"**
+   - Check the Authorization header format
+   - Ensure "Bearer" prefix is included
+
+3. **Rate limiting**
+   - Test keys have lower rate limits
+   - Upgrade to live keys for production use
+
+## Next Steps
+
+- [Create Your First Session](/getting-started/quick-start)
+- [Error Handling](/getting-started/error-handling)
+- [Rate Limits](/guides/rate-limits) 

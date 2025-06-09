@@ -1,0 +1,27 @@
+{
+  "name": "facesign-api-docs",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "FaceSign API Documentation Site",
+  "scripts": {
+    "dev": "astro dev --port 4001",
+    "start": "astro dev --port 4001",
+    "build": "astro build",
+    "preview": "astro preview --port 4001",
+    "astro": "astro",
+    "openapi:json": "node ../generate-openapi-json.js",
+    "deploy:vercel": "vercel --prod",
+    "deploy:firebase": "firebase deploy"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.34.3",
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.6.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.4",
+    "sharp": "^0.32.5",
+    "starlight-openapi": "^0.18.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "license": "MIT"
+}

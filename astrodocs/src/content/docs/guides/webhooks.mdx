@@ -1,0 +1,307 @@
+---
+title: Webhook Signature Verification
+description: Learn how to verify webhook signatures to ensure requests are from FaceSign.
+---
+
+import { Code } from '@astrojs/starlight/components';
+import Callout from '../../../components/Callout.astro';
+
+# Verify webhook signatures
+
+<Callout type="warning">
+  Always verify the `x-facesign-signature` header to ensure webhook requests are authentic.
+</Callout>
+
+Webhooks enable real-time notifications when session events occur. To ensure security, all webhook requests include a signature that you must verify.
+
+## Setting Up Webhooks
+
+1. Configure your webhook endpoint in the [FaceSign Dashboard](https://dashboard.facesign.ai/webhooks)
+2. Note your webhook signing secret (starts with `whsec_`)
+3. Implement signature verification in your endpoint handler
+
+## Signature Verification
+
+FaceSign signs webhook payloads using HMAC-SHA256. The signature is included in the `x-facesign-signature` header.
+
+### Node.js Example
+
+```typescript
+import crypto from 'node:crypto'
+
+export function verifyWebhookSignature(
+  signature: string,
+  payload: string,
+  secret: string
+): boolean {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload, 'utf8')
+    .digest('hex')
+  
+  // Use timingSafeEqual to prevent timing attacks
+  const signatureBuffer = Buffer.from(signature, 'hex')
+  const expectedBuffer = Buffer.from(expectedSignature, 'hex')
+  
+  if (signatureBuffer.length !== expectedBuffer.length) {
+    return false
+  }
+  
+  return crypto.timingSafeEqual(signatureBuffer, expectedBuffer)
+}
+
+// Express.js handler example
+app.post('/webhooks/facesign', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-facesign-signature'] as string
+  const payload = req.body.toString('utf8')
+  
+  if (!verifyWebhookSignature(signature, payload, process.env.WEBHOOK_SECRET)) {
+    return res.status(401).send('Invalid signature')
+  }
+  
+  const event = JSON.parse(payload)
+  // Process the event...
+  
+  res.status(200).send('OK')
+})
+```
+
+### Python Example
+
+```python
+import hmac
+import hashlib
+from flask import Flask, request, abort
+
+app = Flask(__name__)
+
+def verify_webhook_signature(signature: str, payload: bytes, secret: str) -> bool:
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    
+    return hmac.compare_digest(signature, expected_signature)
+
+@app.route('/webhooks/facesign', methods=['POST'])
+def handle_webhook():
+    signature = request.headers.get('x-facesign-signature')
+    if not signature:
+        abort(401)
+    
+    payload = request.get_data()
+    
+    if not verify_webhook_signature(signature, payload, app.config['WEBHOOK_SECRET']):
+        abort(401)
+    
+    event = request.get_json()
+    # Process the event...
+    
+    return 'OK', 200
+```
+
+### PHP Example
+
+```php
+<?php
+function verifyWebhookSignature($signature, $payload, $secret) {
+    $expectedSignature = hash_hmac('sha256', $payload, $secret);
+    return hash_equals($signature, $expectedSignature);
+}
+
+// Get the raw POST data
+$payload = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_FACESIGN_SIGNATURE'] ?? '';
+
+if (!verifyWebhookSignature($signature, $payload, $_ENV['WEBHOOK_SECRET'])) {
+    http_response_code(401);
+    exit('Invalid signature');
+}
+
+$event = json_decode($payload, true);
+// Process the event...
+
+http_response_code(200);
+echo 'OK';
+?>
+```
+
+## Webhook Events
+
+FaceSign sends these webhook events:
+
+### `session.created`
+Fired when a new session is created.
+
+```json
+{
+  "id": "evt_123",
+  "type": "session.created",
+  "created": 1234567890,
+  "data": {
+    "session": {
+      "id": "session_abc123",
+      "status": "requiresInput",
+      "clientReferenceId": "user-123"
+    }
+  }
+}
+```
+
+### `session.started`
+Fired when a user begins the verification flow.
+
+```json
+{
+  "id": "evt_124",
+  "type": "session.started",
+  "created": 1234567891,
+  "data": {
+    "session": {
+      "id": "session_abc123",
+      "status": "processing",
+      "startedAt": 1234567891
+    }
+  }
+}
+```
+
+### `session.completed`
+Fired when a session is successfully completed.
+
+```json
+{
+  "id": "evt_125",
+  "type": "session.completed",
+  "created": 1234567892,
+  "data": {
+    "session": {
+      "id": "session_abc123",
+      "status": "complete",
+      "finishedAt": 1234567892,
+      "report": {
+        "isVerified": true,
+        "livenessDetected": true
+      }
+    }
+  }
+}
+```
+
+### `session.canceled`
+Fired when a session is canceled or expires.
+
+```json
+{
+  "id": "evt_126",
+  "type": "session.canceled",
+  "created": 1234567893,
+  "data": {
+    "session": {
+      "id": "session_abc123",
+      "status": "canceled",
+      "finishedAt": 1234567893
+    }
+  }
+}
+```
+
+## Best Practices
+
+### 1. Idempotency
+
+Webhooks may be delivered more than once. Use the event `id` to ensure idempotent processing:
+
+```typescript
+// Store processed event IDs
+const processedEvents = new Set()
+
+if (processedEvents.has(event.id)) {
+  return res.status(200).send('Already processed')
+}
+
+// Process the event
+processedEvents.add(event.id)
+```
+
+### 2. Async Processing
+
+Process webhooks asynchronously to respond quickly:
+
+```typescript
+app.post('/webhooks/facesign', async (req, res) => {
+  // Verify signature...
+  
+  // Respond immediately
+  res.status(200).send('OK')
+  
+  // Process asynchronously
+  await queue.add('process-webhook', { event })
+})
+```
+
+### 3. Retry Logic
+
+FaceSign retries failed webhook deliveries with exponential backoff:
+- 1st retry: 5 seconds
+- 2nd retry: 30 seconds
+- 3rd retry: 2 minutes
+- 4th retry: 10 minutes
+- 5th retry: 1 hour
+
+Return a 2xx status code to acknowledge receipt.
+
+### 4. Error Handling
+
+Log webhook errors for debugging:
+
+```typescript
+try {
+  await processWebhook(event)
+} catch (error) {
+  console.error('Webhook processing failed:', {
+    eventId: event.id,
+    eventType: event.type,
+    error: error.message
+  })
+  
+  // Still return 200 to prevent retries if the error is on your side
+  res.status(200).send('OK')
+}
+```
+
+## Testing Webhooks
+
+### Local Development
+
+Use [ngrok](https://ngrok.com) to test webhooks locally:
+
+```bash
+ngrok http 3000
+```
+
+Then configure your ngrok URL in the dashboard:
+```
+https://abc123.ngrok.io/webhooks/facesign
+```
+
+### Webhook Testing Tool
+
+Use the webhook testing tool in the dashboard to send test events to your endpoint.
+
+## Security Checklist
+
+- ✅ Verify signature on every request
+- ✅ Use HTTPS endpoints only
+- ✅ Validate event data structure
+- ✅ Implement idempotency
+- ✅ Log failures for debugging
+- ✅ Return 2xx quickly
+- ✅ Process asynchronously when possible
+
+## Next Steps
+
+- [Rate Limits](/guides/rate-limits) - Understand API rate limiting
+- [Security Best Practices](/guides/security) - Additional security recommendations
+- [API Reference](/reference) - Complete API documentation 

@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force light theme as default */
+:root,
+html {
+  color-scheme: light;
+}
+
+/* Ensure light theme is applied by default */
+:root:not([data-theme="dark"]) {
+  --sl-color-accent-low: #e3f2fd;
+  --sl-color-accent: #2196f3;
+  --sl-color-accent-high: #0d47a1;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #f8f9fa;
+  --sl-color-gray-2: #e9ecef;
+  --sl-color-gray-3: #dee2e6;
+  --sl-color-gray-4: #adb5bd;
+  --sl-color-gray-5: #6c757d;
+  --sl-color-gray-6: #495057;
+  --sl-color-black: #212529;
+  --sl-sidebar-width: 18rem;
+}
+
+/* Starlight Theme Overrides */
+:root {
+  /* Custom color scheme */
+  --sl-color-accent-low: #e3f2fd;
+  --sl-color-accent: #2196f3;
+  --sl-color-accent-high: #0d47a1;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #f8f9fa;
+  --sl-color-gray-2: #e9ecef;
+  --sl-color-gray-3: #dee2e6;
+  --sl-color-gray-4: #adb5bd;
+  --sl-color-gray-5: #6c757d;
+  --sl-color-gray-6: #495057;
+  --sl-color-black: #212529;
+  --sl-sidebar-width: 18rem;
+}
+
+/* Dark mode colors - only apply when explicitly set */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --sl-color-accent-low: #0d47a1;
+  --sl-color-accent: #2196f3;
+  --sl-color-accent-high: #64b5f6;
+  --sl-color-white: #1a1a1a;
+  --sl-color-gray-1: #2d2d2d;
+  --sl-color-gray-2: #3d3d3d;
+  --sl-color-gray-3: #4d4d4d;
+  --sl-color-gray-4: #6d6d6d;
+  --sl-color-gray-5: #8d8d8d;
+  --sl-color-gray-6: #adadad;
+  --sl-color-black: #fafafa;
+}
+
+/* Full-width layout for Starlight */
+.sl-layout {
+  --sl-content-width: 100%;
+}
+
+/* Remove max-width constraints */
+main.sl-layout > div {
+  max-width: none !important;
+}
+
+/* Ensure content spans full width with safe margins */
+.content-panel {
+  max-width: calc(100vw - var(--sl-sidebar-width) - 4rem) !important;
+  padding: 2rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .content-panel {
+    max-width: 100% !important;
+    padding: 1.5rem;
+  }
+}
+
+/* Improve sidebar styling */
+nav.sidebar {
+  background: var(--sl-color-bg-sidebar);
+  border-right: 1px solid var(--sl-color-gray-2);
+}
+
+/* Hide ALL chevrons in the sidebar */
+.sl-sidebar [data-sl-sidebar-toggle],
+.sl-sidebar button[aria-expanded],
+.sl-sidebar .sl-caret,
+.sl-sidebar svg.sl-caret,
+.sl-sidebar .group-toggle,
+[data-has-hero] .sl-sidebar [data-sl-sidebar-toggle] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Force all sidebar groups to be expanded */
+.sl-sidebar details {
+  open: true !important;
+}
+
+.sl-sidebar details[open] {
+  open: true !important;
+}
+
+.sl-sidebar details summary {
+  pointer-events: none !important;
+  cursor: default !important;
+  user-select: none !important;
+  list-style: none !important;
+}
+
+.sl-sidebar details summary::before,
+.sl-sidebar details summary::after,
+.sl-sidebar details summary::-webkit-details-marker {
+  display: none !important;
+}
+
+/* Ensure sidebar is always visible and full width */
+@media (min-width: 50rem) {
+  .sl-sidebar {
+    display: flex !important;
+    position: sticky !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Hide social icons divider when theme toggle is hidden */
+.social-icons::after {
+  display: none !important;
+}
+
+/* API Reference styling */
+.sl-markdown-content pre {
+  @apply rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+}
+
+.sl-markdown-content code:not(pre code) {
+  @apply px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-sm;
+}
+
+/* Improved typography */
+.sl-markdown-content {
+  @apply leading-relaxed;
+}
+
+.sl-markdown-content h1 {
+  @apply text-4xl font-bold mb-6 mt-8;
+}
+
+.sl-markdown-content h2 {
+  @apply text-3xl font-semibold mb-4 mt-6;
+}
+
+.sl-markdown-content h3 {
+  @apply text-2xl font-medium mb-3 mt-4;
+}
+
+.sl-markdown-content p {
+  @apply mb-4 text-gray-700 dark:text-gray-300;
+}
+
+/* Tables */
+.sl-markdown-content table {
+  @apply w-full border-collapse mb-6;
+}
+
+.sl-markdown-content th {
+  @apply bg-gray-50 dark:bg-gray-800 font-semibold text-left p-3 border-b-2 border-gray-200 dark:border-gray-700;
+}
+
+.sl-markdown-content td {
+  @apply p-3 border-b border-gray-200 dark:border-gray-700;
+}
+
+/* Callout/Alert styles */
+.sl-markdown-content .callout,
+.sl-markdown-content .alert {
+  @apply p-4 mb-4 rounded-lg border;
+}
+
+.sl-markdown-content .callout-info,
+.sl-markdown-content .alert-info {
+  @apply bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100;
+}
+
+.sl-markdown-content .callout-warning,
+.sl-markdown-content .alert-warning {
+  @apply bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 text-yellow-900 dark:text-yellow-100;
+}
+
+.sl-markdown-content .callout-error,
+.sl-markdown-content .alert-error {
+  @apply bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-900 dark:text-red-100;
+}
+
+/* Button styles */
+.sl-markdown-content .btn,
+.sl-markdown-content button {
+  @apply inline-flex items-center px-4 py-2 rounded-md font-medium transition-colors;
+  @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Code block improvements */
+.sl-markdown-content pre code {
+  @apply block overflow-x-auto p-4 text-sm;
+}
+
+/* Copy button for code blocks */
+.sl-markdown-content .code-copy-button {
+  @apply absolute top-2 right-2 p-2 rounded bg-gray-700 text-gray-300;
+  @apply hover:bg-gray-600 hover:text-white transition-colors;
+}
+
+/* Mermaid diagram container */
+.sl-markdown-content .mermaid {
+  @apply flex justify-center my-6 p-4 bg-white dark:bg-gray-900 rounded-lg;
+}
+
+/* Search input styling */
+.sl-search input {
+  @apply w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700;
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+} 

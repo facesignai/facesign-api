@@ -1,0 +1,436 @@
+---
+title: Security Best Practices
+description: Learn how to secure your FaceSign API integration and protect user data.
+---
+
+# Security Best Practices
+
+Implementing proper security measures is crucial when integrating the FaceSign API. This guide covers essential security practices to protect your application and user data.
+
+## API Key Security
+
+### Never Expose Keys in Client Code
+
+❌ **Wrong - Client-side JavaScript**
+```javascript
+// NEVER do this in browser code
+const apiKey = 'sk_live_abc123...'
+fetch('https://api.facesign.ai/sessions', {
+  headers: { 'Authorization': `Bearer ${apiKey}` }
+})
+```
+
+✅ **Correct - Server-side proxy**
+```javascript
+// Client-side
+const response = await fetch('/api/create-session', {
+  method: 'POST',
+  body: JSON.stringify({ userId: 'user-123' })
+})
+
+// Server-side (Node.js)
+app.post('/api/create-session', async (req, res) => {
+  const client = new Client({
+    auth: process.env.FACESIGN_API_KEY // Stored securely
+  })
+  
+  const session = await client.session.create({
+    clientReferenceId: req.body.userId,
+    // ... other config
+  })
+  
+  // Only return clientSecret to frontend
+  res.json({ clientSecret: session.clientSecret })
+})
+```
+
+### Environment Variables
+
+Store API keys in environment variables:
+
+```bash
+# .env.local (add to .gitignore)
+FACESIGN_API_KEY=sk_live_your_key_here
+FACESIGN_WEBHOOK_SECRET=whsec_your_secret_here
+```
+
+```javascript
+// Access in code
+const apiKey = process.env.FACESIGN_API_KEY
+if (!apiKey) {
+  throw new Error('FACESIGN_API_KEY not configured')
+}
+```
+
+### Key Rotation
+
+Regularly rotate your API keys:
+
+```javascript
+// Implement graceful key rotation
+const primaryKey = process.env.FACESIGN_API_KEY
+const secondaryKey = process.env.FACESIGN_API_KEY_SECONDARY
+
+async function createSession(data) {
+  try {
+    return await clientWithKey(primaryKey).session.create(data)
+  } catch (error) {
+    if (error.status === 401 && secondaryKey) {
+      // Fallback to secondary key during rotation
+      return await clientWithKey(secondaryKey).session.create(data)
+    }
+    throw error
+  }
+}
+```
+
+## Client Secret Handling
+
+### Secure Transmission
+
+Always use HTTPS when transmitting client secrets:
+
+```javascript
+// Ensure HTTPS in production
+if (process.env.NODE_ENV === 'production' && !req.secure) {
+  return res.status(403).json({ 
+    error: 'HTTPS required' 
+  })
+}
+```
+
+### Limited Exposure
+
+Only expose client secrets to authenticated users:
+
+```javascript
+app.post('/api/create-session', authenticate, async (req, res) => {
+  // Verify user is authenticated
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  
+  const session = await client.session.create({
+    clientReferenceId: req.user.id,
+    metadata: { 
+      userId: req.user.id,
+      ip: req.ip 
+    }
+  })
+  
+  // Log for audit trail
+  await logSessionCreation(req.user.id, session.id)
+  
+  res.json({ 
+    sessionId: session.id,
+    clientSecret: session.clientSecret 
+  })
+})
+```
+
+## Webhook Security
+
+### Signature Verification
+
+Always verify webhook signatures:
+
+```javascript
+import crypto from 'crypto'
+
+function verifyWebhookSignature(
+  payload: string,
+  signature: string,
+  secret: string
+): boolean {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex')
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  )
+}
+
+app.post('/webhook', express.raw({ type: '*/*' }), (req, res) => {
+  const signature = req.headers['x-facesign-signature']
+  const payload = req.body.toString()
+  
+  if (!verifyWebhookSignature(payload, signature, webhookSecret)) {
+    return res.status(401).json({ error: 'Invalid signature' })
+  }
+  
+  // Process webhook safely
+  const event = JSON.parse(payload)
+  processWebhook(event)
+  
+  res.status(200).json({ received: true })
+})
+```
+
+### Replay Attack Prevention
+
+Implement timestamp validation:
+
+```javascript
+function verifyWebhookTimestamp(timestamp: number): boolean {
+  const now = Date.now() / 1000
+  const tolerance = 300 // 5 minutes
+  
+  return Math.abs(now - timestamp) < tolerance
+}
+
+// In webhook handler
+const timestamp = req.headers['x-facesign-timestamp']
+if (!verifyWebhookTimestamp(parseInt(timestamp))) {
+  return res.status(401).json({ error: 'Invalid timestamp' })
+}
+```
+
+## Data Protection
+
+### PII Handling
+
+Minimize personally identifiable information (PII) in metadata:
+
+```javascript
+// ❌ Don't store sensitive data in metadata
+const session = await client.session.create({
+  metadata: {
+    ssn: '123-45-6789',        // Never store SSN
+    creditCard: '4111...',     // Never store payment info
+    password: 'user123'        // Never store passwords
+  }
+})
+
+// ✅ Store references instead
+const session = await client.session.create({
+  metadata: {
+    userId: 'usr_abc123',      // Internal reference
+    sessionType: 'kyc',        // Non-sensitive category
+    timestamp: Date.now()      // Audit trail
+  }
+})
+```
+
+### Encryption at Rest
+
+Encrypt sensitive data before storing:
+
+```javascript
+import { encrypt, decrypt } from './crypto'
+
+// Store encrypted reference
+const encryptedRef = encrypt(sensitiveData)
+const session = await client.session.create({
+  metadata: {
+    encryptedRef,
+    version: 'v1' // Track encryption version
+  }
+})
+
+// Decrypt when needed
+const decrypted = decrypt(session.metadata.encryptedRef)
+```
+
+## Access Control
+
+### Session Validation
+
+Verify session ownership:
+
+```javascript
+app.get('/api/session/:id', authenticate, async (req, res) => {
+  const session = await client.session.get({ 
+    sessionId: req.params.id 
+  })
+  
+  // Verify user owns this session
+  if (session.settings.clientReferenceId !== req.user.id) {
+    return res.status(403).json({ 
+      error: 'Access denied' 
+    })
+  }
+  
+  res.json({ session })
+})
+```
+
+### Rate Limiting Per User
+
+Implement user-specific rate limits:
+
+```javascript
+const userRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 sessions per window
+  keyGenerator: (req) => req.user?.id || req.ip,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: 'Too many sessions created'
+    })
+  }
+})
+
+app.post('/api/create-session', 
+  authenticate, 
+  userRateLimiter, 
+  createSessionHandler
+)
+```
+
+## CORS Configuration
+
+Configure CORS properly:
+
+```javascript
+const cors = require('cors')
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://app.example.com',
+      'https://staging.example.com'
+    ]
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use('/api', cors(corsOptions))
+```
+
+## Security Headers
+
+Implement security headers:
+
+```javascript
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
+  res.setHeader('X-XSS-Protection', '1; mode=block')
+  res.setHeader('Strict-Transport-Security', 
+    'max-age=31536000; includeSubDomains')
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; frame-src https://verify.facesign.ai")
+  next()
+})
+```
+
+## Audit Logging
+
+Log all API interactions:
+
+```javascript
+interface AuditLog {
+  timestamp: Date
+  userId: string
+  action: string
+  sessionId?: string
+  metadata?: Record<string, any>
+  ip?: string
+  userAgent?: string
+}
+
+async function logApiCall(log: AuditLog) {
+  await db.auditLogs.insert({
+    ...log,
+    timestamp: new Date()
+  })
+}
+
+// Use in endpoints
+app.post('/api/create-session', async (req, res) => {
+  const session = await client.session.create({...})
+  
+  await logApiCall({
+    userId: req.user.id,
+    action: 'session.created',
+    sessionId: session.id,
+    ip: req.ip,
+    userAgent: req.headers['user-agent']
+  })
+  
+  res.json({ session })
+})
+```
+
+## Compliance
+
+### GDPR Compliance
+
+Implement data deletion:
+
+```javascript
+app.delete('/api/user/:id', authenticate, async (req, res) => {
+  // Delete user sessions
+  const sessions = await client.session.list({
+    clientReferenceId: req.params.id
+  })
+  
+  for (const session of sessions) {
+    // Request deletion from FaceSign
+    await client.session.delete({ sessionId: session.id })
+  }
+  
+  // Delete local records
+  await db.users.delete(req.params.id)
+  await db.auditLogs.deleteUserLogs(req.params.id)
+  
+  res.json({ deleted: true })
+})
+```
+
+### Data Retention
+
+Implement automatic data cleanup:
+
+```javascript
+// Run daily
+async function cleanupOldSessions() {
+  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000)
+  
+  const oldSessions = await db.sessions.find({
+    createdAt: { $lt: thirtyDaysAgo }
+  })
+  
+  for (const session of oldSessions) {
+    await db.sessions.delete(session.id)
+    await logApiCall({
+      action: 'session.auto_deleted',
+      sessionId: session.id,
+      metadata: { reason: 'retention_policy' }
+    })
+  }
+}
+```
+
+## Security Checklist
+
+- [ ] API keys stored in environment variables
+- [ ] Never expose API keys in client code
+- [ ] Implement webhook signature verification
+- [ ] Use HTTPS for all API calls
+- [ ] Validate session ownership
+- [ ] Implement rate limiting
+- [ ] Configure CORS properly
+- [ ] Add security headers
+- [ ] Maintain audit logs
+- [ ] Regular key rotation
+- [ ] Data encryption at rest
+- [ ] GDPR compliance
+- [ ] Automated data retention
+
+## Next Steps
+
+- [Webhook Configuration](/guides/webhooks)
+- [Error Handling](/getting-started/error-handling)
+- [API Reference](/reference) 

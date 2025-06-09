@@ -1,0 +1,74 @@
+---
+// Force light theme by default
+---
+
+<script is:inline>
+  // Immediately set light theme before any other scripts run
+  (function() {
+    // Force light theme immediately
+    document.documentElement.dataset.theme = 'light';
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.style.colorScheme = 'light';
+    
+    // Remove any dark mode classes
+    document.documentElement.classList.remove('dark');
+    document.body?.classList.remove('dark');
+    
+    // Override localStorage to always return light theme
+    const originalGetItem = localStorage.getItem;
+    localStorage.getItem = function(key) {
+      if (key === 'starlight-theme') {
+        return 'light';
+      }
+      return originalGetItem.call(this, key);
+    };
+    
+    // Set the theme in localStorage
+    localStorage.setItem('starlight-theme', 'light');
+    
+    // Use MutationObserver to prevent any theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && 
+            (mutation.attributeName === 'data-theme' || 
+             mutation.attributeName === 'class')) {
+          const target = mutation.target;
+          if (target === document.documentElement) {
+            if (target.getAttribute('data-theme') !== 'light') {
+              target.setAttribute('data-theme', 'light');
+              target.dataset.theme = 'light';
+            }
+            if (target.classList.contains('dark')) {
+              target.classList.remove('dark');
+            }
+          }
+        }
+      });
+    });
+    
+    // Start observing
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class']
+    });
+    
+    // Also observe body when it's available
+    if (document.body) {
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        observer.observe(document.body, {
+          attributes: true,
+          attributeFilter: ['class']
+        });
+      });
+    }
+  })();
+</script>
+
+<template>
+  <!-- Theme toggle template for later use -->
+</template> 

@@ -1,0 +1,290 @@
+---
+title: Node Types Overview
+description: All available node types for building verification flows
+---
+
+# Node Types Overview
+
+FaceSign uses a node-based system to build verification flows. Each node represents a specific action or verification step that can be connected together to create complex workflows.
+
+## Available Node Types
+
+### Control Flow
+
+<div className="card-grid">
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Start Node</h3>
+      <p className="custom-card-description">Entry point for every flow</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/start">Learn more →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">End Node</h3>
+      <p className="custom-card-description">Terminates the flow</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/end">Learn more →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Conversation</h3>
+      <p className="custom-card-description">AI-powered conversational interactions</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/conversation">Learn more →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Data Validation</h3>
+      <p className="custom-card-description">Validate and branch based on data</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/data-validation">Learn more →</a>
+    </div>
+  </div>
+</div>
+
+### Authentication
+
+<div className="card-grid">
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Two-Factor</h3>
+      <p className="custom-card-description">Email/SMS verification codes</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/two-factor">Learn more →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Enter Email</h3>
+      <p className="custom-card-description">Collect and verify email addresses</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/enter-email">Learn more →</a>
+    </div>
+  </div>
+</div>
+
+### Biometric
+
+<div className="card-grid">
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Face Scan</h3>
+      <p className="custom-card-description">Capture and compare faces</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/face-scan">Learn more →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Recognition</h3>
+      <p className="custom-card-description">1:N facial recognition</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/recognition">Learn more →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Liveness Detection</h3>
+      <p className="custom-card-description">Detect real vs fake faces</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/liveness-detection">Learn more →</a>
+    </div>
+  </div>
+</div>
+
+### Document
+
+<div className="card-grid">
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Document Scan</h3>
+      <p className="custom-card-description">Scan IDs, passports, and documents</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes/document-scan">Learn more →</a>
+    </div>
+  </div>
+</div>
+
+## Node Structure
+
+All nodes share a common base structure:
+
+```typescript
+interface FSNodeBase {
+  id: string        // Unique identifier within the flow
+  type: FSNodeType  // The type of node
+}
+```
+
+Each node type extends this base with specific properties and configurations.
+
+## Building Flows
+
+Flows are built by connecting nodes with edges:
+
+```typescript
+const flow = {
+  nodes: [
+    { id: 'start', type: FSNodeType.START },
+    { 
+      id: 'greeting', 
+      type: FSNodeType.CONVERSATION,
+      prompt: 'Welcome! How can I help you?',
+      transitions: []
+    },
+    { id: 'end', type: FSNodeType.END }
+  ],
+  edges: [
+    { id: 'e1', source: 'start', target: 'greeting' },
+    { id: 'e2', source: 'greeting', target: 'end' }
+  ]
+}
+```
+
+## Node Categories
+
+### 1. Control Flow Nodes
+These nodes control the flow of the verification process:
+- **Start**: Entry point (required)
+- **End**: Exit point (required)
+- **Conversation**: Interactive AI dialogue
+- **Data Validation**: Conditional branching
+
+### 2. Authentication Nodes
+These nodes verify user identity through various methods:
+- **Two-Factor**: Send and verify codes via email/SMS
+- **Enter Email**: Collect and validate email addresses
+
+### 3. Biometric Nodes
+These nodes use facial biometrics for verification:
+- **Face Scan**: Capture face images with 1:1 matching
+- **Recognition**: 1:N facial recognition against a database
+- **Liveness Detection**: Ensure a real person is present
+
+### 4. Document Nodes
+These nodes handle document verification:
+- **Document Scan**: Capture and extract data from IDs and passports
+
+## Outcomes and Transitions
+
+Most nodes have multiple possible outcomes that determine the next step:
+
+```typescript
+// Example: Liveness Detection Node
+{
+  id: 'liveness',
+  type: FSNodeType.LIVENESS_DETECTION,
+  outcomes: {
+    livenessDetected: 'continue',    // Success path
+    deepfakeDetected: 'failed',       // Failure path
+    noFace: 'retry'                   // Retry path
+  }
+}
+```
+
+## Best Practices
+
+1. **Always start with a Start node** - Every flow must have exactly one Start node
+2. **End with an End node** - Ensure all paths lead to an End node
+3. **Handle all outcomes** - Define transitions for every possible node outcome
+4. **Keep flows simple** - Complex flows are harder to maintain and debug
+5. **Test edge cases** - Consider what happens when verification fails
+
+## Example: Multi-Step Verification
+
+Here's an example flow combining multiple node types:
+
+```typescript
+{
+  nodes: [
+    { id: 'start', type: FSNodeType.START },
+    
+    // Collect email
+    {
+      id: 'email',
+      type: FSNodeType.ENTER_EMAIL,
+      outcomes: {
+        emailEntered: 'face',
+        canceled: 'end'
+      }
+    },
+    
+    // Face scan
+    {
+      id: 'face',
+      type: FSNodeType.FACE_SCAN,
+      mode: 'capture',
+      outcomes: {
+        captured: 'liveness',
+        noFace: 'face-retry',
+        error: 'end'
+      }
+    },
+    
+    // Liveness check
+    {
+      id: 'liveness',
+      type: FSNodeType.LIVENESS_DETECTION,
+      outcomes: {
+        livenessDetected: '2fa',
+        deepfakeDetected: 'end',
+        noFace: 'face'
+      }
+    },
+    
+    // Two-factor authentication
+    {
+      id: '2fa',
+      type: FSNodeType.TWO_FACTOR,
+      channels: ['email'],
+      contactSource: 'session_data',
+      outcomes: {
+        verified: 'success',
+        failed_unverified: 'end',
+        delivery_failed: 'end'
+      }
+    },
+    
+    // Success message
+    {
+      id: 'success',
+      type: FSNodeType.CONVERSATION,
+      prompt: 'Verification complete! Welcome aboard.',
+      transitions: [{ id: 't1', condition: 'true' }]
+    },
+    
+    { id: 'end', type: FSNodeType.END }
+  ],
+  
+  edges: [
+    { id: 'e1', source: 'start', target: 'email' },
+    // ... additional edges connecting all outcomes
+  ]
+}
+```
+
+## Next Steps
+
+- Explore individual [node type documentation](/nodes/start)
+- Learn about [building flows](/concepts/node-graph)
+- See [example flows](/examples) for common use cases 

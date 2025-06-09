@@ -1,0 +1,436 @@
+---
+title: Basic Session Example
+description: Create a simple verification session with minimal configuration
+---
+
+import { Tabs } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# Basic Session Example
+
+This example demonstrates how to create a simple verification session that collects basic information through a conversational interface.
+
+## Overview
+
+This flow will:
+1. Greet the user
+2. Ask for their name
+3. Ask for their email
+4. Thank them and complete the session
+
+## Complete Code
+
+<Tabs items={['TypeScript', 'JavaScript']}>
+  <Tabs.Tab>
+```typescript
+import Client from '@facesignai/api'
+import { FSNodeType } from '@facesignai/api'
+
+// Initialize the client
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY!
+})
+
+async function createBasicSession() {
+  try {
+    const response = await client.session.create({
+      // Your internal reference
+      clientReferenceId: 'user-' + Date.now(),
+      
+      // Custom metadata for filtering/searching
+      metadata: {
+        purpose: 'basic-info-collection',
+        source: 'website-signup'
+      },
+      
+      // Optional customization
+      customization: {
+        permissionsPage: {
+          mainHeading: 'Let\'s Get Started',
+          subheading: 'We need to collect some basic information',
+          buttonText: 'Begin'
+        }
+      },
+      
+      // The verification flow
+      flow: {
+        nodes: [
+          // 1. Start node (required)
+          {
+            id: 'start',
+            type: FSNodeType.START
+          },
+          
+          // 2. Welcome message
+          {
+            id: 'welcome',
+            type: FSNodeType.CONVERSATION,
+            prompt: 'Hello! I\'m here to help you get started. First, what\'s your full name?',
+            transitions: [{
+              id: 't1',
+              condition: 'true' // Always proceed
+            }]
+          },
+          
+          // 3. Collect email
+          {
+            id: 'email',
+            type: FSNodeType.ENTER_EMAIL,
+            outcomes: {
+              emailEntered: 'thank-you',
+              canceled: 'end'
+            }
+          },
+          
+          // 4. Thank you message
+          {
+            id: 'thank-you',
+            type: FSNodeType.CONVERSATION,
+            prompt: 'Thank you! We\'ve successfully collected your information. Welcome aboard!',
+            transitions: [{
+              id: 't2',
+              condition: 'true'
+            }]
+          },
+          
+          // 5. End node (required)
+          {
+            id: 'end',
+            type: FSNodeType.END
+          }
+        ],
+        
+        // Connect the nodes
+        edges: [
+          { id: 'e1', source: 'start', target: 'welcome' },
+          { id: 'e2', source: 'welcome', target: 'email' },
+          { id: 'e3', source: 'email', target: 'thank-you' },
+          { id: 'e4', source: 'email', target: 'end' }, // Canceled path
+          { id: 'e5', source: 'thank-you', target: 'end' }
+        ]
+      }
+    })
+    
+    console.log('✅ Session created successfully')
+    console.log('Session ID:', response.session.id)
+    console.log('Session URL:', response.clientSecret.url)
+    
+    return response
+  } catch (error) {
+    console.error('❌ Error creating session:', error)
+    throw error
+  }
+}
+
+// Execute
+createBasicSession()
+  .then(response => {
+    // In a real app, you would redirect the user or embed the URL
+    console.log('\n🔗 Direct user to:', response.clientSecret.url)
+  })
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```javascript
+const Client = require('@facesignai/api').default
+const { FSNodeType } = require('@facesignai/api')
+
+// Initialize the client
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+async function createBasicSession() {
+  try {
+    const response = await client.session.create({
+      // Your internal reference
+      clientReferenceId: 'user-' + Date.now(),
+      
+      // Custom metadata for filtering/searching
+      metadata: {
+        purpose: 'basic-info-collection',
+        source: 'website-signup'
+      },
+      
+      // Optional customization
+      customization: {
+        permissionsPage: {
+          mainHeading: 'Let\'s Get Started',
+          subheading: 'We need to collect some basic information',
+          buttonText: 'Begin'
+        }
+      },
+      
+      // The verification flow
+      flow: {
+        nodes: [
+          // 1. Start node (required)
+          {
+            id: 'start',
+            type: FSNodeType.START
+          },
+          
+          // 2. Welcome message
+          {
+            id: 'welcome',
+            type: FSNodeType.CONVERSATION,
+            prompt: 'Hello! I\'m here to help you get started. First, what\'s your full name?',
+            transitions: [{
+              id: 't1',
+              condition: 'true' // Always proceed
+            }]
+          },
+          
+          // 3. Collect email
+          {
+            id: 'email',
+            type: FSNodeType.ENTER_EMAIL,
+            outcomes: {
+              emailEntered: 'thank-you',
+              canceled: 'end'
+            }
+          },
+          
+          // 4. Thank you message
+          {
+            id: 'thank-you',
+            type: FSNodeType.CONVERSATION,
+            prompt: 'Thank you! We\'ve successfully collected your information. Welcome aboard!',
+            transitions: [{
+              id: 't2',
+              condition: 'true'
+            }]
+          },
+          
+          // 5. End node (required)
+          {
+            id: 'end',
+            type: FSNodeType.END
+          }
+        ],
+        
+        // Connect the nodes
+        edges: [
+          { id: 'e1', source: 'start', target: 'welcome' },
+          { id: 'e2', source: 'welcome', target: 'email' },
+          { id: 'e3', source: 'email', target: 'thank-you' },
+          { id: 'e4', source: 'email', target: 'end' }, // Canceled path
+          { id: 'e5', source: 'thank-you', target: 'end' }
+        ]
+      }
+    })
+    
+    console.log('✅ Session created successfully')
+    console.log('Session ID:', response.session.id)
+    console.log('Session URL:', response.clientSecret.url)
+    
+    return response
+  } catch (error) {
+    console.error('❌ Error creating session:', error)
+    throw error
+  }
+}
+
+// Execute
+createBasicSession()
+  .then(response => {
+    // In a real app, you would redirect the user or embed the URL
+    console.log('\n🔗 Direct user to:', response.clientSecret.url)
+  })
+```
+  </Tabs.Tab>
+</Tabs>
+
+## Integration Options
+
+Once you have the session URL, you can integrate it into your application:
+
+### Option 1: Redirect
+
+```javascript
+// Redirect the current page
+window.location.href = response.clientSecret.url
+
+// Or open in a new tab
+window.open(response.clientSecret.url, '_blank')
+```
+
+### Option 2: Embed in iframe
+
+```html
+<iframe 
+  src="${response.clientSecret.url}"
+  width="100%"
+  height="700"
+  frameborder="0"
+  allow="camera; microphone"
+  allowfullscreen
+/>
+```
+
+### Option 3: Email Link
+
+```javascript
+await sendEmail({
+  to: userEmail,
+  subject: 'Complete Your Registration',
+  html: `
+    <p>Hi there!</p>
+    <p>Click the link below to complete your registration:</p>
+    <a href="${response.clientSecret.url}">Complete Registration</a>
+    <p>This link expires in 24 hours.</p>
+  `
+})
+```
+
+## Checking Session Status
+
+Monitor the session progress:
+
+```typescript
+async function checkSessionStatus(sessionId: string) {
+  const { session } = await client.session.retrieve({ sessionId })
+  
+  switch (session.status) {
+    case 'requiresInput':
+      console.log('⏳ Waiting for user input...')
+      break
+    case 'processing':
+      console.log('⚙️ Processing...')
+      break
+    case 'complete':
+      console.log('✅ Complete!')
+      console.log('Collected data:', session.report?.extractedData)
+      break
+    case 'canceled':
+      console.log('❌ Session was canceled')
+      break
+  }
+  
+  return session
+}
+
+// Poll for status (or use webhooks)
+const sessionId = response.session.id
+const interval = setInterval(async () => {
+  const session = await checkSessionStatus(sessionId)
+  if (session.status === 'complete' || session.status === 'canceled') {
+    clearInterval(interval)
+  }
+}, 5000) // Check every 5 seconds
+```
+
+## Session Data
+
+After completion, the session report contains:
+
+```typescript
+{
+  // Full conversation transcript
+  transcript: [
+    {
+      id: 'phrase-1',
+      text: 'Hello! I\'m here to help you get started. First, what\'s your full name?',
+      isAvatar: true,
+      createdAt: 1234567890
+    },
+    {
+      id: 'phrase-2',
+      text: 'John Smith',
+      isAvatar: false,
+      createdAt: 1234567891
+    }
+    // ... more messages
+  ],
+  
+  // Extracted data
+  extractedData: {
+    fullName: 'John Smith',
+    email: 'john.smith@example.com'
+  },
+  
+  // Device and location info
+  device: { /* ... */ },
+  location: { /* ... */ }
+}
+```
+
+## Customization Options
+
+### Branding
+
+```typescript
+customization: {
+  permissionsPage: {
+    backgroundType: 'color',
+    backgroundColor: '#1a73e8',
+    mainHeading: 'Your Company Name',
+    subheading: 'Quick verification process',
+    buttonText: 'Get Started'
+  }
+}
+```
+
+### Multi-Language
+
+```typescript
+// Provide language options
+langs: ['en', 'es', 'fr'],
+defaultLang: 'en',
+
+// Or use translations
+customization: {
+  permissionsPage: {
+    mainHeadingTranslates: {
+      en: 'Welcome',
+      es: 'Bienvenido',
+      fr: 'Bienvenue'
+    }
+  }
+}
+```
+
+### Pre-filled Data
+
+```typescript
+// Pre-populate known information
+providedData: {
+  email: 'existing.user@example.com',
+  firstName: 'Jane'
+}
+```
+
+## Error Handling
+
+<Callout type="info">
+  Always implement proper error handling for production applications.
+</Callout>
+
+```typescript
+try {
+  const response = await client.session.create({ /* ... */ })
+} catch (error) {
+  // Log to your error tracking service
+  console.error('Session creation failed:', {
+    error: error.message,
+    code: error.code,
+    type: error.type
+  })
+  
+  // Show user-friendly message
+  if (error.type === 'validation_error') {
+    alert('Invalid configuration. Please contact support.')
+  } else if (error.type === 'rate_limit_error') {
+    alert('Too many requests. Please try again later.')
+  } else {
+    alert('Something went wrong. Please try again.')
+  }
+}
+```
+
+## Next Steps
+
+- Add [biometric verification](/examples/biometric) for enhanced security
+- Implement [two-factor authentication](/examples/auth-flows)
+- Learn about [webhooks](/guides/webhooks) for real-time updates
+- Explore [advanced customization](/concepts/customization) 

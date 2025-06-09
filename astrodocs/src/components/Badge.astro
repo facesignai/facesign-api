@@ -1,0 +1,13 @@
+---
+export interface Props {
+  color?: 'blue' | 'green' | 'yellow' | 'red' | 'gray';
+  class?: string;
+}
+
+const { color = 'gray', class: className = '' } = Astro.props;
+const classes = `badge badge-${color} ${className}`.trim();
+---
+
+<span class={classes}>
+  <slot />
+</span> 

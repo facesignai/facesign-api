@@ -1,0 +1,341 @@
+---
+title: Error Handling
+description: Learn how to handle errors and implement retry logic with the FaceSign API.
+---
+
+# Error Handling
+
+The FaceSign API uses standard HTTP status codes and structured error responses to help you handle errors gracefully.
+
+## Error Response Format
+
+All API errors follow a consistent format:
+
+```json
+{
+  "error": {
+    "type": "error_type",
+    "message": "Human-readable error message",
+    "code": "optional_error_code"
+  }
+}
+```
+
+## Error Types
+
+### Authentication Errors (401)
+
+```json
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "Invalid API key provided"
+  }
+}
+```
+
+**Common causes:**
+- Missing API key
+- Invalid API key format
+- Expired or revoked API key
+- Using test key in production
+
+### Validation Errors (400)
+
+```json
+{
+  "error": {
+    "type": "validation_error",
+    "message": "Invalid request parameters",
+    "code": "invalid_flow_configuration"
+  }
+}
+```
+
+**Common causes:**
+- Missing required fields
+- Invalid field values
+- Malformed request body
+- Invalid node configuration
+
+### Not Found Errors (404)
+
+```json
+{
+  "error": {
+    "type": "not_found_error",
+    "message": "Session not found"
+  }
+}
+```
+
+**Common causes:**
+- Invalid session ID
+- Session belongs to different account
+- Session has been deleted
+
+### Rate Limit Errors (429)
+
+```json
+{
+  "error": {
+    "type": "rate_limit_error",
+    "message": "Rate limit exceeded"
+  }
+}
+```
+
+**Response headers:**
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1234567890
+```
+
+### Server Errors (500)
+
+```json
+{
+  "error": {
+    "type": "server_error",
+    "message": "An unexpected error occurred"
+  }
+}
+```
+
+## Handling Errors in Code
+
+### TypeScript/JavaScript
+
+```typescript
+import { Client } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+try {
+  const { session, clientSecret } = await client.session.create({
+    clientReferenceId: 'user-123',
+    metadata: {},
+    flow: { /* ... */ }
+  })
+} catch (error) {
+  if (error.response) {
+    // API returned an error response
+    const { status, data } = error.response
+    
+    switch (status) {
+      case 400:
+        console.error('Validation error:', data.error.message)
+        break
+      case 401:
+        console.error('Authentication failed')
+        break
+      case 429:
+        const retryAfter = error.response.headers['x-ratelimit-reset']
+        console.error(`Rate limited. Retry after ${retryAfter}`)
+        break
+      default:
+        console.error('API error:', data.error)
+    }
+  } else if (error.request) {
+    // Request was made but no response
+    console.error('Network error:', error.message)
+  } else {
+    // Something else happened
+    console.error('Error:', error.message)
+  }
+}
+```
+
+### Python
+
+```python
+import os
+from facesign import Client, FaceSignError
+
+client = Client(auth=os.environ['FACESIGN_API_KEY'])
+
+try:
+    response = client.session.create(
+        client_reference_id='user-123',
+        metadata={},
+        flow={...}
+    )
+except FaceSignError as e:
+    if e.status_code == 400:
+        print(f"Validation error: {e.error['message']}")
+    elif e.status_code == 401:
+        print("Authentication failed")
+    elif e.status_code == 429:
+        retry_after = e.headers.get('X-RateLimit-Reset')
+        print(f"Rate limited. Retry after {retry_after}")
+    else:
+        print(f"API error: {e.error}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+```
+
+## Retry Strategy
+
+### Exponential Backoff
+
+```typescript
+async function createSessionWithRetry(
+  config: SessionConfig,
+  maxRetries = 3
+): Promise<CreateSessionResponse> {
+  let lastError: Error
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await client.session.create(config)
+    } catch (error) {
+      lastError = error
+      
+      // Don't retry client errors
+      if (error.response?.status >= 400 && error.response?.status < 500) {
+        throw error
+      }
+      
+      // Calculate backoff
+      const backoffMs = Math.pow(2, i) * 1000 + Math.random() * 1000
+      await new Promise(resolve => setTimeout(resolve, backoffMs))
+    }
+  }
+  
+  throw lastError
+}
+```
+
+## Webhook Error Handling
+
+```typescript
+app.post('/webhook', async (req, res) => {
+  try {
+    // Verify signature
+    const signature = req.headers['x-facesign-signature']
+    if (!verifyWebhookSignature(req.body, signature)) {
+      return res.status(401).json({ error: 'Invalid signature' })
+    }
+    
+    // Process webhook
+    await processWebhook(req.body)
+    res.status(200).json({ received: true })
+    
+  } catch (error) {
+    console.error('Webhook processing error:', error)
+    
+    // Return 200 to prevent retries for processing errors
+    res.status(200).json({ error: 'Processing failed' })
+  }
+})
+```
+
+## Best Practices
+
+### 1. Always Check Error Type
+
+```typescript
+if (error.response?.data?.error?.type === 'rate_limit_error') {
+  // Handle rate limiting specifically
+}
+```
+
+### 2. Log Full Error Context
+
+```typescript
+console.error({
+  status: error.response?.status,
+  type: error.response?.data?.error?.type,
+  message: error.response?.data?.error?.message,
+  requestId: error.response?.headers['x-request-id']
+})
+```
+
+### 3. Implement Circuit Breaker
+
+```typescript
+class CircuitBreaker {
+  private failures = 0
+  private lastFailureTime = 0
+  private readonly threshold = 5
+  private readonly timeout = 60000 // 1 minute
+  
+  async execute<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.isOpen()) {
+      throw new Error('Circuit breaker is open')
+    }
+    
+    try {
+      const result = await fn()
+      this.onSuccess()
+      return result
+    } catch (error) {
+      this.onFailure()
+      throw error
+    }
+  }
+  
+  private isOpen(): boolean {
+    return this.failures >= this.threshold && 
+           Date.now() - this.lastFailureTime < this.timeout
+  }
+  
+  private onSuccess(): void {
+    this.failures = 0
+  }
+  
+  private onFailure(): void {
+    this.failures++
+    this.lastFailureTime = Date.now()
+  }
+}
+```
+
+### 4. User-Friendly Error Messages
+
+```typescript
+function getUserMessage(error: APIError): string {
+  switch (error.type) {
+    case 'authentication_error':
+      return 'Please check your API configuration'
+    case 'validation_error':
+      return 'Please check your input and try again'
+    case 'rate_limit_error':
+      return 'Too many requests. Please try again later'
+    default:
+      return 'An error occurred. Please try again'
+  }
+}
+```
+
+## Common Issues
+
+### CORS Errors
+
+If calling the API from a browser:
+- Use server-side proxy
+- Never expose API keys in client code
+
+### Timeout Errors
+
+```typescript
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  timeout: 30000 // 30 seconds
+})
+```
+
+### Large Payload Errors
+
+- Metadata limited to 50KB
+- Compress large data before sending
+- Store references instead of full data
+
+## Next Steps
+
+- [Rate Limits](/guides/rate-limits)
+- [Webhook Security](/guides/webhooks)
+- [API Reference](/reference) 

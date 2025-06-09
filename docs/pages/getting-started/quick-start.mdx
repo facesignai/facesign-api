@@ -1,0 +1,297 @@
+---
+title: Quick Start
+description: Create your first FaceSign verification session in 5 minutes
+---
+
+import { Tabs } from 'nextra/components'
+import { Callout } from 'nextra/components'
+import { Steps } from 'nextra/components'
+
+# Quick Start
+
+Get up and running with FaceSign in just a few minutes. This guide will walk you through creating your first verification session.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A FaceSign account with an API key ([Get one here](https://dashboard.facesign.ai))
+- Node.js 12+ installed
+- The FaceSign SDK installed (`npm install @facesignai/api`)
+
+## Hello FaceSign
+
+Let's create a simple verification flow that:
+1. Greets the user
+2. Asks for their name
+3. Completes the session
+
+<Steps>
+
+### Step 1: Initialize the Client
+
+<Tabs items={['TypeScript', 'JavaScript']}>
+  <Tabs.Tab>
+```typescript
+import Client from '@facesignai/api'
+import { FSNodeType } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY!
+})
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```javascript
+const Client = require('@facesignai/api').default
+const { FSNodeType } = require('@facesignai/api')
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+```
+  </Tabs.Tab>
+</Tabs>
+
+### Step 2: Create a Session
+
+```typescript
+async function createVerificationSession() {
+  try {
+    const response = await client.session.create({
+      clientReferenceId: 'user-123',
+      metadata: {
+        source: 'quick-start-guide'
+      },
+      flow: {
+        nodes: [
+          {
+            id: 'start',
+            type: FSNodeType.START
+          },
+          {
+            id: 'greeting',
+            type: FSNodeType.CONVERSATION,
+            prompt: 'Hello! Welcome to FaceSign. I\'m here to help verify your identity. What\'s your name?',
+            transitions: [
+              {
+                id: 't1',
+                condition: 'true' // Always proceed to next node
+              }
+            ]
+          },
+          {
+            id: 'end',
+            type: FSNodeType.END
+          }
+        ],
+        edges: [
+          {
+            id: 'e1',
+            source: 'start',
+            target: 'greeting'
+          },
+          {
+            id: 'e2',
+            source: 'greeting',
+            target: 'end'
+          }
+        ]
+      }
+    })
+
+    console.log('Session created:', response.session.id)
+    console.log('Session URL:', response.clientSecret.url)
+    
+    return response
+  } catch (error) {
+    console.error('Error creating session:', error)
+    throw error
+  }
+}
+```
+
+### Step 3: Direct User to Session
+
+Once you have the session URL, you can:
+
+1. **Redirect the user** (for web apps):
+```javascript
+window.location.href = response.clientSecret.url
+```
+
+2. **Embed in an iframe** (for integrated experiences):
+```html
+<iframe 
+  src={response.clientSecret.url}
+  width="100%"
+  height="600"
+  frameborder="0"
+  allow="camera; microphone"
+/>
+```
+
+3. **Open in a new window** (for desktop apps):
+```javascript
+window.open(response.clientSecret.url, '_blank')
+```
+
+</Steps>
+
+## Complete Example
+
+Here's a complete example that creates a more sophisticated flow:
+
+```typescript
+import Client from '@facesignai/api'
+import { FSNodeType, FSLivenessDetectionOutcome } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY!
+})
+
+async function createAdvancedSession() {
+  const response = await client.session.create({
+    clientReferenceId: 'user-456',
+    metadata: {
+      department: 'onboarding',
+      version: '1.0'
+    },
+    customization: {
+      permissionsPage: {
+        mainHeading: 'Verify Your Identity',
+        subheading: 'We need to verify your identity for security purposes',
+        buttonText: 'Start Verification'
+      }
+    },
+    flow: {
+      nodes: [
+        {
+          id: 'start',
+          type: FSNodeType.START
+        },
+        {
+          id: 'welcome',
+          type: FSNodeType.CONVERSATION,
+          prompt: 'Welcome! I\'ll help you verify your identity. First, what\'s your full name?',
+          transitions: [{
+            id: 't1',
+            condition: 'true'
+          }]
+        },
+        {
+          id: 'liveness',
+          type: FSNodeType.LIVENESS_DETECTION,
+          outcomes: {
+            [FSLivenessDetectionOutcome.LIVENESS_DETECTED]: 'success',
+            [FSLivenessDetectionOutcome.DEEPFAKE_DETECTED]: 'failed',
+            [FSLivenessDetectionOutcome.NO_FACE]: 'retry'
+          }
+        },
+        {
+          id: 'success',
+          type: FSNodeType.CONVERSATION,
+          prompt: 'Great! Your identity has been verified successfully.',
+          transitions: [{
+            id: 't2',
+            condition: 'true'
+          }]
+        },
+        {
+          id: 'failed',
+          type: FSNodeType.CONVERSATION,
+          prompt: 'We couldn\'t verify your identity. Please contact support.',
+          transitions: [{
+            id: 't3',
+            condition: 'true'
+          }]
+        },
+        {
+          id: 'retry',
+          type: FSNodeType.CONVERSATION,
+          prompt: 'We couldn\'t detect your face. Please ensure you\'re in a well-lit area and try again.',
+          transitions: [{
+            id: 't4',
+            condition: 'true'
+          }]
+        },
+        {
+          id: 'end',
+          type: FSNodeType.END
+        }
+      ],
+      edges: [
+        { id: 'e1', source: 'start', target: 'welcome' },
+        { id: 'e2', source: 'welcome', target: 'liveness' },
+        { id: 'e3', source: 'liveness', target: 'success' },
+        { id: 'e4', source: 'liveness', target: 'failed' },
+        { id: 'e5', source: 'liveness', target: 'retry' },
+        { id: 'e6', source: 'success', target: 'end' },
+        { id: 'e7', source: 'failed', target: 'end' },
+        { id: 'e8', source: 'retry', target: 'liveness' }
+      ]
+    }
+  })
+
+  return response
+}
+
+// Use the session
+createAdvancedSession()
+  .then(response => {
+    console.log('Session URL:', response.clientSecret.url)
+    // Redirect user or embed in your app
+  })
+  .catch(error => {
+    console.error('Failed to create session:', error)
+  })
+```
+
+## Testing Your Integration
+
+<Callout type="info">
+  Use test mode API keys (prefixed with `sk_test_`) during development to avoid charges and test freely.
+</Callout>
+
+### Using the Session URL
+
+The `clientSecret.url` returned from session creation is a complete, hosted verification experience. Users can:
+
+- Complete the verification flow
+- Interact with the AI avatar
+- Submit required information
+- Complete biometric checks
+
+### Checking Session Status
+
+You can check the session status at any time:
+
+```typescript
+const sessionStatus = await client.session.retrieve({
+  sessionId: response.session.id
+})
+
+console.log('Status:', sessionStatus.session.status)
+// Possible values: 'requiresInput', 'processing', 'complete', 'canceled'
+
+if (sessionStatus.session.status === 'complete') {
+  console.log('Verification complete!')
+  console.log('Report:', sessionStatus.session.report)
+}
+```
+
+## What's Next?
+
+Now that you've created your first session, explore:
+
+- [Node Types Reference](/nodes) - Learn about all available node types
+- [SDK Methods](/sdk) - Explore the full SDK API
+- [Customization Options](/concepts/customization) - Brand the experience
+- [Webhooks](/guides/webhooks) - Get real-time updates
+- [Error Handling](/getting-started/error-handling) - Handle edge cases
+
+## Need Help?
+
+- Check our [FAQ](/faq)
+- Browse [example flows](/examples)
+- Contact [support@facesign.ai](mailto:support@facesign.ai) 

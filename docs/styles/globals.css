@@ -1,0 +1,444 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 225 73% 57%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 225 73% 57%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 225 73% 57%;
+    --primary-foreground: 222.2 84% 4.9%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 225 73% 57%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* === CRITICAL FULL-WIDTH OVERRIDES === */
+/* Remove ALL max-width constraints from Nextra */
+.nx-mx-auto {
+  max-width: none !important;
+}
+
+.nx-max-w-\[90rem\] {
+  max-width: none !important;
+}
+
+.nx-w-full {
+  width: 100% !important;
+}
+
+/* Main container full width */
+.nextra-nav-container,
+.nextra-nav-container nav,
+.nextra-nav-container > div {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Content area full width */
+main.nx-w-full,
+.nextra-content,
+article {
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
+
+@media (min-width: 1024px) {
+  main.nx-w-full,
+  .nextra-content,
+  article {
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  main.nx-w-full,
+  .nextra-content,
+  article {
+    padding-left: 6rem !important;
+    padding-right: 6rem !important;
+  }
+}
+
+/* === DARK MODE FIXES === */
+/* Set proper dark mode backgrounds */
+html.dark {
+  color-scheme: dark;
+  background-color: rgb(17 24 39);
+}
+
+.dark body {
+  background-color: rgb(17 24 39);
+}
+
+/* Navigation dark mode */
+.dark .nextra-nav-container {
+  background-color: rgb(17 24 39);
+  border-bottom-color: rgb(31 41 55);
+}
+
+/* Sidebar dark mode */
+.dark .nextra-sidebar-container {
+  background-color: rgb(17 24 39);
+}
+
+.dark .nextra-sidebar {
+  background-color: rgb(17 24 39);
+}
+
+/* Table of contents dark mode */
+.dark .nextra-toc {
+  background-color: rgb(17 24 39);
+}
+
+/* Content text colors in dark mode */
+.dark {
+  color: rgb(229 231 235);
+}
+
+.dark h1,
+.dark h2, 
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: rgb(243 244 246);
+}
+
+.dark p,
+.dark li {
+  color: rgb(209 213 219);
+}
+
+/* Links in dark mode */
+.dark a {
+  color: rgb(96 165 250);
+}
+
+.dark a:hover {
+  color: rgb(147 197 253);
+}
+
+/* Code blocks in dark mode */
+.dark pre {
+  background-color: rgb(17 24 39) !important;
+  border-color: rgb(31 41 55) !important;
+}
+
+.dark code {
+  background-color: rgb(31 41 55) !important;
+  color: rgb(229 231 235) !important;
+}
+
+.dark :not(pre) > code {
+  background-color: rgb(31 41 55) !important;
+  border-color: rgb(55 65 81) !important;
+  color: rgb(229 231 235) !important;
+}
+
+/* === SIDEBAR FIXES === */
+/* Always expanded sidebar */
+.nextra-sidebar ul {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Remove collapse icons completely */
+.nextra-sidebar button[aria-label*="Toggle"] {
+  display: none !important;
+}
+
+/* Sidebar item spacing */
+.nextra-sidebar li {
+  margin: 0.25rem 0;
+}
+
+/* Sidebar separators */
+.nextra-sidebar-separator {
+  margin: 1.5rem 0 0.5rem 0;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgb(107 114 128);
+}
+
+.dark .nextra-sidebar-separator {
+  color: rgb(156 163 175);
+}
+
+/* Nested items indentation */
+.nextra-sidebar li li {
+  padding-left: 1rem;
+}
+
+/* Active sidebar item */
+.nextra-sidebar a[aria-current="page"],
+.nextra-sidebar a[data-active="true"] {
+  background-color: rgb(239 246 255);
+  color: rgb(29 78 216);
+  font-weight: 500;
+}
+
+.dark .nextra-sidebar a[aria-current="page"],
+.dark .nextra-sidebar a[data-active="true"] {
+  background-color: rgb(30 58 138);
+  color: rgb(191 219 254);
+}
+
+/* Sidebar hover */
+.nextra-sidebar a:hover {
+  background-color: rgb(243 244 246);
+}
+
+.dark .nextra-sidebar a:hover {
+  background-color: rgb(31 41 55);
+}
+
+/* === TABLE STYLES === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+}
+
+th {
+  background-color: rgb(249 250 251);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 2px solid rgb(229 231 235);
+}
+
+.dark th {
+  background-color: rgb(31 41 55);
+  border-bottom-color: rgb(55 65 81);
+}
+
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgb(229 231 235);
+}
+
+.dark td {
+  border-bottom-color: rgb(55 65 81);
+}
+
+tr:hover td {
+  background-color: rgb(249 250 251);
+}
+
+.dark tr:hover td {
+  background-color: rgb(31 41 55);
+}
+
+/* === CUSTOM COMPONENTS === */
+/* Card styling */
+.custom-card {
+  @apply rounded-lg border bg-white text-card-foreground shadow-sm hover:shadow-md transition-shadow p-6;
+}
+
+.dark .custom-card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.custom-card-header {
+  @apply space-y-1.5 mb-4;
+}
+
+.custom-card-title {
+  @apply text-xl font-semibold leading-none tracking-tight;
+}
+
+.custom-card-description {
+  @apply text-sm text-muted-foreground;
+}
+
+.custom-card-content {
+  @apply text-sm;
+}
+
+.custom-card-content a {
+  @apply text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1;
+}
+
+/* Grid layout */
+.card-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 my-8;
+}
+
+/* Feature sections */
+.feature-section {
+  @apply my-12;
+}
+
+.feature-section h3 {
+  @apply text-lg font-semibold mb-2 flex items-center gap-2;
+}
+
+.feature-section p {
+  @apply text-gray-600;
+}
+
+.dark .feature-section p {
+  @apply text-gray-400;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-gray-700;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}
+
+/* === MORE AGGRESSIVE FULL-WIDTH OVERRIDES === */
+/* Target Nextra 3 specific classes */
+.nx-container-fluid {
+  max-width: none !important;
+}
+
+div[class*="max-w-"] {
+  max-width: none !important;
+}
+
+/* Force all nextra containers to be full width */
+[class*="nextra"] {
+  max-width: none !important;
+}
+
+/* Specific targeting for main content container */
+main > div > div {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Navigation container */
+nav.nextra-nav-container-blur {
+  max-width: none !important;
+}
+
+/* Content wrapper */
+.nextra-body-typesetting-default {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Page container */
+div.nx-pl-\[max\(env\(safe-area-inset-left\)\,1\.5rem\)\] {
+  max-width: none !important;
+}
+
+/* Remove any remaining constraints */
+body > div:first-child,
+body > div:first-child > div,
+body > div:first-child > div > div {
+  max-width: none !important;
+}
+
+/* === NEXTRA 3 SPECIFIC LAYOUT FIXES === */
+/* The main flex container */
+.nx-flex {
+  max-width: none !important;
+}
+
+/* The content container with mx-auto */
+.nx-mx-auto.nx-flex {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Inner content wrapper */
+.nx-flex-1 {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Force the specific max-w-[90rem] class to be overridden */
+.nx-max-w-\[90rem\] {
+  max-width: none !important;
+  width: 100% !important;
+} 

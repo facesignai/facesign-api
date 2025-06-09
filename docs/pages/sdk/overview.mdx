@@ -1,0 +1,290 @@
+---
+title: SDK Overview
+description: TypeScript/JavaScript SDK for the FaceSign API
+---
+
+import { Tabs } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# SDK Overview
+
+The FaceSign SDK provides a type-safe, promise-based interface for interacting with the FaceSign API from Node.js or browser environments.
+
+## Features
+
+- 🔒 **Type-safe** - Full TypeScript support with comprehensive type definitions
+- 🚀 **Promise-based** - Modern async/await API
+- 🔄 **Auto-retry** - Built-in retry logic for transient errors
+- 📊 **Logging** - Configurable logging levels for debugging
+- 🌐 **Isomorphic** - Works in Node.js and browsers
+- 📦 **Lightweight** - Minimal dependencies
+
+## Installation
+
+```bash
+npm install @facesignai/api
+```
+
+## Basic Usage
+
+<Tabs items={['TypeScript', 'JavaScript', 'ES Modules']}>
+  <Tabs.Tab>
+```typescript
+import Client from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+// Create a session
+const response = await client.session.create({
+  clientReferenceId: 'user-123',
+  flow: { /* ... */ }
+})
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```javascript
+const Client = require('@facesignai/api').default
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+// Create a session
+client.session.create({
+  clientReferenceId: 'user-123',
+  flow: { /* ... */ }
+}).then(response => {
+  console.log(response.clientSecret.url)
+})
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```javascript
+import Client from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+// Create a session
+const response = await client.session.create({
+  clientReferenceId: 'user-123',
+  flow: { /* ... */ }
+})
+```
+  </Tabs.Tab>
+</Tabs>
+
+## Client Configuration
+
+The SDK client accepts the following configuration options:
+
+```typescript
+interface ClientOptions {
+  auth?: string        // API key (required)
+  timeoutMs?: number   // Request timeout (default: 10000)
+  logLevel?: ILogLevel // Logging level
+  serverUrl?: string   // API endpoint (default: production)
+}
+```
+
+### Configuration Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `auth` | string | - | Your API key (required) |
+| `timeoutMs` | number | 10000 | Request timeout in milliseconds |
+| `logLevel` | ILogLevel | OFF | Logging verbosity |
+| `serverUrl` | string | `https://api.facesign.ai` | API endpoint |
+
+### Log Levels
+
+```typescript
+enum ILogLevel {
+  TRACE = 'TRACE',
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+  OFF = 'OFF'
+}
+```
+
+## Available Methods
+
+The SDK client provides the following method namespaces:
+
+### Session Methods
+
+| Method | Description |
+|--------|-------------|
+| `client.session.create()` | Create a new verification session |
+| `client.session.retrieve()` | Get session details and status |
+| `client.session.list()` | List sessions with filtering |
+| `client.session.createClientSecret()` | Generate a new client secret |
+
+### Other Methods
+
+| Method | Description |
+|--------|-------------|
+| `client.langs.retrieve()` | Get supported languages |
+| `client.avatars.retrieve()` | Get available avatars |
+
+## Error Handling
+
+The SDK throws typed errors that you can catch and handle:
+
+```typescript
+try {
+  const response = await client.session.create({
+    clientReferenceId: 'user-123',
+    flow: { /* ... */ }
+  })
+} catch (error) {
+  if (error.type === 'authentication_error') {
+    console.error('Invalid API key')
+  } else if (error.type === 'validation_error') {
+    console.error('Invalid request:', error.message)
+  } else if (error.type === 'rate_limit_error') {
+    console.error('Rate limit exceeded')
+  } else {
+    console.error('Unexpected error:', error)
+  }
+}
+```
+
+### Error Types
+
+| Error Type | Description | HTTP Status |
+|------------|-------------|-------------|
+| `authentication_error` | Invalid or missing API key | 401 |
+| `validation_error` | Invalid request parameters | 400 |
+| `not_found_error` | Resource not found | 404 |
+| `rate_limit_error` | Too many requests | 429 |
+| `server_error` | Internal server error | 500+ |
+
+## TypeScript Support
+
+The SDK includes comprehensive TypeScript definitions:
+
+```typescript
+import Client from '@facesignai/api'
+import type {
+  Session,
+  SessionSettings,
+  SessionStatus,
+  FSNode,
+  FSNodeType,
+  Customization
+} from '@facesignai/api'
+
+// All types are fully typed
+const settings: SessionSettings = {
+  clientReferenceId: 'user-123',
+  flow: {
+    nodes: [],
+    edges: []
+  }
+}
+```
+
+## Headers and Versioning
+
+The SDK automatically includes the following headers:
+
+| Header | Value | Description |
+|--------|-------|-------------|
+| `Authorization` | `Bearer {api_key}` | API authentication |
+| `Content-Type` | `application/json` | Request format |
+| `Facesign-Version` | `2024-12-18` | API version |
+| `x-facesign-api-version` | SDK version | SDK version tracking |
+
+## Debugging
+
+Enable debug logging to troubleshoot issues:
+
+```typescript
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  logLevel: ILogLevel.DEBUG
+})
+
+// Logs will include:
+// - Request details
+// - Response status
+// - Timing information
+// - Error details
+```
+
+<Callout type="tip">
+  Set `logLevel` to `DEBUG` during development and `ERROR` or `OFF` in production.
+</Callout>
+
+## Advanced Usage
+
+### Custom Timeout
+
+```typescript
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  timeoutMs: 30000 // 30 seconds
+})
+```
+
+### Custom Server URL
+
+```typescript
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  serverUrl: 'https://api-staging.facesign.ai'
+})
+```
+
+### Environment-based Configuration
+
+```typescript
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  logLevel: process.env.NODE_ENV === 'production' 
+    ? ILogLevel.ERROR 
+    : ILogLevel.DEBUG,
+  timeoutMs: parseInt(process.env.FACESIGN_TIMEOUT || '10000'),
+  serverUrl: process.env.FACESIGN_API_URL
+})
+```
+
+## Browser Usage
+
+The SDK works in modern browsers with fetch support:
+
+```html
+<script type="module">
+import Client from 'https://unpkg.com/@facesignai/api@latest/dist/browser.js'
+
+const client = new Client({
+  auth: 'YOUR_API_KEY' // Use server proxy in production!
+})
+
+// Use the client...
+</script>
+```
+
+<Callout type="warning">
+  Never expose your API key in client-side code. Use a server proxy for production browser applications.
+</Callout>
+
+## Rate Limiting
+
+The SDK respects API rate limits and includes retry logic:
+
+- Automatic retry with exponential backoff for 429 errors
+- Rate limit headers are exposed in responses
+- Configure timeout to prevent hanging requests
+
+## Next Steps
+
+- Learn about [creating sessions](/sdk/create-session)
+- Explore [session retrieval](/sdk/retrieve-session)
+- View [complete examples](/examples) 

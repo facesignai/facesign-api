@@ -1,0 +1,66 @@
+---
+title: FaceSign API Documentation
+description: Build AI-powered identity verification flows with conversational interfaces, biometric verification, and document scanning.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+# Welcome to FaceSign API
+
+The FaceSign API enables developers to create AI-powered identity verification flows with conversational interfaces, biometric verification, document scanning, and multi-factor authentication.
+
+## Quick Links
+
+<CardGrid>
+  <Card title="Getting Started" icon="rocket">
+    Install the SDK and create your first verification session in minutes.
+    [Get Started →](/getting-started)
+  </Card>
+  <Card title="API Reference" icon="open-book">
+    Explore the complete API endpoints, parameters, and response schemas.
+    [View Reference →](/reference)
+  </Card>
+  <Card title="Node Types" icon="puzzle">
+    Learn about building verification flows with our node-based system.
+    [Explore Nodes →](/concepts/node-graph)
+  </Card>
+  <Card title="Examples" icon="code">
+    See practical examples and integration patterns.
+    [View Examples →](/examples/basic-session)
+  </Card>
+</CardGrid>
+
+## Features
+
+- **Conversational AI** - Natural language interactions powered by advanced AI
+- **Biometric Verification** - Face scanning, liveness detection, and 1:1 matching
+- **Document Scanning** - Support for passports, IDs, driver's licenses, and more
+- **Multi-Factor Authentication** - Email and SMS verification with customizable templates
+- **Flexible Flows** - Build custom verification workflows with our node-based system
+- **Real-time Updates** - Webhooks for session status changes and completions
+
+## Authentication
+
+All API requests require authentication using Bearer tokens:
+
+```bash
+Authorization: Bearer sk_live_your_api_key
+```
+
+Use test mode keys (`sk_test_*`) for development and live mode keys (`sk_live_*`) for production.
+
+## Base URL
+
+```
+https://api.facesign.ai
+```
+
+## Version
+
+Current API version: **1.0.18**
+
+## Support
+
+- Email: support@facesign.ai
+- GitHub: [facesignai/facesign-api](https://github.com/facesignai/facesign-api)
+- [Changelog](/changelog)
