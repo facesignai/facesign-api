@@ -1,0 +1,212 @@
+---
+title: Authentication
+description: Learn how to authenticate with the FaceSign API
+---
+
+import { Tabs } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# Authentication
+
+The FaceSign API uses API keys to authenticate requests. You can obtain and manage your API keys from the FaceSign Dashboard.
+
+## Obtaining API Keys
+
+1. Sign up for a FaceSign account at [dashboard.facesign.ai](https://dashboard.facesign.ai)
+2. Navigate to the API Keys section
+3. Click "Create New API Key"
+4. Copy your API key and store it securely
+
+<Callout type="warning">
+  **Important**: Treat your API keys as passwords. Never commit them to version control or expose them in client-side code.
+</Callout>
+
+## Using API Keys
+
+### SDK Authentication
+
+Pass your API key when initializing the client:
+
+<Tabs items={['TypeScript', 'JavaScript', 'Environment Variables']}>
+  <Tabs.Tab>
+```typescript
+import Client from '@facesignai/api'
+
+const client = new Client({
+  auth: 'sk_live_1234567890abcdef'
+})
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```javascript
+const Client = require('@facesignai/api').default
+
+const client = new Client({
+  auth: 'sk_live_1234567890abcdef'
+})
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```javascript
+// .env file
+FACESIGN_API_KEY=sk_live_1234567890abcdef
+
+// Your code
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+```
+  </Tabs.Tab>
+</Tabs>
+
+### REST API Authentication
+
+For direct REST API calls, include your API key in the Authorization header:
+
+```bash
+curl https://api.facesign.ai/sessions \
+  -H "Authorization: Bearer sk_live_1234567890abcdef" \
+  -H "Content-Type: application/json" \
+  -H "Facesign-Version: 2024-12-18"
+```
+
+## API Key Types
+
+FaceSign provides two types of API keys:
+
+| Type | Prefix | Usage | Environment |
+|------|--------|-------|-------------|
+| **Live** | `sk_live_` | Production usage | Production servers only |
+| **Test** | `sk_test_` | Development and testing | Development environments |
+
+### Test Mode
+
+Test mode allows you to experiment with the API without affecting production data:
+
+- Sessions created in test mode are marked as test sessions
+- No charges are incurred for test mode usage
+- Test sessions have limited retention (30 days)
+- Perfect for development and CI/CD pipelines
+
+## Security Best Practices
+
+### 1. Environment Variables
+
+Always use environment variables for API keys:
+
+```javascript
+// ❌ Bad: Hardcoded key
+const client = new Client({ auth: 'sk_live_abc123' })
+
+// ✅ Good: Environment variable
+const client = new Client({ auth: process.env.FACESIGN_API_KEY })
+```
+
+### 2. Server-Side Only
+
+Never expose API keys in client-side code:
+
+```javascript
+// ❌ Bad: Client-side usage
+// frontend.js
+const client = new Client({ auth: apiKey })
+
+// ✅ Good: Server-side usage
+// backend.js
+const client = new Client({ auth: process.env.FACESIGN_API_KEY })
+const session = await client.session.create({...})
+// Return only the clientSecret to frontend
+```
+
+### 3. Key Rotation
+
+Regularly rotate your API keys:
+
+1. Create a new API key in the dashboard
+2. Update your application to use the new key
+3. Verify the new key is working
+4. Delete the old key from the dashboard
+
+### 4. Restrict Key Permissions
+
+When available, use keys with minimal required permissions:
+
+- Read-only keys for analytics dashboards
+- Session-creation-only keys for application servers
+- Full-access keys only for admin operations
+
+## Rate Limiting
+
+API keys are subject to rate limits:
+
+| Plan | Requests/Second | Requests/Hour |
+|------|-----------------|---------------|
+| Free | 10 | 1,000 |
+| Pro | 100 | 10,000 |
+| Enterprise | Custom | Custom |
+
+Rate limit headers are included in all responses:
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 99
+X-RateLimit-Reset: 1609459200
+```
+
+## Client Secret vs API Key
+
+Don't confuse API keys with client secrets:
+
+| | API Key | Client Secret |
+|---|---------|---------------|
+| **Purpose** | Authenticate your server | Authenticate end users |
+| **Usage** | Server-side only | Client-side safe |
+| **Lifetime** | Long-lived | Short-lived (24 hours) |
+| **Scope** | Full API access | Single session access |
+
+## Troubleshooting
+
+### Invalid API Key
+
+```json
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "Invalid API key provided"
+  }
+}
+```
+
+**Solution**: Verify your API key is correct and active in the dashboard.
+
+### Missing Authentication
+
+```json
+{
+  "error": {
+    "type": "authentication_error", 
+    "message": "No API key provided"
+  }
+}
+```
+
+**Solution**: Ensure you're passing the `auth` parameter to the Client constructor.
+
+### Rate Limit Exceeded
+
+```json
+{
+  "error": {
+    "type": "rate_limit_error",
+    "message": "Rate limit exceeded"
+  }
+}
+```
+
+**Solution**: Implement exponential backoff or upgrade your plan.
+
+## Next Steps
+
+- [Create your first session](/getting-started/quick-start)
+- [Learn about error handling](/getting-started/error-handling)
+- [Set up your environment](/getting-started/environment-setup) 

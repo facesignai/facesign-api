@@ -1,0 +1,270 @@
+---
+title: Rate Limits
+description: Understand FaceSign API rate limits and how to handle them effectively.
+---
+
+# Rate Limits
+
+The FaceSign API implements rate limiting to ensure fair usage and maintain service quality for all users.
+
+## Rate Limit Tiers
+
+| Tier | Requests per Minute | Requests per Hour | Concurrent Sessions |
+|------|-------------------|-------------------|-------------------|
+| **Test** | 60 | 1,000 | 10 |
+| **Starter** | 300 | 10,000 | 100 |
+| **Professional** | 1,000 | 50,000 | 500 |
+| **Enterprise** | Custom | Custom | Custom |
+
+## Rate Limit Headers
+
+Every API response includes headers showing your current rate limit status:
+
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 45
+X-RateLimit-Reset: 1234567890
+```
+
+- **X-RateLimit-Limit**: Maximum requests allowed in the current window
+- **X-RateLimit-Remaining**: Requests remaining in the current window
+- **X-RateLimit-Reset**: Unix timestamp when the window resets
+
+## Handling Rate Limits
+
+### Monitor Usage
+
+```typescript
+const response = await client.session.create({...})
+
+console.log({
+  limit: response.headers['x-ratelimit-limit'],
+  remaining: response.headers['x-ratelimit-remaining'],
+  reset: new Date(response.headers['x-ratelimit-reset'] * 1000)
+})
+```
+
+### Implement Backoff
+
+```typescript
+async function withRateLimit<T>(
+  fn: () => Promise<T>
+): Promise<T> {
+  try {
+    return await fn()
+  } catch (error) {
+    if (error.response?.status === 429) {
+      const resetTime = error.response.headers['x-ratelimit-reset']
+      const waitTime = (resetTime * 1000) - Date.now()
+      
+      console.log(`Rate limited. Waiting ${waitTime}ms`)
+      await new Promise(resolve => setTimeout(resolve, waitTime))
+      
+      return fn() // Retry once after waiting
+    }
+    throw error
+  }
+}
+```
+
+### Queue Management
+
+```typescript
+class RateLimitQueue {
+  private queue: Array<() => Promise<any>> = []
+  private processing = false
+  private requestsPerMinute = 60
+  
+  async add<T>(fn: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          const result = await fn()
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+      
+      this.process()
+    })
+  }
+  
+  private async process() {
+    if (this.processing || this.queue.length === 0) return
+    
+    this.processing = true
+    const delay = 60000 / this.requestsPerMinute
+    
+    while (this.queue.length > 0) {
+      const fn = this.queue.shift()
+      await fn()
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
+    
+    this.processing = false
+  }
+}
+```
+
+## Best Practices
+
+### 1. Batch Operations
+
+Instead of:
+```typescript
+// ❌ Don't make many individual requests
+for (const user of users) {
+  await client.session.create({ clientReferenceId: user.id, ... })
+}
+```
+
+Consider:
+```typescript
+// ✅ Process in controlled batches
+const batchSize = 10
+for (let i = 0; i < users.length; i += batchSize) {
+  const batch = users.slice(i, i + batchSize)
+  await Promise.all(
+    batch.map(user => 
+      client.session.create({ clientReferenceId: user.id, ... })
+    )
+  )
+  await new Promise(resolve => setTimeout(resolve, 1000))
+}
+```
+
+### 2. Cache Responses
+
+```typescript
+class SessionCache {
+  private cache = new Map<string, any>()
+  private ttl = 5 * 60 * 1000 // 5 minutes
+  
+  async get(sessionId: string): Promise<Session> {
+    const cached = this.cache.get(sessionId)
+    if (cached && Date.now() - cached.timestamp < this.ttl) {
+      return cached.data
+    }
+    
+    const session = await client.session.get({ sessionId })
+    this.cache.set(sessionId, {
+      data: session,
+      timestamp: Date.now()
+    })
+    
+    return session
+  }
+}
+```
+
+### 3. Use Webhooks
+
+Instead of polling for status:
+```typescript
+// ❌ Don't poll repeatedly
+while (session.status !== 'complete') {
+  session = await client.session.get({ sessionId })
+  await sleep(1000)
+}
+```
+
+Use webhooks:
+```typescript
+// ✅ Use webhooks for real-time updates
+app.post('/webhook', (req, res) => {
+  const { session } = req.body
+  if (session.status === 'complete') {
+    processCompletedSession(session)
+  }
+  res.status(200).send()
+})
+```
+
+## Rate Limit Errors
+
+```json
+{
+  "error": {
+    "type": "rate_limit_error",
+    "message": "Rate limit exceeded. Please retry after 1234567890"
+  }
+}
+```
+
+## Increasing Limits
+
+To request higher rate limits:
+
+1. **Monitor your usage** - Track your API usage patterns
+2. **Optimize requests** - Implement caching and batching
+3. **Contact support** - Email support@facesign.ai with:
+   - Current usage metrics
+   - Expected growth
+   - Use case description
+
+## Per-Endpoint Limits
+
+Some endpoints have specific limits:
+
+| Endpoint | Additional Limit |
+|----------|-----------------|
+| `POST /sessions` | 100 per hour per unique clientReferenceId |
+| `GET /sessions` | 1000 results per request |
+| `POST /sessions/{id}/refresh` | 10 per session |
+
+## Burst Limits
+
+Short bursts are allowed:
+- Up to 2x your per-minute limit for 10 seconds
+- Must not exceed hourly limits
+
+## Development Tips
+
+### Local Development
+
+```typescript
+// Mock rate limit headers in development
+if (process.env.NODE_ENV === 'development') {
+  response.headers['x-ratelimit-limit'] = '60'
+  response.headers['x-ratelimit-remaining'] = '45'
+  response.headers['x-ratelimit-reset'] = String(Date.now() / 1000 + 60)
+}
+```
+
+### Testing Rate Limits
+
+```typescript
+// Test rate limit handling
+async function testRateLimits() {
+  const requests = Array(100).fill(null).map((_, i) => ({
+    clientReferenceId: `test-${i}`,
+    metadata: {},
+    flow: minimalFlow
+  }))
+  
+  let successCount = 0
+  let rateLimitCount = 0
+  
+  for (const request of requests) {
+    try {
+      await client.session.create(request)
+      successCount++
+    } catch (error) {
+      if (error.response?.status === 429) {
+        rateLimitCount++
+      } else {
+        throw error
+      }
+    }
+  }
+  
+  console.log({ successCount, rateLimitCount })
+}
+```
+
+## Next Steps
+
+- [Error Handling](/getting-started/error-handling)
+- [Webhook Configuration](/guides/webhooks)
+- [Performance Optimization](/guides/performance) 

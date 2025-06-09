@@ -1,0 +1,466 @@
+---
+title: Node Graph Architecture
+description: Learn how to build verification flows using FaceSign's node-based graph system.
+---
+
+# Node Graph Architecture
+
+FaceSign uses a directed graph architecture to define verification flows. This approach provides maximum flexibility while maintaining a clear, visual structure.
+
+## Core Concepts
+
+### Nodes
+
+Nodes represent individual steps in the verification process:
+
+```typescript
+interface FSNode {
+  id: string        // Unique identifier
+  type: FSNodeType  // Node functionality
+  // ... type-specific configuration
+}
+```
+
+### Edges
+
+Edges connect nodes and define the flow:
+
+```typescript
+interface FSEdge {
+  id: string      // Unique identifier
+  source: string  // Source node ID
+  target: string  // Target node ID
+}
+```
+
+### Flow
+
+A complete flow combines nodes and edges:
+
+```typescript
+interface FSFlow {
+  nodes: FSNode[]
+  edges: FSEdge[]
+}
+```
+
+## Node Types
+
+### Control Flow Nodes
+
+| Node Type | Purpose | Required |
+|-----------|---------|----------|
+| `start` | Entry point | Yes |
+| `end` | Exit point | Yes |
+| `conversation` | AI dialogue | No |
+| `data_validation` | Validate data | No |
+
+### Verification Nodes
+
+| Node Type | Purpose | Outcomes |
+|-----------|---------|----------|
+| `liveness_detection` | Detect real person | livenessDetected, deepfakeDetected, noFace |
+| `face_scan` | Capture/compare face | captured, match, noMatch, error |
+| `recognition` | 1:N face search | recognized, newUser, noFace |
+| `document_scan` | Scan ID documents | scanSuccess, userCancelled, timeout |
+
+### Input Nodes
+
+| Node Type | Purpose | Outcomes |
+|-----------|---------|----------|
+| `enter_email` | Collect email | emailEntered, canceled |
+| `two_factor` | 2FA verification | verified, failed, error |
+
+## Building Flows
+
+### Basic Linear Flow
+
+```typescript
+const linearFlow: FSFlow = {
+  nodes: [
+    { id: 'start', type: 'start' },
+    { 
+      id: 'greeting', 
+      type: 'conversation',
+      prompt: 'Welcome! Please state your name.',
+      transitions: [{ id: 't1', condition: 'true' }]
+    },
+    { 
+      id: 'email', 
+      type: 'enter_email',
+      outcomes: {
+        emailEntered: 'end',
+        canceled: 'end'
+      }
+    },
+    { id: 'end', type: 'end' }
+  ],
+  edges: [
+    { id: 'e1', source: 'start', target: 'greeting' },
+    { id: 'e2', source: 'greeting', target: 'email' },
+    { id: 'e3', source: 'email', target: 'end' }
+  ]
+}
+```
+
+### Branching Flow
+
+```typescript
+const branchingFlow: FSFlow = {
+  nodes: [
+    { id: 'start', type: 'start' },
+    {
+      id: 'liveness',
+      type: 'liveness_detection',
+      outcomes: {
+        livenessDetected: 'success',
+        deepfakeDetected: 'failure',
+        noFace: 'retry'
+      }
+    },
+    {
+      id: 'success',
+      type: 'conversation',
+      prompt: 'Verification successful!',
+      transitions: [{ id: 't1', condition: 'true' }]
+    },
+    {
+      id: 'failure',
+      type: 'conversation',
+      prompt: 'Verification failed. Please contact support.',
+      transitions: [{ id: 't2', condition: 'true' }]
+    },
+    {
+      id: 'retry',
+      type: 'conversation',
+      prompt: 'No face detected. Please try again.',
+      transitions: [{ id: 't3', condition: 'true' }]
+    },
+    { id: 'end', type: 'end' }
+  ],
+  edges: [
+    { id: 'e1', source: 'start', target: 'liveness' },
+    { id: 'e2', source: 'liveness', target: 'success' },
+    { id: 'e3', source: 'liveness', target: 'failure' },
+    { id: 'e4', source: 'liveness', target: 'retry' },
+    { id: 'e5', source: 'success', target: 'end' },
+    { id: 'e6', source: 'failure', target: 'end' },
+    { id: 'e7', source: 'retry', target: 'liveness' }
+  ]
+}
+```
+
+## Transitions vs Outcomes
+
+### Transitions (Conversation Nodes)
+
+Use JavaScript expressions to determine next node:
+
+```typescript
+{
+  id: 'age-check',
+  type: 'conversation',
+  prompt: 'How old are you?',
+  transitions: [
+    { 
+      id: 't1', 
+      condition: 'extractedData.age >= 18',
+      target: 'adult-flow'
+    },
+    { 
+      id: 't2', 
+      condition: 'extractedData.age < 18',
+      target: 'minor-flow'
+    },
+    { 
+      id: 't3', 
+      condition: 'true', // Default fallback
+      target: 'error-flow'
+    }
+  ]
+}
+```
+
+### Outcomes (Action Nodes)
+
+Map specific results to target nodes:
+
+```typescript
+{
+  id: 'face-verify',
+  type: 'face_scan',
+  mode: 'compare',
+  outcomes: {
+    match: 'verification-success',
+    noMatch: 'verification-failed',
+    noFace: 'face-retry',
+    error: 'support-flow'
+  }
+}
+```
+
+## Advanced Patterns
+
+### Retry Loop with Counter
+
+```typescript
+const retryFlow: FSFlow = {
+  nodes: [
+    { id: 'start', type: 'start' },
+    {
+      id: 'attempt-counter',
+      type: 'data_validation',
+      validation: {
+        field: 'retryCount',
+        action: 'increment',
+        value: '1'
+      },
+      transitions: [
+        {
+          id: 't1',
+          condition: 'sessionData.retryCount <= 3',
+          target: 'face-scan'
+        },
+        {
+          id: 't2',
+          condition: 'sessionData.retryCount > 3',
+          target: 'max-retries'
+        }
+      ]
+    },
+    {
+      id: 'face-scan',
+      type: 'face_scan',
+      mode: 'capture',
+      outcomes: {
+        captured: 'success',
+        noFace: 'attempt-counter',
+        error: 'support'
+      }
+    },
+    // ... rest of nodes
+  ],
+  edges: [
+    { id: 'e1', source: 'start', target: 'attempt-counter' },
+    // ... rest of edges
+  ]
+}
+```
+
+### Conditional Document Scanning
+
+```typescript
+{
+  id: 'country-check',
+  type: 'conversation',
+  prompt: 'What country issued your ID?',
+  transitions: [
+    {
+      id: 't1',
+      condition: 'extractedData.country === "US"',
+      target: 'us-document-scan'
+    },
+    {
+      id: 't2',
+      condition: 'extractedData.country === "CA"',
+      target: 'ca-document-scan'
+    },
+    {
+      id: 't3',
+      condition: 'true',
+      target: 'general-document-scan'
+    }
+  ]
+}
+```
+
+### Multi-Factor Authentication Flow
+
+```typescript
+const mfaFlow: FSFlow = {
+  nodes: [
+    { id: 'start', type: 'start' },
+    {
+      id: 'face-verify',
+      type: 'face_scan',
+      mode: 'compare',
+      referenceImageSource: 'session',
+      outcomes: {
+        match: 'email-2fa',
+        noMatch: 'access-denied',
+        error: 'support'
+      }
+    },
+    {
+      id: 'email-2fa',
+      type: 'two_factor',
+      channels: ['email'],
+      contactSource: 'session_data',
+      outcomes: {
+        verified: 'access-granted',
+        failed_unverified: 'access-denied',
+        error: 'support'
+      }
+    },
+    {
+      id: 'access-granted',
+      type: 'conversation',
+      prompt: 'Access granted! Welcome back.',
+      transitions: [{ id: 't1', condition: 'true' }]
+    },
+    {
+      id: 'access-denied',
+      type: 'conversation',
+      prompt: 'Access denied. Please contact support.',
+      transitions: [{ id: 't2', condition: 'true' }]
+    },
+    { id: 'end', type: 'end' }
+  ],
+  edges: [
+    { id: 'e1', source: 'start', target: 'face-verify' },
+    { id: 'e2', source: 'face-verify', target: 'email-2fa' },
+    { id: 'e3', source: 'face-verify', target: 'access-denied' },
+    { id: 'e4', source: 'email-2fa', target: 'access-granted' },
+    { id: 'e5', source: 'email-2fa', target: 'access-denied' },
+    { id: 'e6', source: 'access-granted', target: 'end' },
+    { id: 'e7', source: 'access-denied', target: 'end' }
+  ]
+}
+```
+
+## Validation Rules
+
+### Graph Structure
+- Must have exactly one `start` node
+- Must have at least one `end` node
+- All nodes must be reachable from `start`
+- No circular dependencies (except intentional loops)
+
+### Node IDs
+- Must be unique within the flow
+- Use descriptive names (e.g., 'age-verification', not 'node1')
+- Alphanumeric with hyphens/underscores
+
+### Edge Connections
+- Source and target must reference existing nodes
+- Cannot connect to `start` node
+- Cannot connect from `end` node
+
+## Best Practices
+
+### 1. Design for Failure
+
+Always provide paths for all possible outcomes:
+
+```typescript
+{
+  id: 'document-scan',
+  type: 'document_scan',
+  outcomes: {
+    scanSuccess: 'verify-document',
+    userCancelled: 'ask-retry',
+    timeout: 'manual-review',
+    // Always handle error cases
+  }
+}
+```
+
+### 2. Use Descriptive IDs
+
+```typescript
+// ❌ Poor naming
+{ id: 'n1', type: 'conversation' }
+{ id: 'n2', type: 'face_scan' }
+
+// ✅ Good naming
+{ id: 'welcome-message', type: 'conversation' }
+{ id: 'identity-verification', type: 'face_scan' }
+```
+
+### 3. Keep Flows Modular
+
+Break complex flows into logical sections:
+
+```typescript
+// Onboarding section
+const onboardingNodes = [
+  { id: 'welcome', type: 'conversation', /* ... */ },
+  { id: 'collect-name', type: 'conversation', /* ... */ },
+  { id: 'collect-email', type: 'enter_email', /* ... */ }
+]
+
+// Verification section
+const verificationNodes = [
+  { id: 'face-capture', type: 'face_scan', /* ... */ },
+  { id: 'liveness-check', type: 'liveness_detection', /* ... */ },
+  { id: 'document-scan', type: 'document_scan', /* ... */ }
+]
+
+// Combine into full flow
+const fullFlow: FSFlow = {
+  nodes: [
+    { id: 'start', type: 'start' },
+    ...onboardingNodes,
+    ...verificationNodes,
+    { id: 'end', type: 'end' }
+  ],
+  edges: [/* ... */]
+}
+```
+
+### 4. Test Edge Cases
+
+Consider all possible paths:
+- User abandonment
+- Technical failures
+- Invalid data
+- Timeout scenarios
+
+## Debugging Flows
+
+### Visualize Your Flow
+
+Use tools to visualize the graph:
+
+```javascript
+// Generate Mermaid diagram
+function generateMermaid(flow: FSFlow): string {
+  let diagram = 'graph TD\n'
+  
+  // Add nodes
+  flow.nodes.forEach(node => {
+    diagram += `  ${node.id}["${node.type}"]\n`
+  })
+  
+  // Add edges
+  flow.edges.forEach(edge => {
+    diagram += `  ${edge.source} --> ${edge.target}\n`
+  })
+  
+  return diagram
+}
+```
+
+### Track Flow Execution
+
+```typescript
+// Monitor which path users take
+app.post('/webhook', (req, res) => {
+  const { event, session } = req.body
+  
+  if (event === 'node.completed') {
+    console.log({
+      sessionId: session.id,
+      nodeId: session.currentNodeId,
+      outcome: session.lastOutcome,
+      timestamp: new Date()
+    })
+  }
+})
+```
+
+## Next Steps
+
+- [Node Type Reference](/reference/nodes)
+- [Example Flows](/examples)
+- [Flow Builder Tool](https://builder.facesign.ai) 

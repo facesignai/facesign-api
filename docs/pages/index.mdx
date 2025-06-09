@@ -1,0 +1,156 @@
+---
+title: FaceSign API Documentation
+description: Build AI-powered identity verification flows with the FaceSign API
+---
+
+# FaceSign API Documentation
+
+Welcome to the FaceSign API documentation. Build secure, AI-powered identity verification flows with our comprehensive SDK and REST API.
+
+## What is FaceSign?
+
+FaceSign is a powerful identity verification platform that enables developers to create sophisticated verification flows using:
+
+<div className="feature-section">
+  <h3>🤖 AI-Powered Conversations</h3>
+  <p>Natural language interactions with virtual avatars</p>
+</div>
+
+<div className="feature-section">
+  <h3>🔐 Biometric Verification</h3>
+  <p>Face scanning, liveness detection, and facial recognition</p>
+</div>
+
+<div className="feature-section">
+  <h3>📄 Document Authentication</h3>
+  <p>ID and passport scanning with OCR</p>
+</div>
+
+<div className="feature-section">
+  <h3>🔄 Multi-Factor Authentication</h3>
+  <p>Email and SMS verification</p>
+</div>
+
+<div className="feature-section">
+  <h3>🎨 Flow Builder</h3>
+  <p>Visual node-based flow creation</p>
+</div>
+
+## Quick Navigation
+
+<div className="card-grid">
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Getting Started</h3>
+      <p className="custom-card-description">Installation, authentication, and your first API call</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/getting-started">Get started →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">SDK Reference</h3>
+      <p className="custom-card-description">Complete TypeScript/JavaScript SDK documentation</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/sdk">View reference →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Node Types</h3>
+      <p className="custom-card-description">All available flow nodes and their configurations</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/nodes">Explore nodes →</a>
+    </div>
+  </div>
+  
+  <div className="custom-card">
+    <div className="custom-card-header">
+      <h3 className="custom-card-title">Code Examples</h3>
+      <p className="custom-card-description">Real-world examples and integration patterns</p>
+    </div>
+    <div className="custom-card-content">
+      <a href="/examples">View examples →</a>
+    </div>
+  </div>
+</div>
+
+## Key Features
+
+### 🤖 Conversational AI
+Build natural verification flows with AI-powered avatars that guide users through the process.
+
+### 🔐 Biometric Security
+Implement face scanning, liveness detection, and 1:1 facial matching for secure authentication.
+
+### 📄 Document Verification
+Scan and verify government IDs, passports, and other documents with advanced OCR.
+
+### 🔄 Flow Control
+Create complex verification flows with conditional logic, branching, and data validation.
+
+### 🌍 Multi-Language Support
+Support users globally with built-in internationalization capabilities.
+
+### 🎨 Customizable UI
+Tailor the verification experience to match your brand and requirements.
+
+## Installation
+
+```bash
+npm install @facesignai/api
+# or
+yarn add @facesignai/api
+```
+
+## Basic Example
+
+```typescript
+import Client from '@facesignai/api'
+
+// Initialize the client
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+// Create a verification session
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  flow: {
+    nodes: [
+      { id: 'start', type: 'start' },
+      { 
+        id: 'conversation', 
+        type: 'conversation',
+        prompt: 'Welcome! Please tell me your name.',
+        transitions: []
+      },
+      { id: 'end', type: 'end' }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'conversation' },
+      { id: 'e2', source: 'conversation', target: 'end' }
+    ]
+  }
+})
+
+console.log('Session URL:', clientSecret.url)
+```
+
+## Support
+
+- **GitHub Issues**: [github.com/facesignai/facesign-api/issues](https://github.com/facesignai/facesign-api/issues)
+- **Email**: support@facesign.ai
+- **Documentation**: You're already here! 😊
+
+## Next Steps
+
+- [Install the SDK](/getting-started/installation) and get your API key
+- [Explore example flows](/examples) to see what's possible
+- [Read the core concepts](/concepts) to understand the platform
+- [Browse the SDK reference](/sdk) for detailed method documentation 

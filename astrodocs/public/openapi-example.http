@@ -1,0 +1,191 @@
+### FaceSign API Examples
+### Based on OpenAPI Specification v1.0.18
+
+### Variables
+@baseUrl = https://api.facesign.ai
+@apiKey = sk_test_your_api_key_here
+@sessionId = session_example_id
+
+### Create a Basic Session
+POST {{baseUrl}}/sessions
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+Facesign-Version: 2024-12-18
+
+{
+  "clientReferenceId": "user-123",
+  "metadata": {
+    "source": "web-app",
+    "purpose": "identity-verification"
+  },
+  "customization": {
+    "permissionsPage": {
+      "mainHeading": "Verify Your Identity",
+      "subheading": "We need to verify your identity for security",
+      "buttonText": "Start Verification"
+    }
+  },
+  "flow": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start"
+      },
+      {
+        "id": "greeting",
+        "type": "conversation",
+        "prompt": "Hello! I'll help you verify your identity. What's your full name?",
+        "transitions": [
+          {
+            "id": "t1",
+            "condition": "true"
+          }
+        ]
+      },
+      {
+        "id": "face-scan",
+        "type": "face_scan",
+        "mode": "capture",
+        "saveToField": "userFaceImage",
+        "captureInstructions": "Please position your face in the frame",
+        "outcomes": {
+          "captured": "liveness",
+          "noFace": "face-scan",
+          "error": "support"
+        }
+      },
+      {
+        "id": "liveness",
+        "type": "liveness_detection",
+        "outcomes": {
+          "livenessDetected": "email",
+          "deepfakeDetected": "failed",
+          "noFace": "face-scan"
+        }
+      },
+      {
+        "id": "email",
+        "type": "enter_email",
+        "outcomes": {
+          "emailEntered": "2fa",
+          "canceled": "end"
+        }
+      },
+      {
+        "id": "2fa",
+        "type": "two_factor",
+        "channels": ["email"],
+        "contactSource": "session_data",
+        "emailTemplate": "Your verification code is: {{code}}",
+        "outcomes": {
+          "verified": "success",
+          "delivery_failed": "support",
+          "failed_unverified": "failed"
+        }
+      },
+      {
+        "id": "success",
+        "type": "conversation",
+        "prompt": "Great! Your identity has been verified successfully.",
+        "transitions": [
+          {
+            "id": "t2",
+            "condition": "true"
+          }
+        ]
+      },
+      {
+        "id": "failed",
+        "type": "conversation",
+        "prompt": "We couldn't verify your identity. Please contact support.",
+        "transitions": [
+          {
+            "id": "t3",
+            "condition": "true"
+          }
+        ]
+      },
+      {
+        "id": "support",
+        "type": "conversation",
+        "prompt": "We encountered an issue. Please contact support@example.com",
+        "transitions": [
+          {
+            "id": "t4",
+            "condition": "true"
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "type": "end"
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "start", "target": "greeting" },
+      { "id": "e2", "source": "greeting", "target": "face-scan" },
+      { "id": "e3", "source": "face-scan", "target": "liveness" },
+      { "id": "e4", "source": "face-scan", "target": "support" },
+      { "id": "e5", "source": "liveness", "target": "email" },
+      { "id": "e6", "source": "liveness", "target": "failed" },
+      { "id": "e7", "source": "email", "target": "2fa" },
+      { "id": "e8", "source": "email", "target": "end" },
+      { "id": "e9", "source": "2fa", "target": "success" },
+      { "id": "e10", "source": "2fa", "target": "support" },
+      { "id": "e11", "source": "2fa", "target": "failed" },
+      { "id": "e12", "source": "success", "target": "end" },
+      { "id": "e13", "source": "failed", "target": "end" },
+      { "id": "e14", "source": "support", "target": "end" }
+    ]
+  }
+}
+
+### List Sessions with Filtering
+GET {{baseUrl}}/sessions?limit=10&status=complete&sortBy=createdAt&sortOrder=desc
+Authorization: Bearer {{apiKey}}
+Facesign-Version: 2024-12-18
+
+### Get Session Details
+GET {{baseUrl}}/sessions/{{sessionId}}
+Authorization: Bearer {{apiKey}}
+Facesign-Version: 2024-12-18
+
+### Create New Client Secret
+GET {{baseUrl}}/sessions/{{sessionId}}/refresh
+Authorization: Bearer {{apiKey}}
+Facesign-Version: 2024-12-18
+
+### Get Supported Languages
+GET {{baseUrl}}/langs
+Authorization: Bearer {{apiKey}}
+Facesign-Version: 2024-12-18
+
+### Get Available Avatars
+GET {{baseUrl}}/avatars
+Authorization: Bearer {{apiKey}}
+Facesign-Version: 2024-12-18
+
+### Example Error Response (401 Unauthorized)
+# {
+#   "error": {
+#     "type": "authentication_error",
+#     "message": "Invalid API key provided"
+#   }
+# }
+
+### Example Success Response for Session Creation
+# {
+#   "session": {
+#     "id": "session_abc123",
+#     "createdAt": 1234567890,
+#     "status": "requiresInput",
+#     "settings": { ... },
+#     "version": "1.0.18"
+#   },
+#   "clientSecret": {
+#     "secret": "cs_abc123",
+#     "createdAt": 1234567890,
+#     "expireAt": 1234654290,
+#     "url": "https://verify.facesign.ai/s/abc123"
+#   }
+# } 

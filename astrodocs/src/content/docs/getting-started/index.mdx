@@ -1,0 +1,207 @@
+---
+title: Getting Started
+description: Install the SDK, set your API key, and create your first verification session.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import Callout from '../../../components/Callout.astro';
+
+# 🚀 Quick Start
+
+Get up and running with the FaceSign API in just a few minutes.
+
+## 1 · Install
+
+Install the FaceSign SDK using your preferred package manager:
+
+<Tabs>
+<TabItem label="npm">
+```bash
+npm install @facesignai/api
+```
+</TabItem>
+<TabItem label="yarn">
+```bash
+yarn add @facesignai/api
+```
+</TabItem>
+<TabItem label="pnpm">
+```bash
+pnpm add @facesignai/api
+```
+</TabItem>
+</Tabs>
+
+## 2 · Authenticate
+
+Set your API key as an environment variable:
+
+```bash
+export FACESIGN_API_KEY=sk_test_your_api_key_here
+```
+
+<Callout type="tip">
+You can find your API keys in the [FaceSign Dashboard](https://dashboard.facesign.ai/api-keys).
+</Callout>
+
+## 3 · Create a session
+
+Create your first verification session:
+
+<Tabs>
+<TabItem label="TypeScript">
+```typescript
+import { Client } from '@facesignai/api'
+
+// Initialize the client
+const facesignClient = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+})
+
+// Create a session
+const { session, clientSecret } = await facesignClient.session.create({
+  clientReferenceId: 'user-123',
+  metadata: {
+    source: 'web-app',
+    purpose: 'identity-verification'
+  },
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: 'start'
+      },
+      {
+        id: 'greeting',
+        type: 'conversation',
+        prompt: 'Hello! I'll help you verify your identity. What's your full name?',
+        transitions: [
+          {
+            id: 't1',
+            condition: 'true'
+          }
+        ]
+      },
+      {
+        id: 'end',
+        type: 'end'
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'greeting' },
+      { id: 'e2', source: 'greeting', target: 'end' }
+    ]
+  }
+})
+
+console.log('Session created:', session.id)
+console.log('Client URL:', clientSecret.url)
+```
+</TabItem>
+<TabItem label="cURL">
+```bash
+curl -X POST https://api.facesign.ai/sessions \
+  -H "Authorization: Bearer $FACESIGN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientReferenceId": "user-123",
+    "metadata": {
+      "source": "web-app"
+    },
+    "flow": {
+      "nodes": [
+        {
+          "id": "start",
+          "type": "start"
+        },
+        {
+          "id": "greeting",
+          "type": "conversation",
+          "prompt": "Hello! What's your name?",
+          "transitions": [
+            {
+              "id": "t1",
+              "condition": "true"
+            }
+          ]
+        },
+        {
+          "id": "end",
+          "type": "end"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "start",
+          "target": "greeting"
+        },
+        {
+          "id": "e2",
+          "source": "greeting",
+          "target": "end"
+        }
+      ]
+    }
+  }'
+```
+</TabItem>
+<TabItem label="Python">
+```python
+from facesign import FaceSignClient
+
+# Initialize the client
+client = FaceSignClient(auth=os.environ['FACESIGN_API_KEY'])
+
+# Create a session
+response = client.session.create(
+    client_reference_id='user-123',
+    metadata={
+        'source': 'web-app',
+        'purpose': 'identity-verification'
+    },
+    flow={
+        'nodes': [
+            {
+                'id': 'start',
+                'type': 'start'
+            },
+            {
+                'id': 'greeting',
+                'type': 'conversation',
+                'prompt': 'Hello! What's your name?',
+                'transitions': [
+                    {
+                        'id': 't1',
+                        'condition': 'true'
+                    }
+                ]
+            },
+            {
+                'id': 'end',
+                'type': 'end'
+            }
+        ],
+        'edges': [
+            {'id': 'e1', 'source': 'start', 'target': 'greeting'},
+            {'id': 'e2', 'source': 'greeting', 'target': 'end'}
+        ]
+    }
+)
+
+print(f"Session created: {response.session.id}")
+print(f"Client URL: {response.client_secret.url}")
+```
+</TabItem>
+</Tabs>
+
+<Callout type="info" title="Sandbox vs Production">
+By default, sessions are created in sandbox mode when using test keys (`sk_test_*`). Switch to live keys (`sk_live_*`) for production use.
+</Callout>
+
+## Next Steps
+
+- [Authentication Guide](/getting-started/authentication) - Learn about API keys and authentication
+- [Session Concepts](/concepts/sessions) - Understand session lifecycle and management
+- [Node Types](/concepts/node-graph) - Build complex verification flows
+- [Webhooks Guide](/guides/webhooks) - Handle real-time session updates 

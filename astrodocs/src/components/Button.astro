@@ -1,0 +1,33 @@
+---
+export interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  download?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const { 
+  variant = 'primary', 
+  size = 'md',
+  href,
+  download = false,
+  disabled = false,
+  class: className = ''
+} = Astro.props;
+
+const sizeClass = size === 'sm' ? 'btn-sm' : size === 'lg' ? 'btn-lg' : '';
+const classes = `btn btn-${variant} ${sizeClass} ${className}`.trim();
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag 
+  class={classes}
+  href={href}
+  download={download}
+  disabled={disabled}
+>
+  <slot />
+</Tag> 

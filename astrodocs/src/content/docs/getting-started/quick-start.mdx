@@ -1,0 +1,69 @@
+---
+title: Quick Start
+description: Get up and running with FaceSign API in 5 minutes.
+---
+
+# Quick Start
+
+This guide will help you get started with the FaceSign API quickly.
+
+## Prerequisites
+
+- Node.js 18+ or Python 3.8+
+- A FaceSign account ([sign up here](https://dashboard.facesign.ai))
+- An API key from your dashboard
+
+## Step 1: Install the SDK
+
+Choose your preferred language and install the SDK:
+
+```bash
+npm install @facesignai/api
+```
+
+## Step 2: Initialize the Client
+
+```typescript
+import { Client } from '@facesignai/api'
+
+const client = new Client({
+  auth: 'sk_test_your_api_key'
+})
+```
+
+## Step 3: Create Your First Session
+
+```typescript
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'quickstart-test',
+  metadata: { test: true },
+  flow: {
+    nodes: [
+      { id: 'start', type: 'start' },
+      { 
+        id: 'greeting', 
+        type: 'conversation',
+        prompt: 'Hello! This is a test verification.',
+        transitions: [{ id: 't1', condition: 'true' }]
+      },
+      { id: 'end', type: 'end' }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'greeting' },
+      { id: 'e2', source: 'greeting', target: 'end' }
+    ]
+  }
+})
+
+console.log('Session URL:', clientSecret.url)
+```
+
+## Step 4: Test the Flow
+
+Open the session URL in your browser to test the verification flow.
+
+## Next Steps
+
+- [Full Getting Started Guide](/getting-started) - Detailed setup instructions
+- [Authentication](/getting-started/authentication) - API key management
+- [Session Concepts](/concepts/sessions) - Understanding sessions 

@@ -1,0 +1,192 @@
+---
+title: Changelog
+description: Release history and version changes for the FaceSign API
+---
+
+import { Callout } from 'nextra/components'
+
+# Changelog
+
+All notable changes to the FaceSign API are documented here.
+
+<Callout type="info">
+  The FaceSign API follows [Semantic Versioning](https://semver.org/). Breaking changes are only introduced in major versions.
+</Callout>
+
+## [1.0.18] - 2025-01-29
+
+### ⚠️ Breaking Changes
+
+- **Standardized Two-Factor Authentication contact field names**
+  - Removed support for custom field mapping (`emailField` and `phoneField` properties)
+  - When using `SESSION_DATA` as contact source, the system now always looks for standardized `email` and `phone` fields
+  - This ensures consistent data structure across all integrations
+  - **Migration required**: Update your data to use standard field names: `email` and `phone`
+
+## [1.0.16] - 2025-01-29
+
+### ✨ Added
+
+**Two-Factor Authentication Node** - Complete 2FA implementation with:
+
+#### Enums
+- `FSTwoFactorChannel` - EMAIL and SMS channel options
+- `FSTwoFactorContactSource` - session_data, module_settings, and recognition_match sources
+- `FSTwoFactorOutcome` - verified, delivery_failed, failed_unverified, cancelled, and error outcomes
+
+#### Features
+- Multi-channel delivery (Email via Resend, SMS via Twilio)
+- Flexible contact source configuration
+- Template system with variable support (`{{userName}}`, `{{code}}`, `{{companyName}}`)
+- Configurable verification settings (OTP length, expiry, max attempts, resend delay)
+- Test mode for development
+
+#### Integration
+- `FSPhraseAction.START_TWO_FACTOR_VERIFICATION` action for conversation flow
+- `FSClientEvent.TWO_FACTOR_CODE_SPOKEN` event for spoken code verification
+
+## [1.0.15] - 2025-01-28
+
+### ✨ Added
+
+**Advanced Face Scan Configuration Options**:
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `captureDelay` | Countdown before capture | 3000ms |
+| `detectionInterval` | Face check frequency | 150ms |
+| `qualityThreshold` | Overall quality score (0-1) | 0.7 |
+| `blurThreshold` | Clarity threshold (lower = stricter) | 50 |
+| `minFaceSize` / `maxFaceSize` | Face size range in pixels | 100-400px |
+| `enableSound` | Audio feedback | true |
+| `enableHaptics` | Haptic feedback (mobile) | true |
+| `useWebGL` | WebGL acceleration | true |
+| `maxRetries` | Maximum capture attempts | 3 |
+
+## [1.0.14] - 2025-01-28
+
+### ✨ Added
+
+**Permissions Screen Localization**:
+- `permissionsButtonTextTranslates` - Localized button text per language
+- `permissionsMainHeadingTranslates` - Localized main heading per language
+- `permissionsSubheadingTranslates` - Localized subheading per language
+
+Original non-localized fields retained for backward compatibility.
+
+## [1.0.13] - 2025-01-28
+
+### ✨ Added
+
+**Face Scan Modes**:
+- `FSFaceScanMode` enum with CAPTURE and COMPARE modes
+- Enhanced `FSFaceScanNode` interface with mode-based configuration
+- `saveToField` option for capture-only mode
+- `CAPTURED` outcome for capture-only face scans
+
+### 🔄 Changed
+
+- Reorganized `FSFaceScanOutcome` enum for mode-specific outcomes
+- Updated `FSFaceScanNode` to support dual-mode operation
+
+## [1.0.12] - 2025-01-27
+
+### ✨ Added
+
+**Face Scan Node** (`FACE_SCAN`) for 1:1 biometric face matching:
+- `FSFaceScanOutcome` enum - match, noMatch, noFace, error
+- `FSFaceScanNode` interface with:
+  - Reference image source configuration
+  - Matching threshold settings
+  - Flexible outcome mapping
+
+## [1.0.11] - 2025-01-27
+
+### ✨ Added
+
+**Permissions Screen Customization** in `SessionSettings`:
+
+| Property | Description |
+|----------|-------------|
+| `permissionsButtonText` | Custom button text |
+| `permissionsBackgroundType` | 'avatar' or 'color' background |
+| `permissionsBackgroundColor` | Custom color for solid background |
+| `permissionsMainHeading` | Main heading text |
+| `permissionsSubheading` | Subheading text |
+
+## [1.0.10] - 2024-05-20
+
+### ✨ Added
+
+**Document Scanning Node** (`DOCUMENT_SCAN`) with Microblink integration:
+- `MicroblinkDocumentType` enum for supported documents
+- `FSDocumentScanOutcome` enum for scan results
+- `FSDocumentScanNode` interface with scanning configuration
+- Updated `FSNode` union type
+
+## [1.0.9] - Previous version
+
+### 🚀 Initial Release
+
+Core node types:
+- Start/End nodes
+- Conversation nodes
+- Liveness Detection nodes
+- Email Input nodes
+- Data Validation nodes
+
+## Migration Guides
+
+### Migrating to 1.0.18
+
+If you're using Two-Factor Authentication with `SESSION_DATA` contact source:
+
+**Before:**
+```typescript
+{
+  type: FSNodeType.TWO_FACTOR,
+  contactSource: 'session_data',
+  emailField: 'user_email',  // ❌ No longer supported
+  phoneField: 'user_phone'   // ❌ No longer supported
+}
+```
+
+**After:**
+```typescript
+// Ensure your session data uses standard field names
+sessionData = {
+  email: 'user@example.com',  // ✅ Standard field name
+  phone: '+1234567890'        // ✅ Standard field name
+}
+
+{
+  type: FSNodeType.TWO_FACTOR,
+  contactSource: 'session_data'
+  // System automatically looks for 'email' and 'phone' fields
+}
+```
+
+## Version Support
+
+| Version | Status | Support Until |
+|---------|--------|---------------|
+| 1.0.18 | **Current** | - |
+| 1.0.16-1.0.17 | Supported | 2025-07-29 |
+| 1.0.15 and below | Deprecated | 2025-04-29 |
+
+<Callout type="warning">
+  Always test new versions in a development environment before upgrading production systems.
+</Callout>
+
+## Deprecation Policy
+
+- Features are deprecated with advance notice in minor versions
+- Deprecated features are removed in the next major version
+- Breaking changes are only introduced in major versions
+- Security fixes are backported to supported versions
+
+## Stay Updated
+
+- Subscribe to [release notifications](https://github.com/facesignai/facesign-api/releases)
+- Join our [developer newsletter](https://facesign.ai/developers)
+- Follow [@facesignai](https://twitter.com/facesignai) for updates 

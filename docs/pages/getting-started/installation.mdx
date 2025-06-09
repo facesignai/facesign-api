@@ -1,0 +1,124 @@
+---
+title: Installation
+description: Install the FaceSign SDK and set up your development environment
+---
+
+import { Tabs } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# Installation
+
+Get started with FaceSign API by installing our official SDK.
+
+## Package Installation
+
+<Tabs items={['npm', 'yarn', 'pnpm']}>
+  <Tabs.Tab>
+```bash
+npm install @facesignai/api
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```bash
+yarn add @facesignai/api
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```bash
+pnpm add @facesignai/api
+```
+  </Tabs.Tab>
+</Tabs>
+
+## Requirements
+
+- **Node.js**: Version 12 or higher
+- **TypeScript**: Version 4.8.4 or higher (for TypeScript projects)
+
+## Peer Dependencies
+
+The SDK has minimal dependencies:
+
+- `node-fetch`: ^2.6.1 (for Node.js environments)
+- `loglevel`: ^1.9.1 (for debug logging)
+
+These are automatically installed with the main package.
+
+## TypeScript Support
+
+The SDK is written in TypeScript and includes comprehensive type definitions. No additional `@types` packages are required.
+
+```typescript
+import Client from '@facesignai/api'
+import type { 
+  Session, 
+  SessionSettings, 
+  FSNode,
+  FSNodeType 
+} from '@facesignai/api'
+```
+
+## CDN Usage
+
+For browser-based implementations or quick prototypes, you can use our CDN:
+
+```html
+<script src="https://unpkg.com/@facesignai/api@latest/dist/browser.js"></script>
+<script>
+  const client = new FaceSignAPI.Client({
+    auth: 'YOUR_API_KEY'
+  })
+</script>
+```
+
+<Callout type="warning">
+  CDN usage is not recommended for production applications. Always use the NPM package for better security, tree-shaking, and type safety.
+</Callout>
+
+## Verify Installation
+
+After installation, you can verify everything is working:
+
+```javascript
+const Client = require('@facesignai/api').default
+// or ES modules
+// import Client from '@facesignai/api'
+
+const client = new Client({
+  auth: 'YOUR_API_KEY'
+})
+
+// Test the connection
+client.langs.retrieve()
+  .then(response => {
+    console.log('Available languages:', response.langs)
+  })
+  .catch(error => {
+    console.error('Connection failed:', error)
+  })
+```
+
+## Environment Variables
+
+We recommend storing your API credentials in environment variables:
+
+```bash
+# .env file
+FACESIGN_API_KEY=your_api_key_here
+FACESIGN_API_URL=https://api.facesign.ai  # Optional, defaults to production
+```
+
+Then in your code:
+
+```javascript
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  serverUrl: process.env.FACESIGN_API_URL // Optional
+})
+```
+
+## Next Steps
+
+- [Set up authentication](/getting-started/authentication) with your API key
+- [Create your first session](/getting-started/quick-start)
+- [Configure your environment](/getting-started/environment-setup) 

@@ -1,0 +1,1187 @@
+openapi: 3.0.3
+info:
+  title: FaceSign API
+  description: |
+    The FaceSign API enables developers to create AI-powered identity verification flows with conversational interfaces, 
+    biometric verification, document scanning, and multi-factor authentication.
+  version: 1.0.18
+  contact:
+    name: FaceSign Support
+    email: support@facesign.ai
+    url: https://facesign.ai
+  license:
+    name: MIT
+    url: https://github.com/facesignai/facesign-api/blob/main/LICENSE
+
+servers:
+  - url: https://api.facesign.ai
+    description: Production server
+  - url: https://api-staging.facesign.ai
+    description: Staging server
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Sessions
+    description: Identity verification session management
+  - name: Languages
+    description: Supported language operations
+  - name: Avatars
+    description: Available avatar operations
+
+paths:
+  /sessions:
+    post:
+      tags:
+        - Sessions
+      summary: Create a verification session
+      description: Creates a new identity verification session with the specified configuration
+      operationId: createSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionSettings'
+            examples:
+              basicSession:
+                summary: Basic conversational session
+                value:
+                  clientReferenceId: "user-123"
+                  metadata:
+                    source: "web-app"
+                  flow:
+                    nodes:
+                      - id: "start"
+                        type: "start"
+                      - id: "greeting"
+                        type: "conversation"
+                        prompt: "Hello! What's your name?"
+                        transitions:
+                          - id: "t1"
+                            condition: "true"
+                      - id: "end"
+                        type: "end"
+                    edges:
+                      - id: "e1"
+                        source: "start"
+                        target: "greeting"
+                      - id: "e2"
+                        source: "greeting"
+                        target: "end"
+      responses:
+        '200':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSessionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+    get:
+      tags:
+        - Sessions
+      summary: List sessions
+      description: Retrieve a paginated list of sessions with optional filtering
+      operationId: listSessions
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of sessions to return (max 100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: cursor
+          in: query
+          description: Cursor for pagination
+          schema:
+            type: string
+        - name: flowId
+          in: query
+          description: Filter by flow/form ID
+          schema:
+            type: string
+        - name: clientReferenceId
+          in: query
+          description: Filter by client reference ID
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by session status(es)
+          schema:
+            oneOf:
+              - type: string
+                enum: [requiresInput, processing, canceled, complete]
+              - type: array
+                items:
+                  type: string
+                  enum: [requiresInput, processing, canceled, complete]
+          style: form
+          explode: true
+        - name: fromDate
+          in: query
+          description: Filter sessions created after this timestamp (Unix timestamp)
+          schema:
+            type: integer
+        - name: toDate
+          in: query
+          description: Filter sessions created before this timestamp (Unix timestamp)
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+            enum: [createdAt, status, finishedAt]
+            default: createdAt
+        - name: sortOrder
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: search
+          in: query
+          description: Search in metadata and other fields
+          schema:
+            type: string
+        - name: includeTotal
+          in: query
+          description: Include total count (expensive operation)
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Sessions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /sessions/{sessionId}:
+    get:
+      tags:
+        - Sessions
+      summary: Retrieve a session
+      description: Get details and status of a specific verification session
+      operationId: getSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: The session ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /sessions/{sessionId}/refresh:
+    get:
+      tags:
+        - Sessions
+      summary: Create a client secret
+      description: Generate a new client secret for the specified session
+      operationId: createClientSecret
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: The session ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Client secret created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientSecret'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /langs:
+    get:
+      tags:
+        - Languages
+      summary: Get supported languages
+      description: Retrieve a list of all supported languages
+      operationId: getLangs
+      responses:
+        '200':
+          description: Languages retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLangsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /avatars:
+    get:
+      tags:
+        - Avatars
+      summary: Get available avatars
+      description: Retrieve a list of all available avatars
+      operationId: getAvatars
+      responses:
+        '200':
+          description: Avatars retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAvatarsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API key authentication. Use format "Bearer sk_live_..." or "Bearer sk_test_..."
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              type: "validation_error"
+              message: "Invalid request parameters"
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              type: "authentication_error"
+              message: "Invalid API key provided"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              type: "not_found_error"
+              message: "Session not found"
+
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              type: "rate_limit_error"
+              message: "Rate limit exceeded"
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: The rate limit ceiling
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: The number of requests remaining in the current window
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: The time at which the rate limit window resets in Unix time
+
+  schemas:
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - type
+            - message
+          properties:
+            type:
+              type: string
+              enum:
+                - authentication_error
+                - validation_error
+                - not_found_error
+                - rate_limit_error
+                - server_error
+            message:
+              type: string
+            code:
+              type: string
+
+    SessionSettings:
+      type: object
+      required:
+        - clientReferenceId
+        - metadata
+      properties:
+        clientReferenceId:
+          type: string
+          description: Your internal reference ID for this session
+          example: "user-123"
+        metadata:
+          type: object
+          description: Custom metadata (max 50KB)
+          example:
+            source: "web-app"
+            department: "sales"
+        initialPhrase:
+          type: string
+          description: Opening message from the avatar
+        finalPhrase:
+          type: string
+          description: Closing message from the avatar
+        providedData:
+          type: object
+          additionalProperties:
+            type: string
+          description: Pre-filled user data
+        avatarId:
+          type: string
+          description: Specific avatar to use
+        langs:
+          type: array
+          items:
+            type: string
+          description: Available languages for the session
+          example: ["en", "es", "fr"]
+        defaultLang:
+          type: string
+          description: Default language
+          example: "en"
+        zone:
+          type: string
+          enum: [es, eu]
+          description: Geographic zone
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'
+          description: Legacy module configuration (deprecated, use flow instead)
+        flow:
+          $ref: '#/components/schemas/FSFlow'
+          description: Node-based flow configuration (recommended)
+        customization:
+          $ref: '#/components/schemas/Customization'
+          description: UI/UX customization options
+
+    FSFlow:
+      type: object
+      required:
+        - nodes
+        - edges
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/FSNode'
+          description: List of nodes in the flow
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/FSEdge'
+          description: Connections between nodes
+
+    FSNode:
+      oneOf:
+        - $ref: '#/components/schemas/FSStartNode'
+        - $ref: '#/components/schemas/FSEndNode'
+        - $ref: '#/components/schemas/FSConversationNode'
+        - $ref: '#/components/schemas/FSLivenessDetectionNode'
+        - $ref: '#/components/schemas/FSEnterEmailNode'
+        - $ref: '#/components/schemas/FSDataValidationNode'
+        - $ref: '#/components/schemas/FSDocumentScanNode'
+        - $ref: '#/components/schemas/FSRecognitionNode'
+        - $ref: '#/components/schemas/FSFaceScanNode'
+        - $ref: '#/components/schemas/FSTwoFactorNode'
+      discriminator:
+        propertyName: type
+        mapping:
+          start: '#/components/schemas/FSStartNode'
+          end: '#/components/schemas/FSEndNode'
+          conversation: '#/components/schemas/FSConversationNode'
+          liveness_detection: '#/components/schemas/FSLivenessDetectionNode'
+          enter_email: '#/components/schemas/FSEnterEmailNode'
+          data_validation: '#/components/schemas/FSDataValidationNode'
+          document_scan: '#/components/schemas/FSDocumentScanNode'
+          recognition: '#/components/schemas/FSRecognitionNode'
+          face_scan: '#/components/schemas/FSFaceScanNode'
+          two_factor: '#/components/schemas/FSTwoFactorNode'
+
+    FSNodeBase:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the node within the flow
+        type:
+          $ref: '#/components/schemas/FSNodeType'
+
+    FSNodeType:
+      type: string
+      enum:
+        - start
+        - end
+        - conversation
+        - liveness_detection
+        - enter_email
+        - data_validation
+        - document_scan
+        - recognition
+        - face_scan
+        - two_factor
+
+    FSStartNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [start]
+
+    FSEndNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [end]
+
+    FSConversationNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - prompt
+            - transitions
+          properties:
+            type:
+              type: string
+              enum: [conversation]
+            prompt:
+              type: string
+              description: The conversation prompt
+            transitions:
+              type: array
+              items:
+                $ref: '#/components/schemas/FSNodeTransition'
+
+    FSNodeTransition:
+      type: object
+      required:
+        - id
+        - condition
+      properties:
+        id:
+          type: string
+        condition:
+          type: string
+          description: JavaScript condition expression
+
+    FSLivenessDetectionNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - outcomes
+          properties:
+            type:
+              type: string
+              enum: [liveness_detection]
+            outcomes:
+              type: object
+              additionalProperties:
+                type: string
+              description: Maps outcome to target node ID
+
+    FSEnterEmailNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - outcomes
+          properties:
+            type:
+              type: string
+              enum: [enter_email]
+            outcomes:
+              type: object
+              additionalProperties:
+                type: string
+            transitions:
+              type: array
+              items:
+                $ref: '#/components/schemas/FSNodeTransition'
+
+    FSDataValidationNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - transitions
+            - validation
+          properties:
+            type:
+              type: string
+              enum: [data_validation]
+            transitions:
+              type: array
+              items:
+                $ref: '#/components/schemas/FSNodeTransition'
+            validation:
+              type: object
+              required:
+                - field
+                - action
+              properties:
+                field:
+                  type: string
+                action:
+                  type: string
+                value:
+                  type: string
+
+    FSDocumentScanNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - scanningMode
+            - allowedDocumentTypes
+            - outcomes
+          properties:
+            type:
+              type: string
+              enum: [document_scan]
+            scanningMode:
+              $ref: '#/components/schemas/FSDocumentScanMode'
+            allowedDocumentTypes:
+              type: array
+              items:
+                $ref: '#/components/schemas/FSDocumentType'
+            outcomes:
+              type: object
+              additionalProperties:
+                type: string
+            showTorchButton:
+              type: boolean
+              default: true
+            showCameraSwitch:
+              type: boolean
+              default: true
+
+    FSDocumentScanMode:
+      type: string
+      enum:
+        - SINGLE_SIDE
+        - MULTI_SIDE
+        - BARCODE
+
+    FSDocumentType:
+      type: string
+      enum:
+        - MRTD_TYPE_UNKNOWN
+        - MRTD_TYPE_IDENITY_CARD
+        - MRTD_TYPE_PASSPORT
+        - MRTD_TYPE_VISA
+        - MRTD_TYPE_GREEN_CARD
+        - MRTD_TYPE_MYS_PASS_IMM13P
+        - MRTD_TYPE_DL
+        - MRTD_TYPE_INTERNAL_TRAVEL_DOCUMENT
+        - MRTD_TYPE_BORDER_CROSSING_CARD
+
+    FSRecognitionNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - outcomes
+          properties:
+            type:
+              type: string
+              enum: [recognition]
+            outcomes:
+              type: object
+              additionalProperties:
+                type: string
+
+    FSFaceScanNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - mode
+            - outcomes
+          properties:
+            type:
+              type: string
+              enum: [face_scan]
+            mode:
+              $ref: '#/components/schemas/FSFaceScanMode'
+            outcomes:
+              type: object
+              additionalProperties:
+                type: string
+            captureInstructions:
+              type: string
+            saveToField:
+              type: string
+            requireLiveness:
+              type: boolean
+            referenceImageSource:
+              type: string
+              enum: [session, providedData, url]
+            referenceImageKey:
+              type: string
+            referenceImageUrl:
+              type: string
+            similarityThreshold:
+              type: number
+              minimum: 0
+              maximum: 1
+            captureDelay:
+              type: integer
+              default: 3000
+            detectionInterval:
+              type: integer
+              default: 150
+            qualityThreshold:
+              type: number
+              default: 0.7
+            blurThreshold:
+              type: number
+              default: 50
+            minFaceSize:
+              type: integer
+              default: 100
+            maxFaceSize:
+              type: integer
+              default: 400
+            enableSound:
+              type: boolean
+              default: true
+            enableHaptics:
+              type: boolean
+              default: true
+            useWebGL:
+              type: boolean
+              default: true
+            maxRetries:
+              type: integer
+              default: 3
+
+    FSFaceScanMode:
+      type: string
+      enum:
+        - capture
+        - compare
+
+    FSTwoFactorNode:
+      allOf:
+        - $ref: '#/components/schemas/FSNodeBase'
+        - type: object
+          required:
+            - channels
+            - contactSource
+            - outcomes
+          properties:
+            type:
+              type: string
+              enum: [two_factor]
+            channels:
+              type: array
+              items:
+                $ref: '#/components/schemas/FSTwoFactorChannel'
+            contactSource:
+              $ref: '#/components/schemas/FSTwoFactorContactSource'
+            outcomes:
+              type: object
+              additionalProperties:
+                type: string
+            staticEmail:
+              type: string
+            staticPhone:
+              type: string
+            emailTemplate:
+              type: string
+            smsTemplate:
+              type: string
+            otpLength:
+              type: integer
+              minimum: 4
+              maximum: 8
+              default: 6
+            expirySeconds:
+              type: integer
+              default: 300
+            maxAttempts:
+              type: integer
+              default: 3
+            resendAfterSeconds:
+              type: integer
+            showUI:
+              type: boolean
+              default: true
+            testMode:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                email:
+                  type: string
+                phone:
+                  type: string
+
+    FSTwoFactorChannel:
+      type: string
+      enum:
+        - email
+        - sms
+
+    FSTwoFactorContactSource:
+      type: string
+      enum:
+        - session_data
+        - module_settings
+        - recognition_match
+
+    FSEdge:
+      type: object
+      required:
+        - id
+        - source
+        - target
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+          description: Source node ID
+        target:
+          type: string
+          description: Target node ID
+
+    Module:
+      oneOf:
+        - $ref: '#/components/schemas/EmailVerification'
+        - $ref: '#/components/schemas/SmsVerification'
+        - $ref: '#/components/schemas/IdentityVerification'
+        - $ref: '#/components/schemas/DocumentAuthentication'
+        - $ref: '#/components/schemas/AgeEstimation'
+        - $ref: '#/components/schemas/ProofOfIntent'
+        - $ref: '#/components/schemas/KnowledgeVerify'
+      discriminator:
+        propertyName: type
+
+    EmailVerification:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [emailVerification]
+        name:
+          type: string
+        email:
+          type: string
+        publicRecognitionEnabled:
+          type: boolean
+
+    SmsVerification:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [smsVerification]
+        phone:
+          type: string
+
+    IdentityVerification:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [identityVerification]
+
+    DocumentAuthentication:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [documentAuthentication]
+
+    AgeEstimation:
+      type: object
+      required:
+        - type
+        - age
+      properties:
+        type:
+          type: string
+          enum: [ageEstimation]
+        age:
+          type: integer
+
+    ProofOfIntent:
+      type: object
+      required:
+        - type
+        - requestedData
+      properties:
+        type:
+          type: string
+          enum: [proofOfIntent]
+        requestedData:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestedData'
+
+    KnowledgeVerify:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [knowledgeVerify]
+
+    RequestedData:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+        isRequired:
+          type: boolean
+        description:
+          type: string
+
+    Customization:
+      type: object
+      properties:
+        permissionsPage:
+          $ref: '#/components/schemas/PermissionsPageCustomization'
+        controls:
+          $ref: '#/components/schemas/ControlsCustomization'
+
+    PermissionsPageCustomization:
+      type: object
+      properties:
+        buttonText:
+          type: string
+        backgroundType:
+          type: string
+          enum: [AVATAR, COLOR]
+        backgroundColor:
+          type: string
+        mainHeading:
+          type: string
+        subheading:
+          type: string
+        buttonTextTranslates:
+          type: object
+          additionalProperties:
+            type: string
+        mainHeadingTranslates:
+          type: object
+          additionalProperties:
+            type: string
+        subheadingTranslates:
+          type: object
+          additionalProperties:
+            type: string
+
+    ControlsCustomization:
+      type: object
+      properties:
+        showUxControls:
+          type: boolean
+
+    Session:
+      type: object
+      required:
+        - id
+        - createdAt
+        - status
+        - settings
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: integer
+          description: Unix timestamp
+        startedAt:
+          type: integer
+          description: Unix timestamp when user began
+        finishedAt:
+          type: integer
+          description: Unix timestamp when completed/canceled
+        status:
+          $ref: '#/components/schemas/SessionStatus'
+        settings:
+          $ref: '#/components/schemas/SessionSettings'
+        version:
+          type: string
+        report:
+          $ref: '#/components/schemas/SessionReport'
+
+    SessionStatus:
+      type: string
+      enum:
+        - requiresInput
+        - processing
+        - canceled
+        - complete
+
+    SessionReport:
+      type: object
+      properties:
+        transcript:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phrase'
+        aiAnalysis:
+          $ref: '#/components/schemas/SessionReportAIAnalysis'
+        location:
+          type: object
+          description: Geolocation data
+        device:
+          type: object
+          description: Device fingerprint
+        livenessDetected:
+          type: boolean
+        lang:
+          type: string
+        extractedData:
+          type: object
+          additionalProperties:
+            type: string
+        screenshots:
+          type: array
+          items:
+            type: string
+        videos:
+          type: object
+          properties:
+            avatarVideoUrl:
+              type: string
+            userVideoUrl:
+              type: string
+        isVerified:
+          type: boolean
+
+    SessionReportAIAnalysis:
+      type: object
+      properties:
+        ageMin:
+          type: integer
+        ageMax:
+          type: integer
+        sex:
+          type: string
+          enum: [male, female]
+        realPersonOrVirtual:
+          type: string
+          enum: [real, virtual, noface]
+        overallSummary:
+          type: string
+        analysis:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              shortDescription:
+                type: string
+              longDescription:
+                type: string
+
+    Phrase:
+      type: object
+      required:
+        - id
+        - createdAt
+        - text
+        - isAvatar
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: integer
+          description: Unix timestamp
+        text:
+          type: string
+        isAvatar:
+          type: boolean
+
+    ClientSecret:
+      type: object
+      required:
+        - secret
+        - createdAt
+        - expireAt
+        - url
+      properties:
+        secret:
+          type: string
+        createdAt:
+          type: integer
+          description: Unix timestamp
+        expireAt:
+          type: integer
+          description: Unix timestamp
+        url:
+          type: string
+          description: Hosted session URL
+
+    CreateSessionResponse:
+      type: object
+      required:
+        - session
+        - clientSecret
+      properties:
+        session:
+          $ref: '#/components/schemas/Session'
+        clientSecret:
+          $ref: '#/components/schemas/ClientSecret'
+
+    GetSessionResponse:
+      type: object
+      required:
+        - session
+        - clientSecret
+      properties:
+        session:
+          $ref: '#/components/schemas/Session'
+        clientSecret:
+          $ref: '#/components/schemas/ClientSecret'
+
+    GetSessionsResponse:
+      type: object
+      required:
+        - sessions
+        - hasMore
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+        nextCursor:
+          type: string
+        totalCount:
+          type: integer
+          description: Only included if includeTotal=true
+        hasMore:
+          type: boolean
+
+    Lang:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+
+    GetLangsResponse:
+      type: object
+      required:
+        - langs
+      properties:
+        langs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lang'
+
+    Avatar:
+      type: object
+      required:
+        - id
+        - name
+        - gender
+        - imageUrl
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        gender:
+          type: string
+          enum: [male, female, unknown]
+        imageUrl:
+          type: string
+
+    GetAvatarsResponse:
+      type: object
+      required:
+        - avatars
+      properties:
+        avatars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avatar' 

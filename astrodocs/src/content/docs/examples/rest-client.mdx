@@ -1,0 +1,138 @@
+---
+title: "VS Code REST Client Examples"
+description: "Run FaceSign API calls directly from your editor with interactive examples."
+---
+
+import Callout from '../../../components/Callout.astro';
+import Button from '../../../components/Button.astro';
+import Badge from '../../../components/Badge.astro';
+
+# REST Client Examples
+
+Test the FaceSign API directly from VS Code using the REST Client extension.
+
+<Callout type="info" title="Prerequisites">
+  Install the [VS Code REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension before using these examples.
+</Callout>
+
+## Quick Start
+
+Download our pre-configured REST Client file with example API calls:
+
+<Button href="/openapi-example.http" download>
+  Download openapi-example.http
+</Button>
+
+## Available Examples
+
+The file includes examples for:
+
+- **Session Management** <Badge color="blue">POST</Badge> <Badge color="green">GET</Badge>
+  - Create verification sessions
+  - List sessions with filtering
+  - Retrieve session details
+  - Generate client secrets
+
+- **Configuration** <Badge color="green">GET</Badge>
+  - Fetch supported languages
+  - Get available avatars
+
+- **Authentication** <Badge color="yellow">Bearer Token</Badge>
+  - Test mode examples
+  - Production authentication
+
+## Usage Instructions
+
+1. Open the downloaded `.http` file in VS Code
+2. Set your API key in the variables section:
+   ```http
+   @apiKey = sk_test_your_actual_api_key_here
+   ```
+3. Click "Send Request" above any example to execute it
+4. View the response in the split pane
+
+<Callout type="warning">
+  Never commit your API keys to version control. Use environment variables in production.
+</Callout>
+
+## Example Request
+
+Here's what a basic session creation request looks like:
+
+```http
+### Create a Basic Session
+POST {{baseUrl}}/sessions
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+Facesign-Version: 2024-12-18
+
+{
+  "clientReferenceId": "user-123",
+  "metadata": {
+    "source": "web-app"
+  },
+  "flow": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start"
+      },
+      {
+        "id": "greeting",
+        "type": "conversation",
+        "prompt": "Hello! What's your name?",
+        "transitions": [
+          {
+            "id": "t1",
+            "condition": "true"
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "type": "end"
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "start", "target": "greeting" },
+      { "id": "e2", "source": "greeting", "target": "end" }
+    ]
+  }
+}
+```
+
+## Response Format
+
+All successful responses follow this structure:
+
+```json
+{
+  "session": {
+    "id": "session_abc123",
+    "createdAt": 1234567890,
+    "status": "requiresInput",
+    "settings": { ... }
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "url": "https://verify.facesign.ai/s/abc123"
+  }
+}
+```
+
+## Next Steps
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Ready to integrate?</h3>
+    <p class="card-description">Check out our SDK examples for your preferred language</p>
+  </div>
+  <div class="card-content">
+    <Button href="/examples/basic-session" variant="outline" class="mr-2">
+      TypeScript Example
+    </Button>
+    <Button href="/getting-started/quick-start" variant="outline">
+      Quick Start Guide
+    </Button>
+  </div>
+</div> 

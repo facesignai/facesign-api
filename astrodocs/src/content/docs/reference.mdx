@@ -1,0 +1,205 @@
+---
+title: API Reference
+description: Complete API reference documentation for all FaceSign endpoints.
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+# API Reference
+
+Complete reference documentation for the FaceSign API v1.0.18.
+
+## Base URL
+
+```
+https://api.facesign.ai
+```
+
+## Authentication
+
+All API requests require Bearer token authentication:
+
+```
+Authorization: Bearer sk_live_your_api_key
+```
+
+## Endpoints
+
+### Sessions
+
+<CardGrid>
+  <Card title="POST /sessions" icon="document">
+    Create a new verification session
+  </Card>
+  <Card title="GET /sessions" icon="list-format">
+    List sessions with filtering and pagination
+  </Card>
+  <Card title="GET /sessions/{sessionId}" icon="magnifier">
+    Retrieve session details and status
+  </Card>
+  <Card title="GET /sessions/{sessionId}/refresh" icon="refresh">
+    Generate a new client secret
+  </Card>
+</CardGrid>
+
+### Configuration
+
+<CardGrid>
+  <Card title="GET /langs" icon="translate">
+    Get supported languages
+  </Card>
+  <Card title="GET /avatars" icon="seti:avatar">
+    Get available avatars
+  </Card>
+</CardGrid>
+
+## Create Session
+
+Creates a new identity verification session.
+
+<Tabs>
+<TabItem label="Request">
+```http
+POST /sessions
+Content-Type: application/json
+Authorization: Bearer sk_live_your_api_key
+
+{
+  "clientReferenceId": "user-123",
+  "metadata": {
+    "source": "web-app"
+  },
+  "flow": {
+    "nodes": [...],
+    "edges": [...]
+  }
+}
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "session": {
+    "id": "session_abc123",
+    "createdAt": 1234567890,
+    "status": "requiresInput",
+    "settings": {...},
+    "version": "1.0.18"
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1234567890,
+    "expireAt": 1234654290,
+    "url": "https://verify.facesign.ai/s/abc123"
+  }
+}
+```
+</TabItem>
+</Tabs>
+
+### Required Fields
+
+- **`clientReferenceId`** (string) - Your internal reference ID
+- **`metadata`** (object) - Custom metadata for your reference
+
+### Optional Fields
+
+- **`flow`** (object) - Node-based flow configuration
+- **`customization`** (object) - UI/UX customization
+- **`providedData`** (object) - Pre-filled user data
+- **`langs`** (string[]) - Available languages
+- **`defaultLang`** (string) - Default language
+- **`zone`** (string) - Geographic zone (`es` or `eu`)
+
+## List Sessions
+
+Retrieve a paginated list of sessions with optional filtering.
+
+<Tabs>
+<TabItem label="Request">
+```http
+GET /sessions?limit=10&status=complete
+Authorization: Bearer sk_live_your_api_key
+```
+</TabItem>
+<TabItem label="Response">
+```json
+{
+  "sessions": [
+    {
+      "id": "session_abc123",
+      "createdAt": 1234567890,
+      "status": "complete",
+      "clientReferenceId": "user-123"
+    }
+  ],
+  "nextCursor": "cursor_xyz",
+  "hasMore": true
+}
+```
+</TabItem>
+</Tabs>
+
+### Query Parameters
+
+- **`limit`** (integer) - Max results per page (default: 25, max: 100)
+- **`cursor`** (string) - Pagination cursor
+- **`status`** (string/array) - Filter by status
+- **`clientReferenceId`** (string) - Filter by reference ID
+- **`fromDate`** (integer) - Unix timestamp lower bound
+- **`toDate`** (integer) - Unix timestamp upper bound
+- **`sortBy`** (string) - Sort field (createdAt, status, finishedAt)
+- **`sortOrder`** (string) - Sort direction (asc, desc)
+
+## Response Codes
+
+| Code | Description |
+|------|-------------|
+| `200` | Success |
+| `400` | Bad request - Invalid parameters |
+| `401` | Unauthorized - Invalid API key |
+| `404` | Not found - Resource doesn't exist |
+| `429` | Rate limited - Too many requests |
+| `500` | Server error - Try again later |
+
+## Rate Limits
+
+- **100 requests per minute** per API key
+- Rate limit headers included in responses:
+  - `X-RateLimit-Limit`
+  - `X-RateLimit-Remaining`
+  - `X-RateLimit-Reset`
+
+## Error Format
+
+```json
+{
+  "error": {
+    "type": "validation_error",
+    "message": "Invalid request parameters",
+    "code": "missing_required_field"
+  }
+}
+```
+
+## OpenAPI Specification
+
+View the complete OpenAPI specification:
+
+- [OpenAPI YAML](/openapi.yaml) - Human-readable format
+- [OpenAPI JSON](/openapi.json) - Machine-readable format
+
+## SDK Libraries
+
+Official SDKs are available for:
+
+- **Node.js/TypeScript** - `npm install @facesignai/api`
+- **Python** - Coming soon
+- **Go** - Coming soon
+- **Ruby** - Coming soon
+
+## Next Steps
+
+- [Getting Started](/getting-started) - Quick start guide
+- [Node Types](/concepts/node-graph) - Available verification nodes
+- [Examples](/examples/basic-session) - Code examples 
