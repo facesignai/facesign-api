@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment } from 'react'
+import { Fragment } from '../../../docs/protocol_docs/node_modules/@types/react'
 import { Highlight } from 'prism-react-renderer'
 
 export function Fence({

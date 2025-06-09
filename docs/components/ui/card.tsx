@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "../../protocol_docs/node_modules/@types/react"
 import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef<

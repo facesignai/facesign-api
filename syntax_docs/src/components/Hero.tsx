@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment } from '../../../docs/protocol_docs/node_modules/@types/react'
 import Image from 'next/image'
 import clsx from 'clsx'
 import { Highlight } from 'prism-react-renderer'

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from '../../../docs/protocol_docs/node_modules/@types/react'
 import { useTheme } from 'next-themes'
 import {
   Label,

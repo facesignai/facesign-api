@@ -1,0 +1,178 @@
+export const metadata = {
+  title: 'Identity Verification Module',
+  description: 'Learn how to use the Identity Verification module for comprehensive biometric verification with liveness detection.',
+}
+
+# Identity Verification Module
+
+<div className="lead">The Identity Verification module is FaceSign's core biometric verification solution. It uses advanced AI to perform facial recognition and liveness detection, ensuring that the person behind the screen is real, present, and who they claim to be. This module is essential for preventing identity fraud, account takeovers, and deepfake attacks.</div>
+
+## How it works
+
+1. **Initiate session** - Create a session including the `identityVerification` module.
+2. **User consent** - The user is prompted to grant access to their camera.
+3. **Conversational interaction** - An AI avatar guides the user through a series of actions, such as looking in different directions or repeating a phrase.
+4. **Biometric analysis** - FaceSign analyzes the video feed for liveness, 3D face mapping, and comparison against known data (if applicable).
+5. **Verification complete** - The module completes with a detailed report on the verification outcome.
+
+## Module configuration
+
+### Properties
+
+<Properties>
+  <Property name="type" type="string">
+    Must be `identityVerification`.
+  </Property>
+</Properties>
+
+*This module has no additional configuration properties. Its behavior is determined by the overall session settings and the user's interaction.*
+
+---
+
+## Example implementation
+
+### Standard identity verification
+
+Add the `identityVerification` module to your session to enable biometric checks.
+
+```typescript {{ title: 'Backend: Create session' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'identityVerification' }
+  ],
+  metadata: {
+    userId: 'user_123',
+    verificationReason: 'onboarding'
+  }
+});
+```
+
+## User experience
+
+### Camera access and guidance
+
+The interface clearly explains why camera access is needed and guides the user through the process.
+
+![Identity verification guidance](https://cdn.facesign.ai/docs/identity-verification-guidance.png)
+
+### Liveness detection
+
+The user interacts with the AI avatar to prove they are a real person, present during the verification.
+
+![Identity verification liveness check](https://cdn.facesign.ai/docs/identity-liveness-check.gif)
+
+### Real-time feedback
+
+The system provides real-time feedback to help the user position themselves correctly.
+
+![Identity verification real-time feedback](https://cdn.facesign.ai/docs/identity-real-time-feedback.png)
+
+## Handling verification results
+
+### Webhook event
+
+The `session.completed` webhook contains detailed results in the `report` object.
+
+```json {{ title: 'session.completed webhook payload' }}
+{
+  "id": "evt_abc123",
+  "type": "session.completed",
+  "data": {
+    "session": {
+      "id": "fs_session_xyz789",
+      "status": "complete",
+      "report": {
+        "isVerified": true,
+        "livenessDetected": true,
+        "aiAnalysis": {
+          "ageMin": 28,
+          "ageMax": 35,
+          "sex": "female",
+          "realPersonOrVirtual": "real",
+          "overallSummary": "High confidence liveness detected. Biometric data matches reference."
+        }
+      },
+      "settings": {
+        "clientReferenceId": "user_123"
+      }
+    }
+  }
+}
+```
+
+### Backend logic
+
+Use the webhook to assess the verification outcome and take appropriate action.
+
+```typescript {{ title: 'Backend: Webhook handler' }}
+app.post('/webhooks/facesign', async (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === 'session.completed') {
+    const { session } = data;
+    const { report, settings } = session;
+
+    const userId = settings.clientReferenceId;
+    const isVerified = report?.isVerified && report?.livenessDetected;
+
+    if (isVerified) {
+      // User is verified, grant access
+      await db.users.update({
+        where: { id: userId },
+        data: {
+          isVerified: true,
+          verifiedAt: new Date()
+        }
+      });
+      await grantFullAccess(userId);
+    } else {
+      // Verification failed, flag for manual review
+      await db.users.update({
+        where: { id: userId },
+        data: {
+          isVerified: false,
+          needsManualReview: true
+        }
+      });
+      await notifyAdminTeam(userId, 'Biometric verification failed');
+    }
+  }
+
+  res.status(200).send('OK');
+});
+```
+
+## Best practices
+
+### 1. Clear communication
+
+Inform your users why they need to complete a biometric verification step. Explain the security benefits to build trust.
+
+### 2. Combine with document authentication
+
+For Know Your Customer (KYC) compliance, combine `identityVerification` with `documentAuthentication` to match the user's face to their government-issued ID.
+
+```typescript {{ title: 'Backend: KYC flow' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'identityVerification' },
+    { type: 'documentAuthentication' }
+  ]
+});
+```
+
+### 3. Handling low-light conditions
+
+FaceSign's AI is designed to work in various lighting conditions, but it's helpful to advise users to be in a well-lit area for the best results.
+
+### 4. Deepfake and fraud prevention
+
+This module is your first line of defense against deepfakes, presentation attacks (e.g., holding up a photo), and other forms of identity fraud. The `livenessDetected` and `realPersonOrVirtual` fields are critical for assessing this risk.
+
+## Next steps
+
+- [Document Authentication](/modules/document-authentication) - Add ID document scanning and verification
+- [Age Estimation](/modules/age-estimation) - Verify user age with AI
+- [Custom Flows](/flows) - Build advanced flows with conditional logic 

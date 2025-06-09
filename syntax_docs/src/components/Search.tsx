@@ -9,7 +9,7 @@ import {
   useId,
   useRef,
   useState,
-} from 'react'
+} from '../../../docs/protocol_docs/node_modules/@types/react'
 import Highlighter from 'react-highlight-words'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {

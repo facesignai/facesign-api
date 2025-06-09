@@ -1,0 +1,206 @@
+export const metadata = {
+  title: 'Age Estimation Module',
+  description: 'Learn how to use the Age Estimation module to verify user age with AI-powered analysis.',
+}
+
+# Age Estimation Module
+
+<div className="lead">The Age Estimation module uses AI to estimate a person's age from their face. It provides a fast, privacy-friendly way to verify that users meet minimum age requirements without needing to collect identity documents. This is ideal for age-gated content, products, or services.</div>
+
+## How it works
+
+1. **Initiate session** - Create a session with the `ageEstimation` module, specifying the minimum required age.
+2. **User consent** - The user grants access to their camera.
+3. **Facial analysis** - The user looks into the camera, and FaceSign's AI analyzes their facial features to estimate an age range.
+4. **Liveness detection** - A built-in liveness check ensures the person is real and present.
+5. **Verification complete** - The module returns an age range estimate and a `true` or `false` result based on the required age.
+
+## Module configuration
+
+### Properties
+
+<Properties>
+  <Property name="type" type="string">
+    Must be `ageEstimation`.
+  </Property>
+  <Property name="age" type="number">
+    The minimum required age for the verification to pass.
+  </Property>
+</Properties>
+
+---
+
+## Example implementation
+
+### Age verification for a gaming platform
+
+Verify that users are at least 13 years old to comply with COPPA.
+
+```typescript {{ title: 'Backend: Create session for age verification' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_456',
+  modules: [
+    {
+      type: 'ageEstimation',
+      age: 13 // Minimum age required
+    }
+  ],
+  metadata: {
+    userId: 'user_456',
+    platform: 'gaming_site'
+  }
+});
+```
+
+### Age verification for an 18+ service
+
+Ensure users are over 18 for an age-restricted service.
+
+```typescript {{ title: 'Backend: Create session for 18+ service' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_789',
+  modules: [
+    {
+      type: 'ageEstimation',
+      age: 18 // Must be 18 or older
+    }
+  ],
+  metadata: {
+    userId: 'user_789',
+    service: 'online_dating'
+  }
+});
+```
+
+## User experience
+
+The user experience is fast and frictionless. The user simply looks at the camera for a few seconds.
+
+![Age estimation user experience](https://cdn.facesign.ai/docs/age-estimation-ux.gif)
+
+## Handling verification results
+
+### Webhook event
+
+The `session.completed` webhook report contains the AI's analysis, including the estimated age range and the overall verification result.
+
+```json {{ title: 'session.completed webhook payload' }}
+{
+  "id": "evt_abc123",
+  "type": "session.completed",
+  "data": {
+    "session": {
+      "id": "fs_session_xyz789",
+      "status": "complete",
+      "report": {
+        "isVerified": true, // True if estimated age is >= required age
+        "livenessDetected": true,
+        "aiAnalysis": {
+          "ageMin": 22,
+          "ageMax": 28,
+          "sex": "male",
+          "realPersonOrVirtual": "real",
+          "overallSummary": "Age estimation successful. Estimated age is above the required threshold of 18."
+        }
+      },
+      "settings": {
+        "clientReferenceId": "user_789",
+        "modules": [
+          { "type": "ageEstimation", "age": 18 }
+        ]
+      }
+    }
+  }
+}
+```
+
+### Backend logic
+
+Use the webhook to grant or deny access based on the age verification result.
+
+```typescript {{ title: 'Backend: Webhook handler' }}
+app.post('/webhooks/facesign', async (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === 'session.completed') {
+    const { session } = data;
+    const { report, settings } = session;
+    const userId = settings.clientReferenceId;
+
+    // Check if the age estimation module was part of the session
+    const ageModule = settings.modules.find(m => m.type === 'ageEstimation');
+    if (ageModule) {
+      if (report?.isVerified) {
+        // Age requirement met
+        await db.users.update({
+          where: { id: userId },
+          data: {
+            isAgeVerified: true,
+            ageRange: `${report.aiAnalysis.ageMin}-${report.aiAnalysis.ageMax}`
+          }
+        });
+        await grantAccessToService(userId);
+      } else {
+        // Age requirement not met
+        await db.users.update({
+          where: { id: userId },
+          data: { isAgeVerified: false }
+        });
+        await denyAccessToService(userId, 'Underage');
+      }
+    }
+  }
+
+  res.status(200).send('OK');
+});
+```
+
+## Best practices
+
+### 1. Privacy-first approach
+
+Age Estimation is less intrusive than asking for an ID document. Position it as a quick, easy, and private way to verify age. No personal data is stored beyond the result of the check.
+
+### 2. Provide fallback options
+
+For users who are near the age threshold or who fail the estimation, provide a fallback method like `documentAuthentication` to ensure they are not unfairly blocked.
+
+```typescript {{ title: 'Backend: Flow with fallback' }}
+// Use a custom flow for this logic
+const ageVerificationFlow = {
+  nodes: [
+    {
+      id: 'age_estimation',
+      type: 'ageEstimation',
+      age: 18,
+      outcomes: {
+        success: 'end_success',
+        failure: 'document_auth_fallback' // If age check fails
+      }
+    },
+    {
+      id: 'document_auth_fallback',
+      type: 'documentAuthentication',
+      outcomes: {
+        success: 'end_success',
+        failure: 'end_failure'
+      }
+    }
+  ],
+  // ... edges configuration
+};
+```
+
+### 3. Communicate results clearly
+
+If a user fails the age check, provide a clear and helpful message. Avoid accusatory language. For example: "Our system could not confirm you meet the age requirement. Please try verifying with a valid ID document."
+
+### 4. Accuracy and bias
+
+FaceSign's AI is trained on a diverse, global dataset to ensure high accuracy and minimize bias across different demographics. The system provides an age range to account for potential variations.
+
+## Next steps
+
+- [Document Authentication](/modules/document-authentication) - Use as a fallback for age verification
+- [Identity Verification](/modules/identity-verification) - Perform full biometric identity checks
+- [Custom Flows](/flows) - Build advanced flows with conditional logic for age checks 

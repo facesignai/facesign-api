@@ -1,41 +1,196 @@
 export const metadata = {
   title: 'Authentication',
-  description:
-    'In this guide, we’ll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token.',
+  description: 'Learn how to authenticate your API requests with FaceSign.',
 }
 
 # Authentication
 
-You'll need to authenticate your requests to access any of the endpoints in the Protocol API. In this guide, we'll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token — OAuth2 is the recommended way. {{ className: 'lead' }}
+The FaceSign API uses API keys to authenticate requests. You can view and manage your API keys in the FaceSign Dashboard. {{ className: 'lead' }}
 
-## Basic authentication
+## API Keys
 
-With basic authentication, you use your username and password to authenticate your HTTP requests. Unless you have a very good reason, you probably shouldn't use basic auth. Here's how to authenticate using cURL:
+FaceSign provides two types of API keys:
 
-```bash {{ title: 'Example request with basic auth' }}
-curl https://api.protocol.chat/v1/conversations \
-  -u username:password
+- **Test mode keys** - Start with `sk_test_` and can be used for development and testing
+- **Production mode keys** - Start with `sk_live_` and should be used in your production environment
+
+<Note>
+  Test mode keys have the same capabilities as production keys but will not charge your account. All sessions created in test mode are clearly marked.
+</Note>
+
+## Getting your API keys
+
+1. Log in to your [FaceSign Dashboard](https://app.facesign.ai)
+2. Navigate to **Settings** → **API Keys**
+3. Copy your API key for the appropriate environment
+
+<Warning>
+  Keep your API keys secure! Never commit them to version control or expose them in client-side code.
+</Warning>
+
+## Using API keys
+
+Include your API key in the `Authorization` header of every request:
+
+<CodeGroup>
+
+```bash {{ title: 'cURL' }}
+curl https://api.facesign.ai/v1/sessions \
+  -H "Authorization: Bearer sk_test_4eC39HqLyjWDarjtT1zdp7dc"
 ```
 
-Please don't commit your Protocol password to GitHub!
+```typescript {{ title: 'TypeScript' }}
+import { FaceSign } from '@facesign/sdk';
 
-## OAuth2 with bearer token
-
-The recommended way to authenticate with the Protocol API is by using OAuth2. When establishing a connection using OAuth2, you will need your access token — you will find it in the [Protocol dashboard](#) under API settings. Here's how to add the token to the request header using cURL:
-
-```bash {{ title: 'Example request with bearer token' }}
-curl https://api.protocol.chat/v1/conversations \
-  -H "Authorization: Bearer {token}"
+const facesign = new FaceSign({
+  apiKey: 'sk_test_4eC39HqLyjWDarjtT1zdp7dc',
+});
 ```
 
-Always keep your token safe and reset it if you suspect it has been compromised.
+```python {{ title: 'Python' }}
+import facesign
 
-## Using an SDK
+facesign.api_key = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
+```
 
-If you use one of our official SDKs, you won't have to worry about any of the above — fetch your access token from the [Protocol dashboard](#) under API settings, and the client library will take care of the rest. All the client libraries use OAuth2 behind the scenes.
+</CodeGroup>
 
-<div className="not-prose">
-  <Button href="/sdks" variant="text" arrow="right">
-    <>Check out our list of first-party SDKs</>
+## Environment variables
+
+We strongly recommend using environment variables to store your API keys:
+
+<CodeGroup>
+
+```bash {{ title: '.env' }}
+FACESIGN_API_KEY=sk_test_4eC39HqLyjWDarjtT1zdp7dc
+```
+
+```typescript {{ title: 'TypeScript' }}
+import { FaceSign } from '@facesign/sdk';
+
+const facesign = new FaceSign({
+  apiKey: process.env.FACESIGN_API_KEY,
+});
+```
+
+```python {{ title: 'Python' }}
+import os
+import facesign
+
+facesign.api_key = os.environ.get('FACESIGN_API_KEY')
+```
+
+</CodeGroup>
+
+## Client-side authentication
+
+For client-side integrations, use session-specific client secrets instead of your API key:
+
+```typescript {{ title: 'Client-side' }}
+// Never use your API key on the client side!
+// Use the client_secret from a session instead
+const clientSecret = 'vs_1a2b3c4d5e6f_secret_abc123';
+
+// Initialize the client-side SDK
+const facesignClient = new FaceSignClient({
+  clientSecret: clientSecret,
+});
+```
+
+## Rate limiting
+
+API requests are rate limited to ensure fair usage:
+
+- **Test mode**: 100 requests per minute
+- **Production mode**: 1000 requests per minute
+
+If you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
+
+```json {{ title: 'Rate limit error' }}
+{
+  "error": {
+    "type": "rate_limit_error",
+    "message": "Too many requests. Please retry after 60 seconds."
+  }
+}
+```
+
+## API versioning
+
+The FaceSign API uses date-based versioning. You can specify the API version using the `FaceSign-Version` header:
+
+```bash {{ title: 'Specify API version' }}
+curl https://api.facesign.ai/v1/sessions \
+  -H "Authorization: Bearer sk_test_..." \
+  -H "FaceSign-Version: 2024-01-15"
+```
+
+<Note>
+  If you don't specify a version, your requests will use the API version that was current when your account was created.
+</Note>
+
+## Security best practices
+
+1. **Never expose your API keys** - Keep them server-side only
+2. **Use environment variables** - Don't hardcode keys in your source code
+3. **Rotate keys regularly** - Generate new keys periodically
+4. **Use test keys for development** - Keep production keys secure
+5. **Monitor key usage** - Check your dashboard for unusual activity
+
+## Webhook signatures
+
+For webhook endpoints, verify the signature to ensure requests are from FaceSign:
+
+<CodeGroup>
+
+```typescript {{ title: 'TypeScript' }}
+import crypto from 'crypto';
+
+function verifyWebhookSignature(
+  payload: string,
+  signature: string,
+  secret: string
+): boolean {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+```
+
+```python {{ title: 'Python' }}
+import hmac
+import hashlib
+
+def verify_webhook_signature(payload, signature, secret):
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    
+    return hmac.compare_digest(signature, expected_signature)
+```
+
+</CodeGroup>
+
+## Next steps
+
+Now that you understand authentication, you're ready to start making API requests:
+
+<div className="not-prose mt-6 flex flex-col gap-3">
+  <Button href="/quickstart" variant="text" arrow="right">
+    Follow the quick start guide
+  </Button>
+  <Button href="/sessions" variant="text" arrow="right">
+    Learn about sessions
+  </Button>
+  <Button href="/errors" variant="text" arrow="right">
+    Understand error handling
   </Button>
 </div>

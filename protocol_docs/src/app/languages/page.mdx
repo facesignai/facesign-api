@@ -1,0 +1,436 @@
+export const metadata = {
+  title: 'Languages',
+  description: 'Learn how to retrieve and use supported languages for FaceSign verification sessions.',
+}
+
+# Languages
+
+FaceSign supports multiple languages for the verification interface, allowing you to provide a localized experience for users worldwide. The `/langs` endpoint returns all available languages that can be used in your verification sessions. {{ className: 'lead' }}
+
+## Supported languages
+
+FaceSign currently supports the following languages:
+
+- **English (en)** - Default language
+- **Spanish (es)** - Español
+- **French (fr)** - Français
+- **German (de)** - Deutsch
+- **Italian (it)** - Italiano
+- **Portuguese (pt)** - Português
+- **Dutch (nl)** - Nederlands
+- **Polish (pl)** - Polski
+- **Russian (ru)** - Русский
+- **Japanese (ja)** - 日本語
+- **Korean (ko)** - 한국어
+- **Chinese Simplified (zh-CN)** - 简体中文
+- **Chinese Traditional (zh-TW)** - 繁體中文
+
+## Language object
+
+<Properties>
+  <Property name="id" type="string">
+    Language code (ISO 639-1 format).
+  </Property>
+  <Property name="title" type="string">
+    Human-readable language name in the language itself.
+  </Property>
+</Properties>
+
+---
+
+## Get supported languages {{ tag: 'GET', label: '/langs' }}
+
+<Row>
+  <Col>
+
+    Returns a list of all languages supported by FaceSign. Use these language codes when creating sessions to specify which languages should be available to users.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/langs">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.facesign.ai/langs \
+      -H "Authorization: Bearer fs_live_..."
+    ```
+
+    ```typescript {{ title: 'TypeScript' }}
+    const { langs } = await client.languages.list();
+    
+    // Use in session creation
+    const { session, clientSecret } = await client.sessions.create({
+      clientReferenceId: 'user_123',
+      langs: ['en', 'es', 'fr'], // Subset of available languages
+      defaultLang: 'en',
+      modules: [{ type: 'identityVerification' }]
+    });
+    ```
+
+    ```python {{ title: 'Python' }}
+    langs = client.languages.list()
+    
+    // Use in session creation
+    session = client.sessions.create(
+        client_reference_id="user_123",
+        langs=["en", "es", "fr"],
+        default_lang="en",
+        modules=[{"type": "identityVerification"}]
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "langs": [
+        {
+          "id": "en",
+          "title": "English"
+        },
+        {
+          "id": "es", 
+          "title": "Español"
+        },
+        {
+          "id": "fr",
+          "title": "Français"
+        },
+        {
+          "id": "de",
+          "title": "Deutsch"
+        },
+        {
+          "id": "it",
+          "title": "Italiano"
+        },
+        {
+          "id": "pt",
+          "title": "Português"
+        },
+        {
+          "id": "nl",
+          "title": "Nederlands"
+        },
+        {
+          "id": "pl",
+          "title": "Polski"
+        },
+        {
+          "id": "ru",
+          "title": "Русский"
+        },
+        {
+          "id": "ja",
+          "title": "日本語"
+        },
+        {
+          "id": "ko",
+          "title": "한국어"
+        },
+        {
+          "id": "zh-CN",
+          "title": "简体中文"
+        },
+        {
+          "id": "zh-TW",
+          "title": "繁體中文"
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Using languages in sessions
+
+### Basic language configuration
+
+When creating a session, you can specify which languages should be available and set a default language:
+
+```typescript {{ title: 'Configure session languages' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  langs: ['en', 'es', 'fr'], // Available languages for this session
+  defaultLang: 'en', // Default language if user's preference isn't available
+  modules: [{ type: 'identityVerification' }]
+});
+```
+
+### Dynamic language selection
+
+You can dynamically select languages based on user preferences or browser settings:
+
+```typescript {{ title: 'Dynamic language selection' }}
+async function createLocalizedSession(userId: string) {
+  // Get available languages from FaceSign
+  const { langs } = await client.languages.list();
+  const availableLanguages = langs.map(lang => lang.id);
+  
+  // Get user's preferred languages (from browser or user profile)
+  const userLanguages = getUserPreferredLanguages(userId);
+  
+  // Find intersection of user preferences and available languages
+  const supportedUserLanguages = userLanguages.filter(lang => 
+    availableLanguages.includes(lang)
+  );
+  
+  // Fallback to English if no matches
+  const sessionLanguages = supportedUserLanguages.length > 0 
+    ? supportedUserLanguages 
+    : ['en'];
+  
+  const { session, clientSecret } = await client.sessions.create({
+    clientReferenceId: userId,
+    langs: sessionLanguages,
+    defaultLang: sessionLanguages[0],
+    modules: [{ type: 'identityVerification' }]
+  });
+  
+  return { session, clientSecret };
+}
+
+function getUserPreferredLanguages(userId: string): string[] {
+  // Option 1: From user profile in your database
+  const user = await db.users.findUnique({ where: { id: userId } });
+  if (user.preferredLanguage) {
+    return [user.preferredLanguage];
+  }
+  
+  // Option 2: From browser Accept-Language header
+  const acceptLanguage = request.headers['accept-language'];
+  return parseAcceptLanguage(acceptLanguage);
+}
+```
+
+### Regional considerations
+
+Consider your target markets when selecting languages:
+
+```typescript {{ title: 'Regional language configuration' }}
+const REGIONAL_LANGUAGES = {
+  'north-america': ['en', 'es', 'fr'],
+  'europe': ['en', 'de', 'fr', 'it', 'es', 'nl', 'pl'],
+  'asia-pacific': ['en', 'ja', 'ko', 'zh-CN', 'zh-TW'],
+  'latin-america': ['es', 'pt', 'en'],
+  'global': ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'pl', 'ru', 'ja', 'ko', 'zh-CN', 'zh-TW']
+};
+
+async function createRegionalSession(userId: string, region: string) {
+  const languages = REGIONAL_LANGUAGES[region] || REGIONAL_LANGUAGES['global'];
+  
+  const { session, clientSecret } = await client.sessions.create({
+    clientReferenceId: userId,
+    langs: languages,
+    defaultLang: languages[0], // First language as default
+    modules: [{ type: 'identityVerification' }]
+  });
+  
+  return { session, clientSecret };
+}
+```
+
+## Language selection UX
+
+### Let users choose their language
+
+Provide a language selector in your frontend before starting verification:
+
+```typescript {{ title: 'Language selector component' }}
+import React, { useState, useEffect } from 'react';
+
+interface Language {
+  id: string;
+  title: string;
+}
+
+function LanguageSelector({ onLanguageSelect }: { onLanguageSelect: (lang: string) => void }) {
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  
+  useEffect(() => {
+    // Fetch available languages
+    fetch('/api/languages')
+      .then(res => res.json())
+      .then(data => setLanguages(data.langs));
+  }, []);
+  
+  const handleLanguageChange = (langId: string) => {
+    setSelectedLanguage(langId);
+    onLanguageSelect(langId);
+  };
+  
+  return (
+    <div className="language-selector">
+      <label htmlFor="language-select">Select your language:</label>
+      <select 
+        id="language-select"
+        value={selectedLanguage}
+        onChange={(e) => handleLanguageChange(e.target.value)}
+      >
+        {languages.map(lang => (
+          <option key={lang.id} value={lang.id}>
+            {lang.title}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function VerificationFlow() {
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  
+  const startVerification = async () => {
+    // Create session with selected language
+    const response = await fetch('/api/create-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        langs: [selectedLanguage],
+        defaultLang: selectedLanguage
+      })
+    });
+    
+    const { clientSecret } = await response.json();
+    
+    // Start verification with preferred language
+    const facesign = new FaceSign({ clientSecret });
+    await facesign.mount('#verification-container');
+  };
+  
+  return (
+    <div>
+      <LanguageSelector onLanguageSelect={setSelectedLanguage} />
+      <button onClick={startVerification}>
+        Start Verification
+      </button>
+      <div id="verification-container"></div>
+    </div>
+  );
+}
+```
+
+### Auto-detect user language
+
+Automatically detect and use the user's browser language:
+
+```typescript {{ title: 'Auto-detect language' }}
+function detectUserLanguage(): string {
+  // Get browser language
+  const browserLang = navigator.language.split('-')[0]; // e.g., 'en' from 'en-US'
+  
+  // List of supported languages (you'd get this from the API)
+  const supportedLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'pl', 'ru', 'ja', 'ko', 'zh'];
+  
+  // Return detected language if supported, otherwise default to English
+  return supportedLanguages.includes(browserLang) ? browserLang : 'en';
+}
+
+async function createAutoLocalizedSession(userId: string) {
+  const detectedLanguage = detectUserLanguage();
+  
+  const { session, clientSecret } = await client.sessions.create({
+    clientReferenceId: userId,
+    langs: [detectedLanguage, 'en'], // Include English as fallback
+    defaultLang: detectedLanguage,
+    modules: [{ type: 'identityVerification' }]
+  });
+  
+  return { session, clientSecret };
+}
+```
+
+## Best practices
+
+### 1. Cache language list
+
+Cache the languages list to avoid unnecessary API calls:
+
+```typescript {{ title: 'Cache languages' }}
+let cachedLanguages: Language[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+async function getAvailableLanguages(): Promise<Language[]> {
+  const now = Date.now();
+  
+  // Return cached version if still valid
+  if (cachedLanguages && (now - cacheTimestamp) < CACHE_DURATION) {
+    return cachedLanguages;
+  }
+  
+  // Fetch fresh data
+  const { langs } = await client.languages.list();
+  cachedLanguages = langs;
+  cacheTimestamp = now;
+  
+  return langs;
+}
+```
+
+### 2. Provide language fallbacks
+
+Always include common languages as fallbacks:
+
+```typescript {{ title: 'Language fallbacks' }}
+function getLanguagesWithFallback(userPreferences: string[]): string[] {
+  const fallbackLanguages = ['en', 'es']; // English and Spanish as common fallbacks
+  
+  // Combine user preferences with fallbacks, removing duplicates
+  return [...new Set([...userPreferences, ...fallbackLanguages])];
+}
+```
+
+### 3. Handle RTL languages
+
+For right-to-left languages, ensure your UI adapts accordingly:
+
+```typescript {{ title: 'RTL language support' }}
+const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
+
+function isRTLLanguage(langId: string): boolean {
+  return RTL_LANGUAGES.includes(langId);
+}
+
+// Apply RTL styling
+function applyLanguageDirection(langId: string) {
+  const isRTL = isRTLLanguage(langId);
+  document.dir = isRTL ? 'rtl' : 'ltr';
+  document.documentElement.lang = langId;
+}
+```
+
+### 4. Store user language preference
+
+Remember user language choices for future sessions:
+
+```typescript {{ title: 'Store language preference' }}
+async function updateUserLanguagePreference(userId: string, langId: string) {
+  await db.users.update({
+    where: { id: userId },
+    data: { preferredLanguage: langId }
+  });
+  
+  // Also store in localStorage for immediate use
+  localStorage.setItem('preferredLanguage', langId);
+}
+
+function getUserLanguagePreference(userId?: string): string {
+  // Try localStorage first for immediate access
+  const storedLang = localStorage.getItem('preferredLanguage');
+  if (storedLang) return storedLang;
+  
+  // Fall back to browser language
+  return detectUserLanguage();
+}
+```
+
+## Next steps
+
+- [Sessions](/sessions) - Learn how to create sessions with language configuration
+- [Avatars](/avatars) - Discover available AI avatars for different languages
+- [Modules](/modules) - Configure verification modules for specific regions 

@@ -28,11 +28,11 @@ interface Resource {
 
 const resources: Array<Resource> = [
   {
-    href: '/contacts',
-    name: 'Contacts',
+    href: '/quickstart',
+    name: 'Quick Start',
     description:
-      'Learn about the contact model and how to create, retrieve, update, delete, and list contacts.',
-    icon: UserIcon,
+      'Get up and running with the FaceSign API in under 5 minutes. Create your first verification session.',
+    icon: ChatBubbleIcon,
     pattern: {
       y: 16,
       squares: [
@@ -42,11 +42,11 @@ const resources: Array<Resource> = [
     },
   },
   {
-    href: '/conversations',
-    name: 'Conversations',
+    href: '/sessions',
+    name: 'Sessions',
     description:
-      'Learn about the conversation model and how to create, retrieve, update, delete, and list conversations.',
-    icon: ChatBubbleIcon,
+      'Learn about verification sessions and how to create, retrieve, and manage them with customizable flows.',
+    icon: UserIcon,
     pattern: {
       y: -6,
       squares: [
@@ -56,10 +56,10 @@ const resources: Array<Resource> = [
     },
   },
   {
-    href: '/messages',
-    name: 'Messages',
+    href: '/authentication',
+    name: 'Authentication',
     description:
-      'Learn about the message model and how to create, retrieve, update, delete, and list messages.',
+      'Secure your API requests with API keys. Learn about test and production environments.',
     icon: EnvelopeIcon,
     pattern: {
       y: 32,
@@ -70,10 +70,10 @@ const resources: Array<Resource> = [
     },
   },
   {
-    href: '/groups',
-    name: 'Groups',
+    href: '/webhooks',
+    name: 'Webhooks',
     description:
-      'Learn about the group model and how to create, retrieve, update, delete, and list groups.',
+      'Receive real-time updates about session events. Learn how to verify webhook signatures.',
     icon: UsersIcon,
     pattern: {
       y: 22,
@@ -98,8 +98,8 @@ function ResourcePattern({
   mouseX: MotionValue<number>
   mouseY: MotionValue<number>
 }) {
-  let maskImage = useMotionTemplate`radial-gradient(180px at ${mouseX}px ${mouseY}px, white, transparent)`
-  let style = { maskImage, WebkitMaskImage: maskImage }
+  const maskImage = useMotionTemplate`radial-gradient(180px at ${mouseX}px ${mouseY}px, white, transparent)`
+  const style = { maskImage, WebkitMaskImage: maskImage }
 
   return (
     <div className="pointer-events-none">
@@ -133,15 +133,15 @@ function ResourcePattern({
 }
 
 function Resource({ resource }: { resource: Resource }) {
-  let mouseX = useMotionValue(0)
-  let mouseY = useMotionValue(0)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
   function onMouseMove({
     currentTarget,
     clientX,
     clientY,
   }: React.MouseEvent<HTMLDivElement>) {
-    let { left, top } = currentTarget.getBoundingClientRect()
+    const { left, top } = currentTarget.getBoundingClientRect()
     mouseX.set(clientX - left)
     mouseY.set(clientY - top)
   }
@@ -182,5 +182,14 @@ export function Resources() {
         ))}
       </div>
     </div>
+  )
+}
+
+export function Card({ title, href, children }: { title: string; href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="block rounded-lg border border-zinc-200 p-6 transition-shadow hover:shadow-md dark:border-zinc-700">
+      <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{title}</h3>
+      <div className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{children}</div>
+    </Link>
   )
 }

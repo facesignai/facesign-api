@@ -1,98 +1,189 @@
 export const metadata = {
-  title: 'Quickstart',
-  description:
-    'This guide will get you all set up and ready to use the Protocol API. We’ll cover how to get started an API client and how to make your first API request.',
+  title: 'Quick Start',
+  description: 'Get up and running with the FaceSign API in under 5 minutes.',
 }
 
-# Quickstart
+# Quick Start
 
-This guide will get you all set up and ready to use the Protocol API. We'll cover how to get started using one of our API clients and how to make your first API request. We'll also look at where to go next to find all the information you need to take full advantage of our powerful REST API. {{ className: 'lead' }}
+This guide will help you get started with the FaceSign API. You'll learn how to create your first verification session and integrate identity verification into your application. {{ className: 'lead' }}
 
 <Note>
-  Before you can make requests to the Protocol API, you will need to grab your
-  API key from your dashboard. You find it under [Settings &raquo; API](#).
+  You'll need a FaceSign account to follow this guide. [Sign up](https://app.facesign.ai) if you haven't already.
 </Note>
 
-## Choose your client
+## Get your API keys
 
-Before making your first API request, you need to pick which API client you will use. In addition to good ol' cURL HTTP requests, Protocol offers clients for JavaScript, Python, and PHP. In the following example, you can see how to install each client.
+First, you'll need to get your API keys from the FaceSign dashboard.
+
+1. Log in to your [FaceSign dashboard](https://app.facesign.ai)
+2. Navigate to **Settings** → **API Keys**
+3. Copy your API key (starts with `sk_test_` for test mode or `sk_live_` for production)
+
+<Note>
+  Keep your API keys secure and never expose them in client-side code. Use environment variables to store them safely.
+</Note>
+
+## Install the SDK
+
+Choose your preferred language and install the FaceSign SDK:
 
 <CodeGroup>
 
-```bash {{ title: 'cURL' }}
-# cURL is most likely already installed on your machine
-curl --version
+```bash {{ title: 'npm' }}
+npm install @facesign/sdk
 ```
 
-```bash {{ language: 'js' }}
-# Install the Protocol JavaScript SDK
-npm install @example/protocol-api --save
+```bash {{ title: 'yarn' }}
+yarn add @facesign/sdk
 ```
 
-```bash {{ language: 'python' }}
-# Install the Protocol Python SDK
-pip install protocol_api
+```bash {{ title: 'pnpm' }}
+pnpm add @facesign/sdk
 ```
 
-```bash {{ language: 'php' }}
-# Install the Protocol PHP SDK
-composer require protocol/sdk
+```bash {{ title: 'pip' }}
+pip install facesign
 ```
 
 </CodeGroup>
 
-<div className="not-prose">
-  <Button href="/sdks" variant="text" arrow="right">
-    <>Check out our list of first-party SDKs</>
-  </Button>
-</div>
+## Create your first session
 
-## Making your first API request
+Now let's create a verification session. Sessions are the core of FaceSign - they represent a single identity verification flow.
 
-After picking your preferred client, you are ready to make your first call to the Protocol API. Below, you can see how to send a GET request to the Conversations endpoint to get a list of all your conversations. In the cURL example, results are limited to ten conversations, the default page length for each client.
+<CodeGroup title="Create a session" tag="POST" label="/v1/sessions">
 
-<CodeGroup tag="GET" label="/v1/conversations">
+```typescript {{ title: 'TypeScript' }}
+import { FaceSign } from '@facesign/sdk';
+
+const facesign = new FaceSign({
+  apiKey: process.env.FACESIGN_API_KEY,
+});
+
+const session = await facesign.sessions.create({
+  mode: 'redirect',
+  success_url: 'https://example.com/success',
+  cancel_url: 'https://example.com/cancel',
+  metadata: {
+    user_id: '123456',
+  },
+});
+
+console.log(session.url); // Redirect your user to this URL
+```
+
+```python {{ title: 'Python' }}
+import facesign
+import os
+
+facesign.api_key = os.environ.get('FACESIGN_API_KEY')
+
+session = facesign.Session.create(
+    mode='redirect',
+    success_url='https://example.com/success',
+    cancel_url='https://example.com/cancel',
+    metadata={
+        'user_id': '123456'
+    }
+)
+
+print(session.url)  # Redirect your user to this URL
+```
 
 ```bash {{ title: 'cURL' }}
-curl -G https://api.protocol.chat/v1/conversations \
-  -H "Authorization: Bearer {token}" \
-  -d limit=10
-```
-
-```js
-import ApiClient from '@example/protocol-api'
-
-const client = new ApiClient(token)
-
-await client.conversations.list()
-```
-
-```python
-from protocol_api import ApiClient
-
-client = ApiClient(token)
-
-client.conversations.list()
-```
-
-```php
-$client = new \Protocol\ApiClient($token);
-
-$client->conversations->list();
+curl https://api.facesign.ai/v1/sessions \
+  -H "Authorization: Bearer sk_test_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mode": "redirect",
+    "success_url": "https://example.com/success",
+    "cancel_url": "https://example.com/cancel",
+    "metadata": {
+      "user_id": "123456"
+    }
+  }'
 ```
 
 </CodeGroup>
 
-<div className="not-prose">
-  <Button href="/conversations" variant="text" arrow="right">
-    <>Read the docs for the Conversations endpoint</>
-  </Button>
-</div>
+## Redirect your user
+
+After creating a session, you'll receive a response with a `url` field. Redirect your user to this URL to start the verification process:
+
+```json {{ title: 'Response' }}
+{
+  "id": "vs_1a2b3c4d5e6f",
+  "object": "verification_session",
+  "client_secret": "vs_1a2b3c4d5e6f_secret_abc123",
+  "url": "https://verify.facesign.ai/s/vs_1a2b3c4d5e6f",
+  "status": "pending",
+  "mode": "redirect",
+  "success_url": "https://example.com/success",
+  "cancel_url": "https://example.com/cancel",
+  "metadata": {
+    "user_id": "123456"
+  },
+  "created": 1234567890,
+  "expires": 1234571490
+}
+```
+
+## Handle the result
+
+After the user completes or cancels the verification, they'll be redirected to your `success_url` or `cancel_url` with the session ID as a query parameter:
+
+```
+https://example.com/success?session_id=vs_1a2b3c4d5e6f
+```
+
+You can then retrieve the session to check the verification status:
+
+<CodeGroup title="Retrieve a session" tag="GET" label="/v1/sessions/:id">
+
+```typescript {{ title: 'TypeScript' }}
+const session = await facesign.sessions.retrieve('vs_1a2b3c4d5e6f');
+
+if (session.status === 'verified') {
+  // User successfully verified their identity
+  console.log('Verification successful!');
+  console.log('Verified data:', session.verified_outputs);
+} else if (session.status === 'failed') {
+  // Verification failed
+  console.log('Verification failed');
+}
+```
+
+```python {{ title: 'Python' }}
+session = facesign.Session.retrieve('vs_1a2b3c4d5e6f')
+
+if session.status == 'verified':
+    # User successfully verified their identity
+    print('Verification successful!')
+    print('Verified data:', session.verified_outputs)
+elif session.status == 'failed':
+    # Verification failed
+    print('Verification failed')
+```
+
+```bash {{ title: 'cURL' }}
+curl https://api.facesign.ai/v1/sessions/vs_1a2b3c4d5e6f \
+  -H "Authorization: Bearer sk_test_..."
+```
+
+</CodeGroup>
 
 ## What's next?
 
-Great, you're now set up with an API client and have made your first request to the API. Here are a few links that might be handy as you venture further into the Protocol API:
+Congratulations! You've created your first verification session. Here are some next steps:
 
-- [Grab your API key from the Protocol dashboard](#)
-- [Check out the Conversations endpoint](/conversations)
-- [Learn about the different error messages in Protocol](/errors)
+<div className="not-prose mt-6 flex flex-col gap-3">
+  <Button href="/sessions" variant="text" arrow="right">
+    Learn more about sessions
+  </Button>
+  <Button href="/webhooks" variant="text" arrow="right">
+    Set up webhooks for real-time updates
+  </Button>
+  <Button href="/node-graph" variant="text" arrow="right">
+    Customize your verification flow
+  </Button>
+</div>

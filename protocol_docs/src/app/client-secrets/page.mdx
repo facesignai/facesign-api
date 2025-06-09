@@ -1,0 +1,454 @@
+export const metadata = {
+  title: 'Client Secrets',
+  description: 'Learn how to use client secrets for secure frontend integration with FaceSign.',
+}
+
+# Client Secrets
+
+Client secrets are secure, session-specific tokens that allow your frontend applications to interact with FaceSign's verification interface. Unlike your API key, client secrets are safe to use in client-side code and are automatically included when you create or retrieve a session. {{ className: 'lead' }}
+
+## How client secrets work
+
+Client secrets provide a secure way to authenticate frontend requests:
+
+1. **Server-side session creation** - Use your API key to create a session
+2. **Client secret returned** - FaceSign returns a session-specific client secret
+3. **Frontend integration** - Pass the client secret to your frontend or mobile app
+4. **Secure verification** - Frontend uses the client secret to access the verification interface
+5. **Automatic expiration** - Client secrets expire after 1 hour for security
+
+## Client secret properties
+
+<Properties>
+  <Property name="secret" type="string">
+    The client secret token to use in frontend integrations.
+  </Property>
+  <Property name="createdAt" type="number">
+    Unix timestamp when the client secret was created.
+  </Property>
+  <Property name="expireAt" type="number">
+    Unix timestamp when the client secret expires (1 hour from creation).
+  </Property>
+  <Property name="url" type="string">
+    Pre-built URL for hosted verification flow including the client secret.
+  </Property>
+</Properties>
+
+---
+
+## Using client secrets
+
+### Web integration
+
+For web applications, you can either redirect users to the hosted flow or use the JavaScript SDK:
+
+<CodeGroup title="Web integration">
+
+```html {{ title: 'Hosted flow (redirect)' }}
+<!-- Server-side: Get client secret -->
+<script>
+  // Pass client secret from your server
+  const clientSecret = "{{ clientSecret }}"; // From your backend
+  const verificationUrl = `https://verify.facesign.ai/?client_secret=${clientSecret}`;
+  
+  // Redirect user to verification
+  window.location.href = verificationUrl;
+</script>
+```
+
+```javascript {{ title: 'JavaScript SDK' }}
+import FaceSign from '@facesign/js';
+
+// Initialize with client secret
+const facesign = new FaceSign({
+  clientSecret: clientSecret, // From your backend
+});
+
+// Mount the verification interface
+facesign.mount('#verification-container');
+
+// Listen for completion
+facesign.on('session.completed', (session) => {
+  if (session.report.isVerified) {
+    // Verification successful
+    window.location.href = '/dashboard';
+  } else {
+    // Verification failed
+    showErrorMessage('Verification failed. Please try again.');
+  }
+});
+```
+
+```typescript {{ title: 'React integration' }}
+import { FaceSignProvider, useFaceSign } from '@facesign/react';
+
+function VerificationPage({ clientSecret }: { clientSecret: string }) {
+  return (
+    <FaceSignProvider clientSecret={clientSecret}>
+      <VerificationComponent />
+    </FaceSignProvider>
+  );
+}
+
+function VerificationComponent() {
+  const { mount, session } = useFaceSign();
+  
+  useEffect(() => {
+    mount('#verification-container');
+  }, [mount]);
+  
+  useEffect(() => {
+    if (session?.status === 'complete') {
+      if (session.report?.isVerified) {
+        router.push('/dashboard');
+      } else {
+        setError('Verification failed');
+      }
+    }
+  }, [session]);
+  
+  return <div id="verification-container" />;
+}
+```
+
+</CodeGroup>
+
+### Mobile integration
+
+For mobile applications, use the native SDKs:
+
+<CodeGroup title="Mobile integration">
+
+```swift {{ title: 'iOS (Swift)' }}
+import FaceSignSDK
+
+class VerificationViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        startVerification()
+    }
+    
+    func startVerification() {
+        // Get client secret from your backend
+        getClientSecret { [weak self] clientSecret in
+            DispatchQueue.main.async {
+                let config = FaceSignConfig(
+                    clientSecret: clientSecret,
+                    delegate: self
+                )
+                
+                let verificationVC = FaceSignViewController(config: config)
+                self?.present(verificationVC, animated: true)
+            }
+        }
+    }
+    
+    func getClientSecret(completion: @escaping (String) -> Void) {
+        // Call your backend API to get client secret
+        APIClient.createSession { result in
+            switch result {
+            case .success(let response):
+                completion(response.clientSecret)
+            case .failure(let error):
+                print("Failed to get client secret: \(error)")
+            }
+        }
+    }
+}
+
+extension VerificationViewController: FaceSignDelegate {
+    func verificationCompleted(session: FaceSignSession) {
+        if session.report.isVerified {
+            // Verification successful
+            navigateToDashboard()
+        } else {
+            // Verification failed
+            showErrorAlert("Verification failed")
+        }
+    }
+    
+    func verificationCancelled() {
+        // User cancelled verification
+        dismiss(animated: true)
+    }
+}
+```
+
+```kotlin {{ title: 'Android (Kotlin)' }}
+import ai.facesign.sdk.FaceSign
+import ai.facesign.sdk.FaceSignConfig
+import ai.facesign.sdk.FaceSignDelegate
+
+class VerificationActivity : AppCompatActivity(), FaceSignDelegate {
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        startVerification()
+    }
+    
+    private fun startVerification() {
+        // Get client secret from your backend
+        apiClient.createSession { result ->
+            when (result) {
+                is Result.Success -> {
+                    val config = FaceSignConfig(
+                        clientSecret = result.data.clientSecret,
+                        delegate = this
+                    )
+                    
+                    FaceSign.startVerification(this, config)
+                }
+                is Result.Error -> {
+                    Log.e("FaceSign", "Failed to get client secret", result.exception)
+                }
+            }
+        }
+    }
+    
+    override fun onVerificationCompleted(session: FaceSignSession) {
+        if (session.report.isVerified) {
+            // Verification successful
+            navigateToDashboard()
+        } else {
+            // Verification failed
+            showErrorDialog("Verification failed")
+        }
+    }
+    
+    override fun onVerificationCancelled() {
+        // User cancelled verification
+        finish()
+    }
+}
+```
+
+```dart {{ title: 'Flutter' }}
+import 'package:facesign_flutter/facesign_flutter.dart';
+
+class VerificationPage extends StatefulWidget {
+  @override
+  _VerificationPageState createState() => _VerificationPageState();
+}
+
+class _VerificationPageState extends State<VerificationPage> {
+  
+  @override
+  void initState() {
+    super.initState();
+    _startVerification();
+  }
+  
+  void _startVerification() async {
+    try {
+      // Get client secret from your backend
+      final clientSecret = await ApiClient.createSession();
+      
+      final config = FaceSignConfig(
+        clientSecret: clientSecret,
+      );
+      
+      final result = await FaceSign.startVerification(config);
+      
+      if (result.isVerified) {
+        // Verification successful
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        // Verification failed
+        _showErrorDialog('Verification failed');
+      }
+    } catch (e) {
+      print('Verification error: $e');
+      _showErrorDialog('Unable to start verification');
+    }
+  }
+  
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Verification Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Identity Verification')),
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+```
+
+</CodeGroup>
+
+---
+
+## Security considerations
+
+### Client secrets are safe for frontend use
+
+Unlike API keys, client secrets are designed to be safe for client-side use:
+
+- **Session-specific** - Each client secret is tied to a single session
+- **Time-limited** - Automatically expire after 1 hour
+- **Read-only** - Cannot be used to create new sessions or access other data
+- **Domain-restricted** - Can be restricted to specific domains (contact support)
+
+### Best practices
+
+1. **Fetch on demand** - Get client secrets from your backend when needed
+2. **Handle expiration** - Refresh client secrets if they expire during verification
+3. **Secure transmission** - Always use HTTPS when transmitting client secrets
+4. **Don't store long-term** - Client secrets are meant for immediate use
+
+<CodeGroup title="Secure implementation">
+
+```typescript {{ title: 'Backend endpoint' }}
+// Secure endpoint to create sessions
+app.post('/api/create-verification', authenticate, async (req, res) => {
+  // Verify user is authenticated
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const { session, clientSecret } = await facesignClient.sessions.create({
+      clientReferenceId: req.user.id,
+      metadata: {
+        userId: req.user.id,
+        email: req.user.email,
+        ipAddress: req.ip
+      },
+      modules: [{ type: 'identityVerification' }]
+    });
+    
+    // Store session in your database
+    await db.verifications.create({
+      sessionId: session.id,
+      userId: req.user.id,
+      status: session.status,
+      createdAt: new Date()
+    });
+    
+    // Return only the client secret to frontend
+    res.json({
+      clientSecret: clientSecret.secret,
+      sessionId: session.id
+    });
+    
+  } catch (error) {
+    console.error('Session creation failed:', error);
+    res.status(500).json({ error: 'Failed to create verification session' });
+  }
+});
+```
+
+```typescript {{ title: 'Frontend implementation' }}
+async function startVerification() {
+  try {
+    // Fetch client secret from your secure backend
+    const response = await fetch('/api/create-verification', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${userToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to create verification session');
+    }
+    
+    const { clientSecret, sessionId } = await response.json();
+    
+    // Use client secret with FaceSign SDK
+    const facesign = new FaceSign({
+      clientSecret: clientSecret
+    });
+    
+    await facesign.mount('#verification-container');
+    
+  } catch (error) {
+    console.error('Verification startup failed:', error);
+    showErrorMessage('Unable to start verification');
+  }
+}
+```
+
+</CodeGroup>
+
+### Handling expiration
+
+Client secrets expire after 1 hour. If verification takes longer or you need to restart the process:
+
+```typescript {{ title: 'Handle expiration' }}
+async function handleClientSecretExpiration(sessionId: string) {
+  try {
+    // Call your backend to refresh the client secret
+    const response = await fetch(`/api/refresh-verification/${sessionId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${userToken}`,
+      }
+    });
+    
+    const { clientSecret } = await response.json();
+    
+    // Reinitialize FaceSign with new client secret
+    const facesign = new FaceSign({
+      clientSecret: clientSecret
+    });
+    
+    await facesign.mount('#verification-container');
+    
+  } catch (error) {
+    console.error('Failed to refresh client secret:', error);
+    // Redirect to start a new verification session
+    window.location.href = '/start-verification';
+  }
+}
+
+// Backend endpoint for refreshing
+app.post('/api/refresh-verification/:sessionId', authenticate, async (req, res) => {
+  const { sessionId } = req.params;
+  
+  // Verify the session belongs to the authenticated user
+  const verification = await db.verifications.findFirst({
+    where: { sessionId, userId: req.user.id }
+  });
+  
+  if (!verification) {
+    return res.status(404).json({ error: 'Session not found' });
+  }
+  
+  try {
+    const { clientSecret } = await facesignClient.sessions.refreshSecret(sessionId);
+    
+    res.json({
+      clientSecret: clientSecret.secret
+    });
+    
+  } catch (error) {
+    console.error('Failed to refresh client secret:', error);
+    res.status(500).json({ error: 'Failed to refresh client secret' });
+  }
+});
+```
+
+## Next steps
+
+- [Sessions](/sessions) - Learn about the session lifecycle
+- [Webhooks](/webhooks) - Get real-time updates about verification progress
+- [Modules](/modules) - Configure verification modules for your use case 

@@ -1,0 +1,539 @@
+export const metadata = {
+  title: 'Avatars',
+  description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.',
+}
+
+# Avatars
+
+FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }}
+
+## How avatars work
+
+FaceSign avatars are AI-powered virtual assistants that:
+
+- **Guide users** through each step of the verification process
+- **Adapt their conversation** based on the verification modules you've configured
+- **Speak multiple languages** and adjust their communication style accordingly
+- **Provide real-time feedback** and help users complete verification successfully
+- **Detect emotions and engagement** to provide a more personalized experience
+
+## Avatar object
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the avatar.
+  </Property>
+  <Property name="name" type="string">
+    Human-readable name of the avatar.
+  </Property>
+  <Property name="gender" type="string">
+    Avatar gender: `male`, `female`, or `unknown`.
+  </Property>
+  <Property name="imageUrl" type="string">
+    URL to the avatar's profile image for display in your interface.
+  </Property>
+</Properties>
+
+---
+
+## Get available avatars {{ tag: 'GET', label: '/avatars' }}
+
+<Row>
+  <Col>
+
+    Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/avatars">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.facesign.ai/avatars \
+      -H "Authorization: Bearer fs_live_..."
+    ```
+
+    ```typescript {{ title: 'TypeScript' }}
+    const { avatars } = await client.avatars.list();
+    
+    // Use in session creation
+    const { session, clientSecret } = await client.sessions.create({
+      clientReferenceId: 'user_123',
+      avatarId: avatars[0].id, // Select an avatar
+      modules: [{ type: 'identityVerification' }]
+    });
+    ```
+
+    ```python {{ title: 'Python' }}
+    avatars = client.avatars.list()
+    
+    // Use in session creation
+    session = client.sessions.create(
+        client_reference_id="user_123",
+        avatar_id=avatars.avatars[0].id,
+        modules=[{"type": "identityVerification"}]
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "avatars": [
+        {
+          "id": "avatar_sarah_professional",
+          "name": "Sarah",
+          "gender": "female",
+          "imageUrl": "https://cdn.facesign.ai/avatars/sarah_professional.jpg"
+        },
+        {
+          "id": "avatar_james_friendly",
+          "name": "James",
+          "gender": "male", 
+          "imageUrl": "https://cdn.facesign.ai/avatars/james_friendly.jpg"
+        },
+        {
+          "id": "avatar_maria_bilingual",
+          "name": "Maria",
+          "gender": "female",
+          "imageUrl": "https://cdn.facesign.ai/avatars/maria_bilingual.jpg"
+        },
+        {
+          "id": "avatar_alex_neutral",
+          "name": "Alex",
+          "gender": "unknown",
+          "imageUrl": "https://cdn.facesign.ai/avatars/alex_neutral.jpg"
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Choosing the right avatar
+
+### Consider your audience
+
+Different avatars work better for different use cases and audiences:
+
+```typescript {{ title: 'Avatar selection by use case' }}
+const AVATAR_RECOMMENDATIONS = {
+  financial_services: {
+    avatarId: 'avatar_sarah_professional',
+    description: 'Professional, trustworthy appearance for banking and financial apps'
+  },
+  healthcare: {
+    avatarId: 'avatar_james_caring',
+    description: 'Warm, empathetic avatar for medical verification'
+  },
+  gaming: {
+    avatarId: 'avatar_alex_casual',
+    description: 'Casual, friendly avatar for gaming platforms'
+  },
+  enterprise: {
+    avatarId: 'avatar_david_corporate',
+    description: 'Business-appropriate avatar for B2B applications'
+  },
+  international: {
+    avatarId: 'avatar_maria_bilingual',
+    description: 'Multicultural avatar for global applications'
+  }
+};
+
+function selectAvatarForUseCase(useCase: string) {
+  return AVATAR_RECOMMENDATIONS[useCase] || AVATAR_RECOMMENDATIONS.enterprise;
+}
+```
+
+### Dynamic avatar selection
+
+You can dynamically select avatars based on user preferences or demographics:
+
+```typescript {{ title: 'Dynamic avatar selection' }}
+async function selectPersonalizedAvatar(userId: string) {
+  // Get available avatars
+  const { avatars } = await client.avatars.list();
+  
+  // Get user preferences
+  const user = await db.users.findUnique({ where: { id: userId } });
+  
+  // Filter avatars based on user preferences
+  let preferredAvatars = avatars;
+  
+  if (user.preferredAvatarGender) {
+    preferredAvatars = avatars.filter(avatar => 
+      avatar.gender === user.preferredAvatarGender || avatar.gender === 'unknown'
+    );
+  }
+  
+  // Default to first available avatar if no preferences match
+  return preferredAvatars[0] || avatars[0];
+}
+
+async function createPersonalizedSession(userId: string) {
+  const selectedAvatar = await selectPersonalizedAvatar(userId);
+  
+  const { session, clientSecret } = await client.sessions.create({
+    clientReferenceId: userId,
+    avatarId: selectedAvatar.id,
+    modules: [{ type: 'identityVerification' }]
+  });
+  
+  return { session, clientSecret };
+}
+```
+
+## Avatar customization
+
+### Custom phrases
+
+Customize how your avatar greets and concludes the verification:
+
+```typescript {{ title: 'Custom avatar phrases' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  avatarId: 'avatar_sarah_professional',
+  initialPhrase: `Hi there! I'm Sarah, and I'll be helping you verify your identity today. This process should only take a few minutes.`,
+  finalPhrase: `Perfect! Your verification is complete. Thank you for taking the time to secure your account.`,
+  modules: [{ type: 'identityVerification' }]
+});
+```
+
+### Brand-specific customization
+
+Adapt the avatar's messaging to match your brand:
+
+```typescript {{ title: 'Brand-specific avatar setup' }}
+const BRAND_AVATAR_CONFIG = {
+  banking: {
+    initialPhrase: "Welcome to SecureBank! I'm here to help verify your identity securely and efficiently.",
+    finalPhrase: "Your identity verification is complete. Your account security is our top priority.",
+    tone: 'professional'
+  },
+  healthcare: {
+    initialPhrase: "Hello! I'm here to help verify your identity for your healthcare account. Your privacy is completely protected.",
+    finalPhrase: "Thank you for completing your verification. Your health information remains secure.",
+    tone: 'caring'
+  },
+  ecommerce: {
+    initialPhrase: "Hi! Let's quickly verify your identity so you can start shopping with confidence.",
+    finalPhrase: "All set! You're now verified and ready to explore our latest products.",
+    tone: 'friendly'
+  }
+};
+
+function createBrandedSession(userId: string, brand: string) {
+  const config = BRAND_AVATAR_CONFIG[brand] || BRAND_AVATAR_CONFIG.banking;
+  
+  return client.sessions.create({
+    clientReferenceId: userId,
+    avatarId: getAvatarForBrand(brand),
+    initialPhrase: config.initialPhrase,
+    finalPhrase: config.finalPhrase,
+    modules: [{ type: 'identityVerification' }]
+  });
+}
+```
+
+## Avatar selection UI
+
+### Let users choose their avatar
+
+Provide an avatar selection interface before starting verification:
+
+```typescript {{ title: 'Avatar selection component' }}
+import React, { useState, useEffect } from 'react';
+
+interface Avatar {
+  id: string;
+  name: string;
+  gender: string;
+  imageUrl: string;
+}
+
+function AvatarSelector({ onAvatarSelect }: { onAvatarSelect: (avatar: Avatar) => void }) {
+  const [avatars, setAvatars] = useState<Avatar[]>([]);
+  const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
+  
+  useEffect(() => {
+    // Fetch available avatars
+    fetch('/api/avatars')
+      .then(res => res.json())
+      .then(data => {
+        setAvatars(data.avatars);
+        setSelectedAvatar(data.avatars[0]); // Default to first avatar
+      });
+  }, []);
+  
+  const handleAvatarSelect = (avatar: Avatar) => {
+    setSelectedAvatar(avatar);
+    onAvatarSelect(avatar);
+  };
+  
+  return (
+    <div className="avatar-selector">
+      <h3>Choose your verification assistant:</h3>
+      <div className="avatar-grid">
+        {avatars.map(avatar => (
+          <div 
+            key={avatar.id}
+            className={`avatar-card ${selectedAvatar?.id === avatar.id ? 'selected' : ''}`}
+            onClick={() => handleAvatarSelect(avatar)}
+          >
+            <img 
+              src={avatar.imageUrl} 
+              alt={avatar.name}
+              className="avatar-image"
+            />
+            <div className="avatar-info">
+              <h4>{avatar.name}</h4>
+              <p className="avatar-description">
+                {getAvatarDescription(avatar)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function getAvatarDescription(avatar: Avatar): string {
+  const descriptions = {
+    'avatar_sarah_professional': 'Professional and trustworthy',
+    'avatar_james_friendly': 'Warm and approachable',
+    'avatar_maria_bilingual': 'Great for international users',
+    'avatar_alex_neutral': 'Friendly and inclusive'
+  };
+  
+  return descriptions[avatar.id] || 'Helpful verification assistant';
+}
+
+function VerificationSetup() {
+  const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
+  
+  const startVerification = async () => {
+    if (!selectedAvatar) return;
+    
+    const response = await fetch('/api/create-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        avatarId: selectedAvatar.id
+      })
+    });
+    
+    const { clientSecret } = await response.json();
+    
+    // Start verification with selected avatar
+    const facesign = new FaceSign({ clientSecret });
+    await facesign.mount('#verification-container');
+  };
+  
+  return (
+    <div>
+      <AvatarSelector onAvatarSelect={setSelectedAvatar} />
+      <button 
+        onClick={startVerification}
+        disabled={!selectedAvatar}
+        className="start-verification-btn"
+      >
+        Start Verification with {selectedAvatar?.name}
+      </button>
+      <div id="verification-container"></div>
+    </div>
+  );
+}
+```
+
+### Preview avatar interactions
+
+Show users what to expect from their chosen avatar:
+
+```typescript {{ title: 'Avatar preview component' }}
+function AvatarPreview({ avatar }: { avatar: Avatar }) {
+  return (
+    <div className="avatar-preview">
+      <div className="avatar-preview-header">
+        <img src={avatar.imageUrl} alt={avatar.name} />
+        <h4>Meet {avatar.name}</h4>
+      </div>
+      
+      <div className="preview-conversation">
+        <div className="avatar-message">
+          <p>Hi! I'm {avatar.name}. I'll guide you through the verification process step by step.</p>
+        </div>
+        <div className="avatar-message">
+          <p>Don't worry - I'll make sure everything goes smoothly and answer any questions you have.</p>
+        </div>
+        <div className="user-message">
+          <p>Sounds good! Let's get started.</p>
+        </div>
+        <div className="avatar-message">
+          <p>Perfect! Let's begin with verifying your identity...</p>
+        </div>
+      </div>
+      
+      <div className="preview-features">
+        <h5>What {avatar.name} can help with:</h5>
+        <ul>
+          <li>Guide you through document scanning</li>
+          <li>Help with facial recognition</li>
+          <li>Answer questions about the process</li>
+          <li>Provide encouragement and support</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+```
+
+## Best practices
+
+### 1. Match avatar to brand personality
+
+Choose avatars that align with your brand's personality and values:
+
+```typescript {{ title: 'Brand-avatar alignment' }}
+const BRAND_AVATAR_MAPPING = {
+  // Professional, trustworthy brands
+  financial: ['avatar_sarah_professional', 'avatar_david_corporate'],
+  
+  // Friendly, approachable brands
+  consumer: ['avatar_james_friendly', 'avatar_emma_casual'],
+  
+  // Healthcare and sensitive applications
+  healthcare: ['avatar_dr_williams_caring', 'avatar_nurse_compassionate'],
+  
+  // International or diverse audiences
+  global: ['avatar_maria_bilingual', 'avatar_alex_neutral', 'avatar_sam_international']
+};
+
+function getRecommendedAvatars(brandCategory: string): string[] {
+  return BRAND_AVATAR_MAPPING[brandCategory] || BRAND_AVATAR_MAPPING.consumer;
+}
+```
+
+### 2. Consider cultural sensitivity
+
+Be mindful of cultural preferences when selecting avatars for different markets:
+
+```typescript {{ title: 'Cultural avatar considerations' }}
+const REGIONAL_AVATAR_PREFERENCES = {
+  'north-america': {
+    preferred: ['avatar_sarah_professional', 'avatar_james_friendly'],
+    culturalNote: 'Professional but approachable avatars work well'
+  },
+  'europe': {
+    preferred: ['avatar_emma_european', 'avatar_alex_neutral'],
+    culturalNote: 'Neutral, inclusive avatars for diverse populations'
+  },
+  'asia-pacific': {
+    preferred: ['avatar_yuki_respectful', 'avatar_sam_international'],
+    culturalNote: 'Respectful, formal communication style preferred'
+  },
+  'latin-america': {
+    preferred: ['avatar_maria_bilingual', 'avatar_carlos_warm'],
+    culturalNote: 'Warm, personal interaction style resonates well'
+  }
+};
+
+function selectCulturallyAppropriateAvatar(region: string, availableAvatars: Avatar[]) {
+  const preferences = REGIONAL_AVATAR_PREFERENCES[region];
+  
+  if (preferences) {
+    // Find the first preferred avatar that's available
+    for (const preferredId of preferences.preferred) {
+      const avatar = availableAvatars.find(a => a.id === preferredId);
+      if (avatar) return avatar;
+    }
+  }
+  
+  // Fallback to neutral avatar
+  return availableAvatars.find(a => a.gender === 'unknown') || availableAvatars[0];
+}
+```
+
+### 3. Test avatar effectiveness
+
+Monitor how different avatars perform with your users:
+
+```typescript {{ title: 'Avatar performance tracking' }}
+interface AvatarMetrics {
+  avatarId: string;
+  completionRate: number;
+  userSatisfaction: number;
+  averageSessionTime: number;
+  retryRate: number;
+}
+
+async function trackAvatarPerformance(sessionId: string, avatarId: string, outcome: 'completed' | 'cancelled') {
+  await analytics.track('avatar_session_outcome', {
+    sessionId,
+    avatarId,
+    outcome,
+    timestamp: new Date()
+  });
+}
+
+async function getAvatarMetrics(timeframe: string): Promise<AvatarMetrics[]> {
+  return await analytics.query(`
+    SELECT 
+      avatar_id,
+      AVG(completion_rate) as completion_rate,
+      AVG(user_satisfaction) as user_satisfaction,
+      AVG(session_duration) as average_session_time,
+      AVG(retry_rate) as retry_rate
+    FROM avatar_performance 
+    WHERE created_at >= ?
+    GROUP BY avatar_id
+  `, [timeframe]);
+}
+
+// Use metrics to optimize avatar selection
+async function selectOptimalAvatar(userSegment: string): Promise<string> {
+  const metrics = await getAvatarMetrics('30d');
+  
+  // Find avatar with highest completion rate for this user segment
+  const bestPerformer = metrics
+    .filter(m => m.completionRate > 0.8) // Minimum threshold
+    .sort((a, b) => b.completionRate - a.completionRate)[0];
+  
+  return bestPerformer?.avatarId || 'avatar_default';
+}
+```
+
+### 4. Cache avatar data
+
+Cache avatar information to improve performance:
+
+```typescript {{ title: 'Avatar caching' }}
+let cachedAvatars: Avatar[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+
+async function getAvailableAvatars(): Promise<Avatar[]> {
+  const now = Date.now();
+  
+  // Return cached version if still valid
+  if (cachedAvatars && (now - cacheTimestamp) < CACHE_DURATION) {
+    return cachedAvatars;
+  }
+  
+  // Fetch fresh data
+  const { avatars } = await client.avatars.list();
+  cachedAvatars = avatars;
+  cacheTimestamp = now;
+  
+  return avatars;
+}
+```
+
+## Next steps
+
+- [Sessions](/sessions) - Learn how to create sessions with avatar configuration
+- [Languages](/languages) - Configure multi-language support for your avatars
+- [Modules](/modules) - Understand how avatars adapt to different verification modules 

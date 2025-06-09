@@ -1,0 +1,195 @@
+export const metadata = {
+  title: 'Email Verification Module',
+  description: 'Learn how to use the Email Verification module to verify user email addresses with OTP codes.',
+}
+
+# Email Verification Module
+
+<div className="lead">The Email Verification module sends a one-time password (OTP) to a user's email address to confirm ownership. This is a crucial step for user onboarding, account recovery, and preventing fraudulent sign-ups.</div>
+
+## How it works
+
+1. **Initiate session** - Create a session with the `emailVerification` module, providing the user's email address.
+2. **OTP sent** - FaceSign sends a secure, time-sensitive OTP to the specified email address.
+3. **User enters OTP** - The user retrieves the OTP from their email and enters it into the verification interface.
+4. **Verification confirmed** - FaceSign verifies the OTP and completes the module, confirming email ownership.
+
+## Module configuration
+
+### Properties
+
+<Properties>
+  <Property name="type" type="string">
+    Must be `emailVerification`.
+  </Property>
+  <Property name="name" type="string" optional>
+    The user's name, used to personalize the verification email.
+  </Property>
+  <Property name="email" type="string" optional>
+    The user's email address. If not provided, the user will be prompted to enter it.
+  </Property>
+  <Property name="publicRecognitionEnabled" type="boolean" optional>
+    If set to `true`, enables public recognition features. Defaults to `false`.
+  </Property>
+</Properties>
+
+---
+
+## Example implementations
+
+### Basic email verification
+
+A simple setup where the user is prompted to enter their email address:
+
+```typescript {{ title: 'Backend: Create session' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'emailVerification' }
+  ]
+});
+```
+
+### Pre-filled and personalized email verification
+
+For a smoother user experience, pre-fill the user's email and personalize the message:
+
+```typescript {{ title: 'Backend: Create session with pre-filled data' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    {
+      type: 'emailVerification',
+      email: 'john.doe@example.com',
+      name: 'John Doe'
+    }
+  ],
+  metadata: {
+    userId: 'user_123'
+  }
+});
+```
+
+## User experience
+
+### Standard flow
+
+When the email is pre-filled, the user is immediately asked to check their inbox:
+
+![Email verification flow](https://cdn.facesign.ai/docs/email-verification-flow.png)
+
+### Manual entry flow
+
+If the email is not pre-filled, the user is first prompted to enter their email address:
+
+![Email manual entry flow](https://cdn.facesign.ai/docs/email-manual-entry.png)
+
+### OTP email template
+
+The email sent to the user contains the OTP and instructions:
+
+![Email OTP template](https://cdn.facesign.ai/docs/email-otp-template.png)
+
+## Handling verification results
+
+### Webhook event
+
+After the user completes the verification, you'll receive a `session.completed` webhook. Check the `extractedData` field in the session report for the verified email.
+
+```json {{ title: 'session.completed webhook payload' }}
+{
+  "id": "evt_abc123",
+  "type": "session.completed",
+  "data": {
+    "session": {
+      "id": "fs_session_xyz789",
+      "status": "complete",
+      "report": {
+        "isVerified": true,
+        "extractedData": {
+          "email": "john.doe@example.com"
+        }
+      },
+      "settings": {
+        "clientReferenceId": "user_123"
+      }
+    }
+  }
+}
+```
+
+### Backend logic
+
+Use the webhook to update your database and trigger business logic:
+
+```typescript {{ title: 'Backend: Webhook handler' }}
+app.post('/webhooks/facesign', async (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === 'session.completed' && data.session.report?.isVerified) {
+    const { session } = data;
+    const { report, settings } = session;
+
+    const email = report.extractedData?.email;
+    const userId = settings.clientReferenceId;
+
+    if (email) {
+      // Update user record in your database
+      await db.users.update({
+        where: { id: userId },
+        data: {
+          email: email,
+          emailVerified: true,
+          emailVerifiedAt: new Date()
+        }
+      });
+
+      // Trigger welcome email or other business logic
+      await sendWelcomeEmail(userId);
+    }
+  }
+
+  res.status(200).send('OK');
+});
+```
+
+## Best practices
+
+### 1. Pre-fill email address
+
+Always pre-fill the email address when possible to reduce user friction and improve conversion rates.
+
+### 2. Handle invalid emails
+
+If the user enters an invalid email format, the interface will provide immediate feedback. Ensure your system can handle cases where users correct their email address.
+
+### 3. OTP security
+
+- **Time-sensitive:** OTPs expire after 10 minutes.
+- **Rate limiting:** Users are prevented from requesting too many OTPs in a short period.
+- **Single-use:** Each OTP can only be used once.
+
+### 4. Combining with other modules
+
+For stronger verification, combine email verification with other modules like `identityVerification` or `smsVerification`.
+
+```typescript {{ title: 'Backend: Combined verification' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    {
+      type: 'emailVerification',
+      email: 'john.doe@example.com'
+    },
+    {
+      type: 'identityVerification'
+    }
+  ]
+});
+```
+
+## Next steps
+
+- [SMS Verification](/modules/sms-verification) - Add phone number verification
+- [Identity Verification](/modules/identity-verification) - Implement biometric verification
+- [Sessions](/sessions) - Learn more about session management 

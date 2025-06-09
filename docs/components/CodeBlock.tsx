@@ -1,4 +1,4 @@
-import React from 'react'
+import React from '../protocol_docs/node_modules/@types/react'
 import { cn } from '@/lib/utils'
 
 interface CodeBlockProps {

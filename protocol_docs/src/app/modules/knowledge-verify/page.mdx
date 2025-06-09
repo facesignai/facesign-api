@@ -1,0 +1,169 @@
+export const metadata = {
+  title: 'Knowledge Verify Module',
+  description: 'Learn how to use the Knowledge Verify module for knowledge-based authentication (KBA).',
+}
+
+# Knowledge Verify Module
+
+<div className="lead">The Knowledge Verify module adds a layer of security by asking the user questions that only they should know the answer to. This is commonly known as Knowledge-Based Authentication (KBA) and is effective for account recovery, step-up authentication for high-risk actions, and fraud prevention.</div>
+
+## How it works
+
+1. **Initiate session** - Create a session with the `knowledgeVerify` module.
+2. **Data sources** - FaceSign securely accesses trusted data sources to generate out-of-wallet questions based on the user's public and private records.
+3. **Question presented** - The AI avatar presents a series of multiple-choice questions to the user.
+4. **User answers** - The user selects the correct answer for each question.
+5. **Verification complete** - The module completes based on the number of correctly answered questions.
+
+## Module configuration
+
+### Properties
+
+<Properties>
+  <Property name="type" type="string">
+    Must be `knowledgeVerify`.
+  </Property>
+</Properties>
+
+*This module has no additional configuration properties. The questions are generated dynamically based on available data for the user being verified.*
+
+---
+
+## Example implementation
+
+### Account recovery
+
+Use KBA as a step in a secure account recovery flow.
+
+```typescript {{ title: 'Backend: Create session for account recovery' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'emailVerification' }, // First, verify email
+    { type: 'knowledgeVerify' }    // Then, ask KBA questions
+  ],
+  metadata: {
+    userId: 'user_123',
+    reason: 'account_recovery_password_reset'
+  }
+});
+```
+
+### Step-up authentication
+
+Require KBA for high-risk actions like changing an address or adding a new payment method.
+
+```typescript {{ title: 'Backend: Create session for step-up auth' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_456',
+  modules: [
+    { type: 'knowledgeVerify' }
+  ],
+  metadata: {
+    userId: 'user_456',
+    reason: 'change_of_address_confirmation'
+  }
+});
+```
+
+## User experience
+
+The AI avatar presents a series of multiple-choice questions in a conversational manner.
+
+![Knowledge verify user experience](https://cdn.facesign.ai/docs/kba-ux.png)
+
+## Handling verification results
+
+### Webhook event
+
+The `session.completed` webhook `report.isVerified` field will be `true` if the user answered enough questions correctly.
+
+```json {{ title: 'session.completed webhook payload' }}
+{
+  "id": "evt_abc123",
+  "type": "session.completed",
+  "data": {
+    "session": {
+      "id": "fs_session_xyz789",
+      "status": "complete",
+      "report": {
+        "isVerified": true, // True if KBA was passed
+        "livenessDetected": false,
+        "extractedData": {
+          "kba_passed": "true",
+          "kba_score": "0.8" // e.g., 4 out of 5 questions correct
+        }
+      },
+      "settings": {
+        "clientReferenceId": "user_123"
+      }
+    }
+  }
+}
+```
+
+### Backend logic
+
+Use the webhook to determine if the user passed the KBA check.
+
+```typescript {{ title: 'Backend: Webhook handler' }}
+app.post('/webhooks/facesign', async (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === 'session.completed') {
+    const { session } = data;
+    const { report, settings } = session;
+    const userId = settings.clientReferenceId;
+
+    const kbaModule = settings.modules.find(m => m.type === 'knowledgeVerify');
+    if (kbaModule) {
+      if (report?.isVerified) {
+        // KBA passed, allow the action
+        console.log(`KBA successful for user ${userId}`);
+        await completeAccountRecovery(userId);
+      } else {
+        // KBA failed, lock the account and notify support
+        console.log(`KBA failed for user ${userId}`);
+        await lockAccount(userId);
+        await notifySupportTeam(`KBA failure for user ${userId}`);
+      }
+    }
+  }
+
+  res.status(200).send('OK');
+});
+```
+
+## Best practices
+
+### 1. Use for step-up or recovery, not onboarding
+
+KBA is most effective when you already have some information about the user. It is not recommended for initial onboarding of new, unknown users, as there may not be enough data to generate questions.
+
+### 2. Combine with other factors
+
+KBA is strongest when used as part of a multi-factor authentication flow. Combine it with `emailVerification`, `smsVerification`, or `identityVerification`.
+
+```typescript {{ title: 'Backend: Multi-factor recovery' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'smsVerification' },      // Something the user has
+    { type: 'knowledgeVerify' }     // Something the user knows
+  ]
+});
+```
+
+### 3. Dynamic KBA (D-KBA)
+
+FaceSign uses dynamic KBA, meaning the questions are generated in real-time from a wide range of data sources. This is more secure than static KBA, which uses a fixed set of questions that could be compromised.
+
+### 4. Handling "I don't know"
+
+The interface allows users to indicate if none of the answers are correct or if they don't know the answer. This is an important part of the process and helps prevent users from guessing.
+
+## Next steps
+
+- [Proof of Intent](/modules/proof-of-intent) - Capture user consent for high-risk actions
+- [Custom Flows](/flows) - Build custom account recovery and step-up authentication flows
+- [Sessions](/sessions) - Learn more about session management and reports 
