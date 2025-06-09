@@ -13,7 +13,7 @@ const withMDX = nextMDX({
   },
 })
 
-/** @type {import('next').NextConfig} */
+/** @type {import('./protocol_docs/node_modules/next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   experimental: {

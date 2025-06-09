@@ -1,5 +1,0 @@
-{
-  "/modules/page": "app/modules/page.js",
-  "/modules/sms-verification/page": "app/modules/sms-verification/page.js",
-  "/page": "app/page.js"
-}

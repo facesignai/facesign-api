@@ -1,0 +1,111 @@
+import { Guides } from '@/components/Guides'
+import { Resources, Card } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+import { Button } from '@/components/Button'
+
+export const metadata = {
+  title: 'FaceSign API Documentation',
+  description: 'AI-powered identity verification platform with conversational interfaces, biometric verification, and multi-factor authentication.',
+}
+
+export const sections = [
+  { title: 'Guides', id: 'guides' },
+  { title: 'Resources', id: 'resources' },
+]
+
+<HeroPattern />
+
+# FaceSign API Documentation
+
+<div className="lead">
+The FaceSign API enables developers to create AI-powered identity verification flows with conversational interfaces, biometric verification, document scanning, and multi-factor authentication.
+</div>
+
+<div className="not-prose mb-16 mt-6 flex gap-3">
+  <Button href="/quickstart" arrow="right">
+    Quick Start
+  </Button>
+  <Button href="/sdks" variant="outline">
+    Explore SDKs
+  </Button>
+</div>
+
+## Getting started
+
+<div className="lead">
+Create verification sessions, customize flows, and integrate identity verification in minutes.
+</div>
+
+<Resources />
+
+## What is FaceSign?
+
+FaceSign is an AI-powered identity verification platform that helps businesses verify their users' identities through conversational interfaces, biometric verification, and document scanning. Our platform offers:
+
+- **Conversational AI Verification** - Natural language interactions guided by AI avatars
+- **Biometric Authentication** - Face recognition, liveness detection, and age estimation
+- **Document Verification** - ID document scanning and authentication
+- **Multi-Factor Authentication** - Email and SMS verification with OTP
+- **Customizable Flows** - Visual node-based workflow builder
+- **Global Coverage** - Support for multiple languages and regions
+
+## Key Features
+
+<div className="not-prose space-y-6">
+  <div className="rounded-lg border border-zinc-200 p-6 dark:border-zinc-700">
+    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Node-Based Flow Builder</h3>
+    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      Build complex verification workflows using our visual node system. Connect conversation nodes, biometric checks, document scanning, and more to create custom verification flows.
+    </p>
+  </div>
+  
+  <div className="rounded-lg border border-zinc-200 p-6 dark:border-zinc-700">
+    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Real-Time Verification</h3>
+    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      Get instant verification results with our AI-powered analysis. Detect deepfakes, verify documents, and authenticate users in real-time.
+    </p>
+  </div>
+  
+  <div className="rounded-lg border border-zinc-200 p-6 dark:border-zinc-700">
+    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Developer-First API</h3>
+    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      RESTful API with comprehensive SDKs for TypeScript, Python, and more. Built with modern standards including OpenAPI 3.0 specification.
+    </p>
+  </div>
+</div>
+
+## Core Concepts
+
+Understand the fundamental building blocks of the FaceSign platform.
+
+<div className="not-prose grid grid-cols-1 gap-6 sm:grid-cols-2">
+  <Card title="Sessions" href="/sessions">
+    Verification sessions are the core of FaceSign - learn how they work.
+  </Card>
+  <Card title="Client Secrets" href="/client-secrets">
+    Secure authentication tokens for end-user verification flows.
+  </Card>
+  <Card title="Custom Flows" href="/flows">
+    Build complex verification flows using our visual node system.
+  </Card>
+</div>
+
+## API Resources
+
+Explore the available API endpoints and resources.
+
+<div className="not-prose grid grid-cols-1 gap-6 sm:grid-cols-2">
+  <Card title="Sessions API" href="/sessions">
+    Create, retrieve, and manage verification sessions.
+  </Card>
+  <Card title="Languages" href="/languages">
+    Get supported languages for multi-lingual verification.
+  </Card>
+  <Card title="Avatars" href="/avatars">
+    Explore available AI avatars for conversational interfaces.
+  </Card>
+</div>
+
+<Guides />
+
+<Resources />
