@@ -1,0 +1,612 @@
+export const metadata = {
+  title: 'Verification Modules',
+  description: 'Overview of FaceSign verification modules and how to configure them for your use case.',
+}
+
+# Verification Modules
+
+<div className="lead">FaceSign offers a comprehensive suite of verification modules that you can mix and match to create the perfect verification flow for your use case. Each module handles a specific type of verification, from email and SMS to advanced biometric analysis and document authentication.</div>
+
+## Available modules
+
+FaceSign provides seven core verification modules:
+
+<div className="not-prose grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <div className="module-card">
+    <h3>Email Verification</h3>
+    <div>Verify user email addresses with OTP codes</div>
+    <a href="/modules/email-verification">Learn more →</a>
+  </div>
+  
+  <div className="module-card">
+    <h3>SMS Verification</h3>
+    <div>Send verification codes via SMS</div>
+    <a href="/modules/sms-verification">Learn more →</a>
+  </div>
+  
+  <div className="module-card">
+    <h3>Identity Verification</h3>
+    <div>Full biometric identity verification with liveness detection</div>
+    <a href="/modules/identity-verification">Learn more →</a>
+  </div>
+  
+  <div className="module-card">
+    <h3>Document Authentication</h3>
+    <div>Scan and authenticate government-issued documents</div>
+    <a href="/modules/document-authentication">Learn more →</a>
+  </div>
+  
+  <div className="module-card">
+    <h3>Age Estimation</h3>
+    <div>AI-powered age verification and estimation</div>
+    <a href="/modules/age-estimation">Learn more →</a>
+  </div>
+  
+  <div className="module-card">
+    <h3>Proof of Intent</h3>
+    <div>Capture and verify user consent and intent</div>
+    <a href="/modules/proof-of-intent">Learn more →</a>
+  </div>
+  
+  <div className="module-card">
+    <h3>Knowledge Verify</h3>
+    <div>Knowledge-based authentication questions</div>
+    <a href="/modules/knowledge-verify">Learn more →</a>
+  </div>
+</div>
+
+## Module types
+
+Each module has a specific `type` identifier that you use when configuring sessions:
+
+<Properties>
+  <Property name="emailVerification" type="module">
+    Email OTP verification module
+  </Property>
+  <Property name="smsVerification" type="module">
+    SMS OTP verification module
+  </Property>
+  <Property name="identityVerification" type="module">
+    Biometric identity verification with face scanning
+  </Property>
+  <Property name="documentAuthentication" type="module">
+    Government document scanning and authentication
+  </Property>
+  <Property name="ageEstimation" type="module">
+    AI-powered age verification and estimation
+  </Property>
+  <Property name="proofOfIntent" type="module">
+    User consent and intent verification
+  </Property>
+  <Property name="knowledgeVerify" type="module">
+    Knowledge-based authentication questions
+  </Property>
+</Properties>
+
+---
+
+## Configuring modules
+
+### Basic module configuration
+
+Include modules in your session by adding them to the `modules` array:
+
+```typescript {{ title: 'Basic module setup' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'emailVerification' },
+    { type: 'identityVerification' },
+    { type: 'documentAuthentication' }
+  ]
+});
+```
+
+### Module-specific configuration
+
+Many modules accept additional configuration options:
+
+```typescript {{ title: 'Advanced module configuration' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    {
+      type: 'emailVerification',
+      email: 'user@example.com', // Pre-fill email
+      name: 'John Doe' // Personalize email
+    },
+    {
+      type: 'smsVerification',
+      phone: '+1234567890' // Pre-fill phone number
+    },
+    {
+      type: 'ageEstimation',
+      age: 21 // Minimum required age
+    },
+    {
+      type: 'proofOfIntent',
+      requestedData: [
+        {
+          key: 'terms_acceptance',
+          isRequired: true,
+          description: 'I agree to the Terms of Service'
+        },
+        {
+          key: 'marketing_consent',
+          isRequired: false,
+          description: 'I agree to receive marketing communications'
+        }
+      ]
+    }
+  ]
+});
+```
+
+## Common module combinations
+
+### Basic identity verification
+
+Perfect for user onboarding and account verification:
+
+```typescript {{ title: 'Basic identity flow' }}
+const basicIdentityModules = [
+  { type: 'emailVerification' },
+  { type: 'identityVerification' }
+];
+```
+
+### Financial services KYC
+
+Comprehensive verification for financial applications:
+
+```typescript {{ title: 'Financial KYC flow' }}
+const kycModules = [
+  { type: 'emailVerification' },
+  { type: 'smsVerification' },
+  { type: 'identityVerification' },
+  { type: 'documentAuthentication' },
+  { 
+    type: 'proofOfIntent',
+    requestedData: [
+      {
+        key: 'kyc_consent',
+        isRequired: true,
+        description: 'I consent to identity verification as required by law'
+      }
+    ]
+  }
+];
+```
+
+### Age-restricted services
+
+For platforms requiring age verification:
+
+```typescript {{ title: 'Age verification flow' }}
+const ageVerificationModules = [
+  { type: 'emailVerification' },
+  {
+    type: 'ageEstimation',
+    age: 21 // Must be 21 or older
+  },
+  { type: 'documentAuthentication' }, // Backup verification
+  {
+    type: 'proofOfIntent',
+    requestedData: [
+      {
+        key: 'age_verification_consent',
+        isRequired: true,
+        description: 'I confirm that I am of legal age to use this service'
+      }
+    ]
+  }
+];
+```
+
+### High-security applications
+
+Maximum security for sensitive applications:
+
+```typescript {{ title: 'High-security flow' }}
+const highSecurityModules = [
+  { type: 'emailVerification' },
+  { type: 'smsVerification' },
+  { type: 'identityVerification' },
+  { type: 'documentAuthentication' },
+  { type: 'knowledgeVerify' },
+  {
+    type: 'proofOfIntent',
+    requestedData: [
+      {
+        key: 'security_acknowledgment',
+        isRequired: true,
+        description: 'I understand this is a high-security verification process'
+      }
+    ]
+  }
+];
+```
+
+### Quick social verification
+
+Lightweight verification for social platforms:
+
+```typescript {{ title: 'Social platform flow' }}
+const socialVerificationModules = [
+  { type: 'emailVerification' },
+  {
+    type: 'ageEstimation',
+    age: 13 // COPPA compliance
+  }
+];
+```
+
+## Dynamic module selection
+
+### User-based module selection
+
+Choose modules based on user characteristics:
+
+```typescript {{ title: 'Dynamic module selection' }}
+async function selectModulesForUser(userId: string, verificationLevel: 'basic' | 'standard' | 'premium') {
+  const user = await db.users.findUnique({ where: { id: userId } });
+  
+  const baseModules = [{ type: 'emailVerification' }];
+  
+  switch (verificationLevel) {
+    case 'basic':
+      return baseModules;
+      
+    case 'standard':
+      return [
+        ...baseModules,
+        { type: 'identityVerification' }
+      ];
+      
+    case 'premium':
+      return [
+        ...baseModules,
+        { type: 'smsVerification' },
+        { type: 'identityVerification' },
+        { type: 'documentAuthentication' }
+      ];
+  }
+}
+
+async function createAdaptiveSession(userId: string, verificationLevel: string) {
+  const modules = await selectModulesForUser(userId, verificationLevel);
+  
+  return client.sessions.create({
+    clientReferenceId: userId,
+    modules,
+    metadata: {
+      verificationLevel,
+      userId
+    }
+  });
+}
+```
+
+### Risk-based module selection
+
+Adjust verification requirements based on risk assessment:
+
+```typescript {{ title: 'Risk-based verification' }}
+interface RiskAssessment {
+  score: number; // 0-100, higher = more risky
+  factors: string[];
+  recommendation: 'low' | 'medium' | 'high';
+}
+
+async function assessUserRisk(userId: string, ipAddress: string): Promise<RiskAssessment> {
+  // Implement your risk assessment logic
+  const factors = [];
+  let score = 0;
+  
+  // Check if new user
+  const user = await db.users.findUnique({ where: { id: userId } });
+  if (!user.emailVerified) {
+    score += 20;
+    factors.push('unverified_email');
+  }
+  
+  // Check IP reputation
+  const ipRisk = await checkIPReputation(ipAddress);
+  if (ipRisk.isVPN || ipRisk.isTor) {
+    score += 30;
+    factors.push('suspicious_ip');
+  }
+  
+  // Check device fingerprint
+  const deviceRisk = await checkDeviceRisk(userId);
+  if (deviceRisk.isNewDevice) {
+    score += 15;
+    factors.push('new_device');
+  }
+  
+  let recommendation: 'low' | 'medium' | 'high';
+  if (score < 25) recommendation = 'low';
+  else if (score < 60) recommendation = 'medium';
+  else recommendation = 'high';
+  
+  return { score, factors, recommendation };
+}
+
+async function createRiskBasedSession(userId: string, ipAddress: string) {
+  const riskAssessment = await assessUserRisk(userId, ipAddress);
+  
+  let modules;
+  
+  switch (riskAssessment.recommendation) {
+    case 'low':
+      modules = [
+        { type: 'emailVerification' }
+      ];
+      break;
+      
+    case 'medium':
+      modules = [
+        { type: 'emailVerification' },
+        { type: 'identityVerification' }
+      ];
+      break;
+      
+    case 'high':
+      modules = [
+        { type: 'emailVerification' },
+        { type: 'smsVerification' },
+        { type: 'identityVerification' },
+        { type: 'documentAuthentication' },
+        { type: 'knowledgeVerify' }
+      ];
+      break;
+  }
+  
+  return client.sessions.create({
+    clientReferenceId: userId,
+    modules,
+    metadata: {
+      riskScore: riskAssessment.score,
+      riskFactors: riskAssessment.factors,
+      ipAddress
+    }
+  });
+}
+```
+
+## Module sequencing
+
+### Sequential vs. parallel verification
+
+FaceSign automatically handles module sequencing for optimal user experience:
+
+```typescript {{ title: 'Module flow patterns' }}
+// Sequential flow - one module at a time
+const sequentialModules = [
+  { type: 'emailVerification' },    // Step 1: Verify email first
+  { type: 'smsVerification' },      // Step 2: Then SMS
+  { type: 'identityVerification' }  // Step 3: Finally biometric
+];
+
+// Parallel flow - multiple modules can be completed in any order
+const flexibleModules = [
+  { type: 'emailVerification' },
+  { type: 'smsVerification' },
+  // These can be completed in any order
+];
+```
+
+### Conditional module activation
+
+Use custom flows to activate modules based on previous results:
+
+```typescript {{ title: 'Conditional module flows' }}
+// Example: Only require document verification if biometric confidence is low
+const conditionalFlow = {
+  nodes: [
+    {
+      id: 'email_verification',
+      type: 'email',
+      outcomes: { success: 'identity_check', failure: 'end_failure' }
+    },
+    {
+      id: 'identity_check',
+      type: 'identity',
+      outcomes: { 
+        high_confidence: 'end_success',
+        low_confidence: 'document_verification',
+        failure: 'end_failure'
+      }
+    },
+    {
+      id: 'document_verification',
+      type: 'document',
+      outcomes: { success: 'end_success', failure: 'end_failure' }
+    }
+  ],
+  edges: [
+    { source: 'email_verification', target: 'identity_check', condition: 'success' },
+    { source: 'identity_check', target: 'document_verification', condition: 'low_confidence' },
+    // ... other edges
+  ]
+};
+
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  flow: conditionalFlow, // Use custom flow instead of simple modules array
+  modules: [] // Empty when using custom flow
+});
+```
+
+## Module results and data
+
+### Accessing verification results
+
+Each module provides specific data in the session report:
+
+```typescript {{ title: 'Module result handling' }}
+// Handle webhook with module-specific results
+app.post('/webhooks/facesign', async (req, res) => {
+  const { type, data } = req.body;
+  
+  if (type === 'session.completed') {
+    const { session } = data;
+    const { report } = session;
+    
+    // Check overall verification status
+    if (report.isVerified) {
+      // Extract data from different modules
+      const extractedData = report.extractedData || {};
+      
+      // Email verification results
+      if (extractedData.email) {
+        await updateUserEmail(session.settings.clientReferenceId, extractedData.email);
+      }
+      
+      // SMS verification results
+      if (extractedData.phone) {
+        await updateUserPhone(session.settings.clientReferenceId, extractedData.phone);
+      }
+      
+      // Document authentication results
+      if (extractedData.firstName && extractedData.lastName) {
+        await updateUserName(
+          session.settings.clientReferenceId,
+          extractedData.firstName,
+          extractedData.lastName
+        );
+      }
+      
+      // Age estimation results
+      if (report.aiAnalysis?.ageMin && report.aiAnalysis?.ageMax) {
+        await updateUserAgeRange(
+          session.settings.clientReferenceId,
+          report.aiAnalysis.ageMin,
+          report.aiAnalysis.ageMax
+        );
+      }
+      
+      // Proof of intent results
+      if (extractedData.terms_acceptance) {
+        await recordUserConsent(
+          session.settings.clientReferenceId,
+          'terms_of_service',
+          extractedData.terms_acceptance === 'true'
+        );
+      }
+    }
+  }
+  
+  res.status(200).send('OK');
+});
+```
+
+## Best practices
+
+### 1. Start simple, add complexity gradually
+
+Begin with basic modules and add more based on your needs:
+
+```typescript {{ title: 'Progressive module adoption' }}
+// Phase 1: Basic email verification
+const phase1Modules = [{ type: 'emailVerification' }];
+
+// Phase 2: Add biometric verification
+const phase2Modules = [
+  { type: 'emailVerification' },
+  { type: 'identityVerification' }
+];
+
+// Phase 3: Full verification suite
+const phase3Modules = [
+  { type: 'emailVerification' },
+  { type: 'smsVerification' },
+  { type: 'identityVerification' },
+  { type: 'documentAuthentication' }
+];
+```
+
+### 2. Consider user experience
+
+Balance security with user experience:
+
+```typescript {{ title: 'UX-optimized module selection' }}
+// Good: Progressive verification
+const userFriendlyFlow = [
+  { type: 'emailVerification' },     // Quick and familiar
+  { type: 'identityVerification' }   // Fast biometric check
+];
+
+// Avoid: Too many verification steps at once
+const overwhelmingFlow = [
+  { type: 'emailVerification' },
+  { type: 'smsVerification' },
+  { type: 'identityVerification' },
+  { type: 'documentAuthentication' },
+  { type: 'knowledgeVerify' },
+  { type: 'ageEstimation' }
+]; // This may cause user abandonment
+```
+
+### 3. Match modules to use case
+
+Choose modules that make sense for your application:
+
+```typescript {{ title: 'Use case specific modules' }}
+const USE_CASE_MODULES = {
+  social_media: [
+    { type: 'emailVerification' },
+    { type: 'ageEstimation', age: 13 }
+  ],
+  
+  dating_app: [
+    { type: 'emailVerification' },
+    { type: 'identityVerification' }, // Prevent catfishing
+    { type: 'ageEstimation', age: 18 }
+  ],
+  
+  financial_services: [
+    { type: 'emailVerification' },
+    { type: 'smsVerification' },
+    { type: 'identityVerification' },
+    { type: 'documentAuthentication' },
+    { type: 'proofOfIntent' }
+  ],
+  
+  gaming: [
+    { type: 'emailVerification' },
+    { type: 'ageEstimation', age: 13 }
+  ]
+};
+```
+
+### 4. Handle module failures gracefully
+
+Provide fallback options when modules fail:
+
+```typescript {{ title: 'Module fallback strategies' }}
+// If biometric verification fails, fall back to document verification
+const fallbackFlow = {
+  primary: [
+    { type: 'emailVerification' },
+    { type: 'identityVerification' }
+  ],
+  fallback: [
+    { type: 'emailVerification' },
+    { type: 'documentAuthentication' }, // Alternative to biometric
+    { type: 'knowledgeVerify' }         // Additional security
+  ]
+};
+```
+
+## Next steps
+
+Explore individual module documentation for detailed configuration options:
+
+- [Email Verification](/modules/email-verification) - Configure email OTP verification
+- [SMS Verification](/modules/sms-verification) - Set up SMS-based verification
+- [Identity Verification](/modules/identity-verification) - Biometric verification setup
+- [Document Authentication](/modules/document-authentication) - Government document verification
+- [Age Estimation](/modules/age-estimation) - AI-powered age verification
+- [Proof of Intent](/modules/proof-of-intent) - User consent and intent capture
+- [Knowledge Verify](/modules/knowledge-verify) - Knowledge-based authentication 

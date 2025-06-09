@@ -1,172 +1,442 @@
 export const metadata = {
   title: 'Webhooks',
-  description:
-    'In this guide, we will look at how to register and consume webhooks to integrate your app with Protocol.',
+  description: 'Learn how to use webhooks to receive real-time updates about verification sessions.',
 }
 
 # Webhooks
 
-In this guide, we will look at how to register and consume webhooks to integrate your app with Protocol. With webhooks, your app can know when something happens in Protocol, such as someone sending a message or adding a contact. {{ className: 'lead' }}
+Webhooks allow you to receive real-time HTTP notifications when events happen in your FaceSign account. Rather than polling the API for updates, webhooks push data to your endpoint as soon as an event occurs. {{ className: 'lead' }}
 
-## Registering webhooks
+## Setting up webhooks
 
-To register a new webhook, you need to have a URL in your app that Protocol can call. You can configure a new webhook from the Protocol dashboard under [API settings](#). Give your webhook a name, pick the [events](#event-types) you want to listen for, and add your URL.
+To start receiving webhooks:
 
-Now, whenever something of interest happens in your app, a webhook is fired off by Protocol. In the next section, we'll look at how to consume webhooks.
+1. Create an endpoint on your server to receive webhook events
+2. Register your endpoint URL in the FaceSign Dashboard
+3. Handle incoming webhook events in your application
 
-## Consuming webhooks
+### Creating a webhook endpoint
 
-When your app receives a webhook request from Protocol, check the `type` attribute to see what event caused it. The first part of the event type will tell you the payload type, e.g., a conversation, message, etc.
+Your webhook endpoint should:
 
-```json {{ title: 'Example webhook payload' }}
+- Accept POST requests with JSON payloads
+- Respond quickly with a 2xx status code
+- Verify the webhook signature for security
+
+<CodeGroup title="Basic webhook handler">
+
+```typescript {{ title: 'TypeScript' }}
+import express from 'express';
+import crypto from 'crypto';
+
+const app = express();
+
+// Important: Use raw body for signature verification
+app.post('/webhooks/facesign', 
+  express.raw({ type: 'application/json' }), 
+  (req, res) => {
+    const signature = req.headers['facesign-signature'];
+    const body = req.body;
+    
+    // Verify signature (see below)
+    if (!verifySignature(body, signature, webhookSecret)) {
+      return res.status(400).send('Invalid signature');
+    }
+    
+    const event = JSON.parse(body);
+    
+    // Handle the event
+    switch (event.type) {
+      case 'session.verified':
+        console.log('Session verified:', event.data.id);
+        break;
+      case 'session.failed':
+        console.log('Session failed:', event.data.id);
+        break;
+      // ... handle other event types
+    }
+    
+    // Return 200 to acknowledge receipt
+    res.status(200).send('OK');
+  }
+);
+```
+
+```python {{ title: 'Python' }}
+from flask import Flask, request, abort
+import json
+import hmac
+import hashlib
+
+app = Flask(__name__)
+
+@app.route('/webhooks/facesign', methods=['POST'])
+def handle_webhook():
+    # Get the signature from headers
+    signature = request.headers.get('FaceSign-Signature')
+    
+    # Verify signature
+    if not verify_signature(request.data, signature, webhook_secret):
+        abort(400, 'Invalid signature')
+    
+    # Parse the event
+    event = json.loads(request.data)
+    
+    # Handle the event
+    if event['type'] == 'session.verified':
+        print(f"Session verified: {event['data']['id']}")
+    elif event['type'] == 'session.failed':
+        print(f"Session failed: {event['data']['id']}")
+    # ... handle other event types
+    
+    # Return 200 to acknowledge receipt
+    return '', 200
+```
+
+</CodeGroup>
+
+## Webhook events
+
+FaceSign sends the following webhook events:
+
+### Session events
+
+<Properties>
+  <Property name="session.created" type="event">
+    Sent when a new verification session is created.
+  </Property>
+  <Property name="session.started" type="event">
+    Sent when a user begins the verification process.
+  </Property>
+  <Property name="session.verified" type="event">
+    Sent when a session is successfully verified.
+  </Property>
+  <Property name="session.failed" type="event">
+    Sent when verification fails (e.g., document rejected, face mismatch).
+  </Property>
+  <Property name="session.cancelled" type="event">
+    Sent when a session is cancelled by the user or via API.
+  </Property>
+  <Property name="session.expired" type="event">
+    Sent when a session expires without completion.
+  </Property>
+</Properties>
+
+### Event object structure
+
+All webhook events follow this structure:
+
+```json {{ title: 'Event structure' }}
 {
-  "id": "a056V7R7NmNRjl70",
-  "type": "conversation.updated",
-  "payload": {
-    "id": "WAz8eIbvDR60rouK"
-    // ...
+  "id": "evt_1a2b3c4d5e6f",
+  "object": "event",
+  "type": "session.verified",
+  "created": 1706284800,
+  "data": {
+    // The full session object
+    "id": "vs_1a2b3c4d5e6f",
+    "object": "verification_session",
+    "status": "verified",
+    "verified_outputs": {
+      "first_name": "John",
+      "last_name": "Doe",
+      // ... other verification results
+    }
+    // ... other session properties
   }
 }
 ```
 
-In the example above, a conversation was `updated`, and the payload type is a `conversation`.
+## Verifying webhook signatures
 
-<div className="not-prose">
-  <Button href="#event-types" variant="text" arrow="right">
-    <>See all event types</>
-  </Button>
-</div>
+FaceSign signs all webhook payloads so you can verify they're authentic. The signature is included in the `FaceSign-Signature` header.
 
----
+<CodeGroup title="Signature verification">
 
-## Event types
+```typescript {{ title: 'TypeScript' }}
+import crypto from 'crypto';
 
-<Row>
-  <Col>
-
-    <Properties>
-      <Property name="contact.created">
-        A new contact was created.
-      </Property>
-      <Property name="contact.updated">
-        An existing contact was updated.
-      </Property>
-      <Property name="contact.deleted">
-        A contact was successfully deleted.
-      </Property>
-      <Property name="conversation.created">
-        A new conversation was created.
-      </Property>
-      <Property name="conversation.updated">
-        An existing conversation was updated.
-      </Property>
-      <Property name="conversation.deleted">
-        A conversation was successfully deleted.
-      </Property>
-      <Property name="message.created">
-        A new message was created.
-      </Property>
-      <Property name="message.updated">
-        An existing message was updated.
-      </Property>
-      <Property name="message.deleted">
-        A message was successfully deleted.
-      </Property>
-      <Property name="group.created">
-        A new group was created.
-      </Property>
-      <Property name="group.updated">
-        An existing group was updated.
-      </Property>
-      <Property name="group.deleted">
-        A group was successfully deleted.
-      </Property>
-      <Property name="attachment.created">
-        A new attachment was created.
-      </Property>
-      <Property name="attachment.updated">
-        An existing attachment was updated.
-      </Property>
-      <Property name="attachment.deleted">
-        An attachment was successfully deleted.
-      </Property>
-    </Properties>
-
-  </Col>
-  <Col sticky>
-
-    ```json {{ 'title': 'Example payload' }}
-    {
-      "id": "a056V7R7NmNRjl70",
-      "type": "message.updated",
-      "payload": {
-        "id": "SIuAFUNKdSYHZF2w",
-        "conversation_id": "xgQQXg3hrtjh7AvZ",
-        "contact": {
-          "id": "WAz8eIbvDR60rouK",
-          "username": "KevinMcCallister",
-          "phone_number": "1-800-759-3000",
-          "avatar_url": "https://assets.protocol.chat/avatars/kevin.jpg",
-          "last_active_at": 705103200,
-          "created_at": 692233200
-        },
-        "message": "I’m traveling with my dad. He’s at a meeting. I hate meetings.",
-        "reactions": [],
-        "attachments": [],
-        "read_at": 705103200,
-        "created_at": 692233200,
-        "updated_at": 692233200
-      }
-    }
-    ```
-
-  </Col>
-</Row>
-
----
-
-## Security
-
-To know for sure that a webhook was, in fact, sent by Protocol instead of a malicious actor, you can verify the request signature. Each webhook request contains a header named `x-protocol-signature`, and you can verify this signature by using your secret webhook key. The signature is an HMAC hash of the request payload hashed using your secret key. Here is an example of how to verify the signature in your app:
-
-<CodeGroup title="Verifying a request">
-
-```js
-const signature = req.headers['x-protocol-signature']
-const hash = crypto.createHmac('sha256', secret).update(payload).digest('hex')
-
-if (hash === signature) {
-  // Request is verified
-} else {
-  // Request could not be verified
+function verifySignature(
+  payload: Buffer | string,
+  signature: string,
+  secret: string
+): boolean {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  
+  // Use timing-safe comparison
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
 }
 ```
 
-```python
-from flask import request
-import hashlib
+```python {{ title: 'Python' }}
 import hmac
+import hashlib
 
-signature = request.headers.get("x-protocol-signature")
-hash = hmac.new(bytes(secret, "ascii"), bytes(payload, "ascii"), hashlib.sha256)
-
-if hash.hexdigest() == signature:
-    # Request is verified
-else:
-    # Request could not be verified
+def verify_signature(payload, signature, secret):
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    
+    // Use timing-safe comparison
+    return hmac.compare_digest(signature, expected_signature)
 ```
 
-```php
-$signature = $request['headers']['x-protocol-signature'];
-$hash = hash_hmac('sha256', $payload, $secret);
-
-if (hash_equals($hash, $signature)) {
-  // Request is verified
-} else {
-  // Request could not be verified
+```php {{ title: 'PHP' }}
+function verifySignature($payload, $signature, $secret) {
+    $expectedSignature = hash_hmac('sha256', $payload, $secret);
+    
+    // Use timing-safe comparison
+    return hash_equals($expectedSignature, $signature);
 }
 ```
 
 </CodeGroup>
 
-If your generated signature matches the `x-protocol-signature` header, you can be sure that the request was truly coming from Protocol. It's essential to keep your secret webhook key safe — otherwise, you can no longer be sure that a given webhook was sent by Protocol. Don't commit your secret webhook key to GitHub!
+<Warning>
+  Always use a timing-safe comparison function to prevent timing attacks when verifying signatures.
+</Warning>
+
+## Handling webhooks
+
+### Best practices
+
+1. **Respond quickly** - Return a 2xx status code as soon as possible
+2. **Process asynchronously** - Use a queue for time-consuming operations
+3. **Handle duplicates** - Use the event ID to ensure idempotency
+4. **Verify signatures** - Always verify the webhook signature
+5. **Handle failures gracefully** - Implement proper error handling
+
+### Retries
+
+FaceSign will retry failed webhook deliveries with exponential backoff:
+
+- First retry: 5 seconds
+- Second retry: 30 seconds
+- Third retry: 2 minutes
+- Fourth retry: 10 minutes
+- Fifth retry: 1 hour
+
+After 5 failed attempts, the webhook is marked as failed and won't be retried.
+
+### Testing webhooks
+
+You can test your webhook endpoint using the FaceSign Dashboard:
+
+1. Go to **Settings** → **Webhooks**
+2. Click on your webhook endpoint
+3. Click **Send test webhook**
+4. Select an event type and click **Send**
+
+## Example: Complete webhook handler
+
+Here's a complete example that handles all session events:
+
+<CodeGroup title="Complete webhook handler">
+
+```typescript {{ title: 'TypeScript' }}
+import express from 'express';
+import crypto from 'crypto';
+
+const app = express();
+const webhookSecret = process.env.FACESIGN_WEBHOOK_SECRET;
+
+// Webhook handler
+app.post('/webhooks/facesign',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    const signature = req.headers['facesign-signature'] as string;
+    
+    // Verify signature
+    if (!verifySignature(req.body, signature, webhookSecret)) {
+      return res.status(400).send('Invalid signature');
+    }
+    
+    const event = JSON.parse(req.body.toString());
+    
+    // Prevent duplicate processing
+    if (await isEventProcessed(event.id)) {
+      return res.status(200).send('Already processed');
+    }
+    
+    try {
+      // Handle different event types
+      switch (event.type) {
+        case 'session.created':
+          await handleSessionCreated(event.data);
+          break;
+          
+        case 'session.verified':
+          await handleSessionVerified(event.data);
+          break;
+          
+        case 'session.failed':
+          await handleSessionFailed(event.data);
+          break;
+          
+        case 'session.cancelled':
+          await handleSessionCancelled(event.data);
+          break;
+          
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
+      }
+      
+      // Mark event as processed
+      await markEventProcessed(event.id);
+      
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error('Webhook processing error:', error);
+      res.status(500).send('Internal error');
+    }
+  }
+);
+
+async function handleSessionVerified(session: any) {
+  // Update user verification status
+  await updateUserVerificationStatus(session.metadata.user_id, {
+    verified: true,
+    verifiedAt: new Date(),
+    verificationData: session.verified_outputs,
+  });
+  
+  // Send confirmation email
+  await sendVerificationSuccessEmail(session.metadata.user_id);
+}
+
+async function handleSessionFailed(session: any) {
+  // Log failure reason
+  console.error(`Verification failed for user ${session.metadata.user_id}`);
+  
+  // Notify user
+  await sendVerificationFailedEmail(session.metadata.user_id);
+}
+```
+
+```python {{ title: 'Python' }}
+from flask import Flask, request, abort
+import json
+import hmac
+import hashlib
+from datetime import datetime
+
+app = Flask(__name__)
+webhook_secret = os.environ.get('FACESIGN_WEBHOOK_SECRET')
+
+@app.route('/webhooks/facesign', methods=['POST'])
+def handle_webhook():
+    # Get signature
+    signature = request.headers.get('FaceSign-Signature')
+    
+    # Verify signature
+    if not verify_signature(request.data, signature, webhook_secret):
+        abort(400, 'Invalid signature')
+    
+    event = json.loads(request.data)
+    
+    # Prevent duplicate processing
+    if is_event_processed(event['id']):
+        return '', 200
+    
+    try:
+        # Handle different event types
+        if event['type'] == 'session.created':
+            handle_session_created(event['data'])
+            
+        elif event['type'] == 'session.verified':
+            handle_session_verified(event['data'])
+            
+        elif event['type'] == 'session.failed':
+            handle_session_failed(event['data'])
+            
+        elif event['type'] == 'session.cancelled':
+            handle_session_cancelled(event['data'])
+            
+        else:
+            print(f"Unhandled event type: {event['type']}")
+        
+        # Mark event as processed
+        mark_event_processed(event['id'])
+        
+        return '', 200
+        
+    except Exception as e:
+        print(f"Webhook processing error: {e}")
+        abort(500)
+
+def handle_session_verified(session):
+    # Update user verification status
+    update_user_verification_status(
+        session['metadata']['user_id'],
+        {
+            'verified': True,
+            'verified_at': datetime.now(),
+            'verification_data': session['verified_outputs']
+        }
+    )
+    
+    # Send confirmation email
+    send_verification_success_email(session['metadata']['user_id'])
+
+def handle_session_failed(session):
+    # Log failure
+    print(f"Verification failed for user {session['metadata']['user_id']}")
+    
+    # Notify user
+    send_verification_failed_email(session['metadata']['user_id'])
+```
+
+</CodeGroup>
+
+## Webhook security
+
+### IP allowlisting
+
+For additional security, you can restrict webhook requests to FaceSign's IP addresses:
+
+```
+52.89.214.238
+34.212.75.30
+54.218.53.128
+52.32.178.7
+```
+
+### Request headers
+
+All webhook requests include these headers:
+
+<Properties>
+  <Property name="FaceSign-Signature" type="string">
+    HMAC signature of the request body
+  </Property>
+  <Property name="FaceSign-Event-Id" type="string">
+    Unique identifier for this event
+  </Property>
+  <Property name="Content-Type" type="string">
+    Always `application/json`
+  </Property>
+</Properties>
+
+## Next steps
+
+Now that you understand webhooks, explore these related topics:
+
+<div className="not-prose mt-6 flex flex-col gap-3">
+  <Button href="/sessions" variant="text" arrow="right">
+    Learn about sessions
+  </Button>
+  <Button href="/errors" variant="text" arrow="right">
+    Handle errors properly
+  </Button>
+  <Button href="/node-graph" variant="text" arrow="right">
+    Customize verification flows
+  </Button>
+</div>

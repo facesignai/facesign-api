@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from '../../../docs/protocol_docs/node_modules/@types/react'
 import Link from 'next/link'
 import clsx from 'clsx'
 

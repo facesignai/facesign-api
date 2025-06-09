@@ -1,5 +1,5 @@
 module.exports = async () => {
-  const nextra = await import('nextra')
+  const nextra = await import('./protocol_docs/node_modules/nextra/dist/server')
   
   const withNextra = nextra.default({
     theme: 'nextra-theme-docs',

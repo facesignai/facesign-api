@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId } from '../../../docs/protocol_docs/node_modules/@types/react'
 
 export function HeroBackground(props: React.ComponentPropsWithoutRef<'svg'>) {
   let id = useId()

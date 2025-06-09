@@ -1,0 +1,189 @@
+export const metadata = {
+  title: 'Document Authentication Module',
+  description: 'Learn how to use the Document Authentication module to scan and verify government-issued ID documents.',
+}
+
+# Document Authentication Module
+
+<div className="lead">The Document Authentication module allows you to scan, parse, and verify government-issued identity documents like driver's licenses, passports, and national ID cards. It uses OCR (Optical Character Recognition) and AI to extract data, check for tampering, and authenticate the document's validity.</div>
+
+## How it works
+
+1. **Initiate session** - Create a session with the `documentAuthentication` module.
+2. **User selects document** - The user chooses the type of document they want to scan.
+3. **Capture document** - The interface guides the user to capture a clear image of the front and back of the document.
+4. **AI-powered analysis** - FaceSign's AI processes the images to:
+    - Extract personal information (name, DOB, address, etc.)
+    - Check for signs of tampering or forgery
+    - Verify holograms, watermarks, and other security features
+5. **Verification complete** - The module completes with the extracted data and an authentication result.
+
+## Module configuration
+
+### Properties
+
+<Properties>
+  <Property name="type" type="string">
+    Must be `documentAuthentication`.
+  </Property>
+</Properties>
+
+*This module has no additional configuration properties. Its behavior is determined by the document type selected by the user.*
+
+---
+
+## Example implementation
+
+### Standard document authentication
+
+Add the `documentAuthentication` module to your session to enable ID document scanning.
+
+```typescript {{ title: 'Backend: Create session' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'documentAuthentication' }
+  ],
+  metadata: {
+    userId: 'user_123',
+    verificationReason: 'kyc_compliance'
+  }
+});
+```
+
+## User experience
+
+### Document selection
+
+The user selects the country and type of document they will provide.
+
+![Document selection screen](https://cdn.facesign.ai/docs/document-selection.png)
+
+### Document capture
+
+The interface guides the user to take a clear, well-lit photo of their document.
+
+![Document capture screen](https://cdn.facesign.ai/docs/document-capture.gif)
+
+### Data confirmation
+
+The user is shown the extracted data and asked to confirm its accuracy.
+
+![Document data confirmation](https://cdn.facesign.ai/docs/document-data-confirmation.png)
+
+## Handling verification results
+
+### Webhook event
+
+The `session.completed` webhook contains the extracted data in the `report.extractedData` field.
+
+```json {{ title: 'session.completed webhook payload' }}
+{
+  "id": "evt_abc123",
+  "type": "session.completed",
+  "data": {
+    "session": {
+      "id": "fs_session_xyz789",
+      "status": "complete",
+      "report": {
+        "isVerified": true,
+        "livenessDetected": false, // May be false if only document auth is used
+        "extractedData": {
+          "firstName": "JANE",
+          "lastName": "DOE",
+          "dateOfBirth": "1990-01-15",
+          "address": "123 Main St, Anytown, USA 12345",
+          "documentNumber": "D12345678",
+          "documentType": "drivers_license",
+          "issuingCountry": "USA",
+          "expirationDate": "2028-01-15"
+        }
+      },
+      "settings": {
+        "clientReferenceId": "user_123"
+      }
+    }
+  }
+}
+```
+
+### Backend logic
+
+Use the webhook to populate user profiles or fulfill compliance requirements.
+
+```typescript {{ title: 'Backend: Webhook handler' }}
+app.post('/webhooks/facesign', async (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === 'session.completed' && data.session.report?.isVerified) {
+    const { session } = data;
+    const { report, settings } = session;
+    const { extractedData } = report;
+    const userId = settings.clientReferenceId;
+
+    if (extractedData?.documentType) {
+      // Update user profile with data from their ID
+      await db.users.update({
+        where: { id: userId },
+        data: {
+          legalFirstName: extractedData.firstName,
+          legalLastName: extractedData.lastName,
+          dateOfBirth: new Date(extractedData.dateOfBirth),
+          address: extractedData.address,
+          kycStatus: 'verified',
+          kycVerifiedAt: new Date()
+        }
+      });
+
+      // Store document details for compliance
+      await db.documents.create({
+        data: {
+          userId,
+          documentType: extractedData.documentType,
+          documentNumber: extractedData.documentNumber,
+          issuingCountry: extractedData.issuingCountry,
+          expirationDate: new Date(extractedData.expirationDate)
+        }
+      });
+    }
+  }
+
+  res.status(200).send('OK');
+});
+```
+
+## Best practices
+
+### 1. Combine with Identity Verification for KYC
+
+The most powerful use of this module is in combination with `identityVerification`. This allows you to perform a "face match," comparing the live person to the photo on their ID document, which is a standard requirement for KYC/AML compliance.
+
+```typescript {{ title: 'Backend: KYC with face match' }}
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  modules: [
+    { type: 'documentAuthentication' },
+    { type: 'identityVerification' }
+  ]
+});
+
+// The session report will include a `faceMatch` result
+```
+
+### 2. Supported documents
+
+FaceSign supports thousands of document types from over 200 countries and territories. The user interface will automatically adapt to show the correct document types based on the user's selected country.
+
+### 3. Image quality
+
+Advise users to place their document on a flat, dark surface in a well-lit area to ensure high-quality captures and accurate data extraction. The SDK provides real-time feedback to help with this.
+
+### 4. Data privacy
+
+Be transparent with users about what data you are collecting and why. Only store the data you need for legal or compliance reasons and handle it securely.
+
+## Next steps
+
+- [Identity Verification](/modules/identity-verification) - Add biometric face matching to your flow
+- [Proof of Intent](/modules/proof-of-intent) - Capture user consent for data collection
+- [Sessions](/sessions) - Learn more about session management and reports 

@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId } from '../../../docs/protocol_docs/node_modules/@types/react'
 import clsx from 'clsx'
 
 import { InstallationIcon } from '@/components/icons/InstallationIcon'

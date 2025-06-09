@@ -1,6 +1,6 @@
-import React from 'react'
+import React from '../protocol_docs/node_modules/@types/react'
 import { cn } from '@/lib/utils'
-import { AlertCircle, Info, AlertTriangle, CheckCircle } from 'lucide-react'
+import { AlertCircle, Info, AlertTriangle, CheckCircle } from '@/protocol_docs/node_modules/lucide-react/dist/lucide-react'
 
 interface CalloutProps {
   type?: 'info' | 'warning' | 'error' | 'success'

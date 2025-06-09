@@ -1,5 +1,5 @@
-import React from 'react'
-import { DocsThemeConfig } from 'nextra-theme-docs'
+import React from './protocol_docs/node_modules/@types/react'
+import { DocsThemeConfig } from '@/protocol_docs/node_modules/nextra-theme-docs/dist/index.mjs'
 
 const config: DocsThemeConfig = {
   logo: (
