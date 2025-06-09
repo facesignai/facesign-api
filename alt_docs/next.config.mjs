@@ -1,9 +1,9 @@
 import nextMDX from '@next/mdx'
 
-import { recmaPlugins } from '../../protocol_docs/src/mdx/recma.mjs'
-import { rehypePlugins } from '../../protocol_docs/src/mdx/rehype.mjs'
-import { remarkPlugins } from '../../protocol_docs/src/mdx/remark.mjs'
-import withSearch from '../../protocol_docs/src/mdx/search.mjs'
+import { recmaPlugins } from './src/mdx/recma.mjs'
+import { rehypePlugins } from './src/mdx/rehype.mjs'
+import { remarkPlugins } from './src/mdx/remark.mjs'
+import withSearch from './src/mdx/search.mjs'
 
 const withMDX = nextMDX({
   options: {
@@ -13,7 +13,7 @@ const withMDX = nextMDX({
   },
 })
 
-/** @type {import('next').NextConfig} */
+/** @type {import('./protocol_docs/node_modules/next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   experimental: {
