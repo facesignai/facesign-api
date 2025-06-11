@@ -91,3 +91,5 @@ export type NodeReport =
   | DataValidationNodeReport
   | DocumentScanNodeReport
   | RecognitionNodeReport
+  | TwoFactorNodeReport
+  | FaceScanNodeReport
