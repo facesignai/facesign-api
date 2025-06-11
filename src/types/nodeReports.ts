@@ -13,6 +13,7 @@ import {
 export type NodeReportBase = {
   type: FSNodeType
   nodeId: string
+  createdAt: number
 }
 
 export type TwoFactorReport = {
