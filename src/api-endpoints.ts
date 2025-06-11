@@ -2,11 +2,13 @@ import { Device } from './types/deviceDetails'
 import { Location } from './types/location'
 import { FSEdge, FSNode } from './types/nodes'
 import { Customization } from './types/customization'
+import { NodeReport } from './types/nodeReports'
 
 export * from './types/deviceDetails'
 export * from './types/location'
 export * from './types/nodes'
 export * from './types/customization'
+export * from './types/nodeReports'
 
 export enum ILogLevel {
   TRACE = 'TRACE',
@@ -80,20 +82,24 @@ export type SessionReportAIAnalysis = {
   overallSummary: string
   analysis: SessionReportAIAnalysisSection[]
 }
+
 export interface SessionReport {
   transcript: Phrase[]
   aiAnalysis?: SessionReportAIAnalysis
   location?: Location
   device?: Device
-  livenessDetected?: boolean
   lang?: string
+  // TODO:  {{{ remove this a bit later
   extractedData?: Record<string, string>
+  livenessDetected?: boolean
   screenshots?: string[]
   videos?: {
     avatarVideoUrl?: string
     userVideoUrl?: string
   }
   isVerified?: boolean
+  // }}}
+  nodeReports?: NodeReport[]
 }
 
 // Background type enum for permissions screen
