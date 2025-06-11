@@ -18,7 +18,6 @@ export type NodeReportBase = {
 
 export type TwoFactorReport = {
   email: string
-  isVerified?: boolean
 }
 
 export type TwoFactorNodeReport = {
