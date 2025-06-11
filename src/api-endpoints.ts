@@ -195,12 +195,18 @@ export type FSFlow = {
   edges: FSEdge[]
 }
 
+export type ProvidedData = Record<string, string> & {
+  name?: string
+  email?: string
+  phone?: string
+}
+
 export interface SessionSettings {
   clientReferenceId: string
   metadata: object
   initialPhrase?: string
   finalPhrase?: string
-  providedData?: Record<string, string>
+  providedData?: ProvidedData
   avatarId?: string
   langs?: string[]
   defaultLang?: string
