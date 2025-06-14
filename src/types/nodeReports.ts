@@ -20,7 +20,7 @@ export type TwoFactorReport = {
   email: string
 }
 
-export type TwoFactorNodeReport = {
+export type TwoFactorNodeReport = NodeReportBase & {
   type: FSNodeType.TWO_FACTOR
   outcome: FSTwoFactorOutcome
   report?: TwoFactorReport
@@ -31,7 +31,7 @@ export type FaceScanReport = {
   // append data of face scanning
 }
 
-export type FaceScanNodeReport = {
+export type FaceScanNodeReport = NodeReportBase & {
   type: FSNodeType.FACE_SCAN
   outcome: FSFaceScanOutcome
   report?: FaceScanReport
