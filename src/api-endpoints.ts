@@ -102,11 +102,6 @@ export interface SessionReport {
   nodeReports?: NodeReport[]
 }
 
-// Background type enum for permissions screen
-export enum BackgroundType {
-  AVATAR = 'avatar',
-  COLOR = 'color',
-}
 export interface Session {
   id: string
   createdAt: number
