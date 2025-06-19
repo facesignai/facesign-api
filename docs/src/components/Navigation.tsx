@@ -39,7 +39,14 @@ export function Navigation({
                         : 'text-zinc-600 before:hidden before:bg-zinc-300 hover:text-zinc-900 hover:before:block dark:text-zinc-400 dark:before:bg-zinc-700 dark:hover:text-white',
                     )}
                   >
-                    {link.title}
+                    <span className="flex items-center gap-2">
+                      {link.title}
+                      {link.label && (
+                        <span className="inline-flex items-center rounded-full bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20">
+                          {link.label}
+                        </span>
+                      )}
+                    </span>
                   </Link>
                 </li>
               ))}
