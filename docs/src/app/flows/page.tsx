@@ -9,7 +9,7 @@ export default function CustomFlowsPage() {
       <h1>Custom Flows</h1>
       
       <div className="lead text-lg mb-8">
-        Build sophisticated verification experiences with FaceSign's node-based flow system. 
+        Build sophisticated verification experiences with FaceSign&apos;s node-based flow system. 
         Create conditional verification paths, implement complex business logic, and design 
         user experiences that adapt to different scenarios.
       </div>

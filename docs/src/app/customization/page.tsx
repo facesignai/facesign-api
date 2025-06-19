@@ -17,7 +17,7 @@ export default function CustomizationPage() {
       
       <p>
         Session customization allows you to control various aspects of the verification interface 
-        to match your application's look and feel. Customizations are applied when creating a session 
+        to match your application&apos;s look and feel. Customizations are applied when creating a session 
         and affect the entire user journey.
       </p>
 
