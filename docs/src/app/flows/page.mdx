@@ -85,6 +85,47 @@ FaceSign supports 11 different node types for building flows:
 
 ## Basic Flow Example
 
+Here's a simple flow that performs liveness detection followed by document scanning:
+
+<FlowDiagram 
+  title="Basic Identity Verification Flow"
+  description="A simple flow that checks for a live person, then scans their document"
+  interactive
+  nodes={[
+    { 
+      id: "start", 
+      type: "start", 
+      label: "Start",
+      description: "Entry point for the verification flow"
+    },
+    { 
+      id: "liveness", 
+      type: "liveness_detection", 
+      label: "Liveness Check",
+      description: "AI-powered detection to ensure the user is a real, live person"
+    },
+    { 
+      id: "document", 
+      type: "document_scan", 
+      label: "Document Scan",
+      description: "Scan and extract data from government-issued ID documents"
+    },
+    { 
+      id: "end", 
+      type: "end", 
+      label: "Complete",
+      description: "Verification flow completed successfully"
+    }
+  ]}
+  edges={[
+    { id: "e1", source: "start", target: "liveness" },
+    { id: "e2", source: "liveness", target: "document", label: "live person detected" },
+    { id: "e3", source: "document", target: "end", label: "document verified" }
+  ]}
+/>
+
+The corresponding JSON structure for this flow:
+
 ```json {{ title: 'Basic Flow Structure' }}
 {
   "nodes": [

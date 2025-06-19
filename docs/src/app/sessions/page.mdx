@@ -26,6 +26,114 @@ This approach gives you several benefits:
 
 ---
 
+## Create a session
+
+<ApiEndpoint 
+  method="POST" 
+  path="/v1/sessions" 
+  description="Create a new verification session with specified modules or custom flow">
+
+Create a verification session by providing configuration settings. You can use either predefined modules or a custom flow, but not both.
+
+<CodeGroup>
+
+```typescript {{ title: 'Using Modules' }}
+const session = await client.sessions.create({
+  clientReferenceId: 'user-123',
+  metadata: { userId: '123', source: 'web' },
+  modules: [
+    { type: 'identityVerification' },
+    { type: 'documentAuthentication' }
+  ],
+  customization: {
+    branding: {
+      primaryColor: '#007bff',
+      logoUrl: 'https://your-domain.com/logo.png'
+    }
+  }
+})
+```
+
+```typescript {{ title: 'Using Custom Flow' }}
+const session = await client.sessions.create({
+  clientReferenceId: 'user-456',
+  flow: {
+    nodes: [
+      { id: 'start', type: 'start' },
+      { 
+        id: 'liveness', 
+        type: 'liveness_detection',
+        outcomes: {
+          livenessDetected: 'document',
+          deepfakeDetected: 'end'
+        }
+      },
+      { id: 'document', type: 'document_scan' },
+      { id: 'end', type: 'end' }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'liveness' },
+      { id: 'e2', source: 'liveness', target: 'document' },
+      { id: 'e3', source: 'document', target: 'end' }
+    ]
+  }
+})
+```
+
+```bash {{ title: 'cURL' }}
+curl https://api.facesign.ai/v1/sessions \
+  -H "Authorization: Bearer sk_test_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientReferenceId": "user-123",
+    "modules": [
+      { "type": "identityVerification" },
+      { "type": "documentAuthentication" }
+    ]
+  }'
+```
+
+</CodeGroup>
+
+<ResponsePreview 
+  responses={[
+    {
+      status: 201,
+      description: "Session created successfully",
+      example: {
+        id: "vs_1a2b3c4d5e6f",
+        clientSecret: "vs_1a2b3c4d5e6f_secret_abc123def456",
+        createdAt: 1640995200,
+        status: "requiresInput",
+        settings: {
+          clientReferenceId: "user-123",
+          metadata: { userId: "123", source: "web" },
+          modules: [
+            { type: "identityVerification" },
+            { type: "documentAuthentication" }
+          ]
+        },
+        version: "2024-12-18"
+      }
+    },
+    {
+      status: 400,
+      description: "Invalid request parameters",
+      example: {
+        error: {
+          type: "invalid_request_error",
+          message: "Cannot specify both modules and flow in the same request",
+          param: "modules"
+        }
+      }
+    }
+  ]}
+/>
+
+</ApiEndpoint>
+
+---
+
 ## The session model
 
 The session model contains all the information about a verification session, including its configuration, status, and results.
