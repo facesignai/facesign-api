@@ -9,9 +9,10 @@ import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Protocol API Reference',
-    default: 'Protocol API Reference',
+    template: '%s - FaceSign API Documentation',
+    default: 'FaceSign API Documentation',
   },
+  description: 'Complete API documentation for FaceSign identity verification',
 }
 
 export default async function RootLayout({
