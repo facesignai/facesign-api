@@ -8,7 +8,7 @@
   "trailingSlash": false,
   "git": {
     "deploymentEnabled": {
-      "api_docs_wip": true
+      "api_docs": true
     }
   }
 }
