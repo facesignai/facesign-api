@@ -6,3 +6,6 @@ build
 .vscode
 sandbox
 .DS_Store
+
+# Documentation build artifacts
+/docs/.next

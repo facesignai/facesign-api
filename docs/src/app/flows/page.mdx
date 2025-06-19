@@ -1,0 +1,132 @@
+export const metadata = {
+  title: 'Custom Flows',
+  description: 'Create custom verification flows using the FaceSign node-based flow system for advanced verification scenarios.',
+}
+
+# Custom Flows
+
+<div className="lead">Build sophisticated verification experiences with FaceSign's node-based flow system. Create conditional verification paths, implement complex business logic, and design user experiences that adapt to different scenarios.</div>
+
+## Overview
+
+While the [verification modules](/modules) provide a simple way to configure common verification patterns, custom flows give you complete control over the verification process. Flows are built using a node-graph system where:
+
+- **Nodes** define verification steps and actions
+- **Edges** define the connections between nodes
+- **Outcomes** determine which path to take based on results
+
+## Flow Structure
+
+A flow consists of two main components:
+
+```typescript {{ title: 'Flow structure' }}
+interface FSFlow {
+  nodes: FSNode[]
+  edges: FSEdge[]
+}
+```
+
+### Nodes
+
+Nodes are the building blocks of your verification flow. Each node represents a specific action or verification step:
+
+```typescript {{ title: 'Available node types' }}
+enum FSNodeType {
+  START = 'start',                    // Flow entry point
+  END = 'end',                        // Flow completion
+  CONVERSATION = 'conversation',       // AI chat interaction
+  LIVENESS_DETECTION = 'liveness_detection', // Biometric liveness check
+  ENTER_EMAIL = 'enter_email',        // Email input
+  DATA_VALIDATION = 'data_validation', // Data validation logic
+  DOCUMENT_SCAN = 'document_scan',    // Document scanning
+  RECOGNITION = 'recognition',        // Facial recognition
+  FACE_SCAN = 'face_scan',           // Face capture/comparison
+  TWO_FACTOR = 'two_factor',         // 2FA via email/SMS
+}
+```
+
+### Edges
+
+Edges define how nodes connect to each other:
+
+```typescript {{ title: 'Edge structure' }}
+interface FSEdge {
+  id: string
+  source: string  // Source node ID
+  target: string  // Target node ID
+}
+```
+
+## Creating Custom Flows
+
+### Basic Flow Example
+
+Here's a simple custom flow that collects an email and performs face recognition:
+
+```typescript {{ title: 'Basic custom flow' }}
+const customFlow = {
+  nodes: [
+    {
+      id: 'start',
+      type: 'start'
+    },
+    {
+      id: 'email_step',
+      type: 'enter_email',
+      outcomes: {
+        emailEntered: 'face_recognition',
+        canceled: 'end_canceled'
+      }
+    },
+    {
+      id: 'face_recognition',
+      type: 'recognition',
+      outcomes: {
+        recognized: 'end_success',
+        newUser: 'end_success',
+        noFace: 'retry_face'
+      }
+    },
+    {
+      id: 'retry_face',
+      type: 'conversation',
+      prompt: 'Please ensure your face is clearly visible and try again.',
+      transitions: [
+        {
+          id: 'retry',
+          condition: 'continue'
+        }
+      ]
+    },
+    {
+      id: 'end_success',
+      type: 'end'
+    },
+    {
+      id: 'end_canceled',
+      type: 'end'
+    }
+  ],
+  edges: [
+    { id: 'e1', source: 'start', target: 'email_step' },
+    { id: 'e2', source: 'email_step', target: 'face_recognition' },
+    { id: 'e3', source: 'email_step', target: 'end_canceled' },
+    { id: 'e4', source: 'face_recognition', target: 'end_success' },
+    { id: 'e5', source: 'face_recognition', target: 'retry_face' },
+    { id: 'e6', source: 'retry_face', target: 'face_recognition' }
+  ]
+}
+
+// Create session with custom flow
+const { session, clientSecret } = await client.sessions.create({
+  clientReferenceId: 'user_123',
+  flow: customFlow,
+  modules: [] // Empty when using custom flow
+})
+```
+
+## Next Steps
+
+- [Session Customization](/customization) - Learn how to customize the UI and experience
+- [Verification Modules](/modules) - Understand the simpler module-based approach
+- [Sessions](/sessions) - Learn about session management and lifecycle
