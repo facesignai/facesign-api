@@ -5,5 +5,10 @@
   "installCommand": "npm install",
   "devCommand": "npm run dev",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "git": {
+    "deploymentEnabled": {
+      "api_docs_wip": true
+    }
+  }
 }
