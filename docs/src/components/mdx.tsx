@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { Feedback } from '@/components/Feedback'
 import { Heading } from '@/components/Heading'
 import { Prose } from '@/components/Prose'
+import { ApiEndpoint } from '@/components/ApiEndpoint'
+import { FlowDiagram } from '@/components/FlowDiagram'
+import { ResponsePreview } from '@/components/ResponsePreview'
 
 export const a = Link
 export { Button } from '@/components/Button'
@@ -155,3 +158,6 @@ export function Property({
     </li>
   )
 }
+
+// Export new components for use in MDX
+export { ApiEndpoint, FlowDiagram, ResponsePreview }
