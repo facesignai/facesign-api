@@ -7,6 +7,9 @@ import { Prose } from '@/components/Prose'
 import { ApiEndpoint } from '@/components/ApiEndpoint'
 import { FlowDiagram } from '@/components/FlowDiagram'
 import { ResponsePreview } from '@/components/ResponsePreview'
+import { ApiPlayground } from '@/components/ApiPlayground'
+import { CollapsibleSection } from '@/components/CollapsibleSection'
+import { QuickReference } from '@/components/QuickReference'
 
 export const a = Link
 export { Button } from '@/components/Button'
@@ -160,4 +163,4 @@ export function Property({
 }
 
 // Export new components for use in MDX
-export { ApiEndpoint, FlowDiagram, ResponsePreview }
+export { ApiEndpoint, FlowDiagram, ResponsePreview, ApiPlayground, CollapsibleSection, QuickReference }

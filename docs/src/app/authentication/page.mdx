@@ -55,7 +55,7 @@ facesign.api_key = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
 
 </CodeGroup>
 
-## Environment variables
+<CollapsibleSection title="Environment Variables" defaultOpen>
 
 We strongly recommend using environment variables to store your API keys:
 
@@ -81,6 +81,8 @@ facesign.api_key = os.environ.get('FACESIGN_API_KEY')
 ```
 
 </CodeGroup>
+
+</CollapsibleSection>
 
 ## Client-side authentication
 
@@ -129,13 +131,19 @@ curl https://api.facesign.ai/v1/sessions \
   If you don't specify a version, your requests will use the API version that was current when your account was created.
 </Note>
 
-## Security best practices
+<CollapsibleSection title="Security Best Practices" variant="subtle">
 
 1. **Never expose your API keys** - Keep them server-side only
 2. **Use environment variables** - Don't hardcode keys in your source code
 3. **Rotate keys regularly** - Generate new keys periodically
 4. **Use test keys for development** - Keep production keys secure
 5. **Monitor key usage** - Check your dashboard for unusual activity
+
+<Warning>
+  API keys provide complete access to your FaceSign account. Treat them like passwords and keep them secure.
+</Warning>
+
+</CollapsibleSection>
 
 ## Webhook signatures
 
