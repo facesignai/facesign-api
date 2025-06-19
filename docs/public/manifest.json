@@ -1,0 +1,98 @@
+{
+  "name": "FaceSign API Documentation",
+  "short_name": "FaceSign Docs",
+  "description": "Interactive documentation for the FaceSign identity verification API",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["developer", "documentation", "api"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Start",
+      "short_name": "Start",
+      "description": "Get started with FaceSign API",
+      "url": "/quickstart",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "32x32"
+        }
+      ]
+    },
+    {
+      "name": "API Reference",
+      "short_name": "API",
+      "description": "Browse API endpoints",
+      "url": "/sessions",
+      "icons": [
+        {
+          "src": "/favicon.ico", 
+          "sizes": "32x32"
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "short_name": "Auth",
+      "description": "Learn about API authentication",
+      "url": "/authentication",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "32x32"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://docs.facesign.ai"
+    }
+  ],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "FaceSign API Documentation - Desktop View"
+    },
+    {
+      "src": "/screenshot-narrow.png", 
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "FaceSign API Documentation - Mobile View"
+    }
+  ]
+}
