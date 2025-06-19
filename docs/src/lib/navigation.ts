@@ -26,9 +26,6 @@ export const navigation = [
       { title: 'SMS Verification', href: '/modules/sms-verification' },
       { title: 'Identity Verification', href: '/modules/identity-verification' },
       { title: 'Document Authentication', href: '/modules/document-authentication' },
-      { title: 'Age Estimation', href: '/modules/age-estimation' },
-      { title: 'Proof of Intent', href: '/modules/proof-of-intent' },
-      { title: 'Knowledge Verify', href: '/modules/knowledge-verify' },
     ],
   },
   {
@@ -42,7 +39,7 @@ export const navigation = [
     title: 'Resources',
     links: [
       { title: 'SDKs', href: '/sdks' },
-      { title: 'OpenAPI Spec', href: 'https://github.com/facesignai/api-docs' },
+      { title: 'OpenAPI Spec', href: '/openapi.yaml' },
     ],
   },
 ] 
