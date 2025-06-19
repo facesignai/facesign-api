@@ -45,6 +45,7 @@ function extractSections() {
 }
 
 export default function Search(nextConfig = {}) {
+  // eslint-disable-next-line no-undef
   let cache = new Map()
 
   return Object.assign({}, nextConfig, {

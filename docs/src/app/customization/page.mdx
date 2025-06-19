@@ -1,0 +1,252 @@
+export const metadata = {
+  title: 'Session Customization',
+  description: 'Customize the FaceSign verification experience with branding, UI controls, and user experience settings.',
+}
+
+export const sections = [
+  { title: 'Overview', id: 'overview' },
+  { title: 'Customization Options', id: 'customization-options' },
+  { title: 'Implementation', id: 'implementation' },
+  { title: 'Advanced Customization', id: 'advanced-customization' },
+  { title: 'Best Practices', id: 'best-practices' },
+  { title: 'Examples', id: 'examples' },
+]
+
+# Session Customization
+
+Tailor the FaceSign verification experience to match your brand and user experience requirements. Customize colors, fonts, messaging, and UI behavior to create a seamless integration. {{ className: 'lead' }}
+
+## Overview {{ anchor: false }}
+
+Session customization allows you to control various aspects of the verification interface to match your application's look and feel. Customizations are applied when creating a session and affect the entire user journey.
+
+## Customization Options
+
+### Branding
+
+Customize the visual appearance to match your brand:
+
+<Properties>
+  <Property name="primaryColor" type="string">
+    Main brand color used for buttons and highlights
+  </Property>
+  <Property name="secondaryColor" type="string">
+    Accent color for secondary elements
+  </Property>
+  <Property name="logoUrl" type="string">
+    Your company logo displayed during verification
+  </Property>
+  <Property name="backgroundColor" type="string">
+    Overall background color
+  </Property>
+  <Property name="textColor" type="string">
+    Primary text color
+  </Property>
+</Properties>
+
+### UI Controls
+
+Control which UI elements are shown or hidden:
+
+<Properties>
+  <Property name="showProgressBar" type="boolean">
+    Display verification progress
+  </Property>
+  <Property name="showSkipButton" type="boolean">
+    Allow users to skip optional steps
+  </Property>
+  <Property name="showHelpButton" type="boolean">
+    Display help/support options
+  </Property>
+  <Property name="allowCameraSwitch" type="boolean">
+    Let users switch between cameras
+  </Property>
+  <Property name="showTorchButton" type="boolean">
+    Display flashlight toggle for document scanning
+  </Property>
+</Properties>
+
+### Messaging
+
+Customize text and instructions shown to users:
+
+<Properties>
+  <Property name="welcomeMessage" type="string">
+    Initial greeting text
+  </Property>
+  <Property name="completionMessage" type="string">
+    Success message after verification
+  </Property>
+  <Property name="errorMessages" type="object">
+    Custom error text for different scenarios
+  </Property>
+  <Property name="instructionText" type="string">
+    Step-by-step guidance for users
+  </Property>
+</Properties>
+
+## Implementation
+
+Include customization options when creating a session:
+
+<CodeGroup>
+
+```typescript {{ title: 'TypeScript' }}
+const session = await client.sessions.create({
+  clientReferenceId: 'user-123',
+  metadata: { userId: '123' },
+  modules: [
+    { type: 'identityVerification' },
+    { type: 'documentAuthentication' }
+  ],
+  customization: {
+    branding: {
+      primaryColor: '#007bff',
+      secondaryColor: '#6c757d',
+      logoUrl: 'https://your-domain.com/logo.png',
+      backgroundColor: '#ffffff',
+      textColor: '#333333'
+    },
+    ui: {
+      showProgressBar: true,
+      showSkipButton: false,
+      showHelpButton: true,
+      allowCameraSwitch: true,
+      showTorchButton: true
+    },
+    messaging: {
+      welcomeMessage: 'Welcome to our secure verification process',
+      completionMessage: 'Verification completed successfully!',
+      errorMessages: {
+        cameraPermission: 'Please allow camera access to continue',
+        networkError: 'Connection error. Please check your internet.'
+      }
+    }
+  }
+})
+```
+
+```javascript {{ title: 'JavaScript' }}
+const session = await client.sessions.create({
+  clientReferenceId: 'user-123',
+  metadata: { userId: '123' },
+  modules: [
+    { type: 'identityVerification' },
+    { type: 'documentAuthentication' }
+  ],
+  customization: {
+    branding: {
+      primaryColor: '#007bff',
+      secondaryColor: '#6c757d',
+      logoUrl: 'https://your-domain.com/logo.png',
+      backgroundColor: '#ffffff',
+      textColor: '#333333'
+    },
+    ui: {
+      showProgressBar: true,
+      showSkipButton: false,
+      showHelpButton: true,
+      allowCameraSwitch: true,
+      showTorchButton: true
+    },
+    messaging: {
+      welcomeMessage: 'Welcome to our secure verification process',
+      completionMessage: 'Verification completed successfully!',
+      errorMessages: {
+        cameraPermission: 'Please allow camera access to continue',
+        networkError: 'Connection error. Please check your internet.'
+      }
+    }
+  }
+})
+```
+
+</CodeGroup>
+
+## Advanced Customization
+
+### Custom CSS
+
+For advanced styling, you can inject custom CSS:
+
+```typescript {{ title: 'Custom CSS' }}
+customization: {
+  css: `
+    .facesign-container {
+      font-family: 'Your Custom Font', sans-serif;
+      border-radius: 12px;
+    }
+    .facesign-button {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+  `
+}
+```
+
+### Responsive Design
+
+Customize appearance for different screen sizes:
+
+```typescript {{ title: 'Responsive Design' }}
+customization: {
+  responsive: {
+    mobile: {
+      fontSize: '14px',
+      padding: '16px'
+    },
+    desktop: {
+      fontSize: '16px',
+      padding: '24px'
+    }
+  }
+}
+```
+
+## Best Practices
+
+- Test customizations on different devices and browsers
+- Ensure sufficient color contrast for accessibility
+- Keep custom messages clear and actionable
+- Use high-quality logos and images
+- Consider your brand guidelines when choosing colors
+- Test with users to ensure the customized experience is intuitive
+
+## Examples
+
+### Minimal Branding
+
+```typescript {{ title: 'Minimal Setup' }}
+customization: {
+  branding: {
+    primaryColor: '#2563eb',
+    logoUrl: 'https://example.com/logo.svg'
+  }
+}
+```
+
+### Full Customization
+
+```typescript {{ title: 'Complete Setup' }}
+customization: {
+  branding: {
+    primaryColor: '#059669',
+    secondaryColor: '#d1fae5',
+    logoUrl: 'https://example.com/logo.svg',
+    backgroundColor: '#f9fafb',
+    textColor: '#111827'
+  },
+  ui: {
+    showProgressBar: true,
+    showHelpButton: true,
+    allowCameraSwitch: true
+  },
+  messaging: {
+    welcomeMessage: 'Let\'s verify your identity securely',
+    completionMessage: 'All set! Your identity has been verified.'
+  }
+}
+```
+
+<Warning>
+  Custom CSS and extensive UI modifications may affect the verification user experience. Test thoroughly to ensure all functionality remains accessible and intuitive.
+</Warning>

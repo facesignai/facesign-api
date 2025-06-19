@@ -1,4 +1,15 @@
-export const navigation = [
+interface NavigationLink {
+  title: string
+  href: string
+  label?: string
+}
+
+interface NavigationSection {
+  title: string
+  links: NavigationLink[]
+}
+
+export const navigation: NavigationSection[] = [
   {
     title: 'Getting Started',
     links: [
@@ -24,8 +35,8 @@ export const navigation = [
       { title: 'Module Overview', href: '/modules' },
       { title: 'Email Verification', href: '/modules/email-verification' },
       { title: 'SMS Verification', href: '/modules/sms-verification' },
-      { title: 'Identity Verification', href: '/modules/identity-verification' },
-      { title: 'Document Authentication', href: '/modules/document-authentication' },
+      { title: 'Identity Verification', href: '/modules/identity-verification', label: 'Beta' },
+      { title: 'Document Authentication', href: '/modules/document-authentication', label: 'Beta' },
     ],
   },
   {
