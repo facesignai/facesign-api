@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import Link from 'next/link'
 
-import { Feedback } from '@/components/Feedback'
 import { Heading } from '@/components/Heading'
 import { Prose } from '@/components/Prose'
 import { ApiEndpoint } from '@/components/ApiEndpoint'
@@ -9,7 +8,6 @@ import { FlowDiagram } from '@/components/FlowDiagram'
 import { ResponsePreview } from '@/components/ResponsePreview'
 import { ApiPlayground } from '@/components/ApiPlayground'
 import { CollapsibleSection } from '@/components/CollapsibleSection'
-import { QuickReference } from '@/components/QuickReference'
 
 export const a = Link
 export { Button } from '@/components/Button'
@@ -19,9 +17,6 @@ export function wrapper({ children }: { children: React.ReactNode }) {
   return (
     <article className="flex h-full flex-col pt-16 pb-10">
       <Prose className="flex-auto">{children}</Prose>
-      <footer className="mx-auto mt-16 w-full max-w-2xl lg:max-w-5xl">
-        <Feedback />
-      </footer>
     </article>
   )
 }
@@ -163,4 +158,4 @@ export function Property({
 }
 
 // Export new components for use in MDX
-export { ApiEndpoint, FlowDiagram, ResponsePreview, ApiPlayground, CollapsibleSection, QuickReference }
+export { ApiEndpoint, FlowDiagram, ResponsePreview, ApiPlayground, CollapsibleSection }

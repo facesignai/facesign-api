@@ -5,18 +5,8 @@ export const metadata = {
 
 # Sessions
 
-Sessions are the core of FaceSign's identity verification platform. A session represents a single identity verification flow that guides users through various verification steps like conversational AI interactions, biometric checks, document scanning, and multi-factor authentication. {{ className: 'lead' }}
 
-<QuickReference 
-  title="Sessions Quick Reference"
-  items={[
-    { title: "Create Session", href: "#create-a-session", description: "API endpoint for creating sessions" },
-    { title: "Session Model", href: "#the-session-model", description: "Complete data structure reference" },
-    { title: "Session Settings", href: "#session-settings", description: "Configuration options" },
-    { title: "API Playground", href: "#try-it-yourself", description: "Interactive testing" }
-  ]}
-  threshold={300}
-/>
+Sessions are the core of FaceSign's identity verification platform. A session represents a single identity verification flow powered by FaceSign's node-based flow system, guiding users through custom verification steps like conversational AI interactions, biometric checks, document scanning, and multi-factor authentication. {{ className: 'lead' }}
 
 ## How FaceSign Sessions Work
 
@@ -44,11 +34,11 @@ This approach gives you several benefits:
   path="/v1/sessions" 
   description="Create a new verification session with specified modules or custom flow">
 
-Create a verification session by providing configuration settings. You can use either predefined modules or a custom flow, but not both.
+Create a verification session by providing configuration settings. You can use either a custom flow (recommended) or legacy modules for simple use cases, but not both.
 
 <CodeGroup>
 
-```typescript {{ title: 'Using Modules' }}
+```typescript {{ title: 'Using Legacy Modules' }}
 const session = await client.sessions.create({
   clientReferenceId: 'user-123',
   metadata: { userId: '123', source: 'web' },
@@ -226,10 +216,10 @@ The session model contains all the information about a verification session, inc
     Geographic zone: `es` (United States) or `eu` (European Union).
   </Property>
   <Property name="modules" type="array">
-    Array of verification modules to include in this session.
+    Array of legacy verification modules to include in this session (use flow instead for new implementations).
   </Property>
   <Property name="flow" type="object">
-    Custom node-based flow definition (optional).
+    Custom node-based flow definition (recommended for new implementations).
   </Property>
   <Property name="customization" type="object">
     UI customization options including colors, fonts, and branding.
@@ -739,4 +729,4 @@ const verification = await getUserVerificationStatus(userId);
 if (verification?.isVerified) {
   // Allow access to premium features
 }
-``` 
+```

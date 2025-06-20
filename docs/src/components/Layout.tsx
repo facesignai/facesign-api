@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Logo } from '@/components/Logo'
 import { Navigation } from '@/components/Navigation'
+import { MobileQuickActions } from '@/components/MobileQuickActions'
 import { SectionProvider, type Section } from '@/components/SectionProvider'
 
 export function Layout({
@@ -40,6 +41,7 @@ export function Layout({
           <main className="flex-auto">{children}</main>
           <Footer />
         </div>
+        <MobileQuickActions />
       </div>
     </SectionProvider>
   )
