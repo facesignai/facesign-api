@@ -2,6 +2,6 @@
 Utility modules for FaceSign SDK.
 """
 
-from .flow_builder import FlowBuilder
+from .helpers import pick
 
-__all__ = ["FlowBuilder"]
+__all__ = ["pick"]

@@ -36,7 +36,6 @@ if __name__ == "__main__":
 - **Full API Coverage**: Complete support for all FaceSign API endpoints
 - **Type Safety**: Built with Pydantic for robust type validation
 - **Async/Sync Support**: Use async/await or synchronous calls
-- **Flow Builder**: Intuitive interface for creating node-based verification flows
 - **Comprehensive Error Handling**: Detailed error responses with proper typing
 
 ## Documentation
