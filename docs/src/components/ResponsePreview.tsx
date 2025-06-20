@@ -44,6 +44,9 @@ function JsonViewer({ data }: { data: Record<string, any> }) {
     setCopyCount(count => count + 1)
   }
 
+  // Format JSON without weird highlighting issues
+  const formattedJson = JSON.stringify(data, null, 2)
+
   return (
     <div className="relative">
       <button
@@ -58,8 +61,10 @@ function JsonViewer({ data }: { data: Record<string, any> }) {
         {copied ? 'Copied!' : 'Copy'}
       </button>
       
-      <pre className="overflow-x-auto rounded-lg bg-zinc-900 p-4 text-sm text-zinc-100 dark:bg-zinc-950">
-        <code>{JSON.stringify(data, null, 2)}</code>
+      <pre className="overflow-x-auto rounded-lg bg-zinc-900 p-4 text-sm leading-relaxed dark:bg-zinc-950">
+        <code className="block text-zinc-100 dark:text-zinc-100" style={{ whiteSpace: 'pre' }}>
+          {formattedJson}
+        </code>
       </pre>
     </div>
   )

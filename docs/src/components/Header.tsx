@@ -82,7 +82,7 @@ export const Header = forwardRef<
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-8">
             <TopLevelNavItem href="/">Documentation</TopLevelNavItem>
-            <TopLevelNavItem href="/openapi.yaml">API Reference</TopLevelNavItem>
+            <TopLevelNavItem href="/api-reference">API Reference</TopLevelNavItem>
             <TopLevelNavItem href="/sdks">SDKs</TopLevelNavItem>
           </ul>
         </nav>
@@ -93,6 +93,11 @@ export const Header = forwardRef<
         </div>
         <div className="hidden min-[416px]:contents">
           <Button href="/quickstart">Get Started</Button>
+        </div>
+        <div className="contents min-[416px]:hidden">
+          <Button href="/quickstart" className="text-xs px-3 py-1.5">
+            Start
+          </Button>
         </div>
       </div>
     </motion.div>

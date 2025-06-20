@@ -57,4 +57,22 @@
   [inert] ::-webkit-scrollbar {
     display: none;
   }
+
+  /* Prevent weird text highlighting in code blocks */
+  pre code,
+  pre code *,
+  .shiki code,
+  .shiki code * {
+    background: transparent !important;
+    text-decoration: none !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  /* Ensure proper code block styling without unwanted highlights */
+  pre code span {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }

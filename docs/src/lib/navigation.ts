@@ -30,9 +30,10 @@ export const navigation: NavigationSection[] = [
     ],
   },
   {
-    title: 'Verification Modules',
+    title: 'Verification Flows',
     links: [
-      { title: 'Module Overview', href: '/modules' },
+      { title: 'Flows Overview', href: '/flows' },
+      { title: 'Legacy Modules', href: '/modules' },
       { title: 'Email Verification', href: '/modules/email-verification' },
       { title: 'SMS Verification', href: '/modules/sms-verification' },
       { title: 'Identity Verification', href: '/modules/identity-verification', label: 'Beta' },
@@ -42,15 +43,14 @@ export const navigation: NavigationSection[] = [
   {
     title: 'Advanced Features',
     links: [
-      { title: 'Custom Flows', href: '/flows' },
       { title: 'Session Customization', href: '/customization' },
     ],
   },
   {
     title: 'Resources',
     links: [
+      { title: 'API Reference', href: '/api-reference' },
       { title: 'SDKs', href: '/sdks' },
-      { title: 'OpenAPI Spec', href: '/openapi.yaml' },
     ],
   },
 ] 

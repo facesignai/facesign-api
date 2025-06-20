@@ -12,6 +12,8 @@ import { create } from 'zustand'
 
 import { Header } from '@/components/Header'
 import { Navigation } from '@/components/Navigation'
+import { Button } from '@/components/Button'
+import Link from 'next/link'
 
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -43,6 +45,48 @@ function XIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 
 const IsInsideMobileNavigationContext = createContext(false)
 
+function QuickActions({ close }: { close: () => void }) {
+  return (
+    <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 mt-6">
+      <div className="pb-4">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">Quick Actions</h3>
+      </div>
+      <div className="space-y-3">
+        <Button 
+          href="/quickstart" 
+          className="w-full justify-center"
+          onClick={close}
+        >
+          Get Started
+        </Button>
+        <Link
+          href="/api-reference"
+          onClick={close}
+          className="flex w-full items-center justify-center rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-900 shadow-sm transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
+        >
+          API Reference
+        </Link>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mt-4">
+        <Link
+          href="/sessions"
+          onClick={close}
+          className="flex items-center justify-center rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+        >
+          Sessions
+        </Link>
+        <Link
+          href="/flows"
+          onClick={close}
+          className="flex items-center justify-center rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+        >
+          Flows
+        </Link>
+      </div>
+    </div>
+  )
+}
+
 function MobileNavigationDialog({
   isOpen,
   close,
@@ -72,7 +116,8 @@ function MobileNavigationDialog({
             layoutScroll
             className="fixed top-14 bottom-0 left-0 w-full overflow-y-auto bg-white px-4 pt-6 pb-4 shadow-lg ring-1 shadow-zinc-900/10 ring-zinc-900/7.5 duration-500 ease-in-out data-closed:-translate-x-full min-[416px]:max-w-sm sm:px-6 sm:pb-10 dark:bg-zinc-900 dark:ring-zinc-800"
           >
-            <Navigation />
+            <Navigation onLinkClick={close} />
+            <QuickActions close={close} />
           </motion.div>
         </TransitionChild>
       </DialogPanel>

@@ -1,17 +1,27 @@
 export const metadata = {
-  title: 'Verification Modules',
-  description: 'Overview of FaceSign verification modules and how to configure them for your use case.',
+  title: 'Legacy Verification Modules',
+  description: 'Legacy modules system documentation. New implementations should use the node-based flow system.',
 }
 
-# Verification Modules
+# Legacy Verification Modules
 
-<div className="lead">FaceSign offers a comprehensive suite of verification modules that you can mix and match to create the perfect verification flow for your use case. Each module handles a specific type of verification, from email and SMS to advanced biometric analysis and document authentication.</div>
+<div className="lead">This page documents FaceSign's legacy modules system. For new implementations, we recommend using the <a href="/flows">node-based flow system</a> which provides more flexibility and control over verification processes.</div>
 
-## Available modules
+<Note>
+**Legacy API**: The modules system is still supported but deprecated in favor of the more powerful flow-based approach. New integrations should use [Custom Flows](/flows) for better flexibility and conditional logic.
+</Note>
 
-FaceSign provides seven core verification modules:
+## Available node types
+
+FaceSign provides several node types that you can combine in your flows:
 
 <div className="not-prose grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <div className="module-card">
+    <h3>Start Node</h3>
+    <div>Entry point for every verification flow</div>
+    <a href="/flows#start-node">Learn more →</a>
+  </div>
+  
   <div className="module-card">
     <h3>Email Verification</h3>
     <div>Verify user email addresses with OTP codes</div>
@@ -25,120 +35,136 @@ FaceSign provides seven core verification modules:
   </div>
   
   <div className="module-card">
-    <h3>Identity Verification</h3>
-    <div>Full biometric identity verification with liveness detection</div>
+    <h3>Liveness Detection</h3>
+    <div>Biometric liveness verification with face scanning</div>
     <a href="/modules/identity-verification">Learn more →</a>
   </div>
   
   <div className="module-card">
-    <h3>Document Authentication</h3>
+    <h3>Document Scan</h3>
     <div>Scan and authenticate government-issued documents</div>
     <a href="/modules/document-authentication">Learn more →</a>
   </div>
   
   <div className="module-card">
-    <h3>Age Estimation</h3>
-    <div>AI-powered age verification and estimation</div>
-    <a href="/modules/age-estimation">Learn more →</a>
+    <h3>Conversation</h3>
+    <div>AI-powered conversational interactions</div>
+    <a href="/flows#conversation-node">Learn more →</a>
   </div>
   
   <div className="module-card">
-    <h3>Proof of Intent</h3>
-    <div>Capture and verify user consent and intent</div>
-    <a href="/modules/proof-of-intent">Learn more →</a>
-  </div>
-  
-  <div className="module-card">
-    <h3>Knowledge Verify</h3>
-    <div>Knowledge-based authentication questions</div>
-    <a href="/modules/knowledge-verify">Learn more →</a>
+    <h3>End Node</h3>
+    <div>Terminal point for flow completion</div>
+    <a href="/flows#end-node">Learn more →</a>
   </div>
 </div>
 
-## Module types
+## Node types
 
-Each module has a specific `type` identifier that you use when configuring sessions:
+Each node has a specific `type` identifier that you use when creating flows:
 
 <Properties>
-  <Property name="emailVerification" type="module">
-    Email OTP verification module
+  <Property name="start" type="node">
+    Entry point node - every flow must begin with this
   </Property>
-  <Property name="smsVerification" type="module">
-    SMS OTP verification module
+  <Property name="end" type="node">
+    Terminal node - marks successful completion of the flow
   </Property>
-  <Property name="identityVerification" type="module">
-    Biometric identity verification with face scanning
+  <Property name="conversation" type="node">
+    AI-powered conversational interaction node
   </Property>
-  <Property name="documentAuthentication" type="module">
-    Government document scanning and authentication
+  <Property name="email_verification" type="node">
+    Email OTP verification node
   </Property>
-  <Property name="ageEstimation" type="module">
-    AI-powered age verification and estimation
+  <Property name="sms_verification" type="node">
+    SMS OTP verification node
   </Property>
-  <Property name="proofOfIntent" type="module">
-    User consent and intent verification
+  <Property name="liveness_detection" type="node">
+    Biometric liveness verification node
   </Property>
-  <Property name="knowledgeVerify" type="module">
-    Knowledge-based authentication questions
+  <Property name="document_scan" type="node">
+    Government document scanning and authentication node
+  </Property>
+  <Property name="age_estimation" type="node">
+    AI-powered age verification and estimation node
   </Property>
 </Properties>
 
 ---
 
-## Configuring modules
+## Creating flows
 
-### Basic module configuration
+### Basic flow configuration
 
-Include modules in your session by adding them to the `modules` array:
+Create flows by defining nodes and edges that connect them:
 
-```typescript {{ title: 'Basic module setup' }}
+```typescript {{ title: 'Basic flow setup' }}
 const { session, clientSecret } = await client.sessions.create({
   clientReferenceId: 'user_123',
-  modules: [
-    { type: 'emailVerification' },
-    { type: 'identityVerification' },
-    { type: 'documentAuthentication' }
-  ]
+  flow: {
+    nodes: [
+      { id: 'start', type: 'start' },
+      { id: 'email', type: 'email_verification' },
+      { id: 'liveness', type: 'liveness_detection' },
+      { id: 'document', type: 'document_scan' },
+      { id: 'end', type: 'end' }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'email' },
+      { id: 'e2', source: 'email', target: 'liveness' },
+      { id: 'e3', source: 'liveness', target: 'document' },
+      { id: 'e4', source: 'document', target: 'end' }
+    ]
+  }
 });
 ```
 
-### Module-specific configuration
+### Advanced flow configuration
 
-Many modules accept additional configuration options:
+Nodes can accept configuration options and define conditional outcomes:
 
-```typescript {{ title: 'Advanced module configuration' }}
+```typescript {{ title: 'Advanced flow configuration' }}
 const { session, clientSecret } = await client.sessions.create({
   clientReferenceId: 'user_123',
-  modules: [
-    {
-      type: 'emailVerification',
-      email: 'user@example.com', // Pre-fill email
-      name: 'John Doe' // Personalize email
-    },
-    {
-      type: 'smsVerification',
-      phone: '+1234567890' // Pre-fill phone number
-    },
-    {
-      type: 'ageEstimation',
-      age: 21 // Minimum required age
-    },
-    {
-      type: 'proofOfIntent',
-      requestedData: [
-        {
-          key: 'terms_acceptance',
-          isRequired: true,
-          description: 'I agree to the Terms of Service'
-        },
-        {
-          key: 'marketing_consent',
-          isRequired: false,
-          description: 'I agree to receive marketing communications'
+  flow: {
+    nodes: [
+      { id: 'start', type: 'start' },
+      { 
+        id: 'email', 
+        type: 'email_verification',
+        config: {
+          email: 'user@example.com', // Pre-fill email
+          name: 'John Doe' // Personalize email
         }
-      ]
-    }
-  ]
+      },
+      { 
+        id: 'liveness', 
+        type: 'liveness_detection',
+        outcomes: {
+          livenessDetected: 'document',
+          deepfakeDetected: 'end_failure'
+        }
+      },
+      { 
+        id: 'document', 
+        type: 'document_scan',
+        outcomes: {
+          documentVerified: 'end_success',
+          documentRejected: 'end_failure'
+        }
+      },
+      { id: 'end_success', type: 'end' },
+      { id: 'end_failure', type: 'end' }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'email' },
+      { id: 'e2', source: 'email', target: 'liveness' },
+      { id: 'e3', source: 'liveness', target: 'document', condition: 'livenessDetected' },
+      { id: 'e4', source: 'liveness', target: 'end_failure', condition: 'deepfakeDetected' },
+      { id: 'e5', source: 'document', target: 'end_success', condition: 'documentVerified' },
+      { id: 'e6', source: 'document', target: 'end_failure', condition: 'documentRejected' }
+    ]
+  }
 });
 ```
 
