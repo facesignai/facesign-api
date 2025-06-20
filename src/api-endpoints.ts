@@ -7,6 +7,7 @@ export * from './types/deviceDetails'
 export * from './types/location'
 export * from './types/nodes'
 export * from './types/customization'
+export * from './types/errors'
 
 export enum ILogLevel {
   TRACE = 'TRACE',
@@ -28,7 +29,7 @@ export enum Method {
   GET = 'get',
   POST = 'post',
   PATCH = 'patch',
-  DELTE = 'delete',
+  DELETE = 'delete',
 }
 
 export interface RequestedData {
@@ -96,11 +97,6 @@ export interface SessionReport {
   isVerified?: boolean
 }
 
-// Background type enum for permissions screen
-export enum BackgroundType {
-  AVATAR = 'avatar',
-  COLOR = 'color',
-}
 export interface Session {
   id: string
   createdAt: number
@@ -199,7 +195,7 @@ export interface SessionSettings {
   langs?: string[]
   defaultLang?: string
   zone?: Zone
-  modules: Module[]
+  modules?: Module[]
   flow?: FSFlow
   customization?: Customization
 }
