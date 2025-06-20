@@ -90,7 +90,7 @@ class SessionSettings(BaseModel):
     """Settings for creating a verification session."""
     
     client_reference_id: str
-    metadata: Dict[str, Any]
+    metadata: Optional[Dict[str, Any]] = None  # Made optional as it's not always required
     initial_phrase: Optional[str] = None
     final_phrase: Optional[str] = None
     provided_data: Optional[Dict[str, str]] = None
@@ -107,11 +107,11 @@ class Session(BaseModel):
     """Verification session object."""
     
     id: str
-    created_at: int
+    created_at: Optional[int] = None  # Made optional as API doesn't always include this
     started_at: Optional[int] = None
     finished_at: Optional[int] = None
     status: SessionStatus
-    settings: SessionSettings
+    settings: Optional[SessionSettings] = None  # Made optional as API doesn't always include full settings
     version: Optional[str] = None
     report: Optional[SessionReport] = None
 

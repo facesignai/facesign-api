@@ -27,9 +27,17 @@ class ClientSecret(BaseModel):
     """Client secret for frontend integration."""
     
     secret: str
-    created_at: int
+    created_at: Optional[int] = None  # Made optional as API doesn't always include this
     expire_at: int
-    url: str
+    url: Optional[str] = None  # Made optional as API doesn't always include this
+    
+    class Config:
+        # Allow API to use camelCase field names
+        alias_generator = lambda field_name: {
+            'created_at': 'createdAt',
+            'expire_at': 'expireAt'
+        }.get(field_name, field_name)
+        populate_by_name = True
 
 
 class Lang(BaseModel):
@@ -46,6 +54,17 @@ class Avatar(BaseModel):
     name: str
     gender: str
     image_url: str
+    created_at: Optional[int] = None  # API includes this field
+    is_disabled: Optional[bool] = None  # API includes this field
+    
+    class Config:
+        # Allow API to use camelCase field names
+        alias_generator = lambda field_name: {
+            'image_url': 'imageUrl',
+            'created_at': 'createdAt',
+            'is_disabled': 'isDisabled'
+        }.get(field_name, field_name)
+        populate_by_name = True
 
 
 class Phrase(BaseModel):

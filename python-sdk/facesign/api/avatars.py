@@ -25,12 +25,14 @@ class AvatarsAPI:
             ...     print(f"{avatar.id}: {avatar.name} ({avatar.gender})")
         """
         response_data = self.client.request("GET", "/avatars")
-        return GetAvatarsResponse(**response_data)
+        # API returns array, but model expects object with 'avatars' field
+        return GetAvatarsResponse(avatars=response_data)
     
     async def aget(self) -> GetAvatarsResponse:
         """Async version of get()."""
         response_data = await self.client.arequest("GET", "/avatars")
-        return GetAvatarsResponse(**response_data)
+        # API returns array, but model expects object with 'avatars' field
+        return GetAvatarsResponse(avatars=response_data)
     
     # Alias for consistency with TypeScript SDK
     retrieve = get

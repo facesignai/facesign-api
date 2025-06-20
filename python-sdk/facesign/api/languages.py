@@ -25,12 +25,14 @@ class LanguagesAPI:
             ...     print(f"{lang.id}: {lang.title}")
         """
         response_data = self.client.request("GET", "/langs")
-        return GetLangsResponse(**response_data)
+        # API returns array, but model expects object with 'langs' field
+        return GetLangsResponse(langs=response_data)
     
     async def aget(self) -> GetLangsResponse:
         """Async version of get()."""
         response_data = await self.client.arequest("GET", "/langs")
-        return GetLangsResponse(**response_data)
+        # API returns array, but model expects object with 'langs' field
+        return GetLangsResponse(langs=response_data)
     
     # Alias for consistency with TypeScript SDK
     retrieve = get

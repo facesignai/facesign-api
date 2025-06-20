@@ -69,7 +69,7 @@ class FaceSignClient:
             "headers": {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
-                "User-Agent": "facesign-python-sdk/1.0.18",
+                "User-Agent": "facesign-python-sdk/1.0.19",
                 "Facesign-Version": "2024-12-18",
             }
         }

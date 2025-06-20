@@ -52,12 +52,22 @@ class SessionsAPI:
         """
         settings = SessionSettings(**kwargs)
         response_data = self.client.request("POST", "/sessions", data=settings.model_dump())
+        
+        # Transform API response to match model expectations
+        if "clientSecret" in response_data:
+            response_data["client_secret"] = response_data.pop("clientSecret")
+        
         return CreateSessionResponse(**response_data)
     
     async def acreate(self, **kwargs) -> CreateSessionResponse:
         """Async version of create()."""
         settings = SessionSettings(**kwargs)
         response_data = await self.client.arequest("POST", "/sessions", data=settings.model_dump())
+        
+        # Transform API response to match model expectations
+        if "clientSecret" in response_data:
+            response_data["client_secret"] = response_data.pop("clientSecret")
+        
         return CreateSessionResponse(**response_data)
     
     def retrieve(self, session_id: str) -> GetSessionResponse:
@@ -76,11 +86,21 @@ class SessionsAPI:
             >>> print(session.session.report.is_verified if session.session.report else "No report yet")
         """
         response_data = self.client.request("GET", f"/sessions/{session_id}")
+        
+        # Transform API response to match model expectations
+        if "clientSecret" in response_data:
+            response_data["client_secret"] = response_data.pop("clientSecret")
+        
         return GetSessionResponse(**response_data)
     
     async def aretrieve(self, session_id: str) -> GetSessionResponse:
         """Async version of retrieve()."""
         response_data = await self.client.arequest("GET", f"/sessions/{session_id}")
+        
+        # Transform API response to match model expectations
+        if "clientSecret" in response_data:
+            response_data["client_secret"] = response_data.pop("clientSecret")
+        
         return GetSessionResponse(**response_data)
     
     def list(
