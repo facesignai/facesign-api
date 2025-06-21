@@ -16,26 +16,29 @@ const libraries = [
       'Official TypeScript SDK with full type safety and IntelliSense support for Node.js and browser environments.',
     logo: logoNode,
     status: 'available',
+    buttonText: 'View on npm',
   },
-]
-
-const upcomingLibraries = [
   {
+    href: 'https://pypi.org/project/facesign-api/',
     name: 'Python',
     description:
       'Python SDK for server-side integrations with Django, Flask, and FastAPI.',
     logo: logoPython,
-    status: 'planned',
-    timeline: 'Q2 2024',
+    status: 'available',
+    buttonText: 'View on PyPI',
   },
   {
+    href: 'https://pkg.go.dev/github.com/facesignai/facesign-go',
     name: 'Go',
     description:
       'Lightweight Go SDK for high-performance server applications.',
     logo: logoGo,
-    status: 'planned',
-    timeline: 'Q3 2024',
+    status: 'available',
+    buttonText: 'View on pkg.go.dev',
   },
+]
+
+const upcomingLibraries = [
   {
     name: 'PHP',
     description:
@@ -77,7 +80,7 @@ export function Libraries() {
               </p>
               <p className="mt-4">
                 <Button href={library.href} variant="text" arrow="right">
-                  View on npm
+                  {library.buttonText}
                 </Button>
               </p>
             </div>
