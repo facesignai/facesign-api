@@ -1,0 +1,449 @@
+# Go SDK Installation Guide
+
+Get started with the FaceSign Go SDK for server-side identity verification integration.
+
+## Installation
+
+Install the FaceSign Go SDK using go get:
+
+```bash
+go get github.com/facesignai/facesign-go
+```
+
+## Requirements
+
+- Go 1.21 or higher
+- FaceSign API key
+
+## Quick Start
+
+### 1. Initialize the Client
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+    "os"
+    
+    facesign "github.com/facesignai/facesign-go"
+)
+
+func main() {
+    // Initialize with your API key from environment variable
+    apiKey := os.Getenv("FACESIGN_API_KEY")
+    if apiKey == "" {
+        log.Fatal("FACESIGN_API_KEY environment variable is required")
+    }
+    
+    // Create client with optional configuration
+    client := facesign.NewClient(apiKey,
+        facesign.WithBaseURL("https://api.facesign.ai"), // Production
+        // facesign.WithBaseURL("https://api.dev.facesign.ai"), // Development
+    )
+}
+```
+
+### 2. Create a Verification Session
+
+```go
+// Create a session with modules (legacy approach)
+ctx := context.Background()
+sessionResp, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
+    ClientReferenceID: "user-12345",
+    Metadata: map[string]interface{}{
+        "user_id": "12345",
+        "source":  "go-app",
+    },
+    Modules: []facesign.Module{
+        {Type: facesign.ModuleIdentityVerification},
+        {Type: facesign.ModuleDocumentAuthentication},
+    },
+    InitialPhrase: "Welcome! I'll help you verify your identity.",
+    DefaultLang:   "en",
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Session ID: %s\n", sessionResp.Session.ID)
+fmt.Printf("Client Secret: %s\n", sessionResp.ClientSecret.Secret)
+fmt.Printf("Verification URL: %s\n", sessionResp.ClientSecret.URL)
+```
+
+### 3. Create with Flow-Based Configuration
+
+```go
+// Create a session with flow (recommended approach)
+flow := &facesign.Flow{
+    Nodes: []facesign.Node{
+        {
+            ID:   "start",
+            Type: facesign.NodeTypeStart,
+        },
+        {
+            ID:     "greeting",
+            Type:   facesign.NodeTypeConversation,
+            Prompt: "Hello! Let's verify your identity.",
+            Transitions: []facesign.Transition{
+                {ID: "t1", Condition: "true"},
+            },
+        },
+        {
+            ID:   "face-scan",
+            Type: facesign.NodeTypeFaceScan,
+            Mode: "capture",
+            Outcomes: map[string]string{
+                "captured": "end",
+                "error":    "end",
+            },
+        },
+        {
+            ID:   "end",
+            Type: facesign.NodeTypeEnd,
+        },
+    },
+    Edges: []facesign.Edge{
+        {ID: "e1", Source: "start", Target: "greeting"},
+        {ID: "e2", Source: "greeting", Target: "face-scan"},
+        {ID: "e3", Source: "face-scan", Target: "end"},
+    },
+}
+
+flowSession, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
+    ClientReferenceID: "user-67890",
+    Metadata: map[string]interface{}{
+        "source": "go-flow-app",
+    },
+    Flow: flow,
+})
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+### 4. Retrieve Session Status
+
+```go
+// Get session details
+session, err := client.Sessions.Get(ctx, "vs_session_id_here")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Status: %s\n", session.Session.Status)
+
+if session.Session.Report != nil {
+    fmt.Printf("Verified: %v\n", session.Session.Report.IsVerified)
+}
+```
+
+### 5. List Sessions
+
+```go
+// List recent sessions
+sessions, err := client.Sessions.List(ctx, &facesign.ListSessionsRequest{
+    Limit:     10,
+    Status:    "complete",
+    SortBy:    "createdAt",
+    SortOrder: "desc",
+})
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, session := range sessions.Sessions {
+    fmt.Printf("%s: %s\n", session.ID, session.Status)
+}
+```
+
+## Advanced Features
+
+### Context and Timeouts
+
+The SDK supports Go contexts for proper cancellation and timeout handling:
+
+```go
+// Create context with timeout
+ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+defer cancel()
+
+// Use context in API calls
+session, err := client.Sessions.Create(ctx, req)
+if err != nil {
+    if errors.Is(err, context.DeadlineExceeded) {
+        log.Println("Request timed out")
+    }
+}
+```
+
+### Concurrent Requests
+
+The SDK is safe for concurrent use:
+
+```go
+var wg sync.WaitGroup
+results := make(chan *facesign.CreateSessionResponse, 10)
+
+for i := 0; i < 10; i++ {
+    wg.Add(1)
+    go func(userID string) {
+        defer wg.Done()
+        
+        resp, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
+            ClientReferenceID: userID,
+            Modules: []facesign.Module{
+                {Type: facesign.ModuleIdentityVerification},
+            },
+        })
+        if err != nil {
+            log.Printf("Error for %s: %v", userID, err)
+            return
+        }
+        
+        results <- resp
+    }(fmt.Sprintf("user-%d", i))
+}
+
+wg.Wait()
+close(results)
+```
+
+## Get Available Resources
+
+### Languages
+
+```go
+// Get supported languages
+languages, err := client.Languages.Get(ctx)
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, lang := range languages.Langs {
+    fmt.Printf("%s: %s\n", lang.ID, lang.Title)
+}
+```
+
+### Avatars
+
+```go
+// Get available avatars
+avatars, err := client.Avatars.Get(ctx)
+if err != nil {
+    log.Fatal(err)
+}
+
+for _, avatar := range avatars.Avatars {
+    fmt.Printf("%s: %s (%s)\n", avatar.ID, avatar.Name, avatar.Gender)
+}
+```
+
+## Error Handling
+
+The SDK provides detailed error types for better error handling:
+
+```go
+session, err := client.Sessions.Create(ctx, req)
+if err != nil {
+    // Check for specific API errors
+    if apiErr, ok := facesign.GetAPIError(err); ok {
+        switch {
+        case apiErr.IsNotFound():
+            log.Println("Resource not found")
+        case apiErr.IsUnauthorized():
+            log.Println("Invalid API key")
+        case apiErr.IsRateLimited():
+            log.Println("Rate limit exceeded")
+        default:
+            log.Printf("API error: %s (code: %s)", apiErr.Message, apiErr.Code)
+        }
+    } else {
+        // Handle client errors
+        log.Printf("Client error: %v", err)
+    }
+}
+```
+
+## Framework Integration
+
+### Gin
+
+```go
+package main
+
+import (
+    "net/http"
+    
+    "github.com/gin-gonic/gin"
+    facesign "github.com/facesignai/facesign-go"
+)
+
+var fsClient *facesign.Client
+
+func init() {
+    fsClient = facesign.NewClient(os.Getenv("FACESIGN_API_KEY"))
+}
+
+func createVerification(c *gin.Context) {
+    var req struct {
+        UserID string `json:"userId"`
+    }
+    
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    
+    session, err := fsClient.Sessions.Create(c.Request.Context(), 
+        &facesign.CreateSessionRequest{
+            ClientReferenceID: req.UserID,
+            Modules: []facesign.Module{
+                {Type: facesign.ModuleIdentityVerification},
+            },
+        })
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    
+    c.JSON(http.StatusOK, gin.H{
+        "sessionId":        session.Session.ID,
+        "verificationUrl": session.ClientSecret.URL,
+    })
+}
+```
+
+### Echo
+
+```go
+package main
+
+import (
+    "net/http"
+    
+    "github.com/labstack/echo/v4"
+    facesign "github.com/facesignai/facesign-go"
+)
+
+func createVerification(c echo.Context) error {
+    session, err := fsClient.Sessions.Create(c.Request().Context(),
+        &facesign.CreateSessionRequest{
+            ClientReferenceID: c.Param("userId"),
+            Modules: []facesign.Module{
+                {Type: facesign.ModuleIdentityVerification},
+            },
+        })
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+    }
+    
+    return c.JSON(http.StatusOK, map[string]string{
+        "sessionId":        session.Session.ID,
+        "verificationUrl": session.ClientSecret.URL,
+    })
+}
+```
+
+### Chi
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "net/http"
+    
+    "github.com/go-chi/chi/v5"
+    facesign "github.com/facesignai/facesign-go"
+)
+
+func createVerification(w http.ResponseWriter, r *http.Request) {
+    userID := chi.URLParam(r, "userId")
+    
+    session, err := fsClient.Sessions.Create(r.Context(),
+        &facesign.CreateSessionRequest{
+            ClientReferenceID: userID,
+            Modules: []facesign.Module{
+                {Type: facesign.ModuleIdentityVerification},
+            },
+        })
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{
+        "sessionId":        session.Session.ID,
+        "verificationUrl": session.ClientSecret.URL,
+    })
+}
+```
+
+## Environment Variables
+
+### Setting API Keys Securely
+
+**Never hardcode API keys in your source code.** Use environment variables instead:
+
+**For local development:**
+```bash
+# Create .env file (never commit this file)
+echo "FACESIGN_API_KEY=your_api_key_here" >> .env
+
+# Or export directly
+export FACESIGN_API_KEY="your_api_key_here"
+```
+
+**For production deployment:**
+Set environment variables in your hosting platform (Kubernetes, Docker, AWS, etc.)
+
+**Using in your code:**
+```go
+import (
+    "log"
+    "os"
+    
+    facesign "github.com/facesignai/facesign-go"
+)
+
+func main() {
+    apiKey := os.Getenv("FACESIGN_API_KEY")
+    if apiKey == "" {
+        log.Fatal("FACESIGN_API_KEY is required")
+    }
+    
+    serverURL := os.Getenv("FACESIGN_SERVER_URL")
+    if serverURL == "" {
+        serverURL = "https://api.facesign.ai" // Default to production
+    }
+    
+    client := facesign.NewClient(apiKey,
+        facesign.WithBaseURL(serverURL),
+    )
+}
+```
+
+## Development vs Production
+
+```go
+// Development environment
+devClient := facesign.NewClient("dev_api_key",
+    facesign.WithBaseURL("https://api.dev.facesign.ai"),
+)
+
+// Production environment
+prodClient := facesign.NewClient("prod_api_key",
+    facesign.WithBaseURL("https://api.facesign.ai"),
+)
+```
+
+## Next Steps
+
+- Read the [API Reference](/api-reference) for detailed endpoint documentation
+- Explore [Session Management](/sessions) to understand verification flows
+- Check out [Error Handling](/errors) for comprehensive error management
+- Learn about [Webhooks](/webhooks) for real-time status updates

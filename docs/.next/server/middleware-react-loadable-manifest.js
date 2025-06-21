@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"components/Search.tsx -> @/mdx/search.mjs":{"id":78564,"files":["static/chunks/564.4c65df23d684ea90.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{\"components/Search.tsx -> @/mdx/search.mjs\":{\"id\":\"components/Search.tsx -> @/mdx/search.mjs\",\"files\":[\"static/chunks/_app-pages-browser_src_mdx_search_mjs.js\"]}}"
