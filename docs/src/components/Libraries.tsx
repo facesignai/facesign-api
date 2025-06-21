@@ -113,7 +113,7 @@ export function Libraries() {
                 {library.description}
               </p>
               <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
-                Coming soon - join our waitlist to be notified
+                Coming soon
               </p>
             </div>
             <Image
