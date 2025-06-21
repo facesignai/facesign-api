@@ -1,1 +1,0 @@
-"use strict";exports.id=2826,exports.ids=[2826],exports.modules={22826:(e,i,r)=>{r.r(i),r.d(i,{ApiReferenceClient:()=>s});let s=(0,r(68570).createProxy)(String.raw`/Users/davidgonen/Github/facesign-all/facesign-api/docs/src/app/api-reference/client.tsx#ApiReferenceClient`)}};
