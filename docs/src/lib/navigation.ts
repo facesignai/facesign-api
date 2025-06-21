@@ -15,6 +15,7 @@ export const navigation: NavigationSection[] = [
     links: [
       { title: 'Introduction', href: '/' },
       { title: 'Quick Start', href: '/quickstart' },
+      { title: 'Python Installation', href: '/quickstart/python-installation' },
       { title: 'Authentication', href: '/authentication' },
       { title: 'Error Handling', href: '/errors' },
     ],
