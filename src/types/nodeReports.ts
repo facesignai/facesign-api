@@ -35,9 +35,9 @@ export type CompareFacesReport = {
 }
 
 export type FaceScanReport = {
-  livenessDetected?: boolean
+  livenessChallengePassed: boolean
+  aiLivenessCheckPassed: boolean
   compareFacesReport?: CompareFacesReport
-  // append data of face scanning
 }
 
 export type FaceScanNodeReport = NodeReportBase & {
