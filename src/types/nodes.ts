@@ -1,14 +1,14 @@
 export enum FSNodeType {
-  START = 'start',
-  END = 'end',
-  CONVERSATION = 'conversation',
-  LIVENESS_DETECTION = 'liveness_detection',
-  ENTER_EMAIL = 'enter_email',
-  DATA_VALIDATION = 'data_validation',
-  DOCUMENT_SCAN = 'document_scan',
-  RECOGNITION = 'recognition',
-  FACE_SCAN = 'face_scan',
-  TWO_FACTOR = 'two_factor',
+  START = "start",
+  END = "end",
+  CONVERSATION = "conversation",
+  LIVENESS_DETECTION = "liveness_detection",
+  ENTER_EMAIL = "enter_email",
+  DATA_VALIDATION = "data_validation",
+  DOCUMENT_SCAN = "document_scan",
+  RECOGNITION = "recognition",
+  FACE_SCAN = "face_scan",
+  TWO_FACTOR = "two_factor",
 }
 
 export interface FSNodeBase {
@@ -33,9 +33,9 @@ export interface FSConversationNode extends FSNodeBase {
 }
 
 export enum FSLivenessDetectionOutcome {
-  LIVENESS_DETECTED = 'livenessDetected',
-  DEEPFAKE_DETECTED = 'deepfakeDetected',
-  NO_FACE = 'noFace',
+  LIVENESS_DETECTED = "livenessDetected",
+  DEEPFAKE_DETECTED = "deepfakeDetected",
+  NO_FACE = "noFace",
 }
 
 export interface FSLivenessDetectionNode extends FSNodeBase {
@@ -44,8 +44,8 @@ export interface FSLivenessDetectionNode extends FSNodeBase {
 }
 
 export enum FSEnterEmailOutcome {
-  EMAIL_ENTERED = 'emailEntered',
-  CANCELED = 'canceled',
+  EMAIL_ENTERED = "emailEntered",
+  CANCELED = "canceled",
 }
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
@@ -63,9 +63,9 @@ export interface FSDataValidationNode extends FSNodeBase {
 }
 
 export enum FSRecognitionOutcome {
-  RECOGNIZED = 'recognized',
-  NEW_USER = 'newUser',
-  NO_FACE = 'noFace',
+  RECOGNIZED = "recognized",
+  NEW_USER = "newUser",
+  NO_FACE = "noFace",
 }
 
 export interface FSRecognitionNode extends FSNodeBase {
@@ -74,30 +74,30 @@ export interface FSRecognitionNode extends FSNodeBase {
 }
 
 export enum FSDocumentType {
-  UNKNOWN = 'MRTD_TYPE_UNKNOWN',
-  IDENTITY_CARD = 'MRTD_TYPE_IDENITY_CARD',
-  PASSPORT = 'MRTD_TYPE_PASSPORT',
-  VISA = 'MRTD_TYPE_VISA',
-  GREEN_CARD = 'MRTD_TYPE_GREEN_CARD',
-  MYS_PASS_IMM13P = 'MRTD_TYPE_MYS_PASS_IMM13P',
-  DL = 'MRTD_TYPE_DL',
-  INTERNAL_TRAVEL_DOCUMENT = 'MRTD_TYPE_INTERNAL_TRAVEL_DOCUMENT',
-  BORDER_CROSSING_CARD = 'MRTD_TYPE_BORDER_CROSSING_CARD',
+  UNKNOWN = "MRTD_TYPE_UNKNOWN",
+  IDENTITY_CARD = "MRTD_TYPE_IDENITY_CARD",
+  PASSPORT = "MRTD_TYPE_PASSPORT",
+  VISA = "MRTD_TYPE_VISA",
+  GREEN_CARD = "MRTD_TYPE_GREEN_CARD",
+  MYS_PASS_IMM13P = "MRTD_TYPE_MYS_PASS_IMM13P",
+  DL = "MRTD_TYPE_DL",
+  INTERNAL_TRAVEL_DOCUMENT = "MRTD_TYPE_INTERNAL_TRAVEL_DOCUMENT",
+  BORDER_CROSSING_CARD = "MRTD_TYPE_BORDER_CROSSING_CARD",
 }
 
 export enum FSDocumentScanOutcome {
-  SCAN_SUCCESS = 'scanSuccess',
+  SCAN_SUCCESS = "scanSuccess",
   // SCAN_FAILURE = 'scanFailure',
-  USER_CANCELLED = 'userCancelled',
-  TIMEOUT = 'scanTimeout',
+  USER_CANCELLED = "userCancelled",
+  TIMEOUT = "scanTimeout",
   // PARTIAL_DATA = 'partialDataExtracted',
   // VALIDATION_FAILURE = 'validationFailure',
 }
 
 export enum FSDocumentScanMode {
-  SINGLE_SIDE = 'SINGLE_SIDE',
-  MULTI_SIDE = 'MULTI_SIDE',
-  BARCODE = 'BARCODE',
+  SINGLE_SIDE = "SINGLE_SIDE",
+  MULTI_SIDE = "MULTI_SIDE",
+  BARCODE = "BARCODE",
 }
 
 export interface FSDocumentScanNode extends FSNodeBase {
@@ -115,9 +115,9 @@ export interface FSEndNode extends FSNodeBase {
 }
 
 export enum FSFaceScanOutcome {
-  PASSED = 'passed',
-  NOT_PASSED = 'notPassed',
-  ERROR = 'error',
+  PASSED = "passed",
+  NOT_PASSED = "notPassed",
+  ERROR = "error",
 }
 
 export interface FSFaceScanNode extends FSNodeBase {
@@ -126,8 +126,8 @@ export interface FSFaceScanNode extends FSNodeBase {
 
   // Capture configuration (always used)
   captureInstructions?: string
-  requestLivenessChallenge?: boolean
-  requireAILiveness?: boolean
+  requireLivenessChallenge?: boolean
+  requireAILivenessCheck?: boolean
   referenceImageKey?: string
   similarityThreshold?: number
 
@@ -145,16 +145,16 @@ export interface FSFaceScanNode extends FSNodeBase {
 }
 
 export enum FSTwoFactorChannel {
-  EMAIL = 'email',
-  SMS = 'sms',
+  EMAIL = "email",
+  SMS = "sms",
 }
 
 export enum FSTwoFactorOutcome {
-  VERIFIED = 'verified',
-  DELIVERY_FAILED = 'delivery_failed',
-  FAILED_UNVERIFIED = 'failed_unverified',
-  CANCELLED = 'cancelled',
-  ERROR = 'error',
+  VERIFIED = "verified",
+  DELIVERY_FAILED = "delivery_failed",
+  FAILED_UNVERIFIED = "failed_unverified",
+  CANCELLED = "cancelled",
+  ERROR = "error",
 }
 
 export interface FSTwoFactorNode extends FSNodeBase {
