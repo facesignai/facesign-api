@@ -132,16 +132,8 @@ export interface FSFaceScanNode extends FSNodeBase {
   similarityThreshold?: number
 
   // Advanced configuration
-  captureDelay?: number // Milliseconds before capture (default: 3000)
-  detectionInterval?: number // How often to check for faces (default: 150ms)
-  qualityThreshold?: number // Overall quality score 0-1 (default: 0.7)
-  blurThreshold?: number // Blur detection threshold (default: 50)
-  minFaceSize?: number // Minimum face size in pixels (default: 100)
-  maxFaceSize?: number // Maximum face size in pixels (default: 400)
   enableSound?: boolean // Enable audio feedback (default: true)
   enableHaptics?: boolean // Enable haptic feedback (default: true)
-  useWebGL?: boolean // Use WebGL acceleration when available (default: true)
-  maxRetries?: number // Maximum capture attempts (default: 3)
 }
 
 export enum FSTwoFactorChannel {
