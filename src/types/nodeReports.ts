@@ -8,7 +8,7 @@ import {
   FSRecognitionOutcome,
   FSFaceScanOutcome,
   FSTwoFactorOutcome,
-} from './nodes'
+} from "./nodes"
 
 export type NodeReportBase = {
   type: FSNodeType
@@ -26,8 +26,17 @@ export type TwoFactorNodeReport = NodeReportBase & {
   report?: TwoFactorReport
 }
 
+export type CompareFacesReport = {
+  isMatch: boolean
+  similarity?: number
+  sourceImageFaceFound: boolean
+  targetImageFaceFound: boolean
+  error?: string
+}
+
 export type FaceScanReport = {
   livenessDetected?: boolean
+  compareFacesReport?: CompareFacesReport
   // append data of face scanning
 }
 
