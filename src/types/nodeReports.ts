@@ -35,8 +35,8 @@ export type CompareFacesReport = {
 }
 
 export type FaceScanReport = {
-  livenessChallengePassed: boolean
-  aiLivenessCheckPassed: boolean
+  livenessChallengePassed?: boolean
+  aiLivenessCheckPassed?: boolean
   compareFacesReport?: CompareFacesReport
 }
 
