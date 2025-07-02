@@ -114,37 +114,21 @@ export interface FSEndNode extends FSNodeBase {
   type: FSNodeType.END
 }
 
-export enum FSFaceScanMode {
-  CAPTURE = 'capture', // Only capture face image
-  COMPARE = 'compare', // Capture and compare with reference
-}
-
 export enum FSFaceScanOutcome {
-  // Capture mode outcomes
-  CAPTURED = 'captured',
-  NO_FACE = 'noFace',
+  PASSED = 'passed',
+  NOT_PASSED = 'notPassed',
   ERROR = 'error',
-
-  // Compare mode outcomes (when mode === 'compare')
-  MATCH = 'match',
-  NO_MATCH = 'noMatch',
 }
 
 export interface FSFaceScanNode extends FSNodeBase {
   type: FSNodeType.FACE_SCAN
   outcomes: Record<FSFaceScanOutcome, FSTransitionId>
 
-  // Core configuration
-  mode: FSFaceScanMode // Determines capture-only or capture+compare
-
   // Capture configuration (always used)
   captureInstructions?: string
-  requireLiveness?: boolean
-
-  // Compare configuration (only used when mode === 'compare')
-  referenceImageSource?: 'session' | 'providedData' | 'url'
+  requestLivenessChallenge?: boolean
+  requireAILiveness?: boolean
   referenceImageKey?: string
-  referenceImageUrl?: string
   similarityThreshold?: number
 
   // Advanced configuration
