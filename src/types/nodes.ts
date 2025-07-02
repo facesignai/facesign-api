@@ -117,6 +117,7 @@ export interface FSEndNode extends FSNodeBase {
 export enum FSFaceScanOutcome {
   PASSED = "passed",
   NOT_PASSED = "notPassed",
+  CANCELLED = "cancelled",
   ERROR = "error",
 }
 
