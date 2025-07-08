@@ -1,3 +1,5 @@
+import { DocumentType, ScanningMode } from "./docScanning"
+
 export enum FSNodeType {
   START = "start",
   END = "end",
@@ -74,17 +76,7 @@ export interface FSRecognitionNode extends FSNodeBase {
   outcomes: Record<FSRecognitionOutcome, FSTransitionId>
 }
 
-export enum FSDocumentType {
-  UNKNOWN = "MRTD_TYPE_UNKNOWN",
-  IDENTITY_CARD = "MRTD_TYPE_IDENITY_CARD",
-  PASSPORT = "MRTD_TYPE_PASSPORT",
-  VISA = "MRTD_TYPE_VISA",
-  GREEN_CARD = "MRTD_TYPE_GREEN_CARD",
-  MYS_PASS_IMM13P = "MRTD_TYPE_MYS_PASS_IMM13P",
-  DL = "MRTD_TYPE_DL",
-  INTERNAL_TRAVEL_DOCUMENT = "MRTD_TYPE_INTERNAL_TRAVEL_DOCUMENT",
-  BORDER_CROSSING_CARD = "MRTD_TYPE_BORDER_CROSSING_CARD",
-}
+export type FSDocumentType = DocumentType
 
 export enum FSDocumentScanOutcome {
   SCAN_SUCCESS = "scanSuccess",
@@ -95,11 +87,7 @@ export enum FSDocumentScanOutcome {
   // VALIDATION_FAILURE = 'validationFailure',
 }
 
-export enum FSDocumentScanMode {
-  SINGLE_SIDE = "SINGLE_SIDE",
-  MULTI_SIDE = "MULTI_SIDE",
-  BARCODE = "BARCODE",
-}
+export type FSDocumentScanMode = ScanningMode
 
 export interface FSDocumentScanNode extends FSNodeBase {
   type: FSNodeType.DOCUMENT_SCAN
@@ -109,6 +97,7 @@ export interface FSDocumentScanNode extends FSNodeBase {
   outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
   showTorchButton?: boolean // Default: true
   showCameraSwitch?: boolean // Default: true
+  showMirrorCameraButton?: boolean // // Default: true
 }
 
 export interface FSEndNode extends FSNodeBase {

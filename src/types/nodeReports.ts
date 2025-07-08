@@ -4,11 +4,12 @@ import {
   FSLivenessDetectionOutcome,
   FSEnterEmailOutcome,
   FSDocumentScanOutcome,
-  FSDocumentType,
   FSRecognitionOutcome,
   FSFaceScanOutcome,
   FSTwoFactorOutcome,
 } from "./nodes"
+
+import { DocumentScanReport } from "./docScanning"
 
 export type NodeReportBase = {
   type: FSNodeType
@@ -58,11 +59,6 @@ export type RecognitionNodeReport = NodeReportBase & {
   type: FSNodeType.RECOGNITION
   outcome: FSRecognitionOutcome
   report?: RecognitionReport
-}
-
-export type DocumentScanReport = {
-  documentType: FSDocumentType
-  // append data that comes from the DocScan node
 }
 
 export type DocumentScanNodeReport = NodeReportBase & {
