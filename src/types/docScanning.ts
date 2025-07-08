@@ -514,14 +514,14 @@ export type DetailedCroppedImageResult = {
 export type DocumentClassInfo = {
   country?: Country
   region?: Region
-  type?: DocumentType_2
+  type?: DocumentType
   countryName?: string
   isoNumericCountryCode?: string
   isoAlpha2CountryCode?: string
   isoAlpha3CountryCode?: string
 }
 
-export type DocumentType_2 =
+export type DocumentType =
   | "consular-id"
   | "dl"
   | "dl-public-services-card"
@@ -884,3 +884,5 @@ export type VizResult = {
   countryCode?: StringResult
   nationalInsuranceNumber?: StringResult
 }
+
+export type ScanningMode = "single" | "automatic"
