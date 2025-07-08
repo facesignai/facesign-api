@@ -1,22 +1,23 @@
-import { Device } from './types/deviceDetails'
-import { Location } from './types/location'
-import { FSEdge, FSNode } from './types/nodes'
-import { Customization } from './types/customization'
-import { NodeReport } from './types/nodeReports'
+import { Device } from "./types/deviceDetails"
+import { Location } from "./types/location"
+import { FSEdge, FSNode } from "./types/nodes"
+import { Customization } from "./types/customization"
+import { NodeReport } from "./types/nodeReports"
 
-export * from './types/deviceDetails'
-export * from './types/location'
-export * from './types/nodes'
-export * from './types/customization'
-export * from './types/nodeReports'
+export * from "./types/deviceDetails"
+export * from "./types/location"
+export * from "./types/nodes"
+export * from "./types/customization"
+export * from "./types/nodeReports"
+export * from "./types/docScanning"
 
 export enum ILogLevel {
-  TRACE = 'TRACE',
-  DEBUG = ' DEBUG',
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-  OFF = 'OFF',
+  TRACE = "TRACE",
+  DEBUG = " DEBUG",
+  INFO = "INFO",
+  WARN = "WARN",
+  ERROR = "ERROR",
+  OFF = "OFF",
 }
 
 export interface ClientOptions {
@@ -27,10 +28,10 @@ export interface ClientOptions {
 }
 
 export enum Method {
-  GET = 'get',
-  POST = 'post',
-  PATCH = 'patch',
-  DELTE = 'delete',
+  GET = "get",
+  POST = "post",
+  PATCH = "patch",
+  DELTE = "delete",
 }
 
 export interface RequestedData {
@@ -55,10 +56,10 @@ export interface Phrase {
 }
 
 export enum SessionStatus {
-  RequiresInput = 'requiresInput',
-  Processing = 'processing',
-  Canceled = 'canceled',
-  Complete = 'complete',
+  RequiresInput = "requiresInput",
+  Processing = "processing",
+  Canceled = "canceled",
+  Complete = "complete",
 }
 
 export interface ClientSecret {
@@ -77,8 +78,8 @@ export type SessionReportAIAnalysisSection = {
 export type SessionReportAIAnalysis = {
   ageMin: number
   ageMax: number
-  sex: 'male' | 'female'
-  realPersonOrVirtual: 'real' | 'virtual' | 'noface'
+  sex: "male" | "female"
+  realPersonOrVirtual: "real" | "virtual" | "noface"
   overallSummary: string
   analysis: SessionReportAIAnalysisSection[]
 }
@@ -123,16 +124,16 @@ export type Lang = {
   title: string
 }
 
-export type Zone = 'es' | 'eu'
+export type Zone = "es" | "eu"
 
 export enum ModuleType {
-  EmailVerification = 'emailVerification',
-  SmsVerification = 'smsVerification',
-  IdentityVerification = 'identityVerification',
-  DocumentAuthentication = 'documentAuthentication',
-  AgeEstimation = 'ageEstimation',
-  ProofOfIntent = 'proofOfIntent',
-  KnowledgeVerify = 'knowledgeVerify',
+  EmailVerification = "emailVerification",
+  SmsVerification = "smsVerification",
+  IdentityVerification = "identityVerification",
+  DocumentAuthentication = "documentAuthentication",
+  AgeEstimation = "ageEstimation",
+  ProofOfIntent = "proofOfIntent",
+  KnowledgeVerify = "knowledgeVerify",
 }
 
 export type EmailVerification = {
@@ -172,7 +173,7 @@ export type KnowledgeVerify = {
 export type Avatar = {
   id: string
   name: string
-  gender: 'male' | 'female' | 'unknown'
+  gender: "male" | "female" | "unknown"
   imageUrl: string
 }
 
@@ -221,20 +222,20 @@ export const createSessionEndpoint = {
   pathParams: [],
   queryParams: [],
   bodyParams: [
-    'clientReferenceId',
-    'metadata',
-    'initialPhrase',
-    'finalPhrase',
-    'providedData',
-    'avatarId',
-    'langs',
-    'defaultLang',
-    'zone',
-    'modules',
-    'flow',
-    'customization',
+    "clientReferenceId",
+    "metadata",
+    "initialPhrase",
+    "finalPhrase",
+    "providedData",
+    "avatarId",
+    "langs",
+    "defaultLang",
+    "zone",
+    "modules",
+    "flow",
+    "customization",
   ],
-  path: (): string => '/sessions',
+  path: (): string => "/sessions",
 } as const
 
 type GetSessionPathParameters = {
@@ -243,7 +244,7 @@ type GetSessionPathParameters = {
 
 export const getSessionEndpoint = {
   method: Method.GET,
-  pathParams: ['sessionId'],
+  pathParams: ["sessionId"],
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string => `/sessions/${p.sessionId}`,
@@ -258,7 +259,7 @@ export const getLangsEndpoint = {
   pathParams: [],
   queryParams: [],
   bodyParams: [],
-  path: (): string => '/langs',
+  path: (): string => "/langs",
 } as const
 
 export interface GetAvatarsResponse {
@@ -270,12 +271,12 @@ export const getAvatarsEndpoint = {
   pathParams: [],
   queryParams: [],
   bodyParams: [],
-  path: (): string => '/avatars',
+  path: (): string => "/avatars",
 } as const
 
 export const createClientSecretEndpoint = {
   method: Method.GET,
-  pathParams: ['sessionId'],
+  pathParams: ["sessionId"],
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string =>
@@ -296,8 +297,8 @@ export interface GetSessionsParameters {
   toDate?: number // Unix timestamp
 
   // Sorting
-  sortBy?: 'createdAt' | 'status' | 'finishedAt' // Default: 'createdAt'
-  sortOrder?: 'asc' | 'desc' // Default: 'desc'
+  sortBy?: "createdAt" | "status" | "finishedAt" // Default: 'createdAt'
+  sortOrder?: "asc" | "desc" // Default: 'desc'
 
   // Search
   search?: string // Search in metadata, client reference, etc.
@@ -318,18 +319,18 @@ export const getSessionsEndpoint = {
   method: Method.GET,
   pathParams: [],
   queryParams: [
-    'limit',
-    'cursor',
-    'flowId',
-    'clientReferenceId',
-    'status',
-    'fromDate',
-    'toDate',
-    'sortBy',
-    'sortOrder',
-    'search',
-    'includeTotal',
+    "limit",
+    "cursor",
+    "flowId",
+    "clientReferenceId",
+    "status",
+    "fromDate",
+    "toDate",
+    "sortBy",
+    "sortOrder",
+    "search",
+    "includeTotal",
   ],
   bodyParams: [],
-  path: (): string => '/sessions',
+  path: (): string => "/sessions",
 } as const
