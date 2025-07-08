@@ -514,14 +514,14 @@ export type DetailedCroppedImageResult = {
 export type DocumentClassInfo = {
   country?: Country
   region?: Region
-  type?: DocumentType
+  type?: DocumentType_2
   countryName?: string
   isoNumericCountryCode?: string
   isoAlpha2CountryCode?: string
   isoAlpha3CountryCode?: string
 }
 
-export type DocumentType =
+export type DocumentType_2 =
   | "consular-id"
   | "dl"
   | "dl-public-services-card"
