@@ -9,7 +9,7 @@
     // "esModuleInterop": true,
 
     // Overrides default in order to remove "dom" because this package shouldn't assume the presence of browser APIs
-    "lib": ["ES2019"],
+    "lib": ["dom", "ES2019"],
 
     // Emit location
     "outDir": "build",
@@ -35,7 +35,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types"]
   }
 
   // "include": ["src/**/*"]
