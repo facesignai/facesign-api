@@ -21,8 +21,14 @@ export type TwoFactorReport = {
   email: string
 }
 
-export type TwoFactorNodeReport = NodeReportBase & {
-  type: FSNodeType.TWO_FACTOR
+export type TwoFactorEmailNodeReport = NodeReportBase & {
+  type: FSNodeType.TWO_FACTOR_EMAIL
+  outcome: FSTwoFactorOutcome
+  report?: TwoFactorReport
+}
+
+export type TwoFactorSMSNodeReport = NodeReportBase & {
+  type: FSNodeType.TWO_FACTOR_SMS
   outcome: FSTwoFactorOutcome
   report?: TwoFactorReport
 }
@@ -95,5 +101,5 @@ export type NodeReport =
   | DataValidationNodeReport
   | DocumentScanNodeReport
   | RecognitionNodeReport
-  | TwoFactorNodeReport
+  | TwoFactorEmailNodeReport
   | FaceScanNodeReport
