@@ -102,4 +102,5 @@ export type NodeReport =
   | DocumentScanNodeReport
   | RecognitionNodeReport
   | TwoFactorEmailNodeReport
+  | TwoFactorSMSNodeReport
   | FaceScanNodeReport
