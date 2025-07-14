@@ -174,7 +174,8 @@ export type FSNode =
   | FSDocumentScanNode
   | FSRecognitionNode
   | FSFaceScanNode
-  | FSTwoFactorNode
+  | FSTwoFactorNodeEmail
+  | FSTwoFactorNodeSMS
 
 export type FSEdge = {
   id: string
