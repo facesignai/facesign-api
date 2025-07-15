@@ -10,7 +10,8 @@ export enum FSNodeType {
   DOCUMENT_SCAN = "document_scan",
   RECOGNITION = "recognition",
   FACE_SCAN = "face_scan",
-  TWO_FACTOR = "two_factor",
+  TWO_FACTOR_EMAIL = "two_factor_email",
+  TWO_FACTOR_SMS = "two_factor_sms",
 }
 
 export interface FSNodeBase {
@@ -140,15 +141,8 @@ export enum FSTwoFactorOutcome {
   ERROR = "error",
 }
 
-export interface FSTwoFactorNode extends FSNodeBase {
-  type: FSNodeType.TWO_FACTOR
+interface FSTwoFactorNode extends FSNodeBase {
   outcomes: Record<FSTwoFactorOutcome, FSTransitionId>
-  // Core configuration
-  channels: FSTwoFactorChannel[] // Email, SMS, or both
-
-  // Templates (support variables like {{userName}}, {{code}}, {{companyName}})
-  emailTemplate?: string
-  smsTemplate?: string
 
   // Verification settings
   otpLength?: number // 4-8 digits, default 6
@@ -160,6 +154,17 @@ export interface FSTwoFactorNode extends FSNodeBase {
   showUI?: boolean // Show on-screen toast notification, default true
 }
 
+export interface FSTwoFactorNodeEmail extends FSTwoFactorNode {
+  type: FSNodeType.TWO_FACTOR_EMAIL
+  emailTemplate?: string
+}
+
+export interface FSTwoFactorNodeSMS extends FSTwoFactorNode {
+  type: FSNodeType.TWO_FACTOR_SMS
+  smsTemplate?: string
+}
+
+
 export type FSNode =
   | FSStartNode
   | FSConversationNode
@@ -170,7 +175,8 @@ export type FSNode =
   | FSDocumentScanNode
   | FSRecognitionNode
   | FSFaceScanNode
-  | FSTwoFactorNode
+  | FSTwoFactorNodeEmail
+  | FSTwoFactorNodeSMS
 
 export type FSEdge = {
   id: string
