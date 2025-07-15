@@ -32,6 +32,7 @@ export interface FSConversationNode extends FSNodeBase {
   type: FSNodeType.CONVERSATION
   prompt: string
   transitions: FSNodeTransition[]
+  doesNotRequireReply?: boolean
 }
 
 export enum FSLivenessDetectionOutcome {
