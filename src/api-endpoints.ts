@@ -126,66 +126,12 @@ export type Lang = {
 
 export type Zone = "es" | "eu"
 
-export enum ModuleType {
-  EmailVerification = "emailVerification",
-  SmsVerification = "smsVerification",
-  IdentityVerification = "identityVerification",
-  DocumentAuthentication = "documentAuthentication",
-  AgeEstimation = "ageEstimation",
-  ProofOfIntent = "proofOfIntent",
-  KnowledgeVerify = "knowledgeVerify",
-}
-
-export type EmailVerification = {
-  type: ModuleType.EmailVerification
-  name?: string
-  email?: string
-  publicRecognitionEnabled?: boolean
-}
-
-export type SmsVerification = {
-  type: ModuleType.SmsVerification
-  phone?: string
-}
-
-export type IdentityVerification = {
-  type: ModuleType.IdentityVerification
-}
-
-export type DocumentAuthentication = {
-  type: ModuleType.DocumentAuthentication
-}
-
-export type AgeEstimation = {
-  type: ModuleType.AgeEstimation
-  age: number
-}
-
-export type ProofOfIntent = {
-  type: ModuleType.ProofOfIntent
-  requestedData: RequestedData[]
-}
-
-export type KnowledgeVerify = {
-  type: ModuleType.KnowledgeVerify
-}
-
 export type Avatar = {
   id: string
   name: string
   gender: "male" | "female" | "unknown"
   imageUrl: string
 }
-
-export type Module =
-  | EmailVerification
-  | SmsVerification
-  | IdentityVerification
-  | DocumentAuthentication
-  | AgeEstimation
-  | ProofOfIntent
-  | KnowledgeVerify
-
 
 export type ProvidedData = Record<string, string> & {
   name?: string
