@@ -19,7 +19,7 @@ export interface FSNodeBase {
   type: FSNodeType
 }
 
-export type FSTransitionId = string
+export type FSNodeId = string
 export interface FSStartNode extends FSNodeBase {
   type: FSNodeType.START
 }
@@ -32,7 +32,7 @@ export interface FSNodeTransition {
 export interface FSConversationNode extends FSNodeBase {
   type: FSNodeType.CONVERSATION
   prompt: string
-  transitions: FSNodeTransition[]
+  outcomes: FSNodeTransition[]
   doesNotRequireReply?: boolean
 }
 
@@ -44,7 +44,7 @@ export enum FSLivenessDetectionOutcome {
 
 export interface FSLivenessDetectionNode extends FSNodeBase {
   type: FSNodeType.LIVENESS_DETECTION
-  outcomes: Record<FSLivenessDetectionOutcome, FSTransitionId>
+  outcomes: Record<FSLivenessDetectionOutcome, FSNodeId>
 }
 
 export enum FSEnterEmailOutcome {
@@ -53,12 +53,12 @@ export enum FSEnterEmailOutcome {
 }
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
-  outcomes: Record<FSEnterEmailOutcome, FSTransitionId>
+  outcomes: Record<FSEnterEmailOutcome, FSNodeId>
 }
 
 export interface FSDataValidationNode extends FSNodeBase {
   type: FSNodeType.DATA_VALIDATION
-  transitions: FSNodeTransition[]
+  outcomes: FSNodeTransition[]
   validation: {
     field: string
     action: string
@@ -74,7 +74,7 @@ export enum FSRecognitionOutcome {
 
 export interface FSRecognitionNode extends FSNodeBase {
   type: FSNodeType.RECOGNITION
-  outcomes: Record<FSRecognitionOutcome, FSTransitionId>
+  outcomes: Record<FSRecognitionOutcome, FSNodeId>
 }
 
 export type FSDocumentType = DocumentType
@@ -95,7 +95,7 @@ export interface FSDocumentScanNode extends FSNodeBase {
   scanningMode: FSDocumentScanMode
   allowedDocumentTypes: FSDocumentType[] // Configuration for selectable document types
   // Other configurations like scan region, specific recognizers can be added here later
-  outcomes: Record<FSDocumentScanOutcome, FSTransitionId> // Fixed outcomes for flow branching
+  outcomes: Record<FSDocumentScanOutcome, FSNodeId> // Fixed outcomes for flow branching
   showTorchButton?: boolean // Default: true
   showCameraSwitch?: boolean // Default: true
   showMirrorCameraButton?: boolean // // Default: true
@@ -114,7 +114,7 @@ export enum FSFaceScanOutcome {
 
 export interface FSFaceScanNode extends FSNodeBase {
   type: FSNodeType.FACE_SCAN
-  outcomes: Record<FSFaceScanOutcome, FSTransitionId>
+  outcomes: Record<FSFaceScanOutcome, FSNodeId>
 
   // Capture configuration (always used)
   captureInstructions?: string
@@ -142,7 +142,7 @@ export enum FSTwoFactorOutcome {
 }
 
 interface FSTwoFactorNode extends FSNodeBase {
-  outcomes: Record<FSTwoFactorOutcome, FSTransitionId>
+  outcomes: Record<FSTwoFactorOutcome, FSNodeId>
 
   // Verification settings
   otpLength?: number // 4-8 digits, default 6
@@ -164,7 +164,6 @@ export interface FSTwoFactorNodeSMS extends FSTwoFactorNode {
   smsTemplate?: string
 }
 
-
 export type FSNode =
   | FSStartNode
   | FSConversationNode
@@ -177,9 +176,3 @@ export type FSNode =
   | FSFaceScanNode
   | FSTwoFactorNodeEmail
   | FSTwoFactorNodeSMS
-
-export type FSEdge = {
-  id: string
-  source: string
-  target: string
-}

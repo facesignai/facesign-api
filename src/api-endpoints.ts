@@ -1,6 +1,6 @@
 import { Device } from "./types/deviceDetails"
 import { Location } from "./types/location"
-import { FSEdge, FSNode } from "./types/nodes"
+import { FSNode } from "./types/nodes"
 import { Customization } from "./types/customization"
 import { NodeReport } from "./types/nodeReports"
 
@@ -186,10 +186,6 @@ export type Module =
   | ProofOfIntent
   | KnowledgeVerify
 
-export type FSFlow = {
-  nodes: FSNode[]
-  edges: FSEdge[]
-}
 
 export type ProvidedData = Record<string, string> & {
   name?: string
@@ -200,15 +196,12 @@ export type ProvidedData = Record<string, string> & {
 export interface SessionSettings {
   clientReferenceId: string
   metadata: object
-  initialPhrase?: string
-  finalPhrase?: string
   providedData?: ProvidedData
   avatarId?: string
   langs?: string[]
   defaultLang?: string
   zone?: Zone
-  modules: Module[]
-  flow?: FSFlow
+  flow?: FSNode[]
   customization?: Customization
 }
 
@@ -224,14 +217,11 @@ export const createSessionEndpoint = {
   bodyParams: [
     "clientReferenceId",
     "metadata",
-    "initialPhrase",
-    "finalPhrase",
     "providedData",
     "avatarId",
     "langs",
     "defaultLang",
     "zone",
-    "modules",
     "flow",
     "customization",
   ],
