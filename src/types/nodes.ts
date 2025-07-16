@@ -22,6 +22,7 @@ export interface FSNodeBase {
 export type FSNodeId = string
 export interface FSStartNode extends FSNodeBase {
   type: FSNodeType.START
+  outcome: FSNodeId
 }
 
 export interface FSNodeTransition {
