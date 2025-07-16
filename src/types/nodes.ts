@@ -1,5 +1,7 @@
 import { DocumentType, ScanningMode } from "./docScanning"
 
+export type NonEmptyArray<T> = [T, ...Array<T>]
+
 export enum FSNodeType {
   START = "start",
   END = "end",
@@ -25,15 +27,16 @@ export interface FSStartNode extends FSNodeBase {
   outcome: FSNodeId
 }
 
-export interface FSNodeTransition {
+export interface FSConditionalOutcome {
   id: string
+  targetNodeId: string
   condition: string
 }
 
 export interface FSConversationNode extends FSNodeBase {
   type: FSNodeType.CONVERSATION
   prompt: string
-  outcomes: FSNodeTransition[]
+  outcomes: NonEmptyArray<FSConditionalOutcome>
   doesNotRequireReply?: boolean
 }
 
@@ -59,7 +62,7 @@ export interface FSEnterEmailNode extends FSNodeBase {
 
 export interface FSDataValidationNode extends FSNodeBase {
   type: FSNodeType.DATA_VALIDATION
-  outcomes: FSNodeTransition[]
+  outcomes: NonEmptyArray<FSConditionalOutcome>
   validation: {
     field: string
     action: string
