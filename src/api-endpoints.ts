@@ -142,12 +142,12 @@ export type ProvidedData = Record<string, string> & {
 export interface SessionSettings {
   clientReferenceId: string
   metadata: object
+  flow: FSNode[]
   providedData?: ProvidedData
   avatarId?: string
   langs?: string[]
   defaultLang?: string
   zone?: Zone
-  flow?: FSNode[]
   customization?: Customization
 }
 
