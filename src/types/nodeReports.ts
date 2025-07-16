@@ -1,6 +1,6 @@
 import {
   FSNodeType,
-  FSTransitionId,
+  FSNodeId,
   FSLivenessDetectionOutcome,
   FSEnterEmailOutcome,
   FSDocumentScanOutcome,
@@ -17,7 +17,8 @@ export type NodeReportBase = {
   createdAt: number
 }
 
-export type TwoFactorReport = | { email: string; phoneNumber?: never }
+export type TwoFactorReport =
+  | { email: string; phoneNumber?: never }
   | { phoneNumber: string; email?: never }
   | { email: string; phoneNumber: string }
 
@@ -75,7 +76,7 @@ export type DocumentScanNodeReport = NodeReportBase & {
 
 export type DataValidationNodeReport = NodeReportBase & {
   type: FSNodeType.DATA_VALIDATION
-  passedTransitionId: FSTransitionId
+  outcome: FSNodeId
 }
 
 export type EnterEmailNodeReport = NodeReportBase & {
@@ -91,7 +92,7 @@ export type LivenessDetectionNodeReport = NodeReportBase & {
 
 export type ConversationNodeReport = NodeReportBase & {
   type: FSNodeType.CONVERSATION
-  passedTransitionId: FSTransitionId
+  outcome: FSNodeId
 }
 
 export type NodeReport =
