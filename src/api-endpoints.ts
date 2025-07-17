@@ -90,16 +90,6 @@ export interface SessionReport {
   location?: Location
   device?: Device
   lang?: string
-  // TODO:  {{{ remove this a bit later
-  extractedData?: Record<string, string>
-  livenessDetected?: boolean
-  screenshots?: string[]
-  videos?: {
-    avatarVideoUrl?: string
-    userVideoUrl?: string
-  }
-  isVerified?: boolean
-  // }}}
   nodeReports?: NodeReport[]
 }
 
