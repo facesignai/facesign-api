@@ -145,7 +145,7 @@ export enum FSTwoFactorOutcome {
   ERROR = "error",
 }
 
-interface FSTwoFactorNode extends FSNodeBase {
+export interface FSTwoFactorNode extends FSNodeBase {
   outcomes: Record<FSTwoFactorOutcome, FSNodeId>
 
   // Verification settings
