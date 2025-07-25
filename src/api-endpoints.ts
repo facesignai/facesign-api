@@ -10,6 +10,7 @@ export * from "./types/nodes"
 export * from "./types/customization"
 export * from "./types/nodeReports"
 export * from "./types/docScanning"
+export * from "./types/webhooks"
 
 export enum ILogLevel {
   TRACE = "TRACE",
