@@ -3,6 +3,7 @@ import { Location } from "./types/location"
 import { FSNode } from "./types/nodes"
 import { Customization } from "./types/customization"
 import { NodeReport } from "./types/nodeReports"
+import { VideoAIAnalysis } from "./types/videoAIAnalysis"
 
 export * from "./types/deviceDetails"
 export * from "./types/location"
@@ -11,6 +12,7 @@ export * from "./types/customization"
 export * from "./types/nodeReports"
 export * from "./types/docScanning"
 export * from "./types/webhooks"
+export * from "./types/videoAIAnalysis"
 
 export enum ILogLevel {
   TRACE = "TRACE",
@@ -92,6 +94,7 @@ export interface SessionReport {
   device?: Device
   lang?: string
   nodeReports?: NodeReport[]
+  videoAIAnalysis?: VideoAIAnalysis
 }
 
 export interface Session {
@@ -140,6 +143,7 @@ export interface SessionSettings {
   defaultLang?: string
   zone?: Zone
   customization?: Customization
+  videoAIAnalysisEnabled?: boolean
 }
 
 export interface CreateSessionResponse {
