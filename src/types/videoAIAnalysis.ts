@@ -22,6 +22,4 @@ export enum Criterion {
   useOfExternalDevices = "useOfExternalDevices",
 }
 
-export type VideoAIAnalysis = Record<Criterion, CriterionAnalysis> & {
-  riskyIndicators: Criterion[]
-}
+export type VideoAIAnalysis = Record<Criterion, CriterionAnalysis>
