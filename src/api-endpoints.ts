@@ -165,6 +165,7 @@ export const createSessionEndpoint = {
     "zone",
     "flow",
     "customization",
+    "videoAIAnalysisEnabled",
   ],
   path: (): string => "/sessions",
 } as const
