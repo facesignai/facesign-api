@@ -1,21 +1,22 @@
 export enum WebhookType {
-  SESSION_START = "session.start",
+  SESSION_STARTED = "session.started",
+  SESSION_FINISHED = "session.finished",
+  MEDIA_USER_PHOTO = "media.user_photo",
+  MEDIA_DOCUMENT_PHOTO = "media.document_photo",
+  MEDIA_USER_VIDEO = "media.user_video",
+  ANALYSIS_VIDEO = "analysis.video",
 }
 
-export type WebhookSessionStartData = {
-  sessionId: string
+export type WebhookMedia = {
+  id: string
+  downloadUrl: string
+  downloadUrlExpireAt: number
 }
 
-export type WebhookEventBase = {
+export type WebhookEvent = {
   id: string
   type: WebhookType
   createdAt: number
-  data: WebhookSessionStartData
+  sessionId: string
+  media?: WebhookMedia
 }
-
-export type WebhookEventSessionStart = WebhookEventBase & {
-  type: WebhookType.SESSION_START
-  data: WebhookSessionStartData
-}
-
-export type WebhookEvent = WebhookEventSessionStart
