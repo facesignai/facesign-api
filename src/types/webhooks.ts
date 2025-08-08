@@ -9,6 +9,8 @@ export enum WebhookType {
 }
 
 export type WebhookMedia = {
+  id: string
+  createdAt: number
   url: string
   expires: number
   contentType: string
