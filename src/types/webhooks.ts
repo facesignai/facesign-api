@@ -5,6 +5,7 @@ export enum WebhookType {
   MEDIA_DOCUMENT_PHOTO = "media.document_photo",
   MEDIA_USER_VIDEO = "media.user_video",
   ANALYSIS_VIDEO = "analysis.video",
+  ANALYSIS_SCREENSHOT = "analysis.screenshot",
 }
 
 export type WebhookMedia = {
