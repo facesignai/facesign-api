@@ -118,7 +118,7 @@ export type Lang = {
   title: string
 }
 
-export type Zone = "es" | "eu"
+export type Zone = "us" | "eu"
 
 export type Avatar = {
   id: string
@@ -134,7 +134,7 @@ export type ProvidedData = Record<string, string> & {
 }
 
 export interface SessionSettings {
-  clientReferenceId: string
+  clientReferenceId?: string
   metadata: object
   flow: FSNode[]
   providedData?: ProvidedData
