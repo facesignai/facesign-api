@@ -59,9 +59,9 @@ export interface Phrase {
 }
 
 export enum SessionStatus {
-  RequiresInput = "requiresInput",
-  Processing = "processing",
-  Canceled = "canceled",
+  Created = "created",
+  InProgress = "inProgress",
+  Incomplete = "incomplete",
   Complete = "complete",
 }
 
