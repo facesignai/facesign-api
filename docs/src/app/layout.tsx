@@ -23,14 +23,6 @@ export const metadata: Metadata = {
     maximumScale: 1,
     userScalable: false,
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'FaceSign Docs',
-  },
-  formatDetection: {
-    telephone: false,
-  },
 }
 
 export default async function RootLayout({
@@ -51,11 +43,6 @@ export default async function RootLayout({
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#10b981" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="FaceSign Docs" />
-        <link rel="apple-touch-icon" href="/favicon.ico" />
       </head>
       <body className="flex min-h-full bg-white antialiased dark:bg-zinc-900">
         <Providers>
