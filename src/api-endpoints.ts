@@ -1,21 +1,27 @@
-import { Device } from './types/deviceDetails'
-import { Location } from './types/location'
-import { FSEdge, FSNode } from './types/nodes'
-import { Customization } from './types/customization'
+import { Device } from "./types/deviceDetails"
+import { Location } from "./types/location"
+import { FSNode } from "./types/nodes"
+import { Customization } from "./types/customization"
+import { NodeReport } from "./types/nodeReports"
+import { VideoAIAnalysis } from "./types/videoAIAnalysis"
 
-export * from './types/deviceDetails'
-export * from './types/location'
-export * from './types/nodes'
-export * from './types/customization'
-export * from './types/errors'
+export * from "./types/deviceDetails"
+export * from "./types/location"
+export * from "./types/nodes"
+export * from "./types/customization"
+export * from "./types/errors"
+export * from "./types/nodeReports"
+export * from "./types/docScanning"
+export * from "./types/webhooks"
+export * from "./types/videoAIAnalysis"
 
 export enum ILogLevel {
-  TRACE = 'TRACE',
-  DEBUG = ' DEBUG',
-  INFO = 'INFO',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
-  OFF = 'OFF',
+  TRACE = "TRACE",
+  DEBUG = " DEBUG",
+  INFO = "INFO",
+  WARN = "WARN",
+  ERROR = "ERROR",
+  OFF = "OFF",
 }
 
 export interface ClientOptions {
@@ -26,10 +32,10 @@ export interface ClientOptions {
 }
 
 export enum Method {
-  GET = 'get',
-  POST = 'post',
-  PATCH = 'patch',
-  DELETE = 'delete',
+  GET = "get",
+  POST = "post",
+  PATCH = "patch",
+  DELETE = "delete",
 }
 
 export interface RequestedData {
@@ -54,10 +60,10 @@ export interface Phrase {
 }
 
 export enum SessionStatus {
-  RequiresInput = 'requiresInput',
-  Processing = 'processing',
-  Canceled = 'canceled',
-  Complete = 'complete',
+  RequiresInput = "requiresInput",
+  Processing = "processing",
+  Canceled = "canceled",
+  Complete = "complete",
 }
 
 export interface ClientSecret {
@@ -76,25 +82,20 @@ export type SessionReportAIAnalysisSection = {
 export type SessionReportAIAnalysis = {
   ageMin: number
   ageMax: number
-  sex: 'male' | 'female'
-  realPersonOrVirtual: 'real' | 'virtual' | 'noface'
+  sex: "male" | "female"
+  realPersonOrVirtual: "real" | "virtual" | "noface"
   overallSummary: string
   analysis: SessionReportAIAnalysisSection[]
 }
+
 export interface SessionReport {
   transcript: Phrase[]
   aiAnalysis?: SessionReportAIAnalysis
   location?: Location
   device?: Device
-  livenessDetected?: boolean
   lang?: string
-  extractedData?: Record<string, string>
-  screenshots?: string[]
-  videos?: {
-    avatarVideoUrl?: string
-    userVideoUrl?: string
-  }
-  isVerified?: boolean
+  nodeReports?: NodeReport[]
+  videoAIAnalysis?: VideoAIAnalysis
 }
 
 export interface Session {
@@ -118,86 +119,32 @@ export type Lang = {
   title: string
 }
 
-export type Zone = 'es' | 'eu'
-
-export enum ModuleType {
-  EmailVerification = 'emailVerification',
-  SmsVerification = 'smsVerification',
-  IdentityVerification = 'identityVerification',
-  DocumentAuthentication = 'documentAuthentication',
-  AgeEstimation = 'ageEstimation',
-  ProofOfIntent = 'proofOfIntent',
-  KnowledgeVerify = 'knowledgeVerify',
-}
-
-export type EmailVerification = {
-  type: ModuleType.EmailVerification
-  name?: string
-  email?: string
-  publicRecognitionEnabled?: boolean
-}
-
-export type SmsVerification = {
-  type: ModuleType.SmsVerification
-  phone?: string
-}
-
-export type IdentityVerification = {
-  type: ModuleType.IdentityVerification
-}
-
-export type DocumentAuthentication = {
-  type: ModuleType.DocumentAuthentication
-}
-
-export type AgeEstimation = {
-  type: ModuleType.AgeEstimation
-  age: number
-}
-
-export type ProofOfIntent = {
-  type: ModuleType.ProofOfIntent
-  requestedData: RequestedData[]
-}
-
-export type KnowledgeVerify = {
-  type: ModuleType.KnowledgeVerify
-}
+export type Zone = "es" | "eu"
 
 export type Avatar = {
   id: string
   name: string
-  gender: 'male' | 'female' | 'unknown'
+  gender: "male" | "female" | "unknown"
   imageUrl: string
 }
 
-export type Module =
-  | EmailVerification
-  | SmsVerification
-  | IdentityVerification
-  | DocumentAuthentication
-  | AgeEstimation
-  | ProofOfIntent
-  | KnowledgeVerify
-
-export type FSFlow = {
-  nodes: FSNode[]
-  edges: FSEdge[]
+export type ProvidedData = Record<string, string> & {
+  name?: string
+  email?: string
+  phone?: string
 }
 
 export interface SessionSettings {
-  clientReferenceId: string
+  clientReferenceId?: string
   metadata: object
-  initialPhrase?: string
-  finalPhrase?: string
-  providedData?: Record<string, string>
+  flow: FSNode[]
+  providedData?: ProvidedData
   avatarId?: string
   langs?: string[]
   defaultLang?: string
   zone?: Zone
-  modules?: Module[]
-  flow?: FSFlow
   customization?: Customization
+  videoAIAnalysisEnabled?: boolean
 }
 
 export interface CreateSessionResponse {
@@ -210,20 +157,18 @@ export const createSessionEndpoint = {
   pathParams: [],
   queryParams: [],
   bodyParams: [
-    'clientReferenceId',
-    'metadata',
-    'initialPhrase',
-    'finalPhrase',
-    'providedData',
-    'avatarId',
-    'langs',
-    'defaultLang',
-    'zone',
-    'modules',
-    'flow',
-    'customization',
+    "clientReferenceId",
+    "metadata",
+    "providedData",
+    "avatarId",
+    "langs",
+    "defaultLang",
+    "zone",
+    "flow",
+    "customization",
+    "videoAIAnalysisEnabled",
   ],
-  path: (): string => '/sessions',
+  path: (): string => "/sessions",
 } as const
 
 type GetSessionPathParameters = {
@@ -232,7 +177,7 @@ type GetSessionPathParameters = {
 
 export const getSessionEndpoint = {
   method: Method.GET,
-  pathParams: ['sessionId'],
+  pathParams: ["sessionId"],
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string => `/sessions/${p.sessionId}`,
@@ -247,7 +192,7 @@ export const getLangsEndpoint = {
   pathParams: [],
   queryParams: [],
   bodyParams: [],
-  path: (): string => '/langs',
+  path: (): string => "/langs",
 } as const
 
 export interface GetAvatarsResponse {
@@ -259,12 +204,12 @@ export const getAvatarsEndpoint = {
   pathParams: [],
   queryParams: [],
   bodyParams: [],
-  path: (): string => '/avatars',
+  path: (): string => "/avatars",
 } as const
 
 export const createClientSecretEndpoint = {
   method: Method.GET,
-  pathParams: ['sessionId'],
+  pathParams: ["sessionId"],
   queryParams: [],
   bodyParams: [],
   path: (p: GetSessionPathParameters): string =>
@@ -285,8 +230,8 @@ export interface GetSessionsParameters {
   toDate?: number // Unix timestamp
 
   // Sorting
-  sortBy?: 'createdAt' | 'status' | 'finishedAt' // Default: 'createdAt'
-  sortOrder?: 'asc' | 'desc' // Default: 'desc'
+  sortBy?: "createdAt" | "status" | "finishedAt" // Default: 'createdAt'
+  sortOrder?: "asc" | "desc" // Default: 'desc'
 
   // Search
   search?: string // Search in metadata, client reference, etc.
@@ -307,18 +252,18 @@ export const getSessionsEndpoint = {
   method: Method.GET,
   pathParams: [],
   queryParams: [
-    'limit',
-    'cursor',
-    'flowId',
-    'clientReferenceId',
-    'status',
-    'fromDate',
-    'toDate',
-    'sortBy',
-    'sortOrder',
-    'search',
-    'includeTotal',
+    "limit",
+    "cursor",
+    "flowId",
+    "clientReferenceId",
+    "status",
+    "fromDate",
+    "toDate",
+    "sortBy",
+    "sortOrder",
+    "search",
+    "includeTotal",
   ],
   bodyParams: [],
-  path: (): string => '/sessions',
+  path: (): string => "/sessions",
 } as const

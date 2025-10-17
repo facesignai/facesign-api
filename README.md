@@ -9,8 +9,8 @@
 ## Installation
 
 ```
-npm install @facesign/api
-yarn add @facesign/api
+npm install @facesignai/api
+yarn add @facesignai/api
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ yarn add @facesign/api
 Import and initialize a client using an **integration token**
 
 ```js
-const { Client } = require('@facesignai/api')
+const { Client } = require("@facesignai/api")
 
 // Initializing a client
 const facesignClient = new Client({
