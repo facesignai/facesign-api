@@ -5,7 +5,7 @@ interface PageWithSidebarProps {
   sidebarItems: Array<{
     title: string
     href: string
-    description?: string
+
   }>
   sidebarTitle?: string
 }
@@ -16,10 +16,7 @@ export function PageWithSidebar({ children, sidebarItems, sidebarTitle }: PageWi
       <div className="min-w-0 flex-1">
         {children}
       </div>
-      <ContextualSidebar 
-        items={sidebarItems}
-        title={sidebarTitle}
-      />
+      {/* Quick reference sidebar removed per new UX */}
     </div>
   )
 }
