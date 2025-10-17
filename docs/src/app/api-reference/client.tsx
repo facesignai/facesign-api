@@ -25,22 +25,22 @@ export function ApiReferenceClient() {
               }
             },
             typography: {
-              fontSize: '14px',
-              lineHeight: '1.5em',
-              fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+              fontSize: '15px',
+              lineHeight: '1.6em',
+              fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
               headings: {
-                fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+                fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
                 fontWeight: '600'
               }
             },
             sidebar: {
-              width: '300px',
-              backgroundColor: '#f9fafb',
-              textColor: '#374151'
+              width: '288px',
+              backgroundColor: '#ffffff',
+              textColor: '#111827'
             },
             rightPanel: {
               backgroundColor: '#1f2937',
-              width: '40%'
+              width: '42%'
             }
           }
         }}

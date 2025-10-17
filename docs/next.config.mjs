@@ -1,4 +1,8 @@
 import nextMDX from '@next/mdx'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 import { recmaPlugins } from './src/mdx/recma.mjs'
 import { rehypePlugins } from './src/mdx/rehype.mjs'
@@ -20,6 +24,21 @@ const nextConfig = {
     outputFileTracingIncludes: {
       '/**/*': ['./src/app/**/*.mdx'],
     },
+  },
+  webpack: (config) => {
+    // Copy root openapi.yaml into docs/public for Redoc
+    const repoRoot = path.resolve(__dirname, '..')
+    const src = path.join(repoRoot, 'openapi.yaml')
+    const dest = path.join(__dirname, 'public', 'openapi.yaml')
+    try {
+      if (fs.existsSync(src)) {
+        fs.mkdirSync(path.dirname(dest), { recursive: true })
+        fs.copyFileSync(src, dest)
+      }
+    } catch (e) {
+      console.warn('openapi copy failed:', e?.message)
+    }
+    return config
   },
 }
 
