@@ -1,0 +1,1 @@
+"use strict";exports.id=2763,exports.ids=[2763],exports.modules={12763:(t,e,d)=>{d.r(e),d.d(e,{default:()=>i});let i={src:"/_next/static/media/favicon.f7d762d4.svg",height:120,width:120,blurWidth:0,blurHeight:0}}};
