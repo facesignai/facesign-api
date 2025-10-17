@@ -52,6 +52,7 @@ export const navigation: NavigationSection[] = [
     title: 'Resources',
     links: [
       { title: 'API Reference', href: '/api-reference' },
+      { title: 'OpenAPI Spec', href: '/api-reference' },
       { title: 'SDKs', href: '/sdks' },
     ],
   },

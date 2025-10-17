@@ -290,9 +290,9 @@ function AvatarSelector({ onAvatarSelect }: { onAvatarSelect: (avatar: Avatar) =
             />
             <div className="avatar-info">
               <h4>{avatar.name}</h4>
-              <p className="avatar-description">
+              <div className="avatar-description">
                 {getAvatarDescription(avatar)}
-              </p>
+              </div>
             </div>
           </div>
         ))}
