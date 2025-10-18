@@ -1,13 +1,5 @@
-import glob from 'fast-glob'
-import { type Metadata } from 'next'
-
-import { Providers } from '@/app/providers'
-import { Layout } from '@/components/Layout'
-import { OfflineIndicator } from '@/components/OfflineIndicator'
-import { InstallPrompt } from '@/components/InstallPrompt'
-import { type Section } from '@/components/SectionProvider'
-
-import '@/styles/tailwind.css'
+import { type Metadata, type Viewport } from 'next'
+import { Provider } from '@/components/ui/provider'
 
 export const metadata: Metadata = {
   title: {
@@ -16,46 +8,38 @@ export const metadata: Metadata = {
   },
   description: 'Complete API documentation for FaceSign identity verification',
   manifest: '/manifest.json',
-  themeColor: '#10b981',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
 }
 
-export default async function RootLayout({
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#10b981',
+}
+
+// Force dynamic rendering to avoid SSG context issues with client-side providers
+export const dynamic = 'force-dynamic'
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  let pages = await glob('**/*.mdx', { cwd: 'src/app' })
-  let allSectionsEntries = (await Promise.all(
-    pages.map(async (filename) => [
-      '/' + filename.replace(/(^|\/)page\.mdx$/, ''),
-      (await import(`./${filename}`)).sections,
-    ]),
-  )) as Array<[string, Array<Section>]>
-  let allSections = Object.fromEntries(allSectionsEntries)
-
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="flex min-h-full bg-white antialiased dark:bg-zinc-900">
-        <Providers>
-          <div className="w-full">
-            <OfflineIndicator />
-            <Layout allSections={allSections}>{children}</Layout>
-            <InstallPrompt />
-          </div>
-        </Providers>
+      <body suppressHydrationWarning>
+        <Provider>
+          {children}
+        </Provider>
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              if ('serviceWorker' in navigator) {
+              // Only register service worker in production
+              if ('serviceWorker' in navigator && '${process.env.NODE_ENV}' === 'production') {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js')
                     .then(function(registration) {
@@ -64,6 +48,14 @@ export default async function RootLayout({
                     .catch(function(registrationError) {
                       console.log('SW registration failed: ', registrationError);
                     });
+                });
+              } else if ('serviceWorker' in navigator && '${process.env.NODE_ENV}' !== 'production') {
+                // In development, unregister any existing service workers
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('SW unregistered in development mode');
+                  }
                 });
               }
             `,

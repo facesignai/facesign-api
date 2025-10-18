@@ -1,7 +1,8 @@
 // Service Worker for FaceSign API Documentation
 // Provides offline support for core documentation pages
 
-const CACHE_NAME = 'facesign-docs-v1.0.0'
+const CACHE_VERSION = '1.0.1'
+const CACHE_NAME = `facesign-docs-v${CACHE_VERSION}-${Date.now()}`
 const OFFLINE_PAGES = [
   '/',
   '/quickstart',
@@ -64,58 +65,67 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim())
 })
 
-// Intercept fetch requests and serve from cache when offline
+// Intercept fetch requests
 self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return
-  
+
   // Skip non-navigation requests for external domains
   if (!event.request.url.startsWith(self.location.origin)) return
-  
+
+  // Network-first strategy for HTML pages (ensures fresh content)
+  if (event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Clone and cache the response
+          if (response && response.status === 200) {
+            const responseToCache = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache)
+            })
+          }
+          return response
+        })
+        .catch(() => {
+          // Network failed, fallback to cache
+          return caches.match(event.request)
+            .then((cachedResponse) => {
+              if (cachedResponse) {
+                console.log('[SW] Network failed, serving from cache:', event.request.url)
+                return cachedResponse
+              }
+              return new Response('Offline - Please check your connection', {
+                status: 503,
+                statusText: 'Service Unavailable'
+              })
+            })
+        })
+    )
+    return
+  }
+
+  // Cache-first strategy for static assets (CSS, JS, images)
   event.respondWith(
     caches.match(event.request)
       .then((cachedResponse) => {
-        // Return cached version if available
         if (cachedResponse) {
-          console.log('[SW] Serving from cache:', event.request.url)
+          console.log('[SW] Serving static asset from cache:', event.request.url)
           return cachedResponse
         }
-        
-        // Try to fetch from network
+
         return fetch(event.request)
           .then((response) => {
-            // Don't cache non-successful responses
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response
             }
-            
-            // Clone response for caching
+
             const responseToCache = response.clone()
-            
-            // Cache successful responses for future offline use
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache)
-              })
-            
-            return response
-          })
-          .catch(() => {
-            // Network failed, try to serve offline fallback
-            if (event.request.destination === 'document') {
-              return caches.match('/offline.html') || 
-                     caches.match('/') ||
-                     new Response('Offline - Please check your connection', {
-                       status: 503,
-                       statusText: 'Service Unavailable'
-                     })
-            }
-            
-            // For other resources, just fail gracefully
-            return new Response('Resource not available offline', {
-              status: 503,
-              statusText: 'Service Unavailable'
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache)
             })
+
+            return response
           })
       })
   )
