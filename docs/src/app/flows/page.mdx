@@ -7,6 +7,7 @@ export const sections = [
   { title: 'Overview', id: 'overview' },
   { title: 'Flow Structure', id: 'flow-structure' },
   { title: 'Available Node Types', id: 'available-node-types' },
+  { title: 'Conversation node', id: 'conversation-node' },
   { title: 'Basic Flow Example', id: 'basic-flow-example' },
   { title: 'Using Custom Flows', id: 'using-custom-flows' },
   { title: 'Best Practices', id: 'best-practices' },
@@ -82,6 +83,50 @@ FaceSign supports 11 different node types for building flows:
     <div className="text-sm text-zinc-600 dark:text-zinc-400">Two-factor authentication via SMS/email</div>
   </div>
 </div>
+
+## Conversation node
+
+Use the Conversation node to ask the user for information or guide them with an AI prompt.
+
+### When to use
+
+- Gather short pieces of information (name, intent, missing details)
+- Provide instructions before a capture step (e.g., document scan)
+
+### Core fields
+
+- `type`: `conversation`
+- `prompt`: string — the message shown to the user
+- `transitions`: array of `{ id, condition }` to branch to another node
+
+### Minimal examples
+
+Linear prompt:
+
+```json
+{
+  "id": "greet",
+  "type": "conversation",
+  "prompt": "Hello! What's your name?",
+  "transitions": [{ "id": "t1", "condition": "true" }]
+}
+```
+
+Branching based on a captured variable (example condition, evaluated by your flow engine):
+
+```json
+{
+  "id": "consent",
+  "type": "conversation",
+  "prompt": "Do you agree to continue?",
+  "transitions": [
+    { "id": "ok", "condition": "answer == 'yes'" },
+    { "id": "exit", "condition": "answer != 'yes'" }
+  ]
+}
+```
+
+Link to full schema: see API Reference → `FSConversationNode`.
 
 ## Basic Flow Example
 
