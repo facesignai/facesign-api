@@ -82,15 +82,21 @@ const session = await client.sessions.create({
 ```
 
 ```bash {{ title: 'cURL' }}
-curl https://api.facesign.ai/v1/sessions \
-  -H "Authorization: Bearer sk_test_..." \
+curl https://api.dev.facesign.ai/sessions \
+  -H "Authorization: Bearer $FACESIGN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "clientReferenceId": "user-123",
-    "modules": [
-      { "type": "identityVerification" },
-      { "type": "documentAuthentication" }
-    ]
+    "metadata": { "source": "docs" },
+    "flow": {
+      "nodes": [
+        { "id": "start", "type": "start" },
+        { "id": "end", "type": "end" }
+      ],
+      "edges": [
+        { "id": "e1", "source": "start", "target": "end" }
+      ]
+    }
   }'
 ```
 
@@ -324,8 +330,8 @@ When a session is completed, the `report` object contains detailed verification 
     <CodeGroup title="Request" tag="POST" label="/sessions">
 
     ```bash {{ title: 'cURL' }}
-    curl https://api.facesign.ai/sessions \
-      -H "Authorization: Bearer fs_live_..." \
+    curl https://api.dev.facesign.ai/sessions \
+      -H "Authorization: Bearer $FACESIGN_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{
         "clientReferenceId": "user_123",
@@ -333,15 +339,15 @@ When a session is completed, the `report` object contains detailed verification 
           "user_id": "usr_abc123",
           "verification_type": "onboarding"
         },
-        "modules": [
-          {
-            "type": "identityVerification"
-          },
-          {
-            "type": "emailVerification",
-            "email": "user@example.com"
-          }
-        ]
+        "flow": {
+          "nodes": [
+            { "id": "start", "type": "start" },
+            { "id": "end", "type": "end" }
+          ],
+          "edges": [
+            { "id": "e1", "source": "start", "target": "end" }
+          ]
+        }
       }'
     ```
 
@@ -455,8 +461,8 @@ When a session is completed, the `report` object contains detailed verification 
     <CodeGroup title="Request" tag="GET" label="/sessions/fs_session_abc123">
 
     ```bash {{ title: 'cURL' }}
-    curl https://api.facesign.ai/sessions/fs_session_abc123 \
-      -H "Authorization: Bearer fs_live_..."
+    curl https://api.dev.facesign.ai/sessions/fs_session_abc123 \
+      -H "Authorization: Bearer $FACESIGN_API_KEY"
     ```
 
     ```typescript {{ title: 'TypeScript' }}
@@ -534,8 +540,8 @@ When a session is completed, the `report` object contains detailed verification 
     <CodeGroup title="Request" tag="GET" label="/sessions/fs_session_abc123/refresh">
 
     ```bash {{ title: 'cURL' }}
-    curl https://api.facesign.ai/sessions/fs_session_abc123/refresh \
-      -H "Authorization: Bearer fs_live_..."
+    curl https://api.dev.facesign.ai/sessions/fs_session_abc123/refresh \
+      -H "Authorization: Bearer $FACESIGN_API_KEY"
     ```
 
     ```typescript {{ title: 'TypeScript' }}
