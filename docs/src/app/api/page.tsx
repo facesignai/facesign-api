@@ -16,6 +16,8 @@ import { ApiReferenceLayout } from '@/components/chakra/ApiReferenceLayout'
 import { ApiEndpoint } from '@/components/chakra/ApiEndpoint'
 import { ApiCodePanel } from '@/components/chakra/ApiCodePanel'
 import sessionsListFixture from '@/examples/sessions_list.json'
+import createSessionFixture from '@/examples/create_session.json'
+import getSessionFixture from '@/examples/get_session.json'
 import { useColorModeValue } from '@/components/ui/color-mode'
 
 // Define code examples for each endpoint (Dev by default)
@@ -227,20 +229,7 @@ export default function ApiReferencePage() {
             responses={{
               "200": {
                 description: "Success",
-                content: `{
-  "session": {
-    "id": "sess_abc123",
-    "createdAt": 1705314600,
-    "status": "requiresInput",
-    "settings": { /* ... */ }
-  },
-  "clientSecret": {
-    "secret": "cs_abc123",
-    "createdAt": 1705314600,
-    "expireAt": 1705316400,
-    "url": "https://verify.facesign.ai/s/sess_abc123"
-  }
-}`
+                content: JSON.stringify(createSessionFixture, null, 2)
               }
             }}
           />
@@ -263,20 +252,7 @@ export default function ApiReferencePage() {
             responses={{
               "200": {
                 description: "Success",
-                content: `{
-  "session": {
-    "id": "sess_abc123",
-    "createdAt": 1705314600,
-    "status": "processing",
-    "report": { /* optional fields */ }
-  },
-  "clientSecret": {
-    "secret": "cs_abc123",
-    "createdAt": 1705314600,
-    "expireAt": 1705316400,
-    "url": "https://verify.facesign.ai/s/sess_abc123"
-  }
-}`
+                content: JSON.stringify(getSessionFixture, null, 2)
               }
             }}
           />
