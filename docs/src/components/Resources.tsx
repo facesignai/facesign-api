@@ -8,8 +8,9 @@ import {
 } from 'framer-motion'
 import Link from 'next/link'
 
+import { Heading } from '@chakra-ui/react'
+
 import { GridPattern } from '@/components/GridPattern'
-import { Heading } from '@/components/Heading'
 import { ChatBubbleIcon } from '@/components/icons/ChatBubbleIcon'
 import { EnvelopeIcon } from '@/components/icons/EnvelopeIcon'
 import { UserIcon } from '@/components/icons/UserIcon'
@@ -173,7 +174,13 @@ function Resource({ resource }: { resource: Resource }) {
 export function Resources() {
   return (
     <div className="my-16 xl:max-w-none">
-      <Heading level={2} id="resources">
+      <Heading
+        as="h2"
+        textStyle="docs.heading"
+        fontSize="2xl"
+        id="resources"
+        mb={4}
+      >
         Resources
       </Heading>
       <div className="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:grid-cols-4 dark:border-white/5">
