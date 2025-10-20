@@ -1,16 +1,8 @@
-export const metadata = {
-  title: 'Sessions',
-  description: 'Learn how to create and manage verification sessions with the FaceSign API.',
-}
-
 # Sessions
-
 
 Sessions are the core of FaceSign's identity verification platform. A session represents a single identity verification flow powered by FaceSign's node-based flow system, guiding users through custom verification steps like conversational AI interactions, biometric checks, document scanning, and multi-factor authentication. {{ className: 'lead' }}
 
-<Note>
   See API Reference for endpoints: <a href="/api#create-session">Create</a>, <a href="/api#get-session">Retrieve</a>, <a href="/api#list-sessions">List</a>, and <a href="/api#refresh-client-secret">Client secret</a>. For building flows, see <a href="/flows/mapping">Flow Builder → FSFlow Mapping</a>.
-</Note>
 
 ## How FaceSign Sessions Work
 
@@ -39,8 +31,6 @@ This approach gives you several benefits:
   description="Create a new verification session with specified modules or custom flow">
 
 Create a verification session by providing configuration settings. You can use either a custom flow (recommended) or legacy modules for simple use cases, but not both.
-
-<CodeGroup>
 
 ```typescript {{ title: 'Using Legacy Modules' }}
 const session = await client.sessions.create({
@@ -104,8 +94,6 @@ curl https://api.dev.facesign.ai/sessions \
   }'
 ```
 
-</CodeGroup>
-
 <ResponsePreview 
   responses={[
     {
@@ -151,170 +139,163 @@ The session model contains all the information about a verification session, inc
 
 ### Properties
 
-<Properties>
-  <Property name="id" type="string">
+  
     Unique identifier for the session.
-  </Property>
-  <Property name="createdAt" type="number">
+  
+  
     Unix timestamp when the session was created.
-  </Property>
-  <Property name="startedAt" type="number">
+  
+  
     Unix timestamp when the user began the verification flow.
-  </Property>
-  <Property name="finishedAt" type="number">
+  
+  
     Unix timestamp when the session was completed or cancelled.
-  </Property>
-  <Property name="status" type="string">
+  
+  
     Current status: `requiresInput`, `processing`, `complete`, or `canceled`.
-  </Property>
-  <Property name="settings" type="object">
+  
+  
     Configuration object containing modules, customization, and flow settings.
-  </Property>
-  <Property name="version" type="string">
+  
+  
     API version used for this session.
-  </Property>
-  <Property name="report" type="object">
+  
+  
     Results of the verification including AI analysis, extracted data, and verification status.
-  </Property>
-</Properties>
+  
 
 ### Session Settings
 
-<Properties>
-  <Property name="clientReferenceId" type="string">
+  
     Your internal reference ID to link this session to your user.
-  </Property>
-  <Property name="metadata" type="object">
+  
+  
     Key-value pairs for storing additional information about the session.
-  </Property>
-  <Property name="initialPhrase" type="string">
+  
+  
     Optional custom greeting message for the AI avatar.
-  </Property>
-  <Property name="finalPhrase" type="string">
+  
+  
     Optional custom closing message for the AI avatar.
-  </Property>
-  <Property name="providedData" type="object">
+  
+  
     Pre-filled data to pass to the verification flow.
-  </Property>
-  <Property name="avatarId" type="string">
+  
+  
     ID of the AI avatar to use for conversational interactions.
-  </Property>
-  <Property name="langs" type="array">
+  
+  
     Array of supported language codes for this session.
-  </Property>
-  <Property name="defaultLang" type="string">
+  
+  
     Default language code if user's preference isn't available.
-  </Property>
-  <Property name="zone" type="string">
+  
+  
     Geographic zone: `es` (United States) or `eu` (European Union).
-  </Property>
-  <Property name="modules" type="array">
+  
+  
     Array of legacy verification modules to include in this session (use flow instead for new implementations).
-  </Property>
-  <Property name="flow" type="object">
+  
+  
     Custom node-based flow definition (recommended for new implementations).
-  </Property>
-  <Property name="customization" type="object">
+  
+  
     UI customization options including colors, fonts, and branding.
-  </Property>
-</Properties>
+  
 
 ### Session Report
 
 When a session is completed, the `report` object contains detailed verification results:
 
-<Properties>
-  <Property name="transcript" type="array">
+  
     Conversation transcript between user and AI avatar.
-  </Property>
-  <Property name="aiAnalysis" type="object">
+  
+  
     AI-powered analysis including age estimation, gender detection, and authenticity assessment.
-  </Property>
-  <Property name="location" type="object">
+  
+  
     User's location information (if available and consented).
-  </Property>
-  <Property name="device" type="object">
+  
+  
     Device information and browser details.
-  </Property>
-  <Property name="livenessDetected" type="boolean">
+  
+  
     Whether liveness was detected during biometric verification.
-  </Property>
-  <Property name="lang" type="string">
+  
+  
     Language used during the verification session.
-  </Property>
-  <Property name="extractedData" type="object">
+  
+  
     Data extracted from documents or user input during verification.
-  </Property>
-  <Property name="screenshots" type="array">
+  
+  
     Array of screenshot URLs captured during verification.
-  </Property>
-  <Property name="videos" type="object">
+  
+  
     URLs for avatar and user video recordings.
-  </Property>
-  <Property name="isVerified" type="boolean">
+  
+  
     Overall verification result - true if verification was successful.
-  </Property>
-</Properties>
+  
 
 ---
 
 ## Create a session {{ tag: 'POST', label: '/sessions' }}
 
-<Row>
-  <Col>
+  
 
     Creates a new verification session. The response includes both the session object and a client secret for frontend integration.
 
     ### Required attributes
 
-    <Properties>
-      <Property name="clientReferenceId" type="string">
+    
+      
         Your internal reference ID to link this session to your user.
-      </Property>
-      <Property name="modules" type="array">
+      
+      
         Array of verification modules to include. Each module has a `type` and configuration options.
-      </Property>
-    </Properties>
+      
+    
 
     ### Optional attributes
 
-    <Properties>
-      <Property name="metadata" type="object">
+    
+      
         Key-value pairs for storing additional information about the session.
-      </Property>
-      <Property name="initialPhrase" type="string">
+      
+      
         Custom greeting message for the AI avatar.
-      </Property>
-      <Property name="finalPhrase" type="string">
+      
+      
         Custom closing message for the AI avatar.
-      </Property>
-      <Property name="providedData" type="object">
+      
+      
         Pre-filled data to pass to the verification flow.
-      </Property>
-      <Property name="avatarId" type="string">
+      
+      
         ID of the AI avatar to use. Get available avatars from `/avatars` endpoint.
-      </Property>
-      <Property name="langs" type="array">
+      
+      
         Array of supported language codes. Get available languages from `/langs` endpoint.
-      </Property>
-      <Property name="defaultLang" type="string">
+      
+      
         Default language code (defaults to 'en').
-      </Property>
-      <Property name="zone" type="string">
+      
+      
         Geographic zone: `es` or `eu` (defaults to 'es').
-      </Property>
-      <Property name="flow" type="object">
+      
+      
         Custom node-based flow definition for advanced use cases.
-      </Property>
-      <Property name="customization" type="object">
+      
+      
         UI customization options including colors and branding.
-      </Property>
-    </Properties>
+      
+    
 
-  </Col>
-  <Col sticky>
+  
+  
 
-    <CodeGroup title="Request" tag="POST" label="/sessions">
+    
 
     ```bash {{ title: 'cURL' }}
     curl https://api.dev.facesign.ai/sessions \
@@ -396,7 +377,7 @@ When a session is completed, the `report` object contains detailed verification 
     client_secret = response.client_secret
     ```
 
-    </CodeGroup>
+    
 
     ```json {{ title: 'Response' }}
     {
@@ -430,22 +411,20 @@ When a session is completed, the `report` object contains detailed verification 
     }
     ```
 
-  </Col>
-</Row>
+  
 
 ---
 
 ## Retrieve a session {{ tag: 'GET', label: '/sessions/:id' }}
 
-<Row>
-  <Col>
+  
 
     Retrieves the details of an existing session, including any verification results if the session has been completed.
 
-  </Col>
-  <Col sticky>
+  
+  
 
-    <CodeGroup title="Request" tag="GET" label="/sessions/fs_session_abc123">
+    
 
     ```bash {{ title: 'cURL' }}
     curl https://api.dev.facesign.ai/sessions/fs_session_abc123 \
@@ -472,7 +451,7 @@ When a session is completed, the `report` object contains detailed verification 
     client_secret = response.client_secret
     ```
 
-    </CodeGroup>
+    
 
     ```json {{ title: 'Response' }}
     {
@@ -509,22 +488,20 @@ When a session is completed, the `report` object contains detailed verification 
     }
     ```
 
-  </Col>
-</Row>
+  
 
 ---
 
 ## Refresh client secret {{ tag: 'GET', label: '/sessions/:id/refresh' }}
 
-<Row>
-  <Col>
+  
 
     Generates a new client secret for an existing session. This is useful if the original client secret has expired or been compromised. Note that old client secrets are immediately invalidated when a new one is generated.
 
-  </Col>
-  <Col sticky>
+  
+  
 
-    <CodeGroup title="Request" tag="GET" label="/sessions/fs_session_abc123/refresh">
+    
 
     ```bash {{ title: 'cURL' }}
     curl https://api.dev.facesign.ai/sessions/fs_session_abc123/refresh \
@@ -543,7 +520,7 @@ When a session is completed, the `report` object contains detailed verification 
     client_secret = response.client_secret
     ```
 
-    </CodeGroup>
+    
 
     ```json {{ title: 'Response' }}
     {
@@ -556,8 +533,7 @@ When a session is completed, the `report` object contains detailed verification 
     }
     ```
 
-  </Col>
-</Row>
+  
 
 ---
 
@@ -723,3 +699,6 @@ if (verification?.isVerified) {
   // Allow access to premium features
 }
 ```
+
+---
+Generated for LLMs on 2025-10-20. Source: FaceSign docs.

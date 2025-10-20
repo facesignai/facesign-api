@@ -1,0 +1,364 @@
+# Custom Flows
+
+Build sophisticated verification experiences with FaceSign's node-based flow system. Create conditional verification paths, implement complex business logic, and design user experiences that adapt to different scenarios. {{ className: 'lead' }}
+
+## Overview {{ anchor: false }}
+
+While the verification modules provide a simple way to configure common verification patterns, custom flows give you complete control over the verification process. Flows are built using a node-graph system where:
+
+- **Nodes** define verification steps and actions
+- **Edges** define the connections between nodes  
+- **Outcomes** determine which path to take based on results
+
+## Flow Structure
+
+A flow consists of two main components:
+
+### Nodes Array
+
+Each node represents a step in your verification process. Nodes have specific types and configurations that determine what happens at that step.
+
+### Edges Array
+
+Edges connect nodes together, defining the possible paths through your flow based on outcomes and conditions.
+
+## Available Node Types
+
+FaceSign supports 11 different node types for building flows:
+
+<div className="not-prose grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">START</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Entry point for the flow</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">END</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Exit point for the flow</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">CONVERSATION</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">AI-powered conversational interactions</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">LIVENESS_DETECTION</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Detect if user is real person</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">ENTER_EMAIL</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Collect email address from user</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">DATA_VALIDATION</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Validate and process data</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">DOCUMENT_SCAN</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Scan and extract document data</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">RECOGNITION</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Facial recognition against database</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">FACE_SCAN</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Capture and analyze face images</div>
+  </div>
+  <div className="border border-zinc-200 rounded-lg p-4 dark:border-zinc-700">
+    <h4 className="font-semibold text-zinc-900 dark:text-white">TWO_FACTOR</h4>
+    <div className="text-sm text-zinc-600 dark:text-zinc-400">Two-factor authentication via SMS/email</div>
+  </div>
+</div>
+
+## Conversation node
+
+Use the Conversation node to ask the user for information or guide them with an AI prompt.
+
+### When to use
+
+- Gather short pieces of information (name, intent, missing details)
+- Provide instructions before a capture step (e.g., document scan)
+
+### Core fields
+
+- `type`: `conversation`
+- `prompt`: string — the message shown to the user
+- `transitions`: array of `{ id, condition }` to branch to another node
+
+### Minimal examples
+
+Linear prompt:
+
+```json
+{
+  "id": "greet",
+  "type": "conversation",
+  "prompt": "Hello! What's your name?",
+  "transitions": [{ "id": "t1", "condition": "true" }]
+}
+```
+
+Branching based on a captured variable (example condition, evaluated by your flow engine):
+
+```json
+{
+  "id": "consent",
+  "type": "conversation",
+  "prompt": "Do you agree to continue?",
+  "transitions": [
+    { "id": "ok", "condition": "answer == 'yes'" },
+    { "id": "exit", "condition": "answer != 'yes'" }
+  ]
+}
+```
+
+Link to full schema: see API Reference → `FSConversationNode`.
+
+## Liveness detection node
+
+Detect whether a real person is present before proceeding.
+
+### Core fields
+
+- `type`: `liveness_detection`
+- `outcomes`: map outcome → next node id (e.g., `livenessDetected`, `deepfakeDetected`, `noFace`)
+
+### Minimal example
+
+```json
+{
+  "id": "live",
+  "type": "liveness_detection",
+  "outcomes": {
+    "livenessDetected": "next",
+    "deepfakeDetected": "end",
+    "noFace": "end"
+  }
+}
+```
+
+See API Reference → `FSLivenessDetectionNode` for full schema.
+
+## Document scan node
+
+Scan and extract data from an ID document.
+
+### Core fields
+
+- `type`: `document_scan`
+- `scanningMode`: `SINGLE_SIDE` | `MULTI_SIDE` | `BARCODE`
+- `allowedDocumentTypes`: array of `FSDocumentType`
+- `outcomes`: map of outcome → next node id
+
+### Minimal example
+
+```json
+{
+  "id": "doc",
+  "type": "document_scan",
+  "scanningMode": "SINGLE_SIDE",
+  "allowedDocumentTypes": ["MRTD_TYPE_PASSPORT"],
+  "outcomes": { "scanSuccess": "end", "userCancelled": "end", "scanTimeout": "end" }
+}
+```
+
+See API Reference → `FSDocumentScanNode` for full schema.
+
+## Face scan node
+
+Capture and optionally compare a user’s face image.
+
+### Core fields
+
+- `type`: `face_scan`
+- `mode`: `capture` | `compare`
+- `outcomes`: map of outcome → next node id (e.g., `captured`, `match`, `noMatch`)
+- Optional quality/configuration fields (e.g., `requireLiveness`, `similarityThreshold`)
+
+### Minimal example
+
+```json
+{
+  "id": "face",
+  "type": "face_scan",
+  "mode": "capture",
+  "outcomes": { "captured": "end" },
+  "requireLiveness": true
+}
+```
+
+See API Reference → `FSFaceScanNode` for full schema.
+
+## Enter email node
+
+Collect the user’s email address as input.
+
+### Core fields
+
+- `type`: `enter_email`
+- `outcomes`: map of outcome → next node id (e.g., `emailEntered`, `canceled`)
+- Optional `transitions` for branching after capture
+
+### Minimal example
+
+```json
+{
+  "id": "email",
+  "type": "enter_email",
+  "outcomes": { "emailEntered": "next", "canceled": "end" },
+  "transitions": [{ "id": "t1", "condition": "true" }]
+}
+```
+
+See API Reference → `FSEnterEmailNode` for full schema.
+
+## Data validation node
+
+Validate a field and branch based on result.
+
+### Core fields
+
+- `type`: `data_validation`
+- `validation`: `{ field, action, value? }`
+- `transitions`: array of condition-based transitions
+
+### Minimal example
+
+```json
+{
+  "id": "checkAge",
+  "type": "data_validation",
+  "validation": { "field": "age", "action": ">=", "value": "18" },
+  "transitions": [
+    { "id": "ok", "condition": "age >= 18" },
+    { "id": "fail", "condition": "age < 18" }
+  ]
+}
+```
+
+See API Reference → `FSDataValidationNode` for full schema.
+
+## Two factor node
+
+Send and verify an OTP via email and/or SMS.
+
+### Core fields
+
+- `type`: `two_factor`
+- `channels`: `["email", "sms"]`
+- `contactSource`: `session_data` | `module_settings` | `recognition_match`
+- `outcomes`: map of outcome → next node id (e.g., `verified`, `failed`)
+- Optional templates, `otpLength`, `expirySeconds`, `maxAttempts`
+
+### Minimal example
+
+```json
+{
+  "id": "verifyOtp",
+  "type": "two_factor",
+  "channels": ["email"],
+  "contactSource": "session_data",
+  "outcomes": { "verified": "end", "failed": "end" },
+  "otpLength": 6,
+  "expirySeconds": 300
+}
+```
+
+See API Reference → `FSTwoFactorNode` for full schema.
+
+## Recognition node
+
+Search for a user face in your database (1:N) and branch by outcome.
+
+### Core fields
+
+- `type`: `recognition`
+- `outcomes`: map of outcome → next node id (e.g., `recognized`, `newUser`, `noFace`)
+
+### Minimal example
+
+```json
+{
+  "id": "recognize",
+  "type": "recognition",
+  "outcomes": { "recognized": "next", "newUser": "enroll", "noFace": "end" }
+}
+```
+
+See API Reference → `FSRecognitionNode` for full schema.
+
+## Basic Flow Example
+
+Here's a simple flow that performs liveness detection followed by document scanning:
+
+The corresponding JSON structure for this flow:
+
+```json {{ title: 'Basic Flow Structure' }}
+{
+  "nodes": [
+    { "id": "start", "type": "start" },
+    { 
+      "id": "liveness", 
+      "type": "liveness_detection",
+      "outcomes": {
+        "livenessDetected": "document",
+        "deepfakeDetected": "end",
+        "noFace": "end"
+      }
+    },
+    {
+      "id": "document",
+      "type": "document_scan",
+      "scanningMode": "SINGLE_SIDE",
+      "allowedDocumentTypes": ["MRTD_TYPE_PASSPORT"],
+      "outcomes": {
+        "scanSuccess": "end",
+        "userCancelled": "end",
+        "scanTimeout": "end"
+      }
+    },
+    { "id": "end", "type": "end" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "start", "target": "liveness" },
+    { "id": "e2", "source": "liveness", "target": "document" },
+    { "id": "e3", "source": "liveness", "target": "end" },
+    { "id": "e4", "source": "document", "target": "end" }
+  ]
+}
+```
+
+## Using Custom Flows
+
+Include your custom flow in the session creation request:
+
+```typescript {{ title: 'TypeScript' }}
+const session = await client.sessions.create({
+  clientReferenceId: 'user-123',
+  metadata: { userId: '123' },
+  flow: myCustomFlow,
+  // Don't include modules when using custom flows
+})
+```
+
+```javascript {{ title: 'JavaScript' }}
+const session = await client.sessions.create({
+  clientReferenceId: 'user-123',
+  metadata: { userId: '123' },
+  flow: myCustomFlow,
+  // Don't include modules when using custom flows
+})
+```
+
+## Best Practices
+
+- Always start with a START node and end with an END node
+- Ensure all possible outcome paths are connected
+- Test flows thoroughly with different scenarios
+- Use meaningful node IDs for easier debugging
+- Consider user experience when designing conditional paths
+
+  Custom flows give you powerful control over the verification process, but with that comes responsibility. Make sure to test all possible paths and edge cases to ensure a smooth user experience.
+
+
+---
+Generated for LLMs on 2025-10-20. Source: FaceSign docs.
