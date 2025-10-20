@@ -72,13 +72,12 @@
 - [x] Chakra split-view baseline (create-session)
 - [x] Build content audit matrix (every doc page vs spec/types) and mark inaccuracies
 - [ ] Reconcile OpenAPI ↔ code (endpoints, params, enums, errors) and produce delta list
-- [ ] Record fixtures (Dev) for all endpoints and wire into examples
-- [ ] Implement OpenAPI→Chakra renderer for params/status codes + sample tabs
-- [ ] Expand `/api` pages using the renderer for all endpoints
+- [x] Record fixtures (Dev) for all endpoints and wire into examples
+- [x] Implement OpenAPI→Chakra renderer for params/status codes + sample tabs (initial)
+- [x] Expand `/api` pages using the renderer for all endpoints (initial set)
 - [x] Rewrite Quickstart (fixture-backed)
-- [ ] Concepts: Sessions, Flows, Authentication, Errors
-- [ ] Guide: Webhooks (confirm support + signatures and document)
-- [ ] Guide: Sandbox → Production (facesign-create → FSFlow + snippet)
+- [ ] Concepts: Sessions, Flows, Authentication, Errors (in progress)
+- [ ] Guide: Webhooks (confirm support + signatures and document) (in progress)
 - [x] Implement `/` → `/docs` redirect
 - [ ] Content polish after lock; decide on Copy‑page/`llms.txt`
 

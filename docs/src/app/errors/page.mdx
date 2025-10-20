@@ -48,10 +48,8 @@ All error responses follow a consistent format:
 ```json {{ title: 'Error response' }}
 {
   "error": {
-    "type": "invalid_request_error",
-    "message": "The 'mode' parameter is required.",
-    "param": "mode",
-    "code": "parameter_missing"
+    "type": "validation_error",
+    "message": "The 'clientReferenceId' field is required"
   }
 }
 ```
@@ -76,20 +74,20 @@ All error responses follow a consistent format:
 ## Error types
 
 <Properties>
-  <Property name="api_error">
-    API errors cover any other type of problem (e.g., a temporary problem with FaceSign's servers).
-  </Property>
   <Property name="authentication_error">
     Failure to properly authenticate in the request.
   </Property>
-  <Property name="invalid_request_error">
-    Invalid request errors arise when your request has invalid parameters.
+  <Property name="validation_error">
+    Invalid request or failed validation.
+  </Property>
+  <Property name="not_found_error">
+    Requested resource doesn't exist.
   </Property>
   <Property name="rate_limit_error">
     Too many requests hit the API too quickly.
   </Property>
-  <Property name="validation_error">
-    Errors triggered by our validation system (e.g., invalid email format).
+  <Property name="server_error">
+    Internal server error.
   </Property>
 </Properties>
 
