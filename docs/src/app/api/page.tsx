@@ -20,6 +20,8 @@ import createSessionFixture from '@/examples/create_session.json'
 import getSessionFixture from '@/examples/get_session.json'
 import { useColorModeValue } from '@/components/ui/color-mode'
 import refreshSessionFixture from '@/examples/refresh_session.json'
+import langsFixture from '@/examples/langs.json'
+import avatarsFixture from '@/examples/avatars.json'
 
 // Define code examples for each endpoint (Dev by default)
 const endpointCodeExamples = {
@@ -337,6 +339,48 @@ export default function ApiReferencePage() {
                 description: 'Success',
                 content: JSON.stringify(refreshSessionFixture, null, 2)
               }
+            }}
+          />
+        </Box>
+
+        {/* Languages */}
+        <Box id="languages">
+          <Heading as="h2" size="lg" mb={6}>
+            Languages
+          </Heading>
+
+          <ApiEndpoint
+            id="get-langs"
+            method="GET"
+            path="/langs"
+            description="Get supported languages"
+            parameters={[]}
+            responses={{
+              '200': {
+                description: 'Success',
+                content: JSON.stringify(langsFixture, null, 2),
+              },
+            }}
+          />
+        </Box>
+
+        {/* Avatars */}
+        <Box id="avatars">
+          <Heading as="h2" size="lg" mb={6}>
+            Avatars
+          </Heading>
+
+          <ApiEndpoint
+            id="get-avatars"
+            method="GET"
+            path="/avatars"
+            description="Get available avatars"
+            parameters={[]}
+            responses={{
+              '200': {
+                description: 'Success',
+                content: JSON.stringify(avatarsFixture, null, 2),
+              },
             }}
           />
         </Box>
