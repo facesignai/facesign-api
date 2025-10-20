@@ -1,15 +1,15 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Link from 'next/link'
+// no-op
 import { usePathname } from 'next/navigation'
 
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
-import { Logo } from '@/components/Logo'
-import { Navigation } from '@/components/Navigation'
-import { MobileQuickActions } from '@/components/MobileQuickActions'
-import { SectionProvider, type Section } from '@/components/SectionProvider'
+// Legacy layout file (not used by Chakra DocsLayout). Keep minimal to avoid build errors.
+
+type Section = { id: string; title: string }
+function SectionProvider({ children }: { sections: Array<Section>; children: React.ReactNode }) {
+  return <>{children}</>
+}
 
 export function Layout({
   children,
@@ -23,27 +23,10 @@ export function Layout({
   return (
     <SectionProvider sections={allSections[pathname] ?? []}>
       <div className="h-full lg:ml-64 xl:ml-72">
-        <motion.header
-          layoutScroll
-          className="contents lg:pointer-events-none lg:fixed lg:inset-0 lg:z-40 lg:flex"
-        >
-          <div className="contents lg:pointer-events-auto lg:block lg:w-64 lg:border-r lg:border-zinc-900/10 lg:px-3 lg:pt-4 lg:pb-8 xl:w-72 xl:px-4 lg:dark:border-white/10">
-            <div className="hidden lg:flex">
-              <Link href="/" aria-label="Home">
-                <Logo className="h-6" />
-              </Link>
-            </div>
-            <Header />
-            {pathname !== '/api-reference' && (
-              <Navigation className="hidden lg:mt-10 lg:block" />
-            )}
-          </div>
-        </motion.header>
+        <motion.header layoutScroll className="contents" />
         <div className="relative flex h-full flex-col px-4 pt-14 sm:px-6 lg:px-8">
           <main className="flex-auto">{children}</main>
-          <Footer />
         </div>
-        <MobileQuickActions />
       </div>
     </SectionProvider>
   )
