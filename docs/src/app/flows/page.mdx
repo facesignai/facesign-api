@@ -128,6 +128,179 @@ Branching based on a captured variable (example condition, evaluated by your flo
 
 Link to full schema: see API Reference → `FSConversationNode`.
 
+## Liveness detection node
+
+Detect whether a real person is present before proceeding.
+
+### Core fields
+
+- `type`: `liveness_detection`
+- `outcomes`: map outcome → next node id (e.g., `livenessDetected`, `deepfakeDetected`, `noFace`)
+
+### Minimal example
+
+```json
+{
+  "id": "live",
+  "type": "liveness_detection",
+  "outcomes": {
+    "livenessDetected": "next",
+    "deepfakeDetected": "end",
+    "noFace": "end"
+  }
+}
+```
+
+See API Reference → `FSLivenessDetectionNode` for full schema.
+
+## Document scan node
+
+Scan and extract data from an ID document.
+
+### Core fields
+
+- `type`: `document_scan`
+- `scanningMode`: `SINGLE_SIDE` | `MULTI_SIDE` | `BARCODE`
+- `allowedDocumentTypes`: array of `FSDocumentType`
+- `outcomes`: map of outcome → next node id
+
+### Minimal example
+
+```json
+{
+  "id": "doc",
+  "type": "document_scan",
+  "scanningMode": "SINGLE_SIDE",
+  "allowedDocumentTypes": ["MRTD_TYPE_PASSPORT"],
+  "outcomes": { "scanSuccess": "end", "userCancelled": "end", "scanTimeout": "end" }
+}
+```
+
+See API Reference → `FSDocumentScanNode` for full schema.
+
+## Face scan node
+
+Capture and optionally compare a user’s face image.
+
+### Core fields
+
+- `type`: `face_scan`
+- `mode`: `capture` | `compare`
+- `outcomes`: map of outcome → next node id (e.g., `captured`, `match`, `noMatch`)
+- Optional quality/configuration fields (e.g., `requireLiveness`, `similarityThreshold`)
+
+### Minimal example
+
+```json
+{
+  "id": "face",
+  "type": "face_scan",
+  "mode": "capture",
+  "outcomes": { "captured": "end" },
+  "requireLiveness": true
+}
+```
+
+See API Reference → `FSFaceScanNode` for full schema.
+
+## Enter email node
+
+Collect the user’s email address as input.
+
+### Core fields
+
+- `type`: `enter_email`
+- `outcomes`: map of outcome → next node id (e.g., `emailEntered`, `canceled`)
+- Optional `transitions` for branching after capture
+
+### Minimal example
+
+```json
+{
+  "id": "email",
+  "type": "enter_email",
+  "outcomes": { "emailEntered": "next", "canceled": "end" },
+  "transitions": [{ "id": "t1", "condition": "true" }]
+}
+```
+
+See API Reference → `FSEnterEmailNode` for full schema.
+
+## Data validation node
+
+Validate a field and branch based on result.
+
+### Core fields
+
+- `type`: `data_validation`
+- `validation`: `{ field, action, value? }`
+- `transitions`: array of condition-based transitions
+
+### Minimal example
+
+```json
+{
+  "id": "checkAge",
+  "type": "data_validation",
+  "validation": { "field": "age", "action": ">=", "value": "18" },
+  "transitions": [
+    { "id": "ok", "condition": "age >= 18" },
+    { "id": "fail", "condition": "age < 18" }
+  ]
+}
+```
+
+See API Reference → `FSDataValidationNode` for full schema.
+
+## Two factor node
+
+Send and verify an OTP via email and/or SMS.
+
+### Core fields
+
+- `type`: `two_factor`
+- `channels`: `["email", "sms"]`
+- `contactSource`: `session_data` | `module_settings` | `recognition_match`
+- `outcomes`: map of outcome → next node id (e.g., `verified`, `failed`)
+- Optional templates, `otpLength`, `expirySeconds`, `maxAttempts`
+
+### Minimal example
+
+```json
+{
+  "id": "verifyOtp",
+  "type": "two_factor",
+  "channels": ["email"],
+  "contactSource": "session_data",
+  "outcomes": { "verified": "end", "failed": "end" },
+  "otpLength": 6,
+  "expirySeconds": 300
+}
+```
+
+See API Reference → `FSTwoFactorNode` for full schema.
+
+## Recognition node
+
+Search for a user face in your database (1:N) and branch by outcome.
+
+### Core fields
+
+- `type`: `recognition`
+- `outcomes`: map of outcome → next node id (e.g., `recognized`, `newUser`, `noFace`)
+
+### Minimal example
+
+```json
+{
+  "id": "recognize",
+  "type": "recognition",
+  "outcomes": { "recognized": "next", "newUser": "enroll", "noFace": "end" }
+}
+```
+
+See API Reference → `FSRecognitionNode` for full schema.
+
 ## Basic Flow Example
 
 Here's a simple flow that performs liveness detection followed by document scanning:

@@ -127,6 +127,10 @@ Current Dev webhooks use this minimal structure:
 
 In Dev, webhooks do not include a signature header. Verify authenticity by fetching the session using the `sessionId` from the event and cross-checking expected metadata (e.g., your `clientReferenceId`). Signature-signed deliveries may be added later and will be documented when available.
 
+<Note>
+  Planning for signatures? See <a href="/webhooks/signed-headers">Webhook Signed Headers</a> for the proposed header format and server verification code.
+</Note>
+
 ## Handling webhooks
 
 ### Best practices

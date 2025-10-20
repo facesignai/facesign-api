@@ -137,24 +137,7 @@ curl https://api.dev.facesign.ai/sessions \
   ]}
 />
 
-### Try it yourself
-
-Test the session creation API with our interactive playground:
-
-<ApiPlayground 
-  endpoint="/v1/sessions"
-  method="POST"
-  examples={{
-    clientReferenceId: "user-123",
-    metadata: { userId: "123", source: "web" },
-    modules: [
-      { type: "identityVerification" },
-      { type: "documentAuthentication" }
-    ]
-  }}
-/>
-
-</ApiEndpoint>
+ </ApiEndpoint>
 
 ---
 
