@@ -1,1 +1,181 @@
-{"sessions":[{"id":"OEzfKbPzDTsicXwolHfa","createdAt":1750429184682,"status":"requiresInput","settings":{"client_reference_id":"quick-test-123","metadata":{"test":"quick"},"initial_phrase":null,"final_phrase":null,"provided_data":null,"avatar_id":null,"langs":null,"default_lang":null,"zone":null,"modules":[{"type":"identityVerification"}],"flow":null,"customization":null,"avatarId":"June_HR_public"},"report":{"transcript":[],"lang":"en","nodeReports":[]}},{"id":"a21Cps1irbVLRb5OJndm","createdAt":1750429127367,"status":"requiresInput","settings":{"client_reference_id":"async-test-1750429126","metadata":{"test":"async-python-sdk"},"initial_phrase":null,"final_phrase":null,"provided_data":null,"avatar_id":null,"langs":null,"default_lang":null,"zone":null,"modules":[{"type":"identityVerification"}],"flow":null,"customization":null,"avatarId":"June_HR_public"},"report":{"transcript":[],"lang":"en","nodeReports":[]}},{"id":"4bQlW2xfB9RCostsdrjW","createdAt":1750429125719,"status":"requiresInput","settings":{"client_reference_id":"perf-test-1750429125","metadata":null,"initial_phrase":null,"final_phrase":null,"provided_data":null,"avatar_id":null,"langs":null,"default_lang":null,"zone":null,"modules":[{"type":"identityVerification"}],"flow":null,"customization":null,"avatarId":"June_HR_public"},"report":{"transcript":[],"lang":"en","nodeReports":[]}},{"id":"SjkdSClvjMNJIZWogqN5","createdAt":1750429123329,"status":"requiresInput","settings":{"client_reference_id":"test-1750429123","metadata":{"test":"python-sdk","timestamp":1750429123},"initial_phrase":null,"final_phrase":null,"provided_data":null,"avatar_id":null,"langs":null,"default_lang":null,"zone":null,"modules":[{"type":"identityVerification"}],"flow":null,"customization":null,"avatarId":"June_HR_public"},"report":{"transcript":[],"lang":"en","nodeReports":[]}},{"id":"0pH7nX1WArxyLP0662SH","createdAt":1750429112997,"status":"requiresInput","settings":{"client_reference_id":"async-test-1750429112","metadata":{"test":"async-python-sdk"},"initial_phrase":null,"final_phrase":null,"provided_data":null,"avatar_id":null,"langs":null,"default_lang":null,"zone":null,"modules":[{"type":"identityVerification"}],"flow":null,"customization":null,"avatarId":"June_HR_public"},"report":{"transcript":[],"lang":"en","nodeReports":[]}}],"nextCursor":"0pH7nX1WArxyLP0662SH","hasMore":true}
+{
+  "sessions": [
+    {
+      "id": "eb5ipUwAfOEFLaHOgnQi",
+      "createdAt": 1760989572497,
+      "status": "created",
+      "settings": {
+        "clientReferenceId": "bad-123",
+        "metadata": {
+          "source": "fixture"
+        },
+        "modules": [
+          {
+            "type": "identityVerification"
+          }
+        ],
+        "flow": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "start"
+            },
+            {
+              "id": "end",
+              "type": "end"
+            }
+          ],
+          "edges": [
+            {
+              "id": "e1",
+              "source": "start",
+              "target": "end"
+            }
+          ]
+        },
+        "avatarId": "June_HR_public"
+      },
+      "report": {
+        "transcript": [],
+        "lang": "en",
+        "nodeReports": []
+      }
+    },
+    {
+      "id": "fL8SeQvSP0rRs8JCOMvO",
+      "createdAt": 1760989572190,
+      "status": "created",
+      "settings": {
+        "clientReferenceId": "fixture-user-123",
+        "metadata": {
+          "source": "fixture"
+        },
+        "flow": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "start"
+            },
+            {
+              "id": "end",
+              "type": "end"
+            }
+          ],
+          "edges": [
+            {
+              "id": "e1",
+              "source": "start",
+              "target": "end"
+            }
+          ]
+        },
+        "avatarId": "June_HR_public"
+      },
+      "report": {
+        "transcript": [],
+        "lang": "en",
+        "nodeReports": []
+      }
+    },
+    {
+      "id": "aFOdBvgDfyJLT7gD0naV",
+      "createdAt": 1760981847122,
+      "status": "created",
+      "settings": {
+        "clientReferenceId": "user-123",
+        "metadata": {
+          "source": "quickstart"
+        },
+        "flow": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "start"
+            },
+            {
+              "id": "end",
+              "type": "end"
+            }
+          ],
+          "edges": [
+            {
+              "id": "e1",
+              "source": "start",
+              "target": "end"
+            }
+          ]
+        },
+        "avatarId": "June_HR_public"
+      },
+      "report": {
+        "transcript": [],
+        "lang": "en",
+        "nodeReports": []
+      }
+    },
+    {
+      "id": "OEzfKbPzDTsicXwolHfa",
+      "createdAt": 1750429184682,
+      "status": "requiresInput",
+      "settings": {
+        "client_reference_id": "quick-test-123",
+        "metadata": {
+          "test": "quick"
+        },
+        "initial_phrase": null,
+        "final_phrase": null,
+        "provided_data": null,
+        "avatar_id": null,
+        "langs": null,
+        "default_lang": null,
+        "zone": null,
+        "modules": [
+          {
+            "type": "identityVerification"
+          }
+        ],
+        "flow": null,
+        "customization": null,
+        "avatarId": "June_HR_public"
+      },
+      "report": {
+        "transcript": [],
+        "lang": "en",
+        "nodeReports": []
+      }
+    },
+    {
+      "id": "a21Cps1irbVLRb5OJndm",
+      "createdAt": 1750429127367,
+      "status": "requiresInput",
+      "settings": {
+        "client_reference_id": "async-test-1750429126",
+        "metadata": {
+          "test": "async-python-sdk"
+        },
+        "initial_phrase": null,
+        "final_phrase": null,
+        "provided_data": null,
+        "avatar_id": null,
+        "langs": null,
+        "default_lang": null,
+        "zone": null,
+        "modules": [
+          {
+            "type": "identityVerification"
+          }
+        ],
+        "flow": null,
+        "customization": null,
+        "avatarId": "June_HR_public"
+      },
+      "report": {
+        "transcript": [],
+        "lang": "en",
+        "nodeReports": []
+      }
+    }
+  ],
+  "nextCursor": "a21Cps1irbVLRb5OJndm",
+  "hasMore": true
+}

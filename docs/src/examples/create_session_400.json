@@ -1,13 +1,18 @@
 {
   "session": {
-    "id": "fL8SeQvSP0rRs8JCOMvO",
-    "createdAt": 1760989572190,
+    "id": "eb5ipUwAfOEFLaHOgnQi",
+    "createdAt": 1760989572497,
     "status": "created",
     "settings": {
-      "clientReferenceId": "fixture-user-123",
+      "clientReferenceId": "bad-123",
       "metadata": {
         "source": "fixture"
       },
+      "modules": [
+        {
+          "type": "identityVerification"
+        }
+      ],
       "flow": {
         "nodes": [
           {
@@ -36,9 +41,9 @@
     }
   },
   "clientSecret": {
-    "secret": "csdc2c87ba38b54c9b8bc81314c654992c",
-    "createdAt": 1760989572190,
-    "url": "https://session.dev.facesign.ai?cs=csdc2c87ba38b54c9b8bc81314c654992c",
-    "expireAt": 1760996772190
+    "secret": "csc4bcd1af470c4e899990df8bcda297df",
+    "createdAt": 1760989572497,
+    "url": "https://session.dev.facesign.ai?cs=csc4bcd1af470c4e899990df8bcda297df",
+    "expireAt": 1760996772497
   }
 }
