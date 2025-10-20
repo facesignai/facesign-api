@@ -1,0 +1,356 @@
+# Error Handling
+
+The FaceSign API uses conventional HTTP response codes to indicate the success or failure of an API request. Understanding these errors and implementing proper error handling is crucial for building a robust integration. {{ className: 'lead' }}
+
+## HTTP status codes
+
+FaceSign returns the following HTTP status codes:
+
+  
+    The request was successful.
+  
+  
+    The resource was successfully created.
+  
+  
+    The request was invalid or cannot be served. Check the error message for details.
+  
+  
+    The request requires authentication or the API key is invalid.
+  
+  
+    The API key doesn't have permissions to perform the request.
+  
+  
+    The requested resource doesn't exist.
+  
+  
+    The request conflicts with another request (perhaps using the same idempotency key).
+  
+  
+    Too many requests hit the API too quickly. We recommend implementing exponential backoff.
+  
+  
+    Something went wrong on FaceSign's end. These are rare.
+  
+
+## Error response format
+
+All error responses follow a consistent format:
+
+```json {{ title: 'Error response' }}
+{
+  "error": {
+    "type": "validation_error",
+    "message": "The 'clientReferenceId' field is required"
+  }
+}
+```
+
+### Error object properties
+
+  
+    The type of error returned. See error types below.
+  
+  
+    A human-readable message providing more details about the error.
+  
+  
+    The parameter the error relates to if the error is parameter-specific.
+  
+  
+    A short string uniquely identifying the problem.
+  
+
+## Error types
+
+  
+    Failure to properly authenticate in the request.
+  
+  
+    Invalid request or failed validation.
+  
+  
+    Requested resource doesn't exist.
+  
+  
+    Too many requests hit the API too quickly.
+  
+  
+    Internal server error.
+  
+
+## Handling errors
+
+Here's how to properly handle errors in your integration:
+
+```typescript {{ title: 'TypeScript' }}
+import { FaceSign } from '@facesign/sdk';
+
+const facesign = new FaceSign({
+  apiKey: process.env.FACESIGN_API_KEY,
+});
+
+try {
+  const session = await facesign.sessions.create({
+    mode: 'redirect',
+    success_url: 'https://example.com/success',
+    cancel_url: 'https://example.com/cancel',
+  });
+} catch (error) {
+  if (error.type === 'invalid_request_error') {
+    // Handle invalid parameters
+    console.error(`Invalid parameter: ${error.param}`);
+    console.error(`Error message: ${error.message}`);
+  } else if (error.type === 'authentication_error') {
+    // Handle authentication errors
+    console.error('Check your API key');
+  } else if (error.statusCode === 429) {
+    // Handle rate limiting
+    console.error('Rate limited. Retry after:', error.headers['retry-after']);
+  } else {
+    // Handle other errors
+    console.error('An unexpected error occurred:', error.message);
+  }
+}
+```
+
+```python {{ title: 'Python' }}
+import facesign
+from facesign.error import (
+    FaceSignError,
+    InvalidRequestError,
+    AuthenticationError,
+    RateLimitError
+)
+
+facesign.api_key = os.environ.get('FACESIGN_API_KEY')
+
+try:
+    session = facesign.Session.create(
+        mode='redirect',
+        success_url='https://example.com/success',
+        cancel_url='https://example.com/cancel'
+    )
+except InvalidRequestError as e:
+    # Handle invalid parameters
+    print(f"Invalid parameter: {e.param}")
+    print(f"Error message: {e.user_message}")
+except AuthenticationError as e:
+    # Handle authentication errors
+    print("Check your API key")
+except RateLimitError as e:
+    # Handle rate limiting
+    print(f"Rate limited. Retry after: {e.headers.get('retry-after')}")
+except FaceSignError as e:
+    # Handle other FaceSign errors
+    print(f"FaceSign error: {e.user_message}")
+except Exception as e:
+    # Handle other errors
+    print(f"An unexpected error occurred: {str(e)}")
+```
+
+```javascript {{ title: 'JavaScript' }}
+try {
+  const session = await facesign.sessions.create({
+    mode: 'redirect',
+    success_url: 'https://example.com/success',
+    cancel_url: 'https://example.com/cancel',
+  });
+} catch (error) {
+  switch (error.type) {
+    case 'FaceSignInvalidRequestError':
+      // Invalid parameters
+      console.error(`Invalid parameter: ${error.param}`);
+      break;
+    case 'FaceSignAuthenticationError':
+      // Authentication failed
+      console.error('Check your API key');
+      break;
+    case 'FaceSignRateLimitError':
+      // Rate limited
+      console.error('Rate limited. Retry after:', error.headers['retry-after']);
+      break;
+    default:
+      // Other errors
+      console.error('An error occurred:', error.message);
+  }
+}
+```
+
+## Common errors and solutions
+
+### Authentication errors
+
+```json {{ title: 'Invalid API key' }}
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "Invalid API key provided.",
+    "code": "invalid_api_key"
+  }
+}
+```
+
+**Solution**: Check that you're using the correct API key and that it hasn't been revoked.
+
+### Invalid request errors
+
+```json {{ title: 'Missing required parameter' }}
+{
+  "error": {
+    "type": "invalid_request_error",
+    "message": "The 'success_url' parameter is required.",
+    "param": "success_url",
+    "code": "parameter_missing"
+  }
+}
+```
+
+**Solution**: Ensure all required parameters are included in your request.
+
+### Rate limit errors
+
+```json {{ title: 'Rate limit exceeded' }}
+{
+  "error": {
+    "type": "rate_limit_error",
+    "message": "Too many requests. Please retry after 60 seconds.",
+    "code": "rate_limit_exceeded"
+  }
+}
+```
+
+**Solution**: Implement exponential backoff and respect the `Retry-After` header.
+
+## Implementing retry logic
+
+For transient errors and rate limiting, implement exponential backoff:
+
+```typescript {{ title: 'TypeScript' }}
+async function createSessionWithRetry(params: any, maxRetries = 3) {
+  let lastError;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await facesign.sessions.create(params);
+    } catch (error) {
+      lastError = error;
+      
+      // Don't retry client errors (4xx) except rate limits
+      if (error.statusCode >= 400 && error.statusCode < 500 && error.statusCode !== 429) {
+        throw error;
+      }
+      
+      // Calculate delay with exponential backoff
+      const delay = Math.min(1000 * Math.pow(2, i), 10000);
+      
+      // Use Retry-After header if available
+      if (error.headers && error.headers['retry-after']) {
+        const retryAfter = parseInt(error.headers['retry-after']) * 1000;
+        await new Promise(resolve => setTimeout(resolve, retryAfter));
+      } else {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  throw lastError;
+}
+```
+
+```python {{ title: 'Python' }}
+import time
+import random
+
+def create_session_with_retry(params, max_retries=3):
+    last_error = None
+    
+    for i in range(max_retries):
+        try:
+            return facesign.Session.create(**params)
+        except Exception as error:
+            last_error = error
+            
+            # Don't retry client errors (4xx) except rate limits
+            if hasattr(error, 'http_status'):
+                if 400 <= error.http_status < 500 and error.http_status != 429:
+                    raise
+            
+            # Calculate delay with exponential backoff
+            delay = min(1 * (2 ** i), 10)
+            
+            # Use Retry-After header if available
+            if hasattr(error, 'headers') and 'retry-after' in error.headers:
+                time.sleep(int(error.headers['retry-after']))
+            else:
+                # Add jitter to prevent thundering herd
+                time.sleep(delay + random.uniform(0, 0.1))
+    
+    raise last_error
+```
+
+## Idempotency
+
+To safely retry requests without accidentally performing the same operation twice, use idempotency keys:
+
+```typescript {{ title: 'TypeScript' }}
+const session = await facesign.sessions.create({
+  mode: 'redirect',
+  success_url: 'https://example.com/success',
+  cancel_url: 'https://example.com/cancel',
+}, {
+  idempotencyKey: 'unique-key-for-this-request',
+});
+```
+
+```python {{ title: 'Python' }}
+session = facesign.Session.create(
+    mode='redirect',
+    success_url='https://example.com/success',
+    cancel_url='https://example.com/cancel',
+    idempotency_key='unique-key-for-this-request'
+)
+```
+
+```bash {{ title: 'cURL' }}
+curl https://api.facesign.ai/v1/sessions \
+  -H "Authorization: Bearer sk_test_..." \
+  -H "Idempotency-Key: unique-key-for-this-request" \
+  -d mode=redirect \
+  -d success_url="https://example.com/success" \
+  -d cancel_url="https://example.com/cancel"
+```
+
+## Best practices
+
+1. **Always handle errors gracefully** - Don't let API errors crash your application
+2. **Log errors for debugging** - Include request IDs for easier troubleshooting
+3. **Implement retry logic** - Use exponential backoff for transient errors
+4. **Respect rate limits** - Monitor your usage and implement proper throttling
+5. **Use idempotency keys** - Prevent duplicate operations when retrying
+6. **Show user-friendly messages** - Don't expose technical error details to end users
+
+## Getting help
+
+If you encounter persistent errors:
+
+1. Check the [API status page](https://status.facesign.ai) for any ongoing issues
+2. Review your request parameters against the API documentation
+3. Contact support with the request ID from the error response
+
+<div className="not-prose mt-6 flex flex-col gap-3">
+  <Button href="/authentication" variant="text" arrow="right">
+    Review authentication
+  </Button>
+  <Button href="/webhooks" variant="text" arrow="right">
+    Set up webhooks
+  </Button>
+  <Button href="/rate-limits" variant="text" arrow="right">
+    Learn about rate limits
+  </Button>
+</div>
+
+
+---
+Generated for LLMs on 2025-10-20. Source: FaceSign docs.

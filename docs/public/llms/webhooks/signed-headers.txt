@@ -1,0 +1,150 @@
+# Webhook Signed Headers
+
+This page describes a recommended, Stripe-style design for signing webhook deliveries and verifying them on your server. Dev currently sends unsigned webhooks; this guide is future-facing for when signatures are enabled.
+
+## Header format
+
+- Header: `FaceSign-Signature`
+- Value: `t={unix_ts},v1={hex_hmac_sha256(raw_body, whsec_...)}`
+  - `t`: Unix timestamp in seconds
+  - `v1`: hex-encoded HMAC-SHA256 digest
+
+Example:
+
+```text
+FaceSign-Signature: t=1708281600,v1=4f7e8b...
+```
+
+## Signing algorithm
+
+- Compute `HMAC_SHA256(secret=whsec_..., message=raw_request_body_bytes)`
+- Hex-encode the 32-byte digest (lowercase hex preferred)
+- Do not parse and re-stringify JSON; sign the exact raw bytes as sent
+
+## Replay protection
+
+- Reject if `|now - t| > 300s` (configurable)
+- Use idempotency (event IDs) to prevent double-processing
+
+## Receiver verification
+
+### Node.js (Express)
+
+```typescript
+import crypto from 'node:crypto';
+import express from 'express';
+
+function verifySignature(header: string, payload: Buffer, secret: string, maxSkewSec = 300) {
+  const parts = Object.fromEntries(
+    header.split(',').map(kv => kv.split('=').map(s => s.trim()))
+  ) as Record<string, string>;
+  const ts = Number(parts['t']);
+  const v1 = parts['v1'];
+  const now = Math.floor(Date.now() / 1000);
+  if (!ts || !v1 || Math.abs(now - ts) > maxSkewSec) return false;
+  const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  try {
+    return crypto.timingSafeEqual(Buffer.from(v1, 'hex'), Buffer.from(expected, 'hex'));
+  } catch { return false; }
+}
+
+const app = express();
+app.post('/webhooks/facesign', express.raw({ type: 'application/json' }), (req, res) => {
+  const sig = req.header('FaceSign-Signature') || '';
+  if (!verifySignature(sig, req.body, process.env.FACESIGN_WEBHOOK_SECRET || '')) {
+    return res.status(400).send('Invalid signature');
+  }
+  const event = JSON.parse(req.body.toString('utf8'));
+  // handle event...
+  res.sendStatus(200);
+});
+```
+
+### Python (Flask)
+
+```python
+import hmac, hashlib, time
+from flask import Flask, request, abort
+
+def verify_signature(header: str, payload: bytes, secret: str, max_skew=300):
+  try:
+    parts = dict(kv.split('=') for kv in header.split(',') if '=' in kv)
+  except Exception:
+    return False
+  ts = int(parts.get('t', '0') or 0)
+  v1 = parts.get('v1', '')
+  if abs(int(time.time()) - ts) > max_skew or not v1:
+    return False
+  expected = hmac.new(secret.encode('utf-8'), payload, hashlib.sha256).hexdigest()
+  return hmac.compare_digest(v1, expected)
+
+app = Flask(__name__)
+
+@app.post('/webhooks/facesign')
+def handle_webhook():
+  sig = request.headers.get('FaceSign-Signature', '')
+  if not verify_signature(sig, request.get_data(), 'whsec_...'):
+    abort(400, 'Invalid signature')
+  event = request.get_json()
+  # handle event...
+  return '', 200
+```
+
+### Go (net/http)
+
+```go
+package main
+import (
+  "crypto/hmac"
+  "crypto/sha256"
+  "encoding/hex"
+  "io"
+  "net/http"
+  "strconv"
+  "strings"
+  "time"
+)
+
+func verifySignature(header string, body []byte, secret []byte, maxSkew time.Duration) bool {
+  parts := map[string]string{}
+  for _, kv := range strings.Split(header, ",") {
+    p := strings.SplitN(strings.TrimSpace(kv), "=", 2)
+    if len(p) == 2 { parts[p[0]] = p[1] }
+  }
+  tsStr, v1 := parts["t"], parts["v1"]
+  ts, err := strconv.ParseInt(tsStr, 10, 64)
+  if err != nil { return false }
+  if d := time.Since(time.Unix(ts, 0)); d > maxSkew || d < -maxSkew { return false }
+  mac := hmac.New(sha256.New, secret)
+  mac.Write(body)
+  expected := hex.EncodeToString(mac.Sum(nil))
+  return hmac.Equal([]byte(v1), []byte(expected))
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+  sig := r.Header.Get("FaceSign-Signature")
+  body, _ := io.ReadAll(r.Body)
+  if !verifySignature(sig, body, []byte("whsec_..."), 5*time.Minute) {
+    http.Error(w, "invalid signature", http.StatusBadRequest)
+    return
+  }
+  w.WriteHeader(http.StatusOK)
+}
+```
+
+## Raw body notes
+
+- Express: `express.raw({ type: 'application/json' })` for this route; avoid `express.json()` which mutates payload
+- Next.js App Router: use `await req.arrayBuffer()` for raw bytes before verifying
+- Flask: `request.get_data()` returns raw bytes
+
+## Rotation & rollout
+
+- Secrets: `whsec_...` stored in env/secret manager; never log or expose client-side
+- Rotation: dual-signing window (two `v1=` values) or scheduled cutover; remove old key when consumers rotate
+- Current Dev behavior: unsigned; verify by fetching the session via `sessionId` for now
+
+
+
+---
+Generated for LLMs on 2025-10-20. Source: FaceSign docs.

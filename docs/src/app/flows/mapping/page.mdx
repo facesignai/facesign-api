@@ -1,0 +1,86 @@
+export const metadata = {
+  title: 'Flow Builder → FSFlow Mapping',
+  description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.',
+}
+
+# Flow Builder → FSFlow Mapping
+
+This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (`SessionSettings.flow`).
+
+## Node type mapping
+
+| Flow Builder | FSNode `type` |
+| --- | --- |
+| Start | `start` |
+| End | `end` |
+| Conversation | `conversation` |
+| Liveness Detection | `liveness_detection` |
+| Enter Email | `enter_email` |
+| Data Validation | `data_validation` |
+| Document Scan | `document_scan` |
+| Recognition | `recognition` |
+| Face Scan | `face_scan` |
+| Two Factor | `two_factor` |
+
+See the full schema details in API Reference for `FSNode` and type-specific properties.
+
+## Edges
+
+Each connection in the canvas becomes an `FSEdge`:
+
+```json
+{
+  "id": "e1",
+  "source": "start",
+  "target": "conversation"
+}
+```
+
+## Minimal translation example
+
+Flow Builder (conceptual): Start → Conversation → End
+
+FSFlow JSON:
+
+```json
+{
+  "nodes": [
+    { "id": "start", "type": "start" },
+    {
+      "id": "greet",
+      "type": "conversation",
+      "prompt": "Welcome!",
+      "transitions": [{ "id": "t1", "condition": "true" }]
+    },
+    { "id": "end", "type": "end" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "start", "target": "greet" },
+    { "id": "e2", "source": "greet", "target": "end" }
+  ]
+}
+```
+
+## Checklist before exporting
+
+- Every node has a unique `id` and a valid `type`
+- All outcomes/branches point to an existing node `id`
+- There is exactly one `start` and at least one path to an `end`
+- Optional prompts/validation rules set as needed
+
+## Using the FSFlow with the API
+
+```bash
+curl -X POST https://api.dev.facesign.ai/sessions \
+  -H "Authorization: Bearer $FACESIGN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientReferenceId": "user-123",
+    "metadata": { "source": "sandbox" },
+    "flow": { /* FSFlow JSON from above */ }
+  }'
+```
+
+On success you receive `{ session, clientSecret }`; send users to `clientSecret.url`.
+
+

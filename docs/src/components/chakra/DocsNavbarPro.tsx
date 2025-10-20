@@ -62,6 +62,25 @@ export function DocsNavbarPro() {
   const pathname = usePathname()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
+  async function handleCopyForAI() {
+    try {
+      const slug = (pathname || '/docs').replace(/^\/+/, '') || 'docs'
+      const res = await fetch(`/llms/${slug}.txt`)
+      if (res.ok) {
+        const text = await res.text()
+        await navigator.clipboard.writeText(text)
+        return
+      }
+      const main = document.querySelector('main, [role="main"]') as HTMLElement | null
+      const text = main ? main.innerText : document.body.innerText
+      await navigator.clipboard.writeText(text)
+    } catch (e) {
+      try {
+        await navigator.clipboard.writeText(document.body.innerText)
+      } catch {}
+    }
+  }
+
   const navItems = [
     { label: 'Docs', href: '/docs', icon: <FiBook /> },
     { label: 'API Reference', href: '/api', icon: <FiCode /> },
@@ -81,8 +100,13 @@ export function DocsNavbarPro() {
       <HStack h="16" px={{ base: 4, md: 6, lg: 8 }} gap="4" minW="0">
         <HStack flex="1" gap="8">
           {/* Logo */}
-          <NextLink href="/" passHref>
-            <Link display="flex" alignItems="center" _hover={{ textDecoration: 'none' }}>
+          <NextLink href="/" passHref legacyBehavior>
+            <Box
+              as="a"
+              display="flex"
+              alignItems="center"
+              _hover={{ textDecoration: 'none' }}
+            >
               <Box h={8} w="auto" position="relative">
                 <Image
                   src={logoSrc}
@@ -91,7 +115,7 @@ export function DocsNavbarPro() {
                   style={{ width: 'auto', height: '100%', objectFit: 'contain' }}
                 />
               </Box>
-            </Link>
+            </Box>
           </NextLink>
 
             {/* Desktop Navigation with underline */}
@@ -121,20 +145,23 @@ export function DocsNavbarPro() {
                 <SearchBarTrigger onClick={() => setIsSearchOpen(true)} />
               </Box>
 
+              {/* Copy for AI */}
+              <IconButton aria-label="Copy page for AI" variant="ghost" size="sm" onClick={handleCopyForAI}>
+                ⧉
+              </IconButton>
+
               {/* GitHub link */}
-              <Link
+              <IconButton
+                as="a"
                 href="https://github.com/facesignai/api"
                 target="_blank"
                 rel="noopener noreferrer"
+                variant="ghost"
+                size="sm"
+                aria-label="GitHub"
               >
-                <IconButton
-                  variant="ghost"
-                  size="sm"
-                  aria-label="GitHub"
-                >
-                  <FiGithub />
-                </IconButton>
-              </Link>
+                <FiGithub />
+              </IconButton>
 
               {/* Theme toggle */}
               <ColorModeButton size="sm" />

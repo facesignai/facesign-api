@@ -1,0 +1,351 @@
+# Webhooks
+
+Webhooks allow you to receive real-time HTTP notifications when events happen in your FaceSign account. Rather than polling the API for updates, webhooks push data to your endpoint as soon as an event occurs. {{ className: 'lead' }}
+
+## Setting up webhooks
+
+To start receiving webhooks:
+
+1. Create an endpoint on your server to receive webhook events
+2. Register your endpoint URL in the FaceSign Dashboard
+3. Handle incoming webhook events in your application
+
+### Creating a webhook endpoint
+
+Your webhook endpoint should:
+
+- Accept POST requests with JSON payloads
+- Respond quickly with a 2xx status code
+- Validate events by fetching the session from the API (Dev currently does not include a signature header)
+
+```typescript {{ title: 'TypeScript' }}
+import express from 'express'
+
+const app = express()
+
+app.post('/webhooks/facesign', express.json(), async (req, res) => {
+  const event = req.body
+
+  // Dev: validate by fetching session from API (no signature header currently)
+  if (event?.sessionId) {
+    const r = await fetch(`https://api.dev.facesign.ai/sessions/${event.sessionId}`, {
+      headers: { Authorization: `Bearer ${process.env.FACESIGN_API_KEY}` }
+    })
+    if (!r.ok) return res.status(400).send('Unknown session')
+    const { session } = await r.json()
+    console.log('Session status:', session?.status)
+  }
+
+  // Return 200 to acknowledge receipt
+  res.status(200).send('OK')
+})
+```
+
+```python {{ title: 'Python' }}
+from flask import Flask, request
+import requests
+import os
+
+app = Flask(__name__)
+
+@app.route('/webhooks/facesign', methods=['POST'])
+def handle_webhook():
+    event = request.get_json(silent=True) or {}
+
+    # Dev: validate by fetching session from API (no signature header currently)
+    session_id = event.get('sessionId')
+    if session_id:
+        r = requests.get(
+            f'https://api.dev.facesign.ai/sessions/{session_id}',
+            headers={'Authorization': f"Bearer {os.environ.get('FACESIGN_API_KEY','')}"}
+        )
+        if r.status_code != 200:
+            return 'Unknown session', 400
+        data = r.json()
+        print('Session status:', data.get('session', {}).get('status'))
+
+    return '', 200
+```
+
+## Webhook events
+
+FaceSign sends the following webhook events:
+
+### Session events
+
+  
+    Sent when a new verification session is created.
+  
+  
+    Sent when a user begins the verification process.
+  
+  
+    Sent when a session is successfully verified.
+  
+  
+    Sent when verification fails (e.g., document rejected, face mismatch).
+  
+  
+    Sent when a session is cancelled by the user or via API.
+  
+  
+    Sent when a session expires without completion.
+  
+
+### Event object structure (Dev)
+
+Current Dev webhooks use this minimal structure:
+
+```json {{ title: 'Event structure' }}
+{
+  "id": "evt_1a2b3c4d5e6f",
+  "type": "session.completed",
+  "createdAt": 1706284800,
+  "sessionId": "sess_abc123",
+  "media": {
+    "id": "evt_1a2b3c4d5e6f",
+    "createdAt": 1706284800,
+    "url": "https://signed.example",
+    "expires": 1706285700,
+    "contentType": "image/png"
+  }
+}
+```
+
+## Verifying events (Dev)
+
+In Dev, webhooks do not include a signature header. Verify authenticity by fetching the session using the `sessionId` from the event and cross-checking expected metadata (e.g., your `clientReferenceId`). Signature-signed deliveries may be added later and will be documented when available.
+
+  Planning for signatures? See <a href="/webhooks/signed-headers">Webhook Signed Headers</a> for the proposed header format and server verification code.
+
+## Handling webhooks
+
+### Best practices
+
+1. **Respond quickly** - Return a 2xx status code as soon as possible
+2. **Process asynchronously** - Use a queue for time-consuming operations
+3. **Handle duplicates** - Use the event ID to ensure idempotency
+4. **Verify signatures** - Always verify the webhook signature
+5. **Handle failures gracefully** - Implement proper error handling
+
+### Retries
+
+FaceSign will retry failed webhook deliveries with exponential backoff:
+
+- First retry: 5 seconds
+- Second retry: 30 seconds
+- Third retry: 2 minutes
+- Fourth retry: 10 minutes
+- Fifth retry: 1 hour
+
+After 5 failed attempts, the webhook is marked as failed and won't be retried.
+
+### Testing webhooks
+
+You can test your webhook endpoint using the FaceSign Dashboard:
+
+1. Go to **Settings** → **Webhooks**
+2. Click on your webhook endpoint
+3. Click **Send test webhook**
+4. Select an event type and click **Send**
+
+## Example: Complete webhook handler
+
+Here's a complete example that handles all session events:
+
+```typescript {{ title: 'TypeScript' }}
+import express from 'express';
+import crypto from 'crypto';
+
+const app = express();
+const webhookSecret = process.env.FACESIGN_WEBHOOK_SECRET;
+
+// Webhook handler
+app.post('/webhooks/facesign',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    const signature = req.headers['facesign-signature'] as string;
+    
+    // Verify signature
+    if (!verifySignature(req.body, signature, webhookSecret)) {
+      return res.status(400).send('Invalid signature');
+    }
+    
+    const event = JSON.parse(req.body.toString());
+    
+    // Prevent duplicate processing
+    if (await isEventProcessed(event.id)) {
+      return res.status(200).send('Already processed');
+    }
+    
+    try {
+      // Handle different event types
+      switch (event.type) {
+        case 'session.created':
+          await handleSessionCreated(event.data);
+          break;
+          
+        case 'session.verified':
+          await handleSessionVerified(event.data);
+          break;
+          
+        case 'session.failed':
+          await handleSessionFailed(event.data);
+          break;
+          
+        case 'session.cancelled':
+          await handleSessionCancelled(event.data);
+          break;
+          
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
+      }
+      
+      // Mark event as processed
+      await markEventProcessed(event.id);
+      
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error('Webhook processing error:', error);
+      res.status(500).send('Internal error');
+    }
+  }
+);
+
+async function handleSessionVerified(session: any) {
+  // Update user verification status
+  await updateUserVerificationStatus(session.metadata.user_id, {
+    verified: true,
+    verifiedAt: new Date(),
+    verificationData: session.verified_outputs,
+  });
+  
+  // Send confirmation email
+  await sendVerificationSuccessEmail(session.metadata.user_id);
+}
+
+async function handleSessionFailed(session: any) {
+  // Log failure reason
+  console.error(`Verification failed for user ${session.metadata.user_id}`);
+  
+  // Notify user
+  await sendVerificationFailedEmail(session.metadata.user_id);
+}
+```
+
+```python {{ title: 'Python' }}
+from flask import Flask, request, abort
+import json
+import hmac
+import hashlib
+from datetime import datetime
+
+app = Flask(__name__)
+webhook_secret = os.environ.get('FACESIGN_WEBHOOK_SECRET')
+
+@app.route('/webhooks/facesign', methods=['POST'])
+def handle_webhook():
+    # Get signature
+    signature = request.headers.get('FaceSign-Signature')
+    
+    # Verify signature
+    if not verify_signature(request.data, signature, webhook_secret):
+        abort(400, 'Invalid signature')
+    
+    event = json.loads(request.data)
+    
+    # Prevent duplicate processing
+    if is_event_processed(event['id']):
+        return '', 200
+    
+    try:
+        # Handle different event types
+        if event['type'] == 'session.created':
+            handle_session_created(event['data'])
+            
+        elif event['type'] == 'session.verified':
+            handle_session_verified(event['data'])
+            
+        elif event['type'] == 'session.failed':
+            handle_session_failed(event['data'])
+            
+        elif event['type'] == 'session.cancelled':
+            handle_session_cancelled(event['data'])
+            
+        else:
+            print(f"Unhandled event type: {event['type']}")
+        
+        # Mark event as processed
+        mark_event_processed(event['id'])
+        
+        return '', 200
+        
+    except Exception as e:
+        print(f"Webhook processing error: {e}")
+        abort(500)
+
+def handle_session_verified(session):
+    # Update user verification status
+    update_user_verification_status(
+        session['metadata']['user_id'],
+        {
+            'verified': True,
+            'verified_at': datetime.now(),
+            'verification_data': session['verified_outputs']
+        }
+    )
+    
+    # Send confirmation email
+    send_verification_success_email(session['metadata']['user_id'])
+
+def handle_session_failed(session):
+    # Log failure
+    print(f"Verification failed for user {session['metadata']['user_id']}")
+    
+    # Notify user
+    send_verification_failed_email(session['metadata']['user_id'])
+```
+
+## Webhook security
+
+### IP allowlisting
+
+For additional security, you can restrict webhook requests to FaceSign's IP addresses:
+
+```
+52.89.214.238
+34.212.75.30
+54.218.53.128
+52.32.178.7
+```
+
+### Request headers (Dev)
+
+Dev webhooks include at least:
+
+  
+    Always `application/json`
+  
+  
+    FaceSign-Webhook/Dev
+  
+
+## Next steps
+
+Now that you understand webhooks, explore these related topics:
+
+<div className="not-prose mt-6 flex flex-col gap-3">
+  <Button href="/sessions" variant="text" arrow="right">
+    Learn about sessions
+  </Button>
+  <Button href="/errors" variant="text" arrow="right">
+    Handle errors properly
+  </Button>
+  <Button href="/node-graph" variant="text" arrow="right">
+    Customize verification flows
+  </Button>
+</div>
+
+
+---
+Generated for LLMs on 2025-10-20. Source: FaceSign docs.
