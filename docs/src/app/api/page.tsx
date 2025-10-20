@@ -15,7 +15,6 @@ import {
 import { ApiReferenceLayout } from '@/components/chakra/ApiReferenceLayout'
 import { ApiEndpoint } from '@/components/chakra/ApiEndpoint'
 import { ApiCodePanel } from '@/components/chakra/ApiCodePanel'
-import { CodeBlock } from '@/components/chakra/CodeBlock'
 import { useColorModeValue } from '@/components/ui/color-mode'
 
 // Define code examples for each endpoint (Dev by default)
@@ -354,7 +353,7 @@ export default function ApiReferencePage() {
           <Alert.Root status="info" mb={6}>
             <Alert.Indicator />
             <Alert.Title>
-              Webhooks are sent as POST requests with a JSON payload and include a signature header for verification.
+              Dev webhooks are POST JSON without a signature header. Verify by fetching the session using sessionId from the event.
             </Alert.Title>
           </Alert.Root>
 
@@ -400,37 +399,13 @@ export default function ApiReferencePage() {
           </Table.Root>
 
           <Heading as="h3" size="md" mb={4}>
-            Webhook Signature Verification
+            Verifying events (Dev)
           </Heading>
 
           <Text mb={4}>
-            All webhook requests include a cryptographic signature header. Verify this signature with
-            your webhook secret to ensure the request is from FaceSign.
+            In Dev, verify authenticity by fetching the session using the sessionId present in the event payload and
+            cross-checking your expected metadata.
           </Text>
-
-          <Box
-            borderWidth="1px"
-            borderRadius="md"
-            overflow="hidden"
-            borderColor="gray.200"
-            _dark={{
-              borderColor: 'gray.700'
-            }}
-            mb={6}
-          >
-              <CodeBlock
-                code={`import crypto from 'crypto';
-
-function verifyWebhookSignature(payload, signature, secret) {
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-}`}
-                language="javascript"
-              />
-          </Box>
         </Box>
 
         {/* Error Responses */}

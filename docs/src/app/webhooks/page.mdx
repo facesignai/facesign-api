@@ -21,75 +21,56 @@ Your webhook endpoint should:
 
 - Accept POST requests with JSON payloads
 - Respond quickly with a 2xx status code
-- Verify the webhook signature for security
+- Validate events by fetching the session from the API (Dev currently does not include a signature header)
 
 <CodeGroup title="Basic webhook handler">
 
 ```typescript {{ title: 'TypeScript' }}
-import express from 'express';
-import crypto from 'crypto';
+import express from 'express'
 
-const app = express();
+const app = express()
 
-// Important: Use raw body for signature verification
-app.post('/webhooks/facesign', 
-  express.raw({ type: 'application/json' }), 
-  (req, res) => {
-    const signature = req.headers['facesign-signature'];
-    const body = req.body;
-    
-    // Verify signature (see below)
-    if (!verifySignature(body, signature, webhookSecret)) {
-      return res.status(400).send('Invalid signature');
-    }
-    
-    const event = JSON.parse(body);
-    
-    // Handle the event
-    switch (event.type) {
-      case 'session.verified':
-        console.log('Session verified:', event.data.id);
-        break;
-      case 'session.failed':
-        console.log('Session failed:', event.data.id);
-        break;
-      // ... handle other event types
-    }
-    
-    // Return 200 to acknowledge receipt
-    res.status(200).send('OK');
+app.post('/webhooks/facesign', express.json(), async (req, res) => {
+  const event = req.body
+
+  // Dev: validate by fetching session from API (no signature header currently)
+  if (event?.sessionId) {
+    const r = await fetch(`https://api.dev.facesign.ai/sessions/${event.sessionId}`, {
+      headers: { Authorization: `Bearer ${process.env.FACESIGN_API_KEY}` }
+    })
+    if (!r.ok) return res.status(400).send('Unknown session')
+    const { session } = await r.json()
+    console.log('Session status:', session?.status)
   }
-);
+
+  // Return 200 to acknowledge receipt
+  res.status(200).send('OK')
+})
 ```
 
 ```python {{ title: 'Python' }}
-from flask import Flask, request, abort
-import json
-import hmac
-import hashlib
+from flask import Flask, request
+import requests
+import os
 
 app = Flask(__name__)
 
 @app.route('/webhooks/facesign', methods=['POST'])
 def handle_webhook():
-    # Get the signature from headers
-    signature = request.headers.get('FaceSign-Signature')
-    
-    # Verify signature
-    if not verify_signature(request.data, signature, webhook_secret):
-        abort(400, 'Invalid signature')
-    
-    # Parse the event
-    event = json.loads(request.data)
-    
-    # Handle the event
-    if event['type'] == 'session.verified':
-        print(f"Session verified: {event['data']['id']}")
-    elif event['type'] == 'session.failed':
-        print(f"Session failed: {event['data']['id']}")
-    # ... handle other event types
-    
-    # Return 200 to acknowledge receipt
+    event = request.get_json(silent=True) or {}
+
+    # Dev: validate by fetching session from API (no signature header currently)
+    session_id = event.get('sessionId')
+    if session_id:
+        r = requests.get(
+            f'https://api.dev.facesign.ai/sessions/{session_id}',
+            headers={'Authorization': f"Bearer {os.environ.get('FACESIGN_API_KEY','')}"}
+        )
+        if r.status_code != 200:
+            return 'Unknown session', 400
+        data = r.json()
+        print('Session status:', data.get('session', {}).get('status'))
+
     return '', 200
 ```
 
@@ -122,87 +103,29 @@ FaceSign sends the following webhook events:
   </Property>
 </Properties>
 
-### Event object structure
+### Event object structure (Dev)
 
-All webhook events follow this structure:
+Current Dev webhooks use this minimal structure:
 
 ```json {{ title: 'Event structure' }}
 {
   "id": "evt_1a2b3c4d5e6f",
-  "object": "event",
-  "type": "session.verified",
-  "created": 1706284800,
-  "data": {
-    // The full session object
-    "id": "vs_1a2b3c4d5e6f",
-    "object": "verification_session",
-    "status": "verified",
-    "verified_outputs": {
-      "first_name": "John",
-      "last_name": "Doe",
-      // ... other verification results
-    }
-    // ... other session properties
+  "type": "session.completed",
+  "createdAt": 1706284800,
+  "sessionId": "sess_abc123",
+  "media": {
+    "id": "evt_1a2b3c4d5e6f",
+    "createdAt": 1706284800,
+    "url": "https://signed.example",
+    "expires": 1706285700,
+    "contentType": "image/png"
   }
 }
 ```
 
-## Verifying webhook signatures
+## Verifying events (Dev)
 
-FaceSign signs all webhook payloads so you can verify they're authentic. The signature is included in the `FaceSign-Signature` header.
-
-<CodeGroup title="Signature verification">
-
-```typescript {{ title: 'TypeScript' }}
-import crypto from 'crypto';
-
-function verifySignature(
-  payload: Buffer | string,
-  signature: string,
-  secret: string
-): boolean {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  
-  // Use timing-safe comparison
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
-}
-```
-
-```python {{ title: 'Python' }}
-import hmac
-import hashlib
-
-def verify_signature(payload, signature, secret):
-    expected_signature = hmac.new(
-        secret.encode('utf-8'),
-        payload,
-        hashlib.sha256
-    ).hexdigest()
-    
-    // Use timing-safe comparison
-    return hmac.compare_digest(signature, expected_signature)
-```
-
-```php {{ title: 'PHP' }}
-function verifySignature($payload, $signature, $secret) {
-    $expectedSignature = hash_hmac('sha256', $payload, $secret);
-    
-    // Use timing-safe comparison
-    return hash_equals($expectedSignature, $signature);
-}
-```
-
-</CodeGroup>
-
-<Warning>
-  Always use a timing-safe comparison function to prevent timing attacks when verifying signatures.
-</Warning>
+In Dev, webhooks do not include a signature header. Verify authenticity by fetching the session using the `sessionId` from the event and cross-checking expected metadata (e.g., your `clientReferenceId`). Signature-signed deliveries may be added later and will be documented when available.
 
 ## Handling webhooks
 
@@ -409,19 +332,16 @@ For additional security, you can restrict webhook requests to FaceSign's IP addr
 52.32.178.7
 ```
 
-### Request headers
+### Request headers (Dev)
 
-All webhook requests include these headers:
+Dev webhooks include at least:
 
 <Properties>
-  <Property name="FaceSign-Signature" type="string">
-    HMAC signature of the request body
-  </Property>
-  <Property name="FaceSign-Event-Id" type="string">
-    Unique identifier for this event
-  </Property>
   <Property name="Content-Type" type="string">
     Always `application/json`
+  </Property>
+  <Property name="User-Agent" type="string">
+    FaceSign-Webhook/Dev
   </Property>
 </Properties>
 

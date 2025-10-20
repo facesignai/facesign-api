@@ -35,10 +35,9 @@ Legend: [OK] accurate; [FIX] needs change; [CHK] investigate in code
   - Errors [CHK]
     - Align to components/responses and Error schema: authentication_error, validation_error, not_found_error, rate_limit_error, server_error
 - Guides
-  - Webhooks [CHK]
-    - Events: confirm against server; types available in src/types/webhooks.ts
-    - Signature header name and verification scheme [CHK]
-    - Retries/backoff behavior [CHK]
+  - Webhooks [FIX]
+    - Dev: no signature header currently; verify by fetching session using event.sessionId
+    - Update examples accordingly; note that signed headers may be added later
   - Sandbox → Production [FIX]
     - facesign-create export → API FSFlow import; add minimal translation snippet if needed
 
