@@ -1,7 +1,7 @@
 import Image from 'next/image'
+import { Heading } from '@chakra-ui/react'
 
 import { Button } from '@/components/Button'
-import { Heading } from '@/components/Heading'
 import logoGo from '@/images/logos/go.svg'
 import logoNode from '@/images/logos/node.svg'
 import logoPhp from '@/images/logos/php.svg'
@@ -60,7 +60,13 @@ const upcomingLibraries = [
 export function Libraries() {
   return (
     <div className="my-16 xl:max-w-none">
-      <Heading level={2} id="official-libraries">
+      <Heading
+        as="h2"
+        textStyle="docs.heading"
+        fontSize="2xl"
+        id="official-libraries"
+        mb={4}
+      >
         Available SDKs
       </Heading>
       <div className="not-prose mt-4 grid grid-cols-1 gap-x-6 gap-y-10 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
@@ -94,7 +100,14 @@ export function Libraries() {
         ))}
       </div>
 
-      <Heading level={2} id="upcoming-libraries" className="mt-16">
+      <Heading
+        as="h2"
+        textStyle="docs.heading"
+        fontSize="2xl"
+        id="upcoming-libraries"
+        mt={16}
+        mb={4}
+      >
         Planned SDKs
       </Heading>
       <div className="not-prose mt-4 grid grid-cols-1 gap-x-6 gap-y-10 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
