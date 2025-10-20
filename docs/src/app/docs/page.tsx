@@ -224,20 +224,20 @@ console.log("Session ID:", session.id);`}</Code>
           </Text>
           <VStack align="stretch" gap={3}>
             <HStack>
-              <Badge colorScheme="gray">created</Badge>
-              <Text fontSize="sm">Customer has created the session, but user hasn&apos;t opened the URL yet</Text>
+              <Badge colorScheme="gray">requiresInput</Badge>
+              <Text fontSize="sm">Session created and awaiting user input</Text>
             </HStack>
             <HStack>
-              <Badge colorScheme="blue">inprogress</Badge>
-              <Text fontSize="sm">User started interaction with FaceSign</Text>
+              <Badge colorScheme="blue">processing</Badge>
+              <Text fontSize="sm">Session started; processing underway</Text>
             </HStack>
             <HStack>
-              <Badge colorScheme="orange">incomplete</Badge>
-              <Text fontSize="sm">User closed browser tab before flow ended</Text>
+              <Badge colorScheme="orange">canceled</Badge>
+              <Text fontSize="sm">Session canceled by user or halted</Text>
             </HStack>
             <HStack>
               <Badge colorScheme="green">complete</Badge>
-              <Text fontSize="sm">User completed the flow, end node reached</Text>
+              <Text fontSize="sm">Flow ended; results available</Text>
             </HStack>
           </VStack>
         </Box>
@@ -395,13 +395,12 @@ console.log("Session ID:", session.id);`}</Code>
           <Box bg={codeBg} p={4} borderRadius="md">
             <Code bg="transparent" display="block" whiteSpace="pre">{`POST https://your-server.com/webhooks/facesign
 Content-Type: application/json
-X-FaceSign-Signature: sha256=...
 
 {
-  "event": "session.completed",
-  "session_id": "sess_123",
-  "result": "verified",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "id": "evt_123",
+  "type": "session.completed",
+  "createdAt": 1705314600,
+  "sessionId": "sess_123"
 }`}</Code>
           </Box>
         </Box>
@@ -421,19 +420,23 @@ X-FaceSign-Signature: sha256=...
             </HStack>
             <HStack>
               <Badge colorScheme="yellow">400</Badge>
-              <Text fontSize="sm">Bad Request - Invalid parameters</Text>
+              <Text fontSize="sm">validation_error - Invalid parameters</Text>
             </HStack>
             <HStack>
               <Badge colorScheme="red">401</Badge>
-              <Text fontSize="sm">Unauthorized - Invalid API key</Text>
+              <Text fontSize="sm">authentication_error - Invalid API key</Text>
             </HStack>
             <HStack>
-              <Badge colorScheme="red">403</Badge>
-              <Text fontSize="sm">Forbidden - Insufficient permissions</Text>
+              <Badge colorScheme="red">404</Badge>
+              <Text fontSize="sm">not_found_error - Resource not found</Text>
             </HStack>
             <HStack>
-              <Badge colorScheme="red">429</Badge>
-              <Text fontSize="sm">Too Many Requests - Rate limit exceeded</Text>
+              <Badge colorScheme="orange">429</Badge>
+              <Text fontSize="sm">rate_limit_error - Too many requests</Text>
+            </HStack>
+            <HStack>
+              <Badge colorScheme="red">500</Badge>
+              <Text fontSize="sm">server_error - Internal error</Text>
             </HStack>
           </VStack>
         </Box>
