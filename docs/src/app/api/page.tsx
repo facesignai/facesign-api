@@ -19,6 +19,7 @@ import sessionsListFixture from '@/examples/sessions_list.json'
 import createSessionFixture from '@/examples/create_session.json'
 import getSessionFixture from '@/examples/get_session.json'
 import { useColorModeValue } from '@/components/ui/color-mode'
+import refreshSessionFixture from '@/examples/refresh_session.json'
 
 // Define code examples for each endpoint (Dev by default)
 const endpointCodeExamples = {
@@ -311,6 +312,33 @@ export default function ApiReferencePage() {
           <Text>
             See the Sessions → Create Session example above for a minimal flow definition.
           </Text>
+        </Box>
+
+        {/* Client Secret */}
+        <Box id="client-secret">
+          <Heading as="h2" size="lg" mb={6}>
+            Client Secret
+          </Heading>
+
+          <ApiEndpoint
+            id="refresh-client-secret"
+            method="GET"
+            path="/sessions/:id/refresh"
+            description="Generate a new client secret for the specified session"
+            parameters={[{
+              name: 'id',
+              type: 'string',
+              required: true,
+              description: 'The session ID',
+              example: 'sess_abc123'
+            }]}
+            responses={{
+              '200': {
+                description: 'Success',
+                content: JSON.stringify(refreshSessionFixture, null, 2)
+              }
+            }}
+          />
         </Box>
 
         {/* Webhooks */}
