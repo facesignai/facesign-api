@@ -1,0 +1,118 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[110],{56748:function(e,s,r){Promise.resolve().then(r.bind(r,2949))},2949:function(e,s,r){"use strict";r.r(s),r.d(s,{default:function(){return H}});var i=r(57437),t=r(21045),n=r(45189),o=r(72179),a=r(28025),l=r(90549),d=r(10063),c=r(47961),h=r(77646),x=r(38720),p=r(36121),j=r(80609),b=r(29966),u=r(18032),m=r(99376);function g({children:e,codePanel:s}){let r=(0,m.usePathname)();return(0,i.jsxs)(n.Box,{minH:"100vh",children:[(0,i.jsx)(b.Z,{}),(0,i.jsxs)(j.Flex,{gap:0,children:[(0,i.jsx)(n.Box,{display:{base:"none",lg:"block"},children:(0,i.jsx)(u.J,{activeSection:r})}),(0,i.jsx)(n.Box,{flex:"1",minW:"0",ml:{base:0,lg:"280px"},py:8,px:{base:6,md:10,lg:12},children:e}),(0,i.jsx)(n.Box,{flex:"1",minW:"0",display:{base:"none",xl:"block"},py:8,pr:12,children:s})]})]})}var f=r(23729),T=r(9986),y=r(87585),C=r(2265),S=r(45202),w=r(78696);function v({code:e,language:s="javascript",title:r,showLineNumbers:t=!1}){let[o,d]=(0,C.useState)(!1),c=(0,w.ff)("gray.50","gray.900"),x=(0,w.ff)("gray.200","gray.700"),p=(0,w.ff)("gray.100","gray.800"),j=async()=>{await navigator.clipboard.writeText(e),d(!0),setTimeout(()=>d(!1),2e3)},b=e.split("\n");return(0,i.jsxs)(n.Box,{borderWidth:"1px",borderColor:x,borderRadius:"lg",overflow:"hidden",children:[r&&(0,i.jsxs)(l.HStack,{justify:"space-between",px:4,py:2,borderBottomWidth:"1px",borderColor:x,bg:p,children:[(0,i.jsx)(a.Text,{fontSize:"sm",fontWeight:"medium",children:r}),s&&(0,i.jsx)(a.Text,{fontSize:"xs",color:"fg.muted",children:s})]}),(0,i.jsxs)(n.Box,{position:"relative",children:[(0,i.jsx)(n.Box,{bg:c,p:4,overflowX:"auto",children:t?(0,i.jsx)(n.Box,{as:"table",w:"full",children:(0,i.jsx)("tbody",{children:b.map((e,s)=>(0,i.jsxs)("tr",{children:[(0,i.jsx)("td",{children:(0,i.jsx)(a.Text,{as:"span",fontSize:"xs",color:"fg.muted",pr:4,userSelect:"none",textAlign:"right",display:"inline-block",minW:"3ch",children:s+1})}),(0,i.jsx)("td",{width:"100%",children:(0,i.jsx)(h.Code,{as:"pre",fontSize:"sm",bg:"transparent",whiteSpace:"pre",display:"block",children:e||" "})})]},s))})}):(0,i.jsx)(h.Code,{as:"pre",fontSize:"sm",bg:"transparent",whiteSpace:"pre-wrap",display:"block",overflowWrap:"break-word",children:e})}),(0,i.jsx)(y.IconButton,{"aria-label":o?"Copied!":"Copy code",size:"sm",variant:"ghost",position:"absolute",top:2,right:2,onClick:j,colorPalette:o?"green":"gray",children:o?(0,i.jsx)(S.Nhk,{}):(0,i.jsx)(S.ef8,{})})]})]})}let R={GET:"green",POST:"blue",PUT:"orange",PATCH:"purple",DELETE:"red"};function B({name:e,type:s,required:r,description:t,example:o}){return(0,i.jsxs)(n.Box,{borderWidth:"1px",borderRadius:"md",p:6,borderColor:"gray.200",_dark:{borderColor:"gray.700"},children:[(0,i.jsx)(l.HStack,{justify:"space-between",mb:3,children:(0,i.jsxs)(l.HStack,{gap:3,children:[(0,i.jsx)(h.Code,{fontSize:"sm",fontWeight:"semibold",children:e}),(0,i.jsx)(d.Badge,{size:"sm",colorPalette:"gray",variant:"subtle",children:s}),r&&(0,i.jsx)(d.Badge,{size:"sm",colorPalette:"red",variant:"subtle",children:"required"})]})}),(0,i.jsx)(a.Text,{fontSize:"sm",color:"fg.muted",mb:o?3:0,children:t}),o&&(0,i.jsx)(h.Code,{fontSize:"xs",bg:"bg.muted",px:3,py:1.5,borderRadius:"sm",children:o})]})}function _({method:e,path:s,description:r,parameters:x,requestBody:p,responses:j,id:b}){return(0,i.jsxs)(n.Box,{id:b,scrollMarginTop:"80px",mb:12,children:[(0,i.jsxs)(f.Stack,{gap:8,children:[(0,i.jsxs)(n.Box,{children:[(0,i.jsxs)(l.HStack,{gap:4,mb:4,children:[(0,i.jsx)(d.Badge,{size:"lg",colorPalette:R[e],variant:"solid",children:e}),(0,i.jsx)(h.Code,{fontSize:"lg",fontWeight:"semibold",children:s})]}),(0,i.jsx)(a.Text,{color:"fg.muted",fontSize:"md",children:r})]}),x&&x.length>0&&(0,i.jsxs)(n.Box,{children:[(0,i.jsx)(o.Heading,{size:"md",mb:5,children:"Parameters"}),(0,i.jsx)(t.VStack,{align:"stretch",gap:4,children:x.map(e=>(0,i.jsx)(B,{...e},e.name))})]}),p&&(0,i.jsxs)(n.Box,{children:[(0,i.jsx)(o.Heading,{size:"md",mb:5,children:"Request Body"}),(0,i.jsxs)(n.Box,{borderWidth:"1px",borderRadius:"md",overflow:"hidden",borderColor:"gray.200",_dark:{borderColor:"gray.700"},children:[(0,i.jsx)(n.Box,{bg:"gray.50",_dark:{bg:"gray.900",borderBottomColor:"gray.700"},px:5,py:3,borderBottomWidth:"1px",borderBottomColor:"gray.200",children:(0,i.jsx)(a.Text,{fontSize:"sm",fontWeight:"medium",children:"application/json"})}),(0,i.jsx)(v,{code:p.content,language:"json",showLineNumbers:!1})]})]}),j&&(0,i.jsxs)(n.Box,{children:[(0,i.jsx)(o.Heading,{size:"md",mb:5,children:"Responses"}),(0,i.jsxs)(T.TabsRoot,{defaultValue:Object.keys(j)[0],children:[(0,i.jsx)(T.TabsList,{children:Object.keys(j).map(e=>(0,i.jsx)(T.TabsTrigger,{value:e,children:(0,i.jsxs)(l.HStack,{gap:3,children:[(0,i.jsx)(d.Badge,{colorPalette:e.startsWith("2")?"green":e.startsWith("4")?"yellow":"red",variant:"subtle",children:e}),(0,i.jsx)(a.Text,{fontSize:"sm",children:j[e].description})]})},e))}),(0,i.jsx)(T.TabsContentGroup,{children:Object.entries(j).map(([e,s])=>(0,i.jsx)(T.TabsContent,{value:e,children:(0,i.jsxs)(n.Box,{mt:5,borderWidth:"1px",borderRadius:"md",overflow:"hidden",borderColor:"gray.200",_dark:{borderColor:"gray.700"},children:[(0,i.jsx)(n.Box,{bg:e.startsWith("2")?"green.50":"red.50",_dark:{bg:e.startsWith("2")?"green.900/20":"red.900/20",borderBottomColor:"gray.700"},px:5,py:3,borderBottomWidth:"1px",borderBottomColor:"gray.200",children:(0,i.jsx)(a.Text,{fontSize:"sm",fontWeight:"medium",children:"application/json"})}),(0,i.jsx)(v,{code:s.content,language:"json",showLineNumbers:!1})]})},e))})]})]})]}),(0,i.jsx)(c.Separator,{mt:12})]})}var z=r(26577);function k({title:e="Code Examples",description:s,codeExamples:r}){let l=e=>({curl:"cURL",javascript:"JavaScript",python:"Python",go:"Go",php:"PHP",ruby:"Ruby"})[e]||e,d=Object.keys(r).length>0?r:{curl:"# No example available"};return(0,i.jsx)(z.CardRoot,{variant:"elevated",mb:6,children:(0,i.jsx)(z.CardBody,{children:(0,i.jsxs)(t.VStack,{align:"stretch",gap:4,children:[(0,i.jsxs)(n.Box,{children:[(0,i.jsx)(o.Heading,{size:"md",mb:2,children:e}),s&&(0,i.jsx)(a.Text,{fontSize:"sm",color:"fg.muted",children:s})]}),(0,i.jsxs)(T.TabsRoot,{defaultValue:Object.keys(d)[0],variant:"enclosed",children:[(0,i.jsx)(T.TabsList,{children:Object.keys(d).map(e=>(0,i.jsx)(T.TabsTrigger,{value:e,children:l(e)},e))}),(0,i.jsx)(T.TabsContentGroup,{children:Object.entries(d).map(([e,s])=>(0,i.jsx)(T.TabsContent,{value:e,p:0,children:(0,i.jsx)(n.Box,{bg:"gray.50",borderWidth:"1px",borderColor:"gray.200",borderTopWidth:"0",borderRadius:"0 0 md md",overflow:"hidden",_dark:{bg:"gray.900",borderColor:"gray.700"},children:(0,i.jsx)(v,{code:s,language:e,showLineNumbers:!1})})},e))})]})]})})})}let A={"create-session":{curl:`curl -X POST https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "clientReferenceId": "user-123",
+    "metadata": { "source": "web-app" },
+    "flow": {
+      "nodes": [
+        { "id": "start", "type": "start" },
+        { "id": "greeting", "type": "conversation", "prompt": "Hello! What's your name?", "transitions": [{ "id": "t1", "condition": "true" }] },
+        { "id": "end", "type": "end" }
+      ],
+      "edges": [
+        { "id": "e1", "source": "start", "target": "greeting" },
+        { "id": "e2", "source": "greeting", "target": "end" }
+      ]
+    }
+  }'`,javascript:`const res = await fetch('https://api.dev.facesign.ai/sessions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    clientReferenceId: 'user-123',
+    metadata: { source: 'web-app' },
+    flow: {
+      nodes: [
+        { id: 'start', type: 'start' },
+        { id: 'greeting', type: 'conversation', prompt: "Hello! What's your name?", transitions: [{ id: 't1', condition: 'true' }] },
+        { id: 'end', type: 'end' }
+      ],
+      edges: [
+        { id: 'e1', source: 'start', target: 'greeting' },
+        { id: 'e2', source: 'greeting', target: 'end' }
+      ]
+    }
+  })
+})
+const data = await res.json()
+console.log(data.session.id, data.clientSecret.url)`,python:`import requests
+payload = {
+  "clientReferenceId": "user-123",
+  "metadata": {"source": "web-app"},
+  "flow": {
+    "nodes": [
+      {"id": "start", "type": "start"},
+      {"id": "greeting", "type": "conversation", "prompt": "Hello! What's your name?", "transitions": [{"id": "t1", "condition": "true"}]},
+      {"id": "end", "type": "end"}
+    ],
+    "edges": [
+      {"id": "e1", "source": "start", "target": "greeting"},
+      {"id": "e2", "source": "greeting", "target": "end"}
+    ]
+  }
+}
+r = requests.post('https://api.dev.facesign.ai/sessions', json=payload, headers={'Authorization': 'Bearer YOUR_API_KEY'})
+print(r.json()['session']['id'])`},"get-session":{curl:`curl https://api.dev.facesign.ai/sessions/sess_abc123 \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,javascript:`const res = await fetch('https://api.dev.facesign.ai/sessions/sess_abc123', { headers: { Authorization: 'Bearer YOUR_API_KEY' }})
+const data = await res.json()
+console.log(data.session.status)`,python:`import requests
+r = requests.get('https://api.dev.facesign.ai/sessions/sess_abc123', headers={'Authorization': 'Bearer YOUR_API_KEY'})
+print(r.json()['session']['status'])`},"list-sessions":{curl:`curl "https://api.dev.facesign.ai/sessions?limit=20&status=complete" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,javascript:`const res = await fetch('https://api.dev.facesign.ai/sessions?limit=20&status=complete', { headers: { Authorization: 'Bearer YOUR_API_KEY' }})
+const data = await res.json()
+console.log(data.sessions.length, data.hasMore)`,python:`import requests
+r = requests.get('https://api.dev.facesign.ai/sessions', params={'limit':20,'status':'complete'}, headers={'Authorization':'Bearer YOUR_API_KEY'})
+data = r.json()
+print(len(data['sessions']), data.get('hasMore'))`}};function H(){let e=(0,w.ff)("gray.100","gray.900");return(0,i.jsx)(g,{codePanel:(0,i.jsxs)(t.VStack,{align:"stretch",gap:8,children:[(0,i.jsx)(n.Box,{id:"create-session-code",children:(0,i.jsx)(k,{title:"Create Session",codeExamples:A["create-session"]})}),(0,i.jsx)(n.Box,{id:"get-session-code",children:(0,i.jsx)(k,{title:"Get Session",codeExamples:A["get-session"]})}),(0,i.jsx)(n.Box,{id:"list-sessions-code",children:(0,i.jsx)(k,{title:"List Sessions",codeExamples:A["list-sessions"]})})]}),children:(0,i.jsxs)(t.VStack,{align:"stretch",gap:12,children:[(0,i.jsxs)(n.Box,{children:[(0,i.jsx)(o.Heading,{as:"h1",size:"2xl",mb:4,children:"API Reference"}),(0,i.jsx)(a.Text,{fontSize:"xl",color:"gray.600",children:"Complete reference for the FaceSign REST API"}),(0,i.jsxs)(l.HStack,{mt:4,gap:4,children:[(0,i.jsx)(d.Badge,{children:"REST API"}),(0,i.jsx)(d.Badge,{children:"OpenAPI 3.0"}),(0,i.jsx)(d.Badge,{children:"Version 1.0"})]})]}),(0,i.jsx)(c.Separator,{}),(0,i.jsxs)(n.Box,{children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:4,children:"Base URL (Dev)"}),(0,i.jsx)(n.Box,{bg:e,p:4,borderRadius:"md",children:(0,i.jsx)(h.Code,{bg:"transparent",children:"https://api.dev.facesign.ai"})})]}),(0,i.jsxs)(n.Box,{id:"authentication",children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:4,children:"Authentication"}),(0,i.jsx)(a.Text,{mb:4,children:"All API requests require authentication using an API key in the Authorization header."}),(0,i.jsx)(n.Box,{bg:e,p:4,borderRadius:"md",children:(0,i.jsx)(h.Code,{bg:"transparent",children:"Authorization: Bearer YOUR_API_KEY"})})]}),(0,i.jsxs)(n.Box,{id:"sessions",children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:6,children:"Sessions"}),(0,i.jsx)(_,{id:"create-session",method:"POST",path:"/sessions",description:"Create a new verification session",parameters:[{name:"flow_id",type:"string",required:!0,description:"The ID of the flow to use for this session",example:"flow_abc123"},{name:"user_data",type:"object",description:"User information to pre-populate in the session",example:'{"email": "user@example.com", "name": "John Doe"}'},{name:"metadata",type:"object",description:"Custom metadata to attach to the session",example:'{"customer_id": "cust_123"}'},{name:"webhook_url",type:"string",description:"URL to receive webhook events for this session",example:"https://your-server.com/webhooks"},{name:"language",type:"string",description:"ISO 639-1 language code for the session",example:"en"}],responses:{200:{description:"Success",content:`{
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1705314600,
+    "status": "requiresInput",
+    "settings": { /* ... */ }
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1705314600,
+    "expireAt": 1705316400,
+    "url": "https://verify.facesign.ai/s/sess_abc123"
+  }
+}`}}}),(0,i.jsx)(_,{id:"get-session",method:"GET",path:"/sessions/:id",description:"Retrieve a session by ID",parameters:[{name:"id",type:"string",required:!0,description:"The session ID",example:"sess_abc123"}],responses:{200:{description:"Success",content:`{
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1705314600,
+    "status": "processing",
+    "report": { /* optional fields */ }
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1705314600,
+    "expireAt": 1705316400,
+    "url": "https://verify.facesign.ai/s/sess_abc123"
+  }
+}`}}}),(0,i.jsx)(_,{id:"list-sessions",method:"GET",path:"/sessions",description:"List all sessions with optional filters",parameters:[{name:"limit",type:"integer",description:"Number of sessions to return (1-100)",example:"20"},{name:"starting_after",type:"string",description:"Cursor for pagination",example:"sess_abc123"},{name:"status",type:"string",description:"Filter by session status",example:"complete"},{name:"created_after",type:"string",description:"Filter sessions created after this date (ISO 8601)",example:"2024-01-01T00:00:00Z"}],responses:{200:{description:"Success",content:`{
+  "sessions": [
+    { "id": "sess_abc123", "status": "complete", "createdAt": 1705314600 },
+    { "id": "sess_def456", "status": "processing", "createdAt": 1705314300 }
+  ],
+  "hasMore": true,
+  "nextCursor": "cursor_abc",
+  "totalCount": 150
+}`}}})]}),(0,i.jsxs)(n.Box,{id:"flows",children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:6,children:"Flows (via Session Settings)"}),(0,i.jsxs)(a.Text,{color:"gray.600",mb:4,children:["Flows are configured by sending an ",(0,i.jsx)(h.Code,{children:"FSFlow"})," object in the",(0,i.jsx)(h.Code,{ml:1,children:"session.settings.flow"})," payload when creating a session. There are no standalone ",(0,i.jsx)(h.Code,{children:"/flows"})," REST endpoints in the current API."]}),(0,i.jsx)(a.Text,{children:"See the Sessions → Create Session example above for a minimal flow definition."})]}),(0,i.jsxs)(n.Box,{id:"webhooks",children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:6,children:"Webhooks"}),(0,i.jsxs)(x.AlertRoot,{status:"info",mb:6,children:[(0,i.jsx)(x.AlertIndicator,{}),(0,i.jsx)(x.AlertTitle,{children:"Webhooks are sent as POST requests with a JSON payload and include a signature header for verification."})]}),(0,i.jsx)(o.Heading,{as:"h3",size:"md",mb:4,children:"Event Types"}),(0,i.jsxs)(p.TableRoot,{variant:"line",mb:6,children:[(0,i.jsx)(p.TableHeader,{children:(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableColumnHeader,{children:"Event"}),(0,i.jsx)(p.TableColumnHeader,{children:"Description"}),(0,i.jsx)(p.TableColumnHeader,{children:"Payload"})]})}),(0,i.jsxs)(p.TableBody,{children:[(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"session.created"})}),(0,i.jsx)(p.TableCell,{children:"Session was created"}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"xs",children:"Session object"})})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"session.started"})}),(0,i.jsx)(p.TableCell,{children:"User opened the verification URL"}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"xs",children:"Session object"})})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"session.completed"})}),(0,i.jsx)(p.TableCell,{children:"Session completed successfully"}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"xs",children:"Session + result"})})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"session.failed"})}),(0,i.jsx)(p.TableCell,{children:"Session failed verification"}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"xs",children:"Session + error"})})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"session.expired"})}),(0,i.jsx)(p.TableCell,{children:"Session expired without completion"}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"xs",children:"Session object"})})]})]})]}),(0,i.jsx)(o.Heading,{as:"h3",size:"md",mb:4,children:"Webhook Signature Verification"}),(0,i.jsx)(a.Text,{mb:4,children:"All webhook requests include a cryptographic signature header. Verify this signature with your webhook secret to ensure the request is from FaceSign."}),(0,i.jsx)(n.Box,{borderWidth:"1px",borderRadius:"md",overflow:"hidden",borderColor:"gray.200",_dark:{borderColor:"gray.700"},mb:6,children:(0,i.jsx)(v,{code:`import crypto from 'crypto';
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+}`,language:"javascript"})})]}),(0,i.jsxs)(n.Box,{id:"errors",children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:6,children:"Error Responses"}),(0,i.jsx)(a.Text,{mb:4,children:"The API uses standard HTTP status codes and returns detailed error information in the response body."}),(0,i.jsx)(o.Heading,{as:"h3",size:"md",mb:4,children:"Error Response Format"}),(0,i.jsx)(n.Box,{bg:e,p:4,borderRadius:"md",mb:6,children:(0,i.jsx)(h.Code,{bg:"transparent",display:"block",whiteSpace:"pre",children:`{
+  "error": {
+    "type": "invalid_request_error",
+    "message": "The flow_id field is required",
+    "code": "missing_required_field",
+    "field": "flow_id"
+  }
+}`})}),(0,i.jsx)(o.Heading,{as:"h3",size:"md",mb:4,children:"Common Error Codes"}),(0,i.jsxs)(p.TableRoot,{variant:"line",children:[(0,i.jsx)(p.TableHeader,{children:(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableColumnHeader,{children:"Status"}),(0,i.jsx)(p.TableColumnHeader,{children:"Error Type"}),(0,i.jsx)(p.TableColumnHeader,{children:"Description"})]})}),(0,i.jsxs)(p.TableBody,{children:[(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(d.Badge,{colorScheme:"yellow",children:"400"})}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"invalid_request_error"})}),(0,i.jsx)(p.TableCell,{children:"Invalid parameters or missing required fields"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(d.Badge,{colorScheme:"red",children:"401"})}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"authentication_error"})}),(0,i.jsx)(p.TableCell,{children:"Invalid or missing API key"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(d.Badge,{colorScheme:"red",children:"403"})}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"permission_error"})}),(0,i.jsx)(p.TableCell,{children:"API key lacks required permissions"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(d.Badge,{colorScheme:"red",children:"404"})}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"resource_not_found"})}),(0,i.jsx)(p.TableCell,{children:"Requested resource doesn't exist"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(d.Badge,{colorScheme:"orange",children:"429"})}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"rate_limit_error"})}),(0,i.jsx)(p.TableCell,{children:"Too many requests"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(d.Badge,{colorScheme:"red",children:"500"})}),(0,i.jsx)(p.TableCell,{children:(0,i.jsx)(h.Code,{fontSize:"sm",children:"api_error"})}),(0,i.jsx)(p.TableCell,{children:"Internal server error"})]})]})]})]}),(0,i.jsxs)(n.Box,{id:"rate-limits",children:[(0,i.jsx)(o.Heading,{as:"h2",size:"lg",mb:6,children:"Rate Limits"}),(0,i.jsx)(a.Text,{mb:4,children:"The API enforces rate limits to ensure fair usage and system stability."}),(0,i.jsxs)(p.TableRoot,{variant:"line",mb:6,children:[(0,i.jsx)(p.TableHeader,{children:(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableColumnHeader,{children:"Endpoint"}),(0,i.jsx)(p.TableColumnHeader,{children:"Limit"}),(0,i.jsx)(p.TableColumnHeader,{children:"Window"})]})}),(0,i.jsxs)(p.TableBody,{children:[(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:"Create Session"}),(0,i.jsx)(p.TableCell,{children:"100"}),(0,i.jsx)(p.TableCell,{children:"1 minute"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:"Get Session"}),(0,i.jsx)(p.TableCell,{children:"1000"}),(0,i.jsx)(p.TableCell,{children:"1 minute"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:"List Sessions"}),(0,i.jsx)(p.TableCell,{children:"100"}),(0,i.jsx)(p.TableCell,{children:"1 minute"})]}),(0,i.jsxs)(p.TableRow,{children:[(0,i.jsx)(p.TableCell,{children:"All other endpoints"}),(0,i.jsx)(p.TableCell,{children:"500"}),(0,i.jsx)(p.TableCell,{children:"1 minute"})]})]})]}),(0,i.jsxs)(x.AlertRoot,{status:"info",children:[(0,i.jsx)(x.AlertIndicator,{}),(0,i.jsxs)(x.AlertContent,{children:[(0,i.jsx)(x.AlertTitle,{children:"Rate limit information is included in response headers:"}),(0,i.jsxs)(x.AlertDescription,{children:[(0,i.jsx)(h.Code,{children:"X-RateLimit-Limit"}),",",(0,i.jsx)(h.Code,{ml:2,children:"X-RateLimit-Remaining"}),",",(0,i.jsx)(h.Code,{ml:2,children:"X-RateLimit-Reset"})]})]})]})]})]})})}},36121:function(e,s,r){"use strict";r.r(s),r.d(s,{TableBody:function(){return S},TableCaption:function(){return C},TableCell:function(){return y},TableColumn:function(){return v},TableColumnGroup:function(){return w},TableColumnHeader:function(){return T},TableFooter:function(){return f},TableHeader:function(){return g},TableRoot:function(){return j},TableRootPropsProvider:function(){return b},TableRow:function(){return u},TableScrollArea:function(){return m},useTableStyles:function(){return x}});var i=r(57437),t=r(2265),n=r(80072),o=r(58556),a=r(63197);let{StylesProvider:l,ClassNamesProvider:d,useRecipeResult:c,withContext:h,useStyles:x,PropsProvider:p}=(0,n.createSlotRecipeContext)({key:"table"}),j=(0,t.forwardRef)(function({native:e,...s},r){let{styles:n,props:h,classNames:x}=c(s),p=(0,t.useMemo)(()=>e?{...n.root,"& thead":n.header,"& tbody":n.body,"& tfoot":n.footer,"& thead th":n.columnHeader,"& tr":n.row,"& td":n.cell,"& caption":n.caption}:n.root,[n,e]);return(0,i.jsx)(d,{value:x,children:(0,i.jsx)(l,{value:n,children:(0,i.jsx)(o.chakra.table,{ref:r,...h,css:[p,s.css],className:(0,a.cx)(x?.root,s.className)})})})}),b=p,u=h("tr","row"),m=(0,o.chakra)("div",{base:{display:"block",whiteSpace:"nowrap",WebkitOverflowScrolling:"touch",overflow:"auto",maxWidth:"100%"}}),g=h("thead","header"),f=h("tfoot","footer"),T=h("th","columnHeader"),y=h("td","cell"),C=h("caption","caption",{defaultProps:{captionSide:"bottom"}}),S=h("tbody","body"),w=h("colgroup"),v=h("col")}},function(e){e.O(0,[212,956,109,972,669,210,971,117,744],function(){return e(e.s=56748)}),_N_E=e.O()}]);

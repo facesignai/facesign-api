@@ -18,96 +18,91 @@ import { ApiCodePanel } from '@/components/chakra/ApiCodePanel'
 import { CodeBlock } from '@/components/chakra/CodeBlock'
 import { useColorModeValue } from '@/components/ui/color-mode'
 
-// Define code examples for each endpoint
+// Define code examples for each endpoint (Dev by default)
 const endpointCodeExamples = {
   'create-session': {
-    curl: `curl -X POST https://api.facesign.ai/v1/sessions \\
+    curl: `curl -X POST https://api.dev.facesign.ai/sessions \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "flow_id": "flow_abc123",
-    "user_data": {
-      "email": "user@example.com",
-      "name": "John Doe"
+    "clientReferenceId": "user-123",
+    "metadata": { "source": "web-app" },
+    "flow": {
+      "nodes": [
+        { "id": "start", "type": "start" },
+        { "id": "greeting", "type": "conversation", "prompt": "Hello! What's your name?", "transitions": [{ "id": "t1", "condition": "true" }] },
+        { "id": "end", "type": "end" }
+      ],
+      "edges": [
+        { "id": "e1", "source": "start", "target": "greeting" },
+        { "id": "e2", "source": "greeting", "target": "end" }
+      ]
     }
   }'`,
-    javascript: `const session = await client.sessions.create({
-  flow_id: "flow_abc123",
-  user_data: {
-    email: "user@example.com",
-    name: "John Doe"
-  }
-});
-
-console.log("Session URL:", session.url);
-console.log("Session ID:", session.id);`,
-    python: `session = client.sessions.create(
-    flow_id="flow_abc123",
-    user_data={
-        "email": "user@example.com",
-        "name": "John Doe"
+    javascript: `const res = await fetch('https://api.dev.facesign.ai/sessions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    clientReferenceId: 'user-123',
+    metadata: { source: 'web-app' },
+    flow: {
+      nodes: [
+        { id: 'start', type: 'start' },
+        { id: 'greeting', type: 'conversation', prompt: "Hello! What's your name?", transitions: [{ id: 't1', condition: 'true' }] },
+        { id: 'end', type: 'end' }
+      ],
+      edges: [
+        { id: 'e1', source: 'start', target: 'greeting' },
+        { id: 'e2', source: 'greeting', target: 'end' }
+      ]
     }
-)
-
-print(f"Session URL: {session.url}")
-print(f"Session ID: {session.id}")`
+  })
+})
+const data = await res.json()
+console.log(data.session.id, data.clientSecret.url)`,
+    python: `import requests
+payload = {
+  "clientReferenceId": "user-123",
+  "metadata": {"source": "web-app"},
+  "flow": {
+    "nodes": [
+      {"id": "start", "type": "start"},
+      {"id": "greeting", "type": "conversation", "prompt": "Hello! What's your name?", "transitions": [{"id": "t1", "condition": "true"}]},
+      {"id": "end", "type": "end"}
+    ],
+    "edges": [
+      {"id": "e1", "source": "start", "target": "greeting"},
+      {"id": "e2", "source": "greeting", "target": "end"}
+    ]
+  }
+}
+r = requests.post('https://api.dev.facesign.ai/sessions', json=payload, headers={'Authorization': 'Bearer YOUR_API_KEY'})
+print(r.json()['session']['id'])`
   },
   'get-session': {
-    curl: `curl https://api.facesign.ai/v1/sessions/sess_abc123 \\
+    curl: `curl https://api.dev.facesign.ai/sessions/sess_abc123 \\
   -H "Authorization: Bearer YOUR_API_KEY"`,
-    javascript: `const session = await client.sessions.get("sess_abc123");
-
-console.log("Status:", session.status);
-console.log("Result:", session.result);`,
-    python: `session = client.sessions.get("sess_abc123")
-
-print(f"Status: {session.status}")
-print(f"Result: {session.result}")`
+    javascript: `const res = await fetch('https://api.dev.facesign.ai/sessions/sess_abc123', { headers: { Authorization: 'Bearer YOUR_API_KEY' }})
+const data = await res.json()
+console.log(data.session.status)`,
+    python: `import requests
+r = requests.get('https://api.dev.facesign.ai/sessions/sess_abc123', headers={'Authorization': 'Bearer YOUR_API_KEY'})
+print(r.json()['session']['status'])`
   },
   'list-sessions': {
-    curl: `curl "https://api.facesign.ai/v1/sessions?limit=20&status=complete" \\
+    curl: `curl "https://api.dev.facesign.ai/sessions?limit=20&status=complete" \\
   -H "Authorization: Bearer YOUR_API_KEY"`,
-    javascript: `const sessions = await client.sessions.list({
-  limit: 20,
-  status: "complete"
-});
-
-sessions.data.forEach(session => {
-  console.log(session.id, session.status);
-});`,
-    python: `sessions = client.sessions.list(
-    limit=20,
-    status="complete"
-)
-
-for session in sessions.data:
-    print(f"{session.id}: {session.status}")`
+    javascript: `const res = await fetch('https://api.dev.facesign.ai/sessions?limit=20&status=complete', { headers: { Authorization: 'Bearer YOUR_API_KEY' }})
+const data = await res.json()
+console.log(data.sessions.length, data.hasMore)`,
+    python: `import requests
+r = requests.get('https://api.dev.facesign.ai/sessions', params={'limit':20,'status':'complete'}, headers={'Authorization':'Bearer YOUR_API_KEY'})
+data = r.json()
+print(len(data['sessions']), data.get('hasMore'))`
   },
-  'list-flows': {
-    curl: `curl https://api.facesign.ai/v1/flows \\
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    javascript: `const flows = await client.flows.list();
-
-flows.data.forEach(flow => {
-  console.log(flow.name, flow.description);
-});`,
-    python: `flows = client.flows.list()
-
-for flow in flows.data:
-    print(f"{flow.name}: {flow.description}")`
-  },
-  'get-flow': {
-    curl: `curl https://api.facesign.ai/v1/flows/flow_abc123 \\
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    javascript: `const flow = await client.flows.get("flow_abc123");
-
-console.log("Flow name:", flow.name);
-console.log("Nodes:", flow.nodes.length);`,
-    python: `flow = client.flows.get("flow_abc123")
-
-print(f"Flow name: {flow.name}")
-print(f"Nodes: {len(flow.nodes)}")`
-  }
 }
 
 export default function ApiReferencePage() {
@@ -140,21 +135,7 @@ export default function ApiReferencePage() {
           />
         </Box>
 
-        {/* List Flows Code Example */}
-        <Box id="list-flows-code">
-          <ApiCodePanel
-            title="List Flows"
-            codeExamples={endpointCodeExamples['list-flows']}
-          />
-        </Box>
-
-        {/* Get Flow Code Example */}
-        <Box id="get-flow-code">
-          <ApiCodePanel
-            title="Get Flow"
-            codeExamples={endpointCodeExamples['get-flow']}
-          />
-        </Box>
+        {/* Flows are provided via Session Settings.flow; no standalone code panel needed */}
       </VStack>
     }>
       <VStack align="stretch" gap={12}>
@@ -178,10 +159,10 @@ export default function ApiReferencePage() {
         {/* Base URL */}
         <Box>
           <Heading as="h2" size="lg" mb={4}>
-            Base URL
+            Base URL (Dev)
           </Heading>
           <Box bg={codeBg} p={4} borderRadius="md">
-            <Code bg="transparent">https://api.facesign.ai/v1</Code>
+            <Code bg="transparent">https://api.dev.facesign.ai</Code>
           </Box>
         </Box>
 
@@ -247,12 +228,18 @@ export default function ApiReferencePage() {
               "200": {
                 description: "Success",
                 content: `{
-  "id": "sess_abc123",
-  "url": "https://verify.facesign.ai/s/sess_abc123",
-  "status": "created",
-  "flow_id": "flow_abc123",
-  "created_at": "2024-01-15T10:30:00Z",
-  "expires_at": "2024-01-15T11:30:00Z"
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1705314600,
+    "status": "requiresInput",
+    "settings": { /* ... */ }
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1705314600,
+    "expireAt": 1705316400,
+    "url": "https://verify.facesign.ai/s/sess_abc123"
+  }
 }`
               }
             }}
@@ -277,21 +264,18 @@ export default function ApiReferencePage() {
               "200": {
                 description: "Success",
                 content: `{
-  "id": "sess_abc123",
-  "url": "https://verify.facesign.ai/s/sess_abc123",
-  "status": "complete",
-  "flow_id": "flow_abc123",
-  "result": {
-    "verified": true,
-    "confidence": 0.98,
-    "checks": {
-      "document": "passed",
-      "biometric": "passed",
-      "liveness": "passed"
-    }
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1705314600,
+    "status": "processing",
+    "report": { /* optional fields */ }
   },
-  "created_at": "2024-01-15T10:30:00Z",
-  "completed_at": "2024-01-15T10:35:00Z"
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1705314600,
+    "expireAt": 1705316400,
+    "url": "https://verify.facesign.ai/s/sess_abc123"
+  }
 }`
               }
             }}
@@ -333,108 +317,32 @@ export default function ApiReferencePage() {
               "200": {
                 description: "Success",
                 content: `{
-  "data": [
-    {
-      "id": "sess_abc123",
-      "status": "complete",
-      "created_at": "2024-01-15T10:30:00Z"
-    },
-    {
-      "id": "sess_def456",
-      "status": "inprogress",
-      "created_at": "2024-01-15T10:25:00Z"
-    }
+  "sessions": [
+    { "id": "sess_abc123", "status": "complete", "createdAt": 1705314600 },
+    { "id": "sess_def456", "status": "processing", "createdAt": 1705314300 }
   ],
-  "has_more": true,
-  "total_count": 150
+  "hasMore": true,
+  "nextCursor": "cursor_abc",
+  "totalCount": 150
 }`
               }
             }}
           />
         </Box>
 
-        {/* Flows Endpoints */}
+        {/* Flows (concept only) */}
         <Box id="flows">
           <Heading as="h2" size="lg" mb={6}>
-            Flows
+            Flows (via Session Settings)
           </Heading>
-
-          {/* List Flows */}
-          <ApiEndpoint
-            id="list-flows"
-            method="GET"
-            path="/flows"
-            description="List all available verification flows"
-            responses={{
-              "200": {
-                description: "Success",
-                content: `{
-  "data": [
-    {
-      "id": "flow_abc123",
-      "name": "Standard KYC",
-      "description": "Document + Biometric verification",
-      "nodes": 5,
-      "created_at": "2024-01-01T00:00:00Z"
-    },
-    {
-      "id": "flow_def456",
-      "name": "Quick Verification",
-      "description": "Email + SMS verification only",
-      "nodes": 3,
-      "created_at": "2024-01-02T00:00:00Z"
-    }
-  ]
-}`
-              }
-            }}
-          />
-
-          {/* Get Flow */}
-          <ApiEndpoint
-            id="get-flow"
-            method="GET"
-            path="/flows/:id"
-            description="Get detailed information about a specific flow"
-            parameters={[
-              {
-                name: "id",
-                type: "string",
-                required: true,
-                description: "The flow ID",
-                example: "flow_abc123"
-              }
-            ]}
-            responses={{
-              "200": {
-                description: "Success",
-                content: `{
-  "id": "flow_abc123",
-  "name": "Standard KYC",
-  "description": "Complete identity verification flow",
-  "nodes": [
-    {
-      "id": "node_1",
-      "type": "conversation",
-      "config": {...}
-    },
-    {
-      "id": "node_2",
-      "type": "document_scan",
-      "config": {...}
-    }
-  ],
-  "edges": [
-    {
-      "from": "node_1",
-      "to": "node_2",
-      "condition": "success"
-    }
-  ]
-}`
-              }
-            }}
-          />
+          <Text color="gray.600" mb={4}>
+            Flows are configured by sending an <Code>FSFlow</Code> object in the
+            <Code ml={1}>session.settings.flow</Code> payload when creating a session. There are no
+            standalone <Code>/flows</Code> REST endpoints in the current API.
+          </Text>
+          <Text>
+            See the Sessions → Create Session example above for a minimal flow definition.
+          </Text>
         </Box>
 
         {/* Webhooks */}
@@ -496,8 +404,8 @@ export default function ApiReferencePage() {
           </Heading>
 
           <Text mb={4}>
-            All webhook requests include a signature in the <Code>X-FaceSign-Signature</Code> header.
-            Verify this signature to ensure the webhook is from FaceSign.
+            All webhook requests include a cryptographic signature header. Verify this signature with
+            your webhook secret to ensure the request is from FaceSign.
           </Text>
 
           <Box
@@ -510,22 +418,18 @@ export default function ApiReferencePage() {
             }}
             mb={6}
           >
-            <CodeBlock
-              code={`import crypto from 'crypto';
+              <CodeBlock
+                code={`import crypto from 'crypto';
 
 function verifyWebhookSignature(payload, signature, secret) {
-  const expectedSignature = crypto
+  const expected = crypto
     .createHmac('sha256', secret)
-    .update(JSON.stringify(payload))
+    .update(payload)
     .digest('hex');
-
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from('sha256=' + expectedSignature)
-  );
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
 }`}
-              language="javascript"
-            />
+                language="javascript"
+              />
           </Box>
         </Box>
 
