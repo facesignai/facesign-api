@@ -22,6 +22,7 @@ import { useColorModeValue } from '@/components/ui/color-mode'
 import refreshSessionFixture from '@/examples/refresh_session.json'
 import langsFixture from '@/examples/langs.json'
 import avatarsFixture from '@/examples/avatars.json'
+import { OpenApiRenderer } from '@/components/chakra/OpenApiRenderer'
 
 // Define code examples for each endpoint (Dev by default)
 const endpointCodeExamples = {
@@ -236,6 +237,7 @@ export default function ApiReferencePage() {
               }
             }}
           />
+          <OpenApiRenderer spec={require('@/public/openapi.json')} path="/sessions" method="post" />
 
           {/* Get Session */}
           <ApiEndpoint
@@ -259,6 +261,7 @@ export default function ApiReferencePage() {
               }
             }}
           />
+          <OpenApiRenderer spec={require('@/public/openapi.json')} path="/sessions/{sessionId}" method="get" />
 
           {/* List Sessions */}
           <ApiEndpoint
@@ -299,6 +302,7 @@ export default function ApiReferencePage() {
               }
             }}
           />
+          <OpenApiRenderer spec={require('@/public/openapi.json')} path="/sessions" method="get" />
         </Box>
 
         {/* Flows (concept only) */}
@@ -341,6 +345,7 @@ export default function ApiReferencePage() {
               }
             }}
           />
+          <OpenApiRenderer spec={require('@/public/openapi.json')} path="/sessions/{sessionId}/refresh" method="get" />
         </Box>
 
         {/* Languages */}
@@ -362,6 +367,7 @@ export default function ApiReferencePage() {
               },
             }}
           />
+          <OpenApiRenderer spec={require('@/public/openapi.json')} path="/langs" method="get" />
         </Box>
 
         {/* Avatars */}
@@ -383,6 +389,7 @@ export default function ApiReferencePage() {
               },
             }}
           />
+          <OpenApiRenderer spec={require('@/public/openapi.json')} path="/avatars" method="get" />
         </Box>
 
         {/* Webhooks */}
