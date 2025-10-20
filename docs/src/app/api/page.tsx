@@ -15,6 +15,7 @@ import {
 import { ApiReferenceLayout } from '@/components/chakra/ApiReferenceLayout'
 import { ApiEndpoint } from '@/components/chakra/ApiEndpoint'
 import { ApiCodePanel } from '@/components/chakra/ApiCodePanel'
+import sessionsListFixture from '@/examples/sessions_list.json'
 import { useColorModeValue } from '@/components/ui/color-mode'
 
 // Define code examples for each endpoint (Dev by default)
@@ -315,15 +316,7 @@ export default function ApiReferencePage() {
             responses={{
               "200": {
                 description: "Success",
-                content: `{
-  "sessions": [
-    { "id": "sess_abc123", "status": "complete", "createdAt": 1705314600 },
-    { "id": "sess_def456", "status": "processing", "createdAt": 1705314300 }
-  ],
-  "hasMore": true,
-  "nextCursor": "cursor_abc",
-  "totalCount": 150
-}`
+                content: JSON.stringify(sessionsListFixture, null, 2)
               }
             }}
           />
