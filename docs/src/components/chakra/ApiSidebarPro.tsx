@@ -76,41 +76,31 @@ const navigation: NavSection[] = [
     ],
   },
   {
-    title: 'Endpoints',
-    items: [
-      { label: 'Sessions', href: '/api#sessions' },
-      { label: 'Flows', href: '/api#flows' },
-      { label: 'Webhooks', href: '/api#webhooks' },
-    ],
-  },
-  {
-    title: 'Session Operations',
+    title: 'Sessions',
     items: [
       { label: 'Create Session', href: '/api#create-session', method: 'POST' },
       { label: 'Get Session', href: '/api#get-session', method: 'GET' },
       { label: 'List Sessions', href: '/api#list-sessions', method: 'GET' },
-      { label: 'Update Session', href: '/api#update-session', method: 'PATCH' },
-      { label: 'Delete Session', href: '/api#delete-session', method: 'DELETE' },
+      { label: 'Refresh Session', href: '/api#refresh-session', method: 'GET' },
     ],
   },
   {
-    title: 'Flow Operations',
+    title: 'Languages',
     items: [
-      { label: 'List Flows', href: '/api#list-flows', method: 'GET' },
-      { label: 'Get Flow', href: '/api#get-flow', method: 'GET' },
-      { label: 'Create Flow', href: '/api#create-flow', method: 'POST' },
-      { label: 'Update Flow', href: '/api#update-flow', method: 'PUT' },
-      { label: 'Delete Flow', href: '/api#delete-flow', method: 'DELETE' },
+      { label: 'Get Languages', href: '/api#langs', method: 'GET' },
+    ],
+  },
+  {
+    title: 'Avatars',
+    items: [
+      { label: 'Get Avatars', href: '/api#avatars', method: 'GET' },
     ],
   },
   {
     title: 'Webhook Events',
     items: [
       { label: 'Event Types', href: '/api#webhook-events' },
-      { label: 'Signature Verification', href: '/api#webhook-signature' },
-      { label: 'Event Payloads', href: '/api#webhook-payloads' },
-      { label: 'Subscribe', href: '/api#webhook-subscribe', method: 'POST' },
-      { label: 'Unsubscribe', href: '/api#webhook-unsubscribe', method: 'DELETE' },
+      { label: 'Verifying events', href: '/api#webhook-verification' },
     ],
   },
 ]

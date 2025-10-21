@@ -12,249 +12,31 @@ Sessions are the core of FaceSign's identity verification platform. A session re
   See API Reference for endpoints: <a href="/api#create-session">Create</a>, <a href="/api#get-session">Retrieve</a>, <a href="/api#list-sessions">List</a>, and <a href="/api#refresh-client-secret">Client secret</a>. For building flows, see <a href="/flows/mapping">Flow Builder → FSFlow Mapping</a>.
 </Note>
 
+<Note>
+  Related objects: <a href="/sessions/object">The Session object</a> and <a href="/sessions/client-secret">The Client Secret object</a>.
+</Note>
+
 ## How FaceSign Sessions Work
 
-FaceSign sessions work similarly to how Stripe handles payments. When you integrate FaceSign:
+<Row>
+  <Col>
 
-1. **Create a session** using the FaceSign API and get a session object + client secret
-2. **Save the session** to your own database for tracking
-3. **Provide the client secret** to the FaceSign frontend (web or mobile)
-4. **Listen for webhooks** that inform you about session progress and completion
-5. **Update your database** when webhooks arrive with the latest session status
-6. **Build your app logic** using the session data stored in your database
+FaceSign sessions work similarly to how Stripe handles payments. When you integrate FaceSign, you create a session using the API and get a session object plus client secret, save the session to your database for tracking, provide the client secret to the FaceSign frontend, listen for webhooks that inform you about session progress, and update your database when webhooks arrive.
 
-This approach gives you several benefits:
-- **Faster performance** - No need to call external APIs repeatedly
-- **Better reliability** - Your app doesn't depend on external API availability
-- **Enhanced control** - All verification data is available in your database for queries and business logic
-- **Audit trail** - Complete history of verification attempts and results
+This approach gives you faster performance (no repeated API calls), better reliability (your app doesn't depend on external API availability), enhanced control (all verification data is in your database), and a complete audit trail.
 
----
-
-## Create a session
-
-<ApiEndpoint 
-  method="POST" 
-  path="/v1/sessions" 
-  description="Create a new verification session with specified modules or custom flow">
-
-Create a verification session by providing configuration settings. You can use either a custom flow (recommended) or legacy modules for simple use cases, but not both.
-
-<CodeGroup>
-
-```typescript {{ title: 'Using Legacy Modules' }}
-const session = await client.sessions.create({
-  clientReferenceId: 'user-123',
-  metadata: { userId: '123', source: 'web' },
-  modules: [
-    { type: 'identityVerification' },
-    { type: 'documentAuthentication' }
-  ],
-  customization: {
-    branding: {
-      primaryColor: '#007bff',
-      logoUrl: 'https://your-domain.com/logo.png'
-    }
-  }
-})
-```
-
-```typescript {{ title: 'Using Custom Flow' }}
-const session = await client.sessions.create({
-  clientReferenceId: 'user-456',
-  flow: {
-    nodes: [
-      { id: 'start', type: 'start' },
-      { 
-        id: 'liveness', 
-        type: 'liveness_detection',
-        outcomes: {
-          livenessDetected: 'document',
-          deepfakeDetected: 'end'
-        }
-      },
-      { id: 'document', type: 'document_scan' },
-      { id: 'end', type: 'end' }
-    ],
-    edges: [
-      { id: 'e1', source: 'start', target: 'liveness' },
-      { id: 'e2', source: 'liveness', target: 'document' },
-      { id: 'e3', source: 'document', target: 'end' }
-    ]
-  }
-})
-```
-
-```bash {{ title: 'cURL' }}
-curl https://api.dev.facesign.ai/sessions \
-  -H "Authorization: Bearer $FACESIGN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "clientReferenceId": "user-123",
-    "metadata": { "source": "docs" },
-    "flow": {
-      "nodes": [
-        { "id": "start", "type": "start" },
-        { "id": "end", "type": "end" }
-      ],
-      "edges": [
-        { "id": "e1", "source": "start", "target": "end" }
-      ]
-    }
-  }'
-```
-
-</CodeGroup>
-
-<ResponsePreview 
-  responses={[
-    {
-      status: 201,
-      description: "Session created successfully",
-      example: {
-        id: "vs_1a2b3c4d5e6f",
-        clientSecret: "vs_1a2b3c4d5e6f_secret_abc123def456",
-        createdAt: 1640995200,
-        status: "requiresInput",
-        settings: {
-          clientReferenceId: "user-123",
-          metadata: { userId: "123", source: "web" },
-          modules: [
-            { type: "identityVerification" },
-            { type: "documentAuthentication" }
-          ]
-        },
-        version: "2024-12-18"
-      }
-    },
-    {
-      status: 400,
-      description: "Invalid request parameters",
-      example: {
-        error: {
-          type: "invalid_request_error",
-          message: "Cannot specify both modules and flow in the same request",
-          param: "modules"
-        }
-      }
-    }
-  ]}
-/>
-
- </ApiEndpoint>
-
----
-
-## The session model
-
-The session model contains all the information about a verification session, including its configuration, status, and results.
-
-### Properties
-
-<Properties>
-  <Property name="id" type="string">
-    Unique identifier for the session.
-  </Property>
-  <Property name="createdAt" type="number">
-    Unix timestamp when the session was created.
-  </Property>
-  <Property name="startedAt" type="number">
-    Unix timestamp when the user began the verification flow.
-  </Property>
-  <Property name="finishedAt" type="number">
-    Unix timestamp when the session was completed or cancelled.
-  </Property>
-  <Property name="status" type="string">
-    Current status: `requiresInput`, `processing`, `complete`, or `canceled`.
-  </Property>
-  <Property name="settings" type="object">
-    Configuration object containing modules, customization, and flow settings.
-  </Property>
-  <Property name="version" type="string">
-    API version used for this session.
-  </Property>
-  <Property name="report" type="object">
-    Results of the verification including AI analysis, extracted data, and verification status.
-  </Property>
-</Properties>
-
-### Session Settings
-
-<Properties>
-  <Property name="clientReferenceId" type="string">
-    Your internal reference ID to link this session to your user.
-  </Property>
-  <Property name="metadata" type="object">
-    Key-value pairs for storing additional information about the session.
-  </Property>
-  <Property name="initialPhrase" type="string">
-    Optional custom greeting message for the AI avatar.
-  </Property>
-  <Property name="finalPhrase" type="string">
-    Optional custom closing message for the AI avatar.
-  </Property>
-  <Property name="providedData" type="object">
-    Pre-filled data to pass to the verification flow.
-  </Property>
-  <Property name="avatarId" type="string">
-    ID of the AI avatar to use for conversational interactions.
-  </Property>
-  <Property name="langs" type="array">
-    Array of supported language codes for this session.
-  </Property>
-  <Property name="defaultLang" type="string">
-    Default language code if user's preference isn't available.
-  </Property>
-  <Property name="zone" type="string">
-    Geographic zone: `es` (United States) or `eu` (European Union).
-  </Property>
-  <Property name="modules" type="array">
-    Array of legacy verification modules to include in this session (use flow instead for new implementations).
-  </Property>
-  <Property name="flow" type="object">
-    Custom node-based flow definition (recommended for new implementations).
-  </Property>
-  <Property name="customization" type="object">
-    UI customization options including colors, fonts, and branding.
-  </Property>
-</Properties>
-
-### Session Report
-
-When a session is completed, the `report` object contains detailed verification results:
-
-<Properties>
-  <Property name="transcript" type="array">
-    Conversation transcript between user and AI avatar.
-  </Property>
-  <Property name="aiAnalysis" type="object">
-    AI-powered analysis including age estimation, gender detection, and authenticity assessment.
-  </Property>
-  <Property name="location" type="object">
-    User's location information (if available and consented).
-  </Property>
-  <Property name="device" type="object">
-    Device information and browser details.
-  </Property>
-  <Property name="livenessDetected" type="boolean">
-    Whether liveness was detected during biometric verification.
-  </Property>
-  <Property name="lang" type="string">
-    Language used during the verification session.
-  </Property>
-  <Property name="extractedData" type="object">
-    Data extracted from documents or user input during verification.
-  </Property>
-  <Property name="screenshots" type="array">
-    Array of screenshot URLs captured during verification.
-  </Property>
-  <Property name="videos" type="object">
-    URLs for avatar and user video recordings.
-  </Property>
-  <Property name="isVerified" type="boolean">
-    Overall verification result - true if verification was successful.
-  </Property>
-</Properties>
+  </Col>
+  <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
+        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
+        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
+        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
+      ]}
+    />
+  </Col>
+</Row>
 
 ---
 
@@ -313,6 +95,23 @@ When a session is completed, the `report` object contains detailed verification 
 
   </Col>
   <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
+        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
+        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
+        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
+      ]}
+    />
+  </Col>
+</Row>
+
+---
+
+## Create a session {{ tag: 'POST', label: '/sessions' }}
+
+<Row>
+  <Col>
 
     <CodeGroup title="Request" tag="POST" label="/sessions">
 

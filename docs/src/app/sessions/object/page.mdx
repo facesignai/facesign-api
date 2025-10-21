@@ -1,0 +1,69 @@
+export const metadata = {
+  title: 'The Session object',
+  description: 'Attributes and example of the Session object.',
+}
+
+# The Session object
+
+<Row>
+  <Col>
+    ### Attributes
+
+    <Properties>
+      <Property name="id" type="string">Unique identifier for the session.</Property>
+      <Property name="createdAt" type="number">Unix timestamp when created.</Property>
+      <Property name="startedAt" type="number" nullable>Unix timestamp when user started.</Property>
+      <Property name="finishedAt" type="number" nullable>Unix timestamp when finished or cancelled.</Property>
+      <Property name="status" type="string">One of `requiresInput`, `processing`, `complete`, `canceled`.</Property>
+      <Property name="settings" type="object">
+        <Details summary="Show child attributes">
+          <Properties>
+            <Property name="clientReferenceId" type="string">Your internal reference.</Property>
+            <Property name="metadata" type="object">Custom key-value pairs.</Property>
+            <Property name="defaultLang" type="string">Default language code.</Property>
+            <Property name="zone" type="string">`es` or `eu`.</Property>
+            <Property name="modules" type="array" nullable>Legacy modules (use `flow` for new builds).</Property>
+            <Property name="flow" type="object" nullable>Custom FSFlow definition.</Property>
+            <Property name="customization" type="object" nullable>Branding/theme settings.</Property>
+          </Properties>
+        </Details>
+      </Property>
+      <Property name="report" type="object" nullable>
+        <Details summary="Show child attributes">
+          <Properties>
+            <Property name="isVerified" type="boolean">Overall verification result.</Property>
+            <Property name="extractedData" type="object" nullable>Structured data extracted.</Property>
+            <Property name="aiAnalysis" type="object" nullable>AI analysis summary.</Property>
+          </Properties>
+        </Details>
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
+        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
+        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
+        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
+      ]}
+    />
+    
+    ```json {{ title: 'The Session object' }}
+    {
+      "id": "sess_abc123",
+      "createdAt": 1705314600,
+      "status": "requiresInput",
+      "settings": {
+        "clientReferenceId": "user-123",
+        "metadata": { "source": "docs" },
+        "defaultLang": "en",
+        "zone": "es",
+        "flow": { "nodes": [{"id":"start","type":"start"},{"id":"end","type":"end"}], "edges":[{"id":"e1","source":"start","target":"end"}] }
+      }
+    }
+    ```
+  </Col>
+</Row>
+
+

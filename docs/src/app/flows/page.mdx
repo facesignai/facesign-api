@@ -17,6 +17,9 @@ export const sections = [
 
 Build sophisticated verification experiences with FaceSign's node-based flow system. Create conditional verification paths, implement complex business logic, and design user experiences that adapt to different scenarios. {{ className: 'lead' }}
 
+<Row>
+  <Col>
+
 ## Overview {{ anchor: false }}
 
 While the verification modules provide a simple way to configure common verification patterns, custom flows give you complete control over the verification process. Flows are built using a node-graph system where:
@@ -416,3 +419,15 @@ const session = await client.sessions.create({
 <Note>
   Custom flows give you powerful control over the verification process, but with that comes responsibility. Make sure to test all possible paths and edge cases to ensure a smooth user experience.
 </Note>
+
+  </Col>
+  <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
+        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
+        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
+      ]}
+    />
+  </Col>
+</Row>

@@ -266,16 +266,25 @@ const usePreferredLanguageStore = create<{
   preferredLanguages: Array<string>
   addPreferredLanguage: (language: string) => void
 }>()((set) => ({
-  preferredLanguages: [],
+  preferredLanguages:
+    (typeof window !== 'undefined' &&
+      JSON.parse(window.localStorage.getItem('fs-docs.langs') || '[]')) || [],
   addPreferredLanguage: (language) =>
-    set((state) => ({
-      preferredLanguages: [
+    set((state) => {
+      const next = [
         ...state.preferredLanguages.filter(
           (preferredLanguage) => preferredLanguage !== language,
         ),
         language,
-      ],
-    })),
+      ]
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('fs-docs.langs', JSON.stringify(next))
+        if (!window.localStorage.getItem('fs-docs.lang')) {
+          window.localStorage.setItem('fs-docs.lang', language)
+        }
+      }
+      return { preferredLanguages: next }
+    }),
 }))
 
 function useTabGroupProps(availableLanguages: Array<string>) {

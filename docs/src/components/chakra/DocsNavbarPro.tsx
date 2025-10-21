@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Flex, HStack, IconButton, Link, Menu, Portal } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, Menu, Portal } from '@chakra-ui/react'
 import { useState } from 'react'
 import { LuMenu } from 'react-icons/lu'
 import { FiBook, FiCode, FiGithub } from 'react-icons/fi'
@@ -77,7 +77,9 @@ export function DocsNavbarPro() {
     } catch (e) {
       try {
         await navigator.clipboard.writeText(document.body.innerText)
-      } catch {}
+      } catch {
+        // Silently fail if clipboard access is denied
+      }
     }
   }
 
@@ -151,17 +153,26 @@ export function DocsNavbarPro() {
               </IconButton>
 
               {/* GitHub link */}
-              <IconButton
-                as="a"
-                href="https://github.com/facesignai/api"
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="ghost"
-                size="sm"
-                aria-label="GitHub"
+              <Box
+                asChild
+                display="inline-flex"
+                alignItems="center"
+                justifyContent="center"
+                w="var(--sizes-10)"
+                h="var(--sizes-10)"
+                borderRadius="md"
+                cursor="pointer"
+                _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}
               >
-                <FiGithub />
-              </IconButton>
+                <a
+                  href="https://github.com/facesignai/api"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                >
+                  <FiGithub />
+                </a>
+              </Box>
 
               {/* Theme toggle */}
               <ColorModeButton size="sm" />

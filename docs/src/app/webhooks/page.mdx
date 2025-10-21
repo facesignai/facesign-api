@@ -7,6 +7,9 @@ export const metadata = {
 
 Webhooks allow you to receive real-time HTTP notifications when events happen in your FaceSign account. Rather than polling the API for updates, webhooks push data to your endpoint as soon as an event occurs. {{ className: 'lead' }}
 
+<Row>
+  <Col>
+
 ## Setting up webhooks
 
 To start receiving webhooks:
@@ -363,4 +366,13 @@ Now that you understand webhooks, explore these related topics:
   <Button href="/node-graph" variant="text" arrow="right">
     Customize verification flows
   </Button>
-</div>
+  </div>
+  </Col>
+  <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
+      ]}
+    />
+  </Col>
+</Row>

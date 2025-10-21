@@ -38,6 +38,7 @@ interface ApiEndpointProps {
     }
   }
   id?: string
+  showResponsesLeft?: boolean
 }
 
 const methodColors = {
@@ -95,6 +96,7 @@ export function ApiEndpoint({
   requestBody,
   responses,
   id,
+  showResponsesLeft = true,
 }: ApiEndpointProps) {
   return (
     <Box id={id} scrollMarginTop="80px" mb={12}>
@@ -172,7 +174,7 @@ export function ApiEndpoint({
         )}
 
         {/* Responses Section - Using Chakra Pro code-block-002 */}
-        {responses && (
+        {showResponsesLeft && responses && (
           <Box>
             <Heading size="md" mb={5}>
               Responses

@@ -9,6 +9,7 @@ import { ResponsePreview } from '@/components/ResponsePreview'
 import { ApiPlayground } from '@/components/ApiPlayground'
 import { CollapsibleSection } from '@/components/CollapsibleSection'
 import { DocsLayout } from '@/components/chakra/DocsLayout'
+import { ApiEndpointsCard } from '@/components/chakra/ApiEndpointsCard'
 
 export const a = Link
 export { Button } from '@/components/Button'
@@ -170,4 +171,4 @@ export function Property({
 }
 
 // Export new components for use in MDX
-export { ApiEndpoint, FlowDiagram, ResponsePreview, ApiPlayground, CollapsibleSection }
+export { ApiEndpoint, FlowDiagram, ResponsePreview, ApiPlayground, CollapsibleSection, ApiEndpointsCard }

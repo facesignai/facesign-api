@@ -1,10 +1,10 @@
 {
   "session": {
-    "id": "fL8SeQvSP0rRs8JCOMvO",
-    "createdAt": 1760989572190,
+    "id": "wYnM6hrxSPvj4y5xJwaF",
+    "createdAt": 1761001508335,
     "status": "created",
     "settings": {
-      "clientReferenceId": "fixture-user-123",
+      "clientReferenceId": "docs_fixture",
       "metadata": {
         "source": "fixture"
       },
@@ -36,9 +36,9 @@
     }
   },
   "clientSecret": {
-    "secret": "csdc2c87ba38b54c9b8bc81314c654992c",
-    "createdAt": 1760989572190,
-    "url": "https://session.dev.facesign.ai?cs=csdc2c87ba38b54c9b8bc81314c654992c",
-    "expireAt": 1760996772190
+    "secret": "csea61d44d88d345e1b91622820bb73100",
+    "createdAt": 1761001508335,
+    "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100",
+    "expireAt": 1761008708335
   }
 }

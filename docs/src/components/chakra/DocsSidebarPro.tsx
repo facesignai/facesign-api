@@ -77,7 +77,10 @@ const navigation: NavSection[] = [
     title: 'Core Concepts',
     items: [
       { label: 'Sessions', href: '/docs#sessions' },
+      { label: 'The Session object', href: '/sessions/object' },
+      { label: 'The Client Secret object', href: '/sessions/client-secret' },
       { label: 'Flows', href: '/docs#flows' },
+      { label: 'The FSNode object', href: '/flows/fsnode' },
       { label: 'Modules', href: '/docs#modules' },
       { label: 'Webhooks', href: '/docs#webhooks' },
     ],

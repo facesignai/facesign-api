@@ -8,7 +8,7 @@ import { ReactNode } from 'react'
 
 interface ApiReferenceLayoutProps {
   children: ReactNode
-  codePanel: ReactNode
+  codePanel?: ReactNode
 }
 
 export function ApiReferenceLayout({ children, codePanel }: ApiReferenceLayoutProps) {
@@ -28,23 +28,24 @@ export function ApiReferenceLayout({ children, codePanel }: ApiReferenceLayoutPr
         <Box
           flex="1"
           minW="0"
-          ml={{ base: 0, lg: '280px' }}
-          py={8}
-          px={{ base: 6, md: 10, lg: 12 }}
+          py={6}
+          px={{ base: 5, md: 8, lg: 10 }}
         >
           {children}
         </Box>
 
-        {/* Right Panel - Code Examples */}
-        <Box
-          flex="1"
-          minW="0"
-          display={{ base: 'none', xl: 'block' }}
-          py={8}
-          pr={12}
-        >
-          {codePanel}
-        </Box>
+        {/* Right Panel - Code Examples (optional) */}
+        {codePanel ? (
+          <Box
+            flex="1"
+            minW="0"
+            display={{ base: 'none', xl: 'block' }}
+            py={6}
+            pr={10}
+          >
+            {codePanel}
+          </Box>
+        ) : null}
       </Flex>
     </Box>
   )

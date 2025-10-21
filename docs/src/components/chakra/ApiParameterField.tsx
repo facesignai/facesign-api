@@ -3,12 +3,15 @@
 import {
   Badge,
   Box,
-  Code,
+  Flex,
+  Heading,
   HStack,
+  Link,
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { useColorModeValue } from '@/components/ui/color-mode'
+import { useId } from 'react'
+import { LuLink } from 'react-icons/lu'
 
 interface ApiParameterFieldProps {
   name: string
@@ -27,78 +30,78 @@ export function ApiParameterField({
   example,
   children
 }: ApiParameterFieldProps) {
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const bgHover = useColorModeValue('gray.50', 'gray.800')
-  const codeBg = useColorModeValue('gray.100', 'gray.900')
+  const generatedId = useId()
+  const anchorId = `param-${generatedId}`
 
   return (
-    <Box
-      borderWidth="1px"
-      borderColor={borderColor}
-      borderRadius="lg"
-      p={4}
-      mb={3}
-      transition="all 0.2s"
-      _hover={{
-        bg: bgHover,
-        borderColor: useColorModeValue('gray.300', 'gray.600')
-      }}
-    >
-      <VStack align="stretch" gap={3}>
-        <HStack justify="space-between">
-          <HStack gap={2}>
-            <Code
-              size="sm"
-              fontWeight="semibold"
-              colorPalette="blue"
-              variant="subtle"
-            >
-              {name}
-            </Code>
-            <Badge
-              size="sm"
-              colorPalette="purple"
-              variant="subtle"
-            >
-              {type}
-            </Badge>
-            {required && (
-              <Badge
-                size="sm"
-                colorPalette="red"
-                variant="subtle"
+    <Box pt="2.5" pb="5" my="2.5" borderBottomWidth="1px" borderColor="border.muted">
+      <Flex
+        textStyle="sm"
+        fontFamily="mono"
+        position="relative"
+        alignItems="flex-start"
+        id={anchorId}
+        _hover={{ '& .anchor-link': { opacity: 1 } }}
+      >
+        <VStack flex="1" align="stretch" mr="5">
+          <HStack align="center" wrap="wrap" gap="2" py="0.5">
+            <Box position="absolute" top="-1.5">
+              <Link
+                py="2"
+                ml="-10"
+                border="0"
+                opacity="0"
+                display="flex"
+                href={`#${anchorId}`}
+                alignItems="center"
+                className="anchor-link"
+                transition="opacity 0.2s"
               >
-                required
-              </Badge>
-            )}
-          </HStack>
-        </HStack>
-
-        <Text fontSize="sm" color="fg.muted">
-          {description}
-        </Text>
-
-        {example && (
-          <Box>
-            <Text fontSize="xs" fontWeight="medium" mb={2} color="fg.muted">
-              Example:
-            </Text>
-            <Box
-              bg={codeBg}
-              p={3}
-              borderRadius="md"
-              fontSize="xs"
-              fontFamily="mono"
-            >
-              <Code fontSize="xs" bg="transparent">
-                {example}
-              </Code>
+                <Flex
+                  w="6"
+                  h="6"
+                  rounded="md"
+                  color="fg.muted"
+                  borderWidth="1px"
+                  alignItems="center"
+                  transition="all 0.2s"
+                  justifyContent="center"
+                  borderColor="border.muted"
+                >
+                  <Box as={LuLink} boxSize="3" />
+                </Flex>
+              </Link>
             </Box>
-          </Box>
-        )}
 
-        {children}
-      </VStack>
+            <Text cursor="pointer" color={{ base: 'blue.600', _dark: 'blue.300' }} fontWeight="semibold" wordBreak="break-all">
+              {name}
+            </Text>
+
+            <HStack gap="2" textStyle="xs" fontWeight="medium">
+              <Badge variant="surface" size="sm">
+                {type}
+              </Badge>
+              {required && (
+                <Badge size="sm" variant="surface" colorPalette="red">
+                  required
+                </Badge>
+              )}
+            </HStack>
+          </HStack>
+        </VStack>
+      </Flex>
+      <Text mt="4" textStyle="sm" color="fg.muted">
+        {description}
+      </Text>
+
+      {example && (
+        <Box mt="3" textStyle="xs" color="fg.muted">
+          <Heading as="span" size="xs" fontWeight="medium" mr="2">Example:</Heading>
+          <Text as="span" fontFamily="mono">{example}</Text>
+        </Box>
+      )}
+
+      {children}
     </Box>
   )
 }

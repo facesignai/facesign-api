@@ -1,0 +1,39 @@
+export const metadata = {
+  title: 'The FSNode object',
+  description: 'Node types available for FSFlow and their core attributes.',
+}
+
+# The FSNode object
+
+<Row>
+  <Col>
+    ### Node types
+    <Properties>
+      <Property name="type" type="enum">
+        One of `start`, `end`, `conversation`, `liveness_detection`, `enter_email`, `data_validation`, `document_scan`, `recognition`, `face_scan`, `two_factor`.
+      </Property>
+      <Property name="id" type="string">Unique identifier within the flow.</Property>
+    </Properties>
+
+    ### Minimal flow JSON
+    ```json
+    {
+      "nodes": [
+        { "id": "start", "type": "start", "outcome": "conv1" },
+        { "id": "conv1", "type": "conversation", "prompt": "Hello!", "outcomes": [{ "id": "any", "targetNodeId": "end", "condition": "true" }] },
+        { "id": "end", "type": "end" }
+      ],
+      "edges": [ { "id": "e1", "source": "start", "target": "conv1" }, { "id": "e2", "source": "conv1", "target": "end" } ]
+    }
+    ```
+  </Col>
+  <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
+      ]}
+    />
+  </Col>
+</Row>
+
+

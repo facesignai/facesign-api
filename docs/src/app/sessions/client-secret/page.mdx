@@ -1,0 +1,37 @@
+export const metadata = {
+  title: 'The Client Secret object',
+  description: 'Attributes and example of the Client Secret object.',
+}
+
+# The Client Secret object
+
+<Row>
+  <Col>
+    ### Attributes
+
+    <Properties>
+      <Property name="secret" type="string">Opaque token used by the hosted verification UI.</Property>
+      <Property name="createdAt" type="number">Unix timestamp when created.</Property>
+      <Property name="expireAt" type="number">Unix timestamp when the client secret expires (typically ~1h).</Property>
+      <Property name="url" type="string">Hosted verification URL containing the client secret.</Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+    <ApiEndpointsCard
+      items={[
+        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
+      ]}
+    />
+
+    ```json {{ title: 'The Client Secret object' }}
+    {
+      "secret": "cs_abc123",
+      "createdAt": 1705314600,
+      "expireAt": 1705318200,
+      "url": "https://verify.facesign.ai/?client_secret=cs_abc123"
+    }
+    ```
+  </Col>
+</Row>
+
+

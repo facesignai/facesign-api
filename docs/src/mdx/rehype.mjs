@@ -2,13 +2,13 @@ import { slugifyWithCounter } from '@sindresorhus/slugify'
 import * as acorn from 'acorn'
 import { toString } from 'mdast-util-to-string'
 import { mdxAnnotations } from 'mdx-annotations'
-import shiki from 'shiki'
+import { createHighlighter } from 'shiki'
 import { visit } from 'unist-util-visit'
 
 function rehypeParseCodeBlocks() {
   return (tree) => {
     visit(tree, 'element', (node, _nodeIndex, parentNode) => {
-      if (node.tagName === 'code') {
+      if (node.tagName === 'code' && parentNode?.properties) {
         parentNode.properties.language = node.properties.className
           ? node.properties?.className[0]?.replace(/^language-/, '')
           : 'txt'
@@ -22,7 +22,10 @@ let highlighter
 function rehypeShiki() {
   return async (tree) => {
     highlighter =
-      highlighter ?? (await shiki.getHighlighter({ theme: 'css-variables' }))
+      highlighter ?? (await createHighlighter({
+        themes: ['github-light', 'github-dark'],
+        langs: ['javascript', 'typescript', 'jsx', 'tsx', 'bash', 'shell', 'json', 'html', 'css', 'python', 'diff']
+      }))
 
     visit(tree, 'element', (node) => {
       if (node.tagName === 'pre' && node.children[0]?.tagName === 'code') {
@@ -32,18 +35,23 @@ function rehypeShiki() {
         node.properties.code = textNode.value
 
         if (node.properties.language) {
-          let tokens = highlighter.codeToThemedTokens(
-            textNode.value,
-            node.properties.language,
-          )
+          try {
+            let html = highlighter.codeToHtml(textNode.value, {
+              lang: node.properties.language,
+              theme: 'github-light'
+            })
 
-          textNode.value = shiki.renderToHtml(tokens, {
-            elements: {
-              pre: ({ children }) => children,
-              code: ({ children }) => children,
-              line: ({ children }) => `<span>${children}</span>`,
-            },
-          })
+            // Extract just the code content, removing <pre> and <code> wrappers
+            // The generated HTML is: <pre class="..."><code>...</code></pre>
+            // We want just the inner content wrapped in spans
+            let match = html.match(/<code[^>]*>([\s\S]*?)<\/code>/)
+            if (match) {
+              textNode.value = match[1]
+            }
+          } catch (e) {
+            // If language is not supported, leave the code as-is
+            console.warn(`Shiki: Unsupported language "${node.properties.language}"`)
+          }
         }
       }
     })

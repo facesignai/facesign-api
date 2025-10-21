@@ -16,18 +16,20 @@ interface CodeBlockProps {
   language?: string
   title?: string
   showLineNumbers?: boolean
+  variant?: 'request' | 'response'
 }
 
 export function CodeBlock({
   code,
   language = 'javascript',
   title,
-  showLineNumbers = false
+  showLineNumbers = false,
+  variant = 'request'
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false)
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
+  const bgColor = useColorModeValue(variant === 'response' ? 'gray.50' : 'gray.50', 'gray.900')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const headerBg = useColorModeValue('gray.100', 'gray.800')
+  const headerBg = useColorModeValue('gray.50', 'gray.900')
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code)
@@ -44,7 +46,7 @@ export function CodeBlock({
       borderRadius="lg"
       overflow="hidden"
     >
-      {title && (
+      {(title || variant === 'response') && (
         <HStack
           justify="space-between"
           px={4}
@@ -54,9 +56,9 @@ export function CodeBlock({
           bg={headerBg}
         >
           <Text fontSize="sm" fontWeight="medium">
-            {title}
+            {title || (variant === 'response' ? 'application/json' : '')}
           </Text>
-          {language && (
+          {language && variant !== 'response' && (
             <Text fontSize="xs" color="fg.muted">
               {language}
             </Text>

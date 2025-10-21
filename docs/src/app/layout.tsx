@@ -1,5 +1,6 @@
 import { type Metadata, type Viewport } from 'next'
 import { Provider } from '@/components/ui/provider'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: {

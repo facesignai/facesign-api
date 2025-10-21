@@ -4,6 +4,8 @@ Sessions are the core of FaceSign's identity verification platform. A session re
 
   See API Reference for endpoints: <a href="/api#create-session">Create</a>, <a href="/api#get-session">Retrieve</a>, <a href="/api#list-sessions">List</a>, and <a href="/api#refresh-client-secret">Client secret</a>. For building flows, see <a href="/flows/mapping">Flow Builder → FSFlow Mapping</a>.
 
+  
+
 ## How FaceSign Sessions Work
 
 FaceSign sessions work similarly to how Stripe handles payments. When you integrate FaceSign:
@@ -293,6 +295,17 @@ When a session is completed, the `report` object contains detailed verification 
     
 
   
+  
+    <ApiEndpointsCard
+      items={[
+        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
+        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
+        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
+        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
+      ]}
+    />
+  
+
   
 
     

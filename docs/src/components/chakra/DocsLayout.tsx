@@ -57,8 +57,8 @@ export function DocsLayout({
             as="main"
             flex="1"
             minW="0"
-            py={8}
-            px={effectiveVariant === 'api' ? { base: 4, md: 6, lg: 6 } : { base: 4, md: 8, lg: 12 }}
+            py={6}
+            px={effectiveVariant === 'api' ? { base: 4, md: 5, lg: 6 } : { base: 4, md: 6, lg: 8 }}
           >
             {children}
           </Box>
