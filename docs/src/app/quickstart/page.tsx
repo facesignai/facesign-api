@@ -1,0 +1,253 @@
+'use client'
+
+import {
+  Box,
+  Heading,
+  Text,
+  VStack,
+  Code,
+  Link,
+  Separator
+} from '@chakra-ui/react'
+import { DocsLayout } from '@/components/chakra/DocsLayout'
+import { InfoAlert } from '@/components/chakra/InfoAlert'
+import { DocsCodeBlock } from '@/components/chakra/DocsCodeBlock'
+import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
+
+export const metadata = {
+  title: 'Quick Start',
+  description: 'Get up and running with the FaceSign API in under 5 minutes.',
+}
+
+export default function QuickstartPage() {
+  return (
+    <DocsLayout variant="docs">
+      <VStack align="stretch" gap={8} maxW="4xl">
+        {/* Header */}
+        <Box>
+          <Heading as="h1" size="2xl" mb={4}>
+            Quick Start
+          </Heading>
+          <Text fontSize="xl" color="gray.600">
+            This quickstart shows a minimal 3-step Dev flow to get a hosted verification session running.
+          </Text>
+        </Box>
+
+        <InfoAlert>
+          Keep your API keys server-side and use environment variables.
+        </InfoAlert>
+
+        <Separator />
+
+        {/* Step 1 */}
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Step 1 — Install and set your API key
+          </Heading>
+          <Text mb={4}>
+            Get your key from the FaceSign dashboard (Settings → API Keys). Set it for local use:
+          </Text>
+
+          {/* Environment variable */}
+          <DocsCodeBlock
+            title=".env"
+            code="FACESIGN_API_KEY=sk_test_..."
+            language="bash"
+          />
+
+          <Text mt={4} mb={2}>Optional SDK installation:</Text>
+
+          {/* JavaScript SDK */}
+          <DocsCodeBlock
+            title="JavaScript (optional SDK)"
+            code="yarn add @facesignai/api"
+            language="bash"
+          />
+
+          {/* Python SDK */}
+          <DocsCodeBlock
+            title="Python (optional SDK)"
+            code="pip install facesignai"
+            language="bash"
+          />
+        </Box>
+
+        {/* What are Flows callout */}
+        <InfoAlert title="What are Flows?">
+          <Text mb={2}>
+            Flows define the verification journey using a node-graph system:
+          </Text>
+          <VStack align="start" gap={1} pl={4}>
+            <Text>• <strong>Nodes</strong> are verification steps (start, end, email, document scan, etc.)</Text>
+            <Text>• <strong>Edges</strong> connect nodes to define the path through verification</Text>
+            <Text>• The example below uses the simplest flow: start → end</Text>
+          </VStack>
+          <Text mt={2}>
+            <Link href="/flows" color="blue.500">Learn more about flows →</Link>
+          </Text>
+        </InfoAlert>
+
+        {/* Step 2 */}
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Step 2 — Create a session (Dev)
+          </Heading>
+          <Text mb={4}>
+            POST to Dev with a minimal flow (<Code>start</Code> → <Code>end</Code>).
+          </Text>
+
+          <RequestCodeBlock
+            method="POST"
+            path="/sessions (Dev)"
+            codeExamples={{
+              curl: `curl -X POST https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer $FACESIGN_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "clientReferenceId": "user-123",
+    "metadata": { "source": "quickstart" },
+    "flow": {
+      "nodes": [
+        { "id": "start", "type": "start" },  // Entry point
+        { "id": "end", "type": "end" }        // Exit point
+      ],
+      "edges": [
+        { "id": "e1", "source": "start", "target": "end" }  // Connect start to end
+      ]
+    }
+  }'`,
+              javascript: `const res = await fetch('https://api.dev.facesign.ai/sessions', {
+  method: 'POST',
+  headers: {
+    Authorization: \`Bearer \${process.env.FACESIGN_API_KEY}\`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    clientReferenceId: 'user-123',
+    metadata: { source: 'quickstart' },
+    flow: {
+      nodes: [
+        { id: 'start', type: 'start' },  // Entry point
+        { id: 'end', type: 'end' }        // Exit point
+      ],
+      edges: [
+        { id: 'e1', source: 'start', target: 'end' }  // Connect start to end
+      ]
+    }
+  }),
+})
+const { session, clientSecret } = await res.json()
+console.log('Session ID:', session.id)
+console.log('Hosted URL:', clientSecret.url)`,
+              python: `import os, requests
+
+payload = {
+  "clientReferenceId": "user-123",
+  "metadata": { "source": "quickstart" },
+  "flow": {
+    "nodes": [
+      { "id": "start", "type": "start" },  # Entry point
+      { "id": "end", "type": "end" }        # Exit point
+    ],
+    "edges": [
+      { "id": "e1", "source": "start", "target": "end" }  # Connect start to end
+    ]
+  }
+}
+r = requests.post(
+  'https://api.dev.facesign.ai/sessions',
+  json=payload,
+  headers={'Authorization': f'Bearer {os.environ.get("FACESIGN_API_KEY","")}'}
+)
+data = r.json()
+print('Session ID:', data['session']['id'])
+print('Hosted URL:', data['clientSecret']['url'])`
+            }}
+          />
+
+          <Text mt={4} mb={2}>Example response (shape):</Text>
+
+          <DocsCodeBlock
+            title="CreateSessionResponse"
+            code={`{
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1705314600,
+    "status": "requiresInput",  // Waiting for user to start
+    "settings": {}
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1705314600,
+    "expireAt": 1705316400,
+    "url": "https://verify.facesign.ai/s/sess_abc123"  // Send user here
+  }
+}`}
+            language="json"
+          />
+        </Box>
+
+        {/* Step 3 */}
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Step 3 — Open the hosted URL
+          </Heading>
+          <Text>
+            Send your user to the <Code>clientSecret.url</Code> to complete verification.
+          </Text>
+        </Box>
+
+        <Separator />
+
+        {/* Optional: Retrieve session */}
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Retrieve the session (optional)
+          </Heading>
+          <Text mb={4}>
+            Use the session ID to poll status or fetch results.
+          </Text>
+
+          <RequestCodeBlock
+            method="GET"
+            path="/sessions/{id} (Dev)"
+            codeExamples={{
+              curl: `curl https://api.dev.facesign.ai/sessions/sess_abc123 \\
+  -H "Authorization: Bearer $FACESIGN_API_KEY"`,
+              javascript: `const res = await fetch('https://api.dev.facesign.ai/sessions/sess_abc123', {
+  headers: { Authorization: \`Bearer \${process.env.FACESIGN_API_KEY}\` },
+})
+const session = await res.json()
+console.log('Status:', session.status)  // requiresInput, processing, complete, canceled`,
+              python: `r = requests.get(
+  'https://api.dev.facesign.ai/sessions/sess_abc123',
+  headers={'Authorization': f'Bearer {os.environ.get("FACESIGN_API_KEY","")}'}
+)
+session = r.json()
+print('Status:', session['status'])  # requiresInput, processing, complete, canceled`
+            }}
+          />
+
+          <Text mt={4}>
+            Session status values: <Code>requiresInput</Code>, <Code>processing</Code>, <Code>complete</Code>, <Code>canceled</Code>
+          </Text>
+        </Box>
+
+        <Separator />
+
+        {/* Next Steps */}
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Next Steps
+          </Heading>
+          <VStack align="start" gap={2}>
+            <Text>• <Link href="/flows" color="blue.500">Build custom flows</Link> with document scanning, liveness detection, and more</Text>
+            <Text>• <Link href="/webhooks" color="blue.500">Set up webhooks</Link> to receive real-time updates</Text>
+            <Text>• <Link href="/customization" color="blue.500">Customize the UI</Link> to match your brand</Text>
+            <Text>• <Link href="/api" color="blue.500">Explore the full API reference</Link></Text>
+          </VStack>
+        </Box>
+      </VStack>
+    </DocsLayout>
+  )
+}

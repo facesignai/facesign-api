@@ -24,7 +24,7 @@ function rehypeShiki() {
     highlighter =
       highlighter ?? (await createHighlighter({
         themes: ['github-light', 'github-dark'],
-        langs: ['javascript', 'typescript', 'jsx', 'tsx', 'bash', 'shell', 'json', 'html', 'css', 'python', 'diff']
+        langs: ['javascript', 'typescript', 'jsx', 'tsx', 'bash', 'shell', 'json', 'html', 'css', 'python', 'go', 'diff']
       }))
 
     visit(tree, 'element', (node) => {
