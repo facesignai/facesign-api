@@ -20,7 +20,7 @@ export const metadata = {
     {
       "nodes": [
         { "id": "start", "type": "start", "outcome": "conv1" },
-        { "id": "conv1", "type": "conversation", "prompt": "Hello!", "outcomes": [{ "id": "any", "targetNodeId": "end", "condition": "true" }] },
+        { "id": "conv1", "type": "conversation", "prompt": "Hello!", "transitions": [{ "id": "any", "condition": "true" }] },
         { "id": "end", "type": "end" }
       ],
       "edges": [ { "id": "e1", "source": "start", "target": "conv1" }, { "id": "e2", "source": "conv1", "target": "end" } ]

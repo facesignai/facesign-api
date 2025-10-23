@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "outcome": "email"
+    },
+    {
+      "id": "email",
+      "type": "enter_email"
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "email"
+    },
+    {
+      "id": "e2",
+      "source": "email",
+      "target": "end"
+    }
+  ]
+}

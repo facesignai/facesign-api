@@ -31,6 +31,9 @@ import langsFixture from '@/examples/langs.json'
 import avatarsFixture from '@/examples/avatars.json'
 import openapiSpec from '@/data/openapi.json'
 import { shikiAdapter } from '@/lib/shiki-adapter'
+import simpleFlow from '@/examples/flows/simple.json'
+import emailFlow from '@/examples/flows/email_collection.json'
+import documentFlow from '@/examples/flows/document_verification.json'
 
 /**
  * DESIGN GUIDELINES FOR API DOCUMENTATION
@@ -68,7 +71,7 @@ const endpointCodeExamples = {
     "metadata": { "source": "web-app" },
     "flow": {
       "nodes": [
-        { "id": "start", "type": "start" },
+        { "id": "start", "type": "start", "outcome": "greeting" },
         { "id": "greeting", "type": "conversation", "prompt": "Hello! What's your name?", "transitions": [{ "id": "t1", "condition": "true" }] },
         { "id": "end", "type": "end" }
       ],
@@ -89,7 +92,7 @@ const endpointCodeExamples = {
     metadata: { source: 'web-app' },
     flow: {
       nodes: [
-        { id: 'start', type: 'start' },
+        { id: 'start', type: 'start', outcome: 'greeting' },
         { id: 'greeting', type: 'conversation', prompt: "Hello! What's your name?", transitions: [{ id: 't1', condition: 'true' }] },
         { id: 'end', type: 'end' }
       ],
@@ -108,7 +111,7 @@ payload = {
   "metadata": {"source": "web-app"},
   "flow": {
     "nodes": [
-      {"id": "start", "type": "start"},
+      {"id": "start", "type": "start", "outcome": "greeting"},
       {"id": "greeting", "type": "conversation", "prompt": "Hello! What's your name?", "transitions": [{"id": "t1", "condition": "true"}]},
       {"id": "end", "type": "end"}
     ],
@@ -376,7 +379,7 @@ export default function ApiReferencePage() {
               <ReferenceTable headers={['Status', 'Error Type', 'Description']}>
                 <Table.Row>
                   <Table.Cell><Badge colorScheme="yellow">400</Badge></Table.Cell>
-                  <Table.Cell><Code fontSize="sm">invalid_request_error</Code></Table.Cell>
+                  <Table.Cell><Code fontSize="sm">validation_error</Code></Table.Cell>
                   <Table.Cell>Invalid parameters or missing required fields</Table.Cell>
                 </Table.Row>
                 <Table.Row>
@@ -385,13 +388,8 @@ export default function ApiReferencePage() {
                   <Table.Cell>Invalid or missing API key</Table.Cell>
                 </Table.Row>
                 <Table.Row>
-                  <Table.Cell><Badge colorScheme="red">403</Badge></Table.Cell>
-                  <Table.Cell><Code fontSize="sm">permission_error</Code></Table.Cell>
-                  <Table.Cell>API key lacks required permissions</Table.Cell>
-                </Table.Row>
-                <Table.Row>
                   <Table.Cell><Badge colorScheme="red">404</Badge></Table.Cell>
-                  <Table.Cell><Code fontSize="sm">resource_not_found</Code></Table.Cell>
+                  <Table.Cell><Code fontSize="sm">not_found_error</Code></Table.Cell>
                   <Table.Cell>Requested resource doesn&apos;t exist</Table.Cell>
                 </Table.Row>
                 <Table.Row>
@@ -401,7 +399,7 @@ export default function ApiReferencePage() {
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell><Badge colorScheme="red">500</Badge></Table.Cell>
-                  <Table.Cell><Code fontSize="sm">api_error</Code></Table.Cell>
+                  <Table.Cell><Code fontSize="sm">server_error</Code></Table.Cell>
                   <Table.Cell>Internal server error</Table.Cell>
                 </Table.Row>
               </ReferenceTable>
@@ -431,15 +429,232 @@ export default function ApiReferencePage() {
                   >
 {`{
   "error": {
-    "type": "invalid_request_error",
-    "message": "The flow_id field is required",
-    "code": "missing_required_field",
-    "field": "flow_id"
+    "type": "validation_error",
+    "message": "The flow field is required",
+    "code": "missing_required_field"
   }
 }`}
                   </Box>
                 </Card.Body>
               </Card.Root>
+            </Box>
+          </Grid>
+        </Box>
+
+        {/* Flows Section */}
+        <Box id="flows">
+          <Heading as="h2" size="lg" mb={6}>
+            Flows
+          </Heading>
+
+          {/* Flows Overview */}
+          <Grid
+            templateColumns={{ base: '1fr', lg: 'minmax(400px, 45%) minmax(400px, 55%)' }}
+            gap={6}
+            alignItems="start"
+            mb={12}
+          >
+            {/* Left - Description */}
+            <Box>
+              <Text color="gray.600" mb={4}>
+                Flows define the verification steps users go through. A flow is a graph of <strong>nodes</strong> (verification steps) connected by <strong>edges</strong> (transitions).
+              </Text>
+              <Text color="gray.600" mb={4}>
+                Each flow must have exactly one <Code>start</Code> node and at least one <Code>end</Code> node. Nodes execute in sequence based on edge connections and outcome conditions.
+              </Text>
+              <Text color="gray.600">
+                Flows are reusable - create one flow definition and use it across thousands of sessions.
+              </Text>
+            </Box>
+
+            {/* Right - Simple Flow Example */}
+            <Box>
+              <CodeBlock.AdapterProvider value={shikiAdapter}>
+                <CodeBlock.Root
+                  code={JSON.stringify(simpleFlow, null, 2)}
+                  language="json"
+                  size="sm"
+                  meta={{ colorScheme: 'dark' }}
+                >
+                  <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
+                    <HStack flex="1">
+                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">MINIMAL FLOW</Text>
+                    </HStack>
+                    <CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs" color="white">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
+                  </CodeBlock.Header>
+                  <CodeBlock.Content bg="gray.900">
+                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
+                      <CodeBlock.CodeText />
+                    </CodeBlock.Code>
+                  </CodeBlock.Content>
+                </CodeBlock.Root>
+              </CodeBlock.AdapterProvider>
+            </Box>
+          </Grid>
+
+          {/* Node Types Table */}
+          <Grid
+            templateColumns={{ base: '1fr', lg: 'minmax(400px, 45%) minmax(400px, 55%)' }}
+            gap={6}
+            alignItems="start"
+            mb={12}
+          >
+            {/* Left - Node Types Reference */}
+            <Box>
+              <Heading as="h3" size="md" mb={4}>
+                Available Node Types
+              </Heading>
+              <Card.Root bg="gray.50" borderColor="gray.200" mb={4}>
+                <Card.Body p={4}>
+                  <Table.Root variant="line" size="sm">
+                    <Table.Body>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>start</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Flow entry point (required, one per flow)</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>end</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Flow exit point (required, one or more)</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>conversation</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">AI-powered conversational interaction</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>liveness_detection</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Deepfake detection and liveness check</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>document_scan</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">ID document scanning (passport, driver&apos;s license)</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>recognition</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">1:N face recognition from collection</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>face_scan</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">1:1 face matching or capture</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>enter_email</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Email address collection</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>data_validation</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Conditional data validation (age, address, etc.)</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>two_factor</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">SMS or Email OTP verification</Table.Cell>
+                      </Table.Row>
+                    </Table.Body>
+                  </Table.Root>
+                </Card.Body>
+              </Card.Root>
+              <Text fontSize="sm" color="gray.600">
+                Each node type has specific configuration options and outcome enums. See the TypeScript SDK for full type definitions.
+              </Text>
+            </Box>
+
+            {/* Right - Email Collection Flow Example */}
+            <Box>
+              <CodeBlock.AdapterProvider value={shikiAdapter}>
+                <CodeBlock.Root
+                  code={JSON.stringify(emailFlow, null, 2)}
+                  language="json"
+                  size="sm"
+                  meta={{ colorScheme: 'dark' }}
+                >
+                  <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
+                    <HStack flex="1">
+                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">EMAIL COLLECTION FLOW</Text>
+                    </HStack>
+                    <CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs" color="white">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
+                  </CodeBlock.Header>
+                  <CodeBlock.Content bg="gray.900">
+                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
+                      <CodeBlock.CodeText />
+                    </CodeBlock.Code>
+                  </CodeBlock.Content>
+                </CodeBlock.Root>
+              </CodeBlock.AdapterProvider>
+            </Box>
+          </Grid>
+
+          {/* Conditional Branching */}
+          <Grid
+            templateColumns={{ base: '1fr', lg: 'minmax(400px, 45%) minmax(400px, 55%)' }}
+            gap={6}
+            alignItems="start"
+            mb={12}
+          >
+            {/* Left - Description */}
+            <Box>
+              <Heading as="h3" size="md" mb={4}>
+                Conditional Branching
+              </Heading>
+              <Text color="gray.600" mb={4}>
+                Nodes can have multiple outcomes, allowing you to create conditional logic. Each node type defines specific outcome values (e.g., <Code>scanSuccess</Code>, <Code>userCancelled</Code> for document_scan).
+              </Text>
+              <Text color="gray.600" mb={4}>
+                Use the <Code>outcomes</Code> object to map each outcome to a target node ID. Edges use the <Code>condition</Code> field to specify which outcome triggers the transition.
+              </Text>
+              <Card.Root bg="blue.50" borderColor="blue.200" mt={4}>
+                <Card.Body p={4}>
+                  <HStack gap={2} mb={2}>
+                    <Badge colorScheme="blue" size="sm">TIP</Badge>
+                    <Text fontSize="sm" fontWeight="semibold" color="blue.900">
+                      Outcome-based routing
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm" color="blue.800">
+                    The <Code>outcomes</Code> object on each node maps outcome values to the next node ID. This creates a clear branching structure based on verification results.
+                  </Text>
+                </Card.Body>
+              </Card.Root>
+            </Box>
+
+            {/* Right - Document Verification Flow Example */}
+            <Box>
+              <CodeBlock.AdapterProvider value={shikiAdapter}>
+                <CodeBlock.Root
+                  code={JSON.stringify(documentFlow, null, 2)}
+                  language="json"
+                  size="sm"
+                  meta={{ colorScheme: 'dark' }}
+                >
+                  <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
+                    <HStack flex="1">
+                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">CONDITIONAL FLOW</Text>
+                    </HStack>
+                    <CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs" color="white">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
+                  </CodeBlock.Header>
+                  <CodeBlock.Content bg="gray.900">
+                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
+                      <CodeBlock.CodeText />
+                    </CodeBlock.Code>
+                  </CodeBlock.Content>
+                </CodeBlock.Root>
+              </CodeBlock.AdapterProvider>
             </Box>
           </Grid>
         </Box>
@@ -491,6 +706,55 @@ export default function ApiReferencePage() {
                   },
                 ]}
               />
+            </Box>
+          </Grid>
+
+          {/* Session Status Reference */}
+          <Grid
+            templateColumns={{ base: '1fr', lg: 'minmax(400px, 45%) minmax(400px, 55%)' }}
+            gap={6}
+            alignItems="start"
+            mb={12}
+          >
+            {/* Left - Description */}
+            <Box>
+              <Heading as="h3" size="md" mb={4} id="session-status">
+                Session Status Values
+              </Heading>
+              <Text color="gray.600" mb={4}>
+                Every session has a <Code>status</Code> field indicating its current state. Use these values to understand session lifecycle and determine next actions.
+              </Text>
+            </Box>
+
+            {/* Right - Status Reference Table */}
+            <Box>
+              <Card.Root bg="gray.50" borderColor="gray.200">
+                <Card.Body p={4}>
+                  <Table.Root variant="line" size="sm">
+                    <Table.Body>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>requiresInput</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Session is awaiting user input or action</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>processing</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Session is being processed by verification services</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>complete</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Session has completed (successfully or with errors)</Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell fontWeight="semibold" fontSize="xs"><Code>canceled</Code></Table.Cell>
+                        <Table.Cell fontSize="xs" color="gray.700">Session was canceled before completion</Table.Cell>
+                      </Table.Row>
+                    </Table.Body>
+                  </Table.Root>
+                </Card.Body>
+              </Card.Root>
+              <Text fontSize="sm" color="gray.600" mt={3}>
+                Check the <Code>report</Code> object on completed sessions for detailed verification results and outcomes.
+              </Text>
             </Box>
           </Grid>
 

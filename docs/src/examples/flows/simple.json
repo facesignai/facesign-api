@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "outcome": "end"
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "end"
+    }
+  ]
+}

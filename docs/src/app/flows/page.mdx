@@ -22,7 +22,7 @@ Build sophisticated verification experiences with FaceSign's node-based flow sys
 
 ## Overview {{ anchor: false }}
 
-While the verification modules provide a simple way to configure common verification patterns, custom flows give you complete control over the verification process. Flows are built using a node-graph system where:
+Flows give you complete control over the verification process using a node-graph system where:
 
 - **Nodes** define verification steps and actions
 - **Edges** define the connections between nodes  
@@ -100,7 +100,8 @@ Use the Conversation node to ask the user for information or guide them with an 
 
 - `type`: `conversation`
 - `prompt`: string — the message shown to the user
-- `transitions`: array of `{ id, condition }` to branch to another node
+- `transitions`: array of `{ id, condition }` to branch to another node (at least one required)
+- `doesNotRequireReply`: boolean (optional) — set to true if prompt doesn't need user response
 
 ### Minimal examples
 
@@ -111,11 +112,13 @@ Linear prompt:
   "id": "greet",
   "type": "conversation",
   "prompt": "Hello! What's your name?",
-  "transitions": [{ "id": "t1", "condition": "true" }]
+  "transitions": [
+    { "id": "next", "condition": "true" }
+  ]
 }
 ```
 
-Branching based on a captured variable (example condition, evaluated by your flow engine):
+Branching based on a condition:
 
 ```json
 {
@@ -123,8 +126,8 @@ Branching based on a captured variable (example condition, evaluated by your flo
   "type": "conversation",
   "prompt": "Do you agree to continue?",
   "transitions": [
-    { "id": "ok", "condition": "answer == 'yes'" },
-    { "id": "exit", "condition": "answer != 'yes'" }
+    { "id": "yes", "condition": "answer == 'yes'" },
+    { "id": "no", "condition": "answer != 'yes'" }
   ]
 }
 ```
@@ -183,24 +186,56 @@ See API Reference → `FSDocumentScanNode` for full schema.
 
 ## Face scan node
 
-Capture and optionally compare a user’s face image.
+Capture a user's face image with optional liveness checks and face matching.
 
 ### Core fields
 
-- `type`: `face_scan`
-- `mode`: `capture` | `compare`
-- `outcomes`: map of outcome → next node id (e.g., `captured`, `match`, `noMatch`)
-- Optional quality/configuration fields (e.g., `requireLiveness`, `similarityThreshold`)
+- `type`: `face_scan` (required)
+- `mode`: `"capture"` or `"compare"` (required) — capture a new face image, or compare against reference
+- `outcomes`: map of outcome → next node id (`passed`, `notPassed`, `cancelled`, `error`)
+- `captureInstructions`: string (optional) — custom instructions shown to user
+- `requireLiveness`: boolean (optional) — require liveness verification
+- `referenceImageKey`: string (optional) — key for reference image to match against (for compare mode)
+- `referenceImageSource`: `"session"`, `"providedData"`, or `"url"` (optional)
+- `similarityThreshold`: number (optional) — similarity threshold for face matching, 0-1 (for compare mode)
+- `captureDelay`: number (optional) — delay before capture in milliseconds (default: 3000)
+- `qualityThreshold`: number (optional) — minimum quality threshold (default: 0.7)
+- `enableSound`: boolean (optional) — enable audio feedback (default: true)
+- `enableHaptics`: boolean (optional) — enable haptic feedback (default: true)
 
-### Minimal example
+### Minimal example (capture mode)
 
 ```json
 {
   "id": "face",
   "type": "face_scan",
   "mode": "capture",
-  "outcomes": { "captured": "end" },
+  "outcomes": {
+    "passed": "end",
+    "notPassed": "retry",
+    "cancelled": "end",
+    "error": "end"
+  },
   "requireLiveness": true
+}
+```
+
+### Compare mode example
+
+```json
+{
+  "id": "face_match",
+  "type": "face_scan",
+  "mode": "compare",
+  "referenceImageSource": "session",
+  "referenceImageKey": "idCardPhoto",
+  "similarityThreshold": 0.85,
+  "outcomes": {
+    "passed": "verified",
+    "notPassed": "failed",
+    "cancelled": "end",
+    "error": "end"
+  }
 }
 ```
 
@@ -208,13 +243,12 @@ See API Reference → `FSFaceScanNode` for full schema.
 
 ## Enter email node
 
-Collect the user’s email address as input.
+Collect the user's email address as input.
 
 ### Core fields
 
 - `type`: `enter_email`
-- `outcomes`: map of outcome → next node id (e.g., `emailEntered`, `canceled`)
-- Optional `transitions` for branching after capture
+- `outcomes`: map of outcome → next node id (`emailEntered`, `canceled`)
 
 ### Minimal example
 
@@ -222,8 +256,10 @@ Collect the user’s email address as input.
 {
   "id": "email",
   "type": "enter_email",
-  "outcomes": { "emailEntered": "next", "canceled": "end" },
-  "transitions": [{ "id": "t1", "condition": "true" }]
+  "outcomes": {
+    "emailEntered": "next",
+    "canceled": "end"
+  }
 }
 ```
 
@@ -262,10 +298,34 @@ Send and verify an OTP via email and/or SMS.
 ### Core fields
 
 - `type`: `two_factor`
-- `channels`: `["email", "sms"]`
-- `contactSource`: `session_data` | `module_settings` | `recognition_match`
-- `outcomes`: map of outcome → next node id (e.g., `verified`, `failed`)
-- Optional templates, `otpLength`, `expirySeconds`, `maxAttempts`
+- `channels`: array of `"email"` and/or `"sms"`
+- `contactSource`: `"session_data"` | `"module_settings"` | `"recognition_match"`
+- `outcomes`: map of outcome → next node id (`verified`, `delivery_failed`, `failed_unverified`, `cancelled`, `error`)
+
+### Contact configuration
+
+- `staticEmail`: string (optional) — static email address to use
+- `staticPhone`: string (optional) — static phone number to use
+
+### Templates
+
+- `emailTemplate`: string (optional) — custom email template with variables like `{{code}}`, `{{userName}}`
+- `smsTemplate`: string (optional) — custom SMS template with variables
+
+### OTP settings
+
+- `otpLength`: number (optional) — OTP length, 4-8 digits (default: 6)
+- `expirySeconds`: number (optional) — OTP expiry time in seconds (default: 300)
+- `maxAttempts`: number (optional) — max verification attempts (default: 3)
+- `resendAfterSeconds`: number (optional) — minimum delay before allowing resend
+
+### UI settings
+
+- `showUI`: boolean (optional) — show on-screen notification toast (default: true)
+
+### Test mode
+
+- `testMode`: object (optional) — test configuration with `enabled`, `email`, `phone`
 
 ### Minimal example
 
@@ -275,9 +335,16 @@ Send and verify an OTP via email and/or SMS.
   "type": "two_factor",
   "channels": ["email"],
   "contactSource": "session_data",
-  "outcomes": { "verified": "end", "failed": "end" },
+  "outcomes": {
+    "verified": "end",
+    "delivery_failed": "error",
+    "failed_unverified": "retry",
+    "cancelled": "end",
+    "error": "end"
+  },
   "otpLength": 6,
-  "expirySeconds": 300
+  "expirySeconds": 300,
+  "maxAttempts": 3
 }
 ```
 

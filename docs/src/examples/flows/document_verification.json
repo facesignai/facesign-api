@@ -1,0 +1,57 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "outcome": "document"
+    },
+    {
+      "id": "document",
+      "type": "document_scan",
+      "scanningMode": "SINGLE_SIDE",
+      "allowedDocumentTypes": ["MRTD_TYPE_PASSPORT", "MRTD_TYPE_ID_CARD"],
+      "outcomes": {
+        "scanSuccess": "liveness",
+        "userCancelled": "end",
+        "scanTimeout": "end"
+      }
+    },
+    {
+      "id": "liveness",
+      "type": "liveness_detection",
+      "outcomes": {
+        "livenessDetected": "end",
+        "deepfakeDetected": "end",
+        "noFace": "end"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "document"
+    },
+    {
+      "id": "e2",
+      "source": "document",
+      "target": "liveness",
+      "condition": "scanSuccess"
+    },
+    {
+      "id": "e3",
+      "source": "document",
+      "target": "end",
+      "condition": "userCancelled || scanTimeout"
+    },
+    {
+      "id": "e4",
+      "source": "liveness",
+      "target": "end"
+    }
+  ]
+}
