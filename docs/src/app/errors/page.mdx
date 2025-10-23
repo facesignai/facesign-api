@@ -58,16 +58,13 @@ All error responses follow a consistent format:
 
 <Properties>
   <Property name="type" type="string">
-    The type of error returned. See error types below.
+    The type of error returned. One of: `authentication_error`, `validation_error`, `not_found_error`, `rate_limit_error`, `server_error`.
   </Property>
   <Property name="message" type="string">
     A human-readable message providing more details about the error.
   </Property>
-  <Property name="param" type="string">
-    The parameter the error relates to if the error is parameter-specific.
-  </Property>
   <Property name="code" type="string">
-    A short string uniquely identifying the problem.
+    A short string uniquely identifying the specific error (e.g., `invalid_api_key`, `parameter_missing`).
   </Property>
 </Properties>
 
@@ -93,102 +90,145 @@ All error responses follow a consistent format:
 
 ## Handling errors
 
-Here's how to properly handle errors in your integration:
+Here's how to properly handle errors when using the FaceSign SDK:
 
 <CodeGroup title="Error handling examples">
 
 ```typescript {{ title: 'TypeScript' }}
-import { FaceSign } from '@facesign/sdk';
+import Client from '@facesignai/api'
+import { FSNodeType } from '@facesignai/api'
 
-const facesign = new FaceSign({
-  apiKey: process.env.FACESIGN_API_KEY,
-});
+const client = new Client({
+  auth: 'sk_test_...',
+  serverUrl: 'https://api.dev.facesign.ai'
+})
 
 try {
-  const session = await facesign.sessions.create({
-    mode: 'redirect',
-    success_url: 'https://example.com/success',
-    cancel_url: 'https://example.com/cancel',
-  });
-} catch (error) {
-  if (error.type === 'invalid_request_error') {
-    // Handle invalid parameters
-    console.error(`Invalid parameter: ${error.param}`);
-    console.error(`Error message: ${error.message}`);
-  } else if (error.type === 'authentication_error') {
-    // Handle authentication errors
-    console.error('Check your API key');
-  } else if (error.statusCode === 429) {
-    // Handle rate limiting
-    console.error('Rate limited. Retry after:', error.headers['retry-after']);
-  } else {
-    // Handle other errors
-    console.error('An unexpected error occurred:', error.message);
+  const { session, clientSecret } = await client.session.create({
+    clientReferenceId: 'user-123',
+    metadata: { source: 'web-app' },
+    flow: {
+      nodes: [
+        { id: 'start', type: FSNodeType.START, outcome: 'end' },
+        { id: 'end', type: FSNodeType.END }
+      ],
+      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+    }
+  })
+
+  console.log('Session created:', session.id)
+} catch (err) {
+  // Parse error response from API
+  try {
+    const errorResponse = JSON.parse((err as Error).message)
+    const { type, message, code } = errorResponse.error
+
+    if (type === 'validation_error') {
+      console.error('Validation error:', message)
+      console.error('Error code:', code)
+    } else if (type === 'authentication_error') {
+      console.error('Authentication failed. Check your API key.')
+    } else if (type === 'rate_limit_error') {
+      console.error('Rate limited:', message)
+    } else {
+      console.error('API error:', message)
+    }
+  } catch {
+    // Handle non-JSON errors (network issues, etc.)
+    console.error('Request failed:', (err as Error).message)
+  }
+}
+```
+
+```javascript {{ title: 'JavaScript' }}
+import Client from '@facesignai/api'
+
+const client = new Client({
+  auth: 'sk_test_...',
+  serverUrl: 'https://api.dev.facesign.ai'
+})
+
+try {
+  const { session, clientSecret } = await client.session.create({
+    clientReferenceId: 'user-123',
+    metadata: { source: 'web-app' },
+    flow: {
+      nodes: [
+        { id: 'start', type: 'start', outcome: 'end' },
+        { id: 'end', type: 'end' }
+      ],
+      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+    }
+  })
+
+  console.log('Session created:', session.id)
+} catch (err) {
+  // Parse error response
+  try {
+    const errorResponse = JSON.parse(err.message)
+    const { type, message, code } = errorResponse.error
+
+    switch (type) {
+      case 'validation_error':
+        console.error('Validation error:', message, code)
+        break
+      case 'authentication_error':
+        console.error('Check your API key')
+        break
+      case 'rate_limit_error':
+        console.error('Rate limited:', message)
+        break
+      default:
+        console.error('API error:', message)
+    }
+  } catch {
+    console.error('Request failed:', err.message)
   }
 }
 ```
 
 ```python {{ title: 'Python' }}
-import facesign
-from facesign.error import (
-    FaceSignError,
-    InvalidRequestError,
-    AuthenticationError,
-    RateLimitError
+import json
+import facesignai
+
+client = facesignai.Client(
+    auth='sk_test_...',
+    base_url='https://api.dev.facesign.ai'
 )
 
-facesign.api_key = os.environ.get('FACESIGN_API_KEY')
-
 try:
-    session = facesign.Session.create(
-        mode='redirect',
-        success_url='https://example.com/success',
-        cancel_url='https://example.com/cancel'
+    response = client.session.create(
+        client_reference_id='user-123',
+        metadata={'source': 'web-app'},
+        flow={
+            'nodes': [
+                {'id': 'start', 'type': 'start', 'outcome': 'end'},
+                {'id': 'end', 'type': 'end'}
+            ],
+            'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
+        }
     )
-except InvalidRequestError as e:
-    # Handle invalid parameters
-    print(f"Invalid parameter: {e.param}")
-    print(f"Error message: {e.user_message}")
-except AuthenticationError as e:
-    # Handle authentication errors
-    print("Check your API key")
-except RateLimitError as e:
-    # Handle rate limiting
-    print(f"Rate limited. Retry after: {e.headers.get('retry-after')}")
-except FaceSignError as e:
-    # Handle other FaceSign errors
-    print(f"FaceSign error: {e.user_message}")
-except Exception as e:
-    # Handle other errors
-    print(f"An unexpected error occurred: {str(e)}")
-```
 
-```javascript {{ title: 'JavaScript' }}
-try {
-  const session = await facesign.sessions.create({
-    mode: 'redirect',
-    success_url: 'https://example.com/success',
-    cancel_url: 'https://example.com/cancel',
-  });
-} catch (error) {
-  switch (error.type) {
-    case 'FaceSignInvalidRequestError':
-      // Invalid parameters
-      console.error(`Invalid parameter: ${error.param}`);
-      break;
-    case 'FaceSignAuthenticationError':
-      // Authentication failed
-      console.error('Check your API key');
-      break;
-    case 'FaceSignRateLimitError':
-      // Rate limited
-      console.error('Rate limited. Retry after:', error.headers['retry-after']);
-      break;
-    default:
-      // Other errors
-      console.error('An error occurred:', error.message);
-  }
-}
+    print(f"Session created: {response['session']['id']}")
+except Exception as err:
+    # Parse error response
+    try:
+        error_response = json.loads(str(err))
+        error = error_response.get('error', {})
+        error_type = error.get('type')
+        message = error.get('message')
+        code = error.get('code')
+
+        if error_type == 'validation_error':
+            print(f"Validation error: {message} ({code})")
+        elif error_type == 'authentication_error':
+            print("Authentication failed. Check your API key.")
+        elif error_type == 'rate_limit_error':
+            print(f"Rate limited: {message}")
+        else:
+            print(f"API error: {message}")
+    except (json.JSONDecodeError, KeyError):
+        print(f"Request failed: {str(err)}")
 ```
 
 </CodeGroup>
@@ -209,20 +249,19 @@ try {
 
 **Solution**: Check that you're using the correct API key and that it hasn't been revoked.
 
-### Invalid request errors
+### Validation errors
 
 ```json {{ title: 'Missing required parameter' }}
 {
   "error": {
-    "type": "invalid_request_error",
-    "message": "The 'success_url' parameter is required.",
-    "param": "success_url",
+    "type": "validation_error",
+    "message": "The 'clientReferenceId' field is required.",
     "code": "parameter_missing"
   }
 }
 ```
 
-**Solution**: Ensure all required parameters are included in your request.
+**Solution**: Ensure all required parameters are included in your request. Check the error message for details about which field is invalid.
 
 ### Rate limit errors
 
@@ -240,107 +279,95 @@ try {
 
 ## Implementing retry logic
 
-For transient errors and rate limiting, implement exponential backoff:
+For transient errors like network issues and rate limiting, implement exponential backoff:
 
 <CodeGroup title="Retry with exponential backoff">
 
 ```typescript {{ title: 'TypeScript' }}
-async function createSessionWithRetry(params: any, maxRetries = 3) {
-  let lastError;
-  
+import Client from '@facesignai/api'
+import type { SessionSettings } from '@facesignai/api'
+
+async function createSessionWithRetry(
+  client: Client,
+  params: SessionSettings,
+  maxRetries = 3
+) {
+  let lastError: Error | undefined
+
   for (let i = 0; i < maxRetries; i++) {
     try {
-      return await facesign.sessions.create(params);
-    } catch (error) {
-      lastError = error;
-      
-      // Don't retry client errors (4xx) except rate limits
-      if (error.statusCode >= 400 && error.statusCode < 500 && error.statusCode !== 429) {
-        throw error;
+      return await client.session.create(params)
+    } catch (err) {
+      lastError = err as Error
+
+      // Try to parse error response
+      try {
+        const errorResponse = JSON.parse(lastError.message)
+        const errorType = errorResponse.error?.type
+
+        // Don't retry validation or authentication errors
+        if (errorType === 'validation_error' || errorType === 'authentication_error') {
+          throw lastError
+        }
+      } catch {
+        // If not JSON, continue with retry
       }
-      
-      // Calculate delay with exponential backoff
-      const delay = Math.min(1000 * Math.pow(2, i), 10000);
-      
-      // Use Retry-After header if available
-      if (error.headers && error.headers['retry-after']) {
-        const retryAfter = parseInt(error.headers['retry-after']) * 1000;
-        await new Promise(resolve => setTimeout(resolve, retryAfter));
-      } else {
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
+
+      // Calculate delay with exponential backoff (1s, 2s, 4s, ...)
+      const delay = Math.min(1000 * Math.pow(2, i), 10000)
+      await new Promise(resolve => setTimeout(resolve, delay))
     }
   }
-  
-  throw lastError;
+
+  throw lastError
 }
+
+// Usage
+const { session } = await createSessionWithRetry(client, {
+  clientReferenceId: 'user-123',
+  metadata: {},
+  flow: { nodes: [...], edges: [...] }
+})
 ```
 
 ```python {{ title: 'Python' }}
 import time
-import random
+import json
+import facesignai
 
-def create_session_with_retry(params, max_retries=3):
+def create_session_with_retry(client, params, max_retries=3):
     last_error = None
-    
+
     for i in range(max_retries):
         try:
-            return facesign.Session.create(**params)
-        except Exception as error:
-            last_error = error
-            
-            # Don't retry client errors (4xx) except rate limits
-            if hasattr(error, 'http_status'):
-                if 400 <= error.http_status < 500 and error.http_status != 429:
+            return client.session.create(**params)
+        except Exception as err:
+            last_error = err
+
+            # Try to parse error response
+            try:
+                error_response = json.loads(str(err))
+                error_type = error_response.get('error', {}).get('type')
+
+                # Don't retry validation or authentication errors
+                if error_type in ['validation_error', 'authentication_error']:
                     raise
-            
-            # Calculate delay with exponential backoff
+            except (json.JSONDecodeError, KeyError):
+                pass  # Continue with retry
+
+            # Calculate delay with exponential backoff (1s, 2s, 4s, ...)
             delay = min(1 * (2 ** i), 10)
-            
-            # Use Retry-After header if available
-            if hasattr(error, 'headers') and 'retry-after' in error.headers:
-                time.sleep(int(error.headers['retry-after']))
-            else:
-                # Add jitter to prevent thundering herd
-                time.sleep(delay + random.uniform(0, 0.1))
-    
+            time.sleep(delay)
+
     raise last_error
-```
 
-</CodeGroup>
-
-## Idempotency
-
-To safely retry requests without accidentally performing the same operation twice, use idempotency keys:
-
-<CodeGroup title="Using idempotency keys">
-
-```typescript {{ title: 'TypeScript' }}
-const session = await facesign.sessions.create({
-  mode: 'redirect',
-  success_url: 'https://example.com/success',
-  cancel_url: 'https://example.com/cancel',
-}, {
-  idempotencyKey: 'unique-key-for-this-request',
-});
-```
-
-```python {{ title: 'Python' }}
-session = facesign.Session.create(
-    mode='redirect',
-    success_url='https://example.com/success',
-    cancel_url='https://example.com/cancel',
-    idempotency_key='unique-key-for-this-request'
-)
-```
-
-```bash {{ title: 'cURL' }}
-curl https://api.facesign.ai/v1/sessions \
-  -H "Authorization: Bearer sk_test_..." \
-  -H "Idempotency-Key: unique-key-for-this-request" \
-  -d mode=redirect \
-  -d success_url="https://example.com/success" \
-  -d cancel_url="https://example.com/cancel"
+# Usage
+client = facesignai.Client(auth='sk_test_...')
+response = create_session_with_retry(client, {
+    'client_reference_id': 'user-123',
+    'metadata': {},
+    'flow': {'nodes': [...], 'edges': [...]}
+})
 ```
 
 </CodeGroup>
@@ -348,11 +375,12 @@ curl https://api.facesign.ai/v1/sessions \
 ## Best practices
 
 1. **Always handle errors gracefully** - Don't let API errors crash your application
-2. **Log errors for debugging** - Include request IDs for easier troubleshooting
+2. **Log errors for debugging** - Save error messages and context for troubleshooting
 3. **Implement retry logic** - Use exponential backoff for transient errors
 4. **Respect rate limits** - Monitor your usage and implement proper throttling
-5. **Use idempotency keys** - Prevent duplicate operations when retrying
+5. **Parse error responses** - Extract `type`, `message`, and `code` from error objects
 6. **Show user-friendly messages** - Don't expose technical error details to end users
+7. **Handle network failures** - Catch both API errors and network issues
 
 ## Getting help
 

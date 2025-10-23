@@ -88,18 +88,15 @@ class Customization(BaseModel):
 # Main session types
 class SessionSettings(BaseModel):
     """Settings for creating a verification session."""
-    
+
     client_reference_id: str
     metadata: Optional[Dict[str, Any]] = None  # Made optional as it's not always required
-    initial_phrase: Optional[str] = None
-    final_phrase: Optional[str] = None
     provided_data: Optional[Dict[str, str]] = None
     avatar_id: Optional[str] = None
     langs: Optional[List[str]] = None
     default_lang: Optional[str] = None
     zone: Optional[Zone] = None
-    modules: Optional[List[Dict[str, Any]]] = None  # Legacy modules (optional)
-    flow: Optional[FSFlow] = None  # Recommended flow-based approach
+    flow: Optional[FSFlow] = None  # Flow-based approach
     customization: Optional[Customization] = None
 
 

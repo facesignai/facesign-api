@@ -1,0 +1,57 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "liveness",
+      "type": "liveness_detection",
+      "outcomes": {
+        "livenessDetected": "face_match",
+        "deepfakeDetected": "end",
+        "noFace": "end"
+      }
+    },
+    {
+      "id": "face_match",
+      "type": "face_scan",
+      "mode": "compare",
+      "compareAgainst": "stored_profile",
+      "similarityThreshold": 0.85,
+      "outcomes": {
+        "match": "end",
+        "noMatch": "end",
+        "error": "end"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "liveness"
+    },
+    {
+      "id": "e2",
+      "source": "liveness",
+      "target": "face_match",
+      "condition": "livenessDetected"
+    },
+    {
+      "id": "e3",
+      "source": "liveness",
+      "target": "end",
+      "condition": "deepfakeDetected || noFace"
+    },
+    {
+      "id": "e4",
+      "source": "face_match",
+      "target": "end"
+    }
+  ]
+}

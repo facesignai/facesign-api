@@ -60,7 +60,7 @@ export function DocsCodeBlock({
   examples,
   code,
   language = 'javascript',
-  showLineNumbers = false,
+  showLineNumbers: _showLineNumbers = false,
   maxHeight = '500px'
 }: DocsCodeBlockProps) {
   // If we have method and path, use RequestCodeBlock for API-style

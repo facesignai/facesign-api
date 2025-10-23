@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Box,
   Heading,
@@ -7,12 +5,13 @@ import {
   VStack,
   Code,
   Link,
-  Separator
+  Separator,
+  Blockquote
 } from '@chakra-ui/react'
 import { DocsLayout } from '@/components/chakra/DocsLayout'
-import { InfoAlert } from '@/components/chakra/InfoAlert'
 import { DocsCodeBlock } from '@/components/chakra/DocsCodeBlock'
 import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
+import { TabbedCodeBlock } from '@/components/chakra/TabbedCodeBlock'
 
 export const metadata = {
   title: 'Quick Start',
@@ -33,9 +32,11 @@ export default function QuickstartPage() {
           </Text>
         </Box>
 
-        <InfoAlert>
-          Keep your API keys server-side and use environment variables.
-        </InfoAlert>
+        <Blockquote.Root variant="subtle" my={6}>
+          <Blockquote.Content>
+            Keep your API keys server-side and use environment variables.
+          </Blockquote.Content>
+        </Blockquote.Root>
 
         <Separator />
 
@@ -57,35 +58,34 @@ export default function QuickstartPage() {
 
           <Text mt={4} mb={2}>Optional SDK installation:</Text>
 
-          {/* JavaScript SDK */}
-          <DocsCodeBlock
-            title="JavaScript (optional SDK)"
-            code="yarn add @facesignai/api"
-            language="bash"
-          />
-
-          {/* Python SDK */}
-          <DocsCodeBlock
-            title="Python (optional SDK)"
-            code="pip install facesignai"
-            language="bash"
+          <TabbedCodeBlock
+            defaultLanguage="npm"
+            codeExamples={{
+              npm: "npm install @facesignai/api",
+              python: "pip install facesignai",
+            }}
           />
         </Box>
 
         {/* What are Flows callout */}
-        <InfoAlert title="What are Flows?">
-          <Text mb={2}>
-            Flows define the verification journey using a node-graph system:
-          </Text>
-          <VStack align="start" gap={1} pl={4}>
-            <Text>• <strong>Nodes</strong> are verification steps (start, end, email, document scan, etc.)</Text>
-            <Text>• <strong>Edges</strong> connect nodes to define the path through verification</Text>
-            <Text>• The example below uses the simplest flow: start → end</Text>
-          </VStack>
-          <Text mt={2}>
-            <Link href="/flows" color="blue.500">Learn more about flows →</Link>
-          </Text>
-        </InfoAlert>
+        <Blockquote.Root variant="subtle" my={6}>
+          <Blockquote.Content>
+            <Heading as="h4" size="sm" mb={2}>
+              What are Flows?
+            </Heading>
+            <Text mb={2}>
+              Flows define the verification journey using a node-graph system:
+            </Text>
+            <VStack align="start" gap={1} pl={4}>
+              <Text>• <strong>Nodes</strong> are verification steps (start, end, email, document scan, etc.)</Text>
+              <Text>• <strong>Edges</strong> connect nodes to define the path through verification</Text>
+              <Text>• The example below uses the simplest flow: start → end</Text>
+            </VStack>
+            <Text mt={2}>
+              <Link href="/flows" color="blue.500">Learn more about flows →</Link>
+            </Text>
+          </Blockquote.Content>
+        </Blockquote.Root>
 
         {/* Step 2 */}
         <Box>
@@ -97,6 +97,7 @@ export default function QuickstartPage() {
           </Text>
 
           <RequestCodeBlock
+            variant="tabs"
             method="POST"
             path="/sessions (Dev)"
             codeExamples={{
@@ -177,10 +178,10 @@ print('Hosted URL:', data['clientSecret']['url'])`
     "settings": {}
   },
   "clientSecret": {
-    "secret": "cs_abc123",
+    "secret": "csea61d44d88d345e1b91622820bb73100",
     "createdAt": 1705314600,
     "expireAt": 1705316400,
-    "url": "https://verify.facesign.ai/s/sess_abc123"  // Send user here
+    "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100"  // Send user here
   }
 }`}
             language="json"
@@ -209,6 +210,7 @@ print('Hosted URL:', data['clientSecret']['url'])`
           </Text>
 
           <RequestCodeBlock
+            variant="tabs"
             method="GET"
             path="/sessions/{id} (Dev)"
             codeExamples={{

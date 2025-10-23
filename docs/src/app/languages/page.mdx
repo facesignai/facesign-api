@@ -51,31 +51,59 @@ FaceSign currently supports the following languages:
     <CodeGroup title="Request" tag="GET" label="/langs">
 
     ```bash {{ title: 'cURL' }}
-    curl https://api.facesign.ai/langs \
-      -H "Authorization: Bearer fs_live_..."
+    curl https://api.dev.facesign.ai/langs \
+      -H "Authorization: Bearer sk_test_..."
     ```
 
     ```typescript {{ title: 'TypeScript' }}
-    const { langs } = await client.languages.list();
-    
+    import Client from '@facesignai/api'
+    import { FSNodeType } from '@facesignai/api'
+
+    const client = new Client({
+      auth: 'sk_test_...',
+      serverUrl: 'https://api.dev.facesign.ai'
+    })
+
+    const { langs } = await client.langs.retrieve()
+
     // Use in session creation
-    const { session, clientSecret } = await client.sessions.create({
+    const { session, clientSecret } = await client.session.create({
       clientReferenceId: 'user_123',
-      langs: ['en', 'es', 'fr'], // Subset of available languages
+      langs: ['en', 'es', 'fr'],
       defaultLang: 'en',
-      modules: [{ type: 'identityVerification' }]
-    });
+      flow: {
+        nodes: [
+          { id: 'start', type: FSNodeType.START, outcome: 'end' },
+          { id: 'end', type: FSNodeType.END }
+        ],
+        edges: [{ id: 'e1', source: 'start', target: 'end' }]
+      }
+    })
     ```
 
     ```python {{ title: 'Python' }}
-    langs = client.languages.list()
-    
-    // Use in session creation
-    session = client.sessions.create(
-        client_reference_id="user_123",
-        langs=["en", "es", "fr"],
-        default_lang="en",
-        modules=[{"type": "identityVerification"}]
+    import facesignai
+
+    client = facesignai.Client(
+        auth='sk_test_...',
+        base_url='https://api.dev.facesign.ai'
+    )
+
+    response = client.langs.retrieve()
+    langs = response['langs']
+
+    # Use in session creation
+    session_response = client.session.create(
+        client_reference_id='user_123',
+        langs=['en', 'es', 'fr'],
+        default_lang='en',
+        flow={
+            'nodes': [
+                {'id': 'start', 'type': 'start', 'outcome': 'end'},
+                {'id': 'end', 'type': 'end'}
+            ],
+            'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
+        }
     )
     ```
 
@@ -152,12 +180,18 @@ FaceSign currently supports the following languages:
 When creating a session, you can specify which languages should be available and set a default language:
 
 ```typescript {{ title: 'Configure session languages' }}
-const { session, clientSecret } = await client.sessions.create({
+const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user_123',
   langs: ['en', 'es', 'fr'], // Available languages for this session
   defaultLang: 'en', // Default language if user's preference isn't available
-  modules: [{ type: 'identityVerification' }]
-});
+  flow: {
+    nodes: [
+      { id: 'start', type: FSNodeType.START, outcome: 'end' },
+      { id: 'end', type: FSNodeType.END }
+    ],
+    edges: [{ id: 'e1', source: 'start', target: 'end' }]
+  }
+})
 ```
 
 ### Dynamic language selection
@@ -183,14 +217,20 @@ async function createLocalizedSession(userId: string) {
     ? supportedUserLanguages 
     : ['en'];
   
-  const { session, clientSecret } = await client.sessions.create({
+  const { session, clientSecret } = await client.session.create({
     clientReferenceId: userId,
     langs: sessionLanguages,
     defaultLang: sessionLanguages[0],
-    modules: [{ type: 'identityVerification' }]
-  });
-  
-  return { session, clientSecret };
+    flow: {
+      nodes: [
+        { id: 'start', type: FSNodeType.START, outcome: 'end' },
+        { id: 'end', type: FSNodeType.END }
+      ],
+      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+    }
+  })
+
+  return { session, clientSecret }
 }
 
 function getUserPreferredLanguages(userId: string): string[] {
@@ -220,16 +260,22 @@ const REGIONAL_LANGUAGES = {
 };
 
 async function createRegionalSession(userId: string, region: string) {
-  const languages = REGIONAL_LANGUAGES[region] || REGIONAL_LANGUAGES['global'];
-  
-  const { session, clientSecret } = await client.sessions.create({
+  const languages = REGIONAL_LANGUAGES[region] || REGIONAL_LANGUAGES['global']
+
+  const { session, clientSecret } = await client.session.create({
     clientReferenceId: userId,
     langs: languages,
     defaultLang: languages[0], // First language as default
-    modules: [{ type: 'identityVerification' }]
-  });
-  
-  return { session, clientSecret };
+    flow: {
+      nodes: [
+        { id: 'start', type: FSNodeType.START, outcome: 'end' },
+        { id: 'end', type: FSNodeType.END }
+      ],
+      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+    }
+  })
+
+  return { session, clientSecret }
 }
 ```
 
@@ -239,34 +285,34 @@ async function createRegionalSession(userId: string, region: string) {
 
 Provide a language selector in your frontend before starting verification:
 
-```typescript {{ title: 'Language selector component' }}
-import React, { useState, useEffect } from 'react';
+```typescript {{ title: 'Language selector with redirect' }}
+import React, { useState, useEffect } from 'react'
 
 interface Language {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 
 function LanguageSelector({ onLanguageSelect }: { onLanguageSelect: (lang: string) => void }) {
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  
+  const [languages, setLanguages] = useState<Language[]>([])
+  const [selectedLanguage, setSelectedLanguage] = useState('en')
+
   useEffect(() => {
-    // Fetch available languages
+    // Fetch available languages from your backend
     fetch('/api/languages')
       .then(res => res.json())
-      .then(data => setLanguages(data.langs));
-  }, []);
-  
+      .then(data => setLanguages(data.langs))
+  }, [])
+
   const handleLanguageChange = (langId: string) => {
-    setSelectedLanguage(langId);
-    onLanguageSelect(langId);
-  };
-  
+    setSelectedLanguage(langId)
+    onLanguageSelect(langId)
+  }
+
   return (
     <div className="language-selector">
       <label htmlFor="language-select">Select your language:</label>
-      <select 
+      <select
         id="language-select"
         value={selectedLanguage}
         onChange={(e) => handleLanguageChange(e.target.value)}
@@ -278,14 +324,14 @@ function LanguageSelector({ onLanguageSelect }: { onLanguageSelect: (lang: strin
         ))}
       </select>
     </div>
-  );
+  )
 }
 
 function VerificationFlow() {
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  
+  const [selectedLanguage, setSelectedLanguage] = useState('en')
+
   const startVerification = async () => {
-    // Create session with selected language
+    // Create session with selected language on your backend
     const response = await fetch('/api/create-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -293,24 +339,22 @@ function VerificationFlow() {
         langs: [selectedLanguage],
         defaultLang: selectedLanguage
       })
-    });
-    
-    const { clientSecret } = await response.json();
-    
-    // Start verification with preferred language
-    const facesign = new FaceSign({ clientSecret });
-    await facesign.mount('#verification-container');
-  };
-  
+    })
+
+    const { verificationUrl } = await response.json()
+
+    // Redirect to hosted verification
+    window.location.href = verificationUrl
+  }
+
   return (
     <div>
       <LanguageSelector onLanguageSelect={setSelectedLanguage} />
       <button onClick={startVerification}>
         Start Verification
       </button>
-      <div id="verification-container"></div>
     </div>
-  );
+  )
 }
 ```
 
@@ -331,16 +375,22 @@ function detectUserLanguage(): string {
 }
 
 async function createAutoLocalizedSession(userId: string) {
-  const detectedLanguage = detectUserLanguage();
-  
-  const { session, clientSecret } = await client.sessions.create({
+  const detectedLanguage = detectUserLanguage()
+
+  const { session, clientSecret } = await client.session.create({
     clientReferenceId: userId,
     langs: [detectedLanguage, 'en'], // Include English as fallback
     defaultLang: detectedLanguage,
-    modules: [{ type: 'identityVerification' }]
-  });
-  
-  return { session, clientSecret };
+    flow: {
+      nodes: [
+        { id: 'start', type: FSNodeType.START, outcome: 'end' },
+        { id: 'end', type: FSNodeType.END }
+      ],
+      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+    }
+  })
+
+  return { session, clientSecret }
 }
 ```
 
@@ -433,4 +483,4 @@ function getUserLanguagePreference(userId?: string): string {
 
 - [Sessions](/sessions) - Learn how to create sessions with language configuration
 - [Avatars](/avatars) - Discover available AI avatars for different languages
-- [Modules](/modules) - Configure verification modules for specific regions 
+- [Custom Flows](/flows) - Build sophisticated verification flows with node-based system

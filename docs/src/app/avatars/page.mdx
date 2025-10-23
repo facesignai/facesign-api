@@ -12,7 +12,7 @@ FaceSign uses AI-powered avatars to create natural, conversational verification 
 FaceSign avatars are AI-powered virtual assistants that:
 
 - **Guide users** through each step of the verification process
-- **Adapt their conversation** based on the verification modules you've configured
+- **Adapt their conversation** based on the flow nodes you've configured
 - **Speak multiple languages** and adjust their communication style accordingly
 - **Provide real-time feedback** and help users complete verification successfully
 - **Detect emotions and engagement** to provide a more personalized experience
@@ -49,29 +49,57 @@ FaceSign avatars are AI-powered virtual assistants that:
     <CodeGroup title="Request" tag="GET" label="/avatars">
 
     ```bash {{ title: 'cURL' }}
-    curl https://api.facesign.ai/avatars \
-      -H "Authorization: Bearer fs_live_..."
+    curl https://api.dev.facesign.ai/avatars \
+      -H "Authorization: Bearer sk_test_..."
     ```
 
     ```typescript {{ title: 'TypeScript' }}
-    const { avatars } = await client.avatars.list();
-    
+    import Client from '@facesignai/api'
+    import { FSNodeType } from '@facesignai/api'
+
+    const client = new Client({
+      auth: 'sk_test_...',
+      serverUrl: 'https://api.dev.facesign.ai'
+    })
+
+    const { avatars } = await client.avatars.retrieve()
+
     // Use in session creation
-    const { session, clientSecret } = await client.sessions.create({
+    const { session, clientSecret } = await client.session.create({
       clientReferenceId: 'user_123',
-      avatarId: avatars[0].id, // Select an avatar
-      modules: [{ type: 'identityVerification' }]
-    });
+      avatarId: avatars[0].id,
+      flow: {
+        nodes: [
+          { id: 'start', type: FSNodeType.START, outcome: 'end' },
+          { id: 'end', type: FSNodeType.END }
+        ],
+        edges: [{ id: 'e1', source: 'start', target: 'end' }]
+      }
+    })
     ```
 
     ```python {{ title: 'Python' }}
-    avatars = client.avatars.list()
-    
-    // Use in session creation
-    session = client.sessions.create(
-        client_reference_id="user_123",
-        avatar_id=avatars.avatars[0].id,
-        modules=[{"type": "identityVerification"}]
+    import facesignai
+
+    client = facesignai.Client(
+        auth='sk_test_...',
+        base_url='https://api.dev.facesign.ai'
+    )
+
+    response = client.avatars.retrieve()
+    avatars = response['avatars']
+
+    # Use in session creation
+    session_response = client.session.create(
+        client_reference_id='user_123',
+        avatar_id=avatars[0]['id'],
+        flow={
+            'nodes': [
+                {'id': 'start', 'type': 'start', 'outcome': 'end'},
+                {'id': 'end', 'type': 'end'}
+            ],
+            'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
+        }
     )
     ```
 
@@ -174,68 +202,59 @@ async function selectPersonalizedAvatar(userId: string) {
 }
 
 async function createPersonalizedSession(userId: string) {
-  const selectedAvatar = await selectPersonalizedAvatar(userId);
-  
-  const { session, clientSecret } = await client.sessions.create({
+  const selectedAvatar = await selectPersonalizedAvatar(userId)
+
+  const { session, clientSecret } = await client.session.create({
     clientReferenceId: userId,
     avatarId: selectedAvatar.id,
-    modules: [{ type: 'identityVerification' }]
-  });
-  
-  return { session, clientSecret };
+    flow: {
+      nodes: [
+        { id: 'start', type: FSNodeType.START, outcome: 'end' },
+        { id: 'end', type: FSNodeType.END }
+      ],
+      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+    }
+  })
+
+  return { session, clientSecret }
 }
 ```
 
 ## Avatar customization
 
-### Custom phrases
+Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.
 
-Customize how your avatar greets and concludes the verification:
-
-```typescript {{ title: 'Custom avatar phrases' }}
-const { session, clientSecret } = await client.sessions.create({
+```typescript {{ title: 'Avatar with custom flow' }}
+const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user_123',
-  avatarId: 'avatar_sarah_professional',
-  initialPhrase: `Hi there! I'm Sarah, and I'll be helping you verify your identity today. This process should only take a few minutes.`,
-  finalPhrase: `Perfect! Your verification is complete. Thank you for taking the time to secure your account.`,
-  modules: [{ type: 'identityVerification' }]
-});
-```
-
-### Brand-specific customization
-
-Adapt the avatar's messaging to match your brand:
-
-```typescript {{ title: 'Brand-specific avatar setup' }}
-const BRAND_AVATAR_CONFIG = {
-  banking: {
-    initialPhrase: "Welcome to SecureBank! I'm here to help verify your identity securely and efficiently.",
-    finalPhrase: "Your identity verification is complete. Your account security is our top priority.",
-    tone: 'professional'
-  },
-  healthcare: {
-    initialPhrase: "Hello! I'm here to help verify your identity for your healthcare account. Your privacy is completely protected.",
-    finalPhrase: "Thank you for completing your verification. Your health information remains secure.",
-    tone: 'caring'
-  },
-  ecommerce: {
-    initialPhrase: "Hi! Let's quickly verify your identity so you can start shopping with confidence.",
-    finalPhrase: "All set! You're now verified and ready to explore our latest products.",
-    tone: 'friendly'
+  avatarId: 'June_HR_public',
+  flow: {
+    nodes: [
+      { id: 'start', type: FSNodeType.START, outcome: 'greet' },
+      {
+        id: 'greet',
+        type: FSNodeType.CONVERSATION,
+        prompt: "Hi! I'm here to verify your identity. This will only take a moment.",
+        outcomes: [{ id: 'next', targetNodeId: 'liveness', condition: 'true' }]
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      { id: 'end', type: FSNodeType.END }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'greet' },
+      { id: 'e2', source: 'greet', target: 'liveness' },
+      { id: 'e3', source: 'liveness', target: 'end' }
+    ]
   }
-};
-
-function createBrandedSession(userId: string, brand: string) {
-  const config = BRAND_AVATAR_CONFIG[brand] || BRAND_AVATAR_CONFIG.banking;
-  
-  return client.sessions.create({
-    clientReferenceId: userId,
-    avatarId: getAvatarForBrand(brand),
-    initialPhrase: config.initialPhrase,
-    finalPhrase: config.finalPhrase,
-    modules: [{ type: 'identityVerification' }]
-  });
-}
+})
 ```
 
 ## Avatar selection UI
@@ -524,11 +543,11 @@ async function getAvailableAvatars(): Promise<Avatar[]> {
   }
   
   // Fetch fresh data
-  const { avatars } = await client.avatars.list();
-  cachedAvatars = avatars;
-  cacheTimestamp = now;
-  
-  return avatars;
+  const { avatars } = await client.avatars.retrieve()
+  cachedAvatars = avatars
+  cacheTimestamp = now
+
+  return avatars
 }
 ```
 
@@ -536,4 +555,4 @@ async function getAvailableAvatars(): Promise<Avatar[]> {
 
 - [Sessions](/sessions) - Learn how to create sessions with avatar configuration
 - [Languages](/languages) - Configure multi-language support for your avatars
-- [Modules](/modules) - Understand how avatars adapt to different verification modules 
+- [Custom Flows](/flows) - Build sophisticated verification flows that leverage avatar interactions

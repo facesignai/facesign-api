@@ -23,8 +23,10 @@ export function DocsLayout({
   const pathname = usePathname()
 
   // Determine if we're on docs or API page
-  const isDocsPage = pathname?.startsWith('/docs')
   const isApiPage = pathname?.startsWith('/api')
+  const isHomepage = pathname === '/'
+  // Show docs sidebar on all pages except API pages and homepage
+  const isDocsPage = !isHomepage && !isApiPage
 
   // Use variant prop or determine from pathname
   const effectiveVariant = variant || (isApiPage ? 'api' : 'docs')

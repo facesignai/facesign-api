@@ -1,252 +1,387 @@
 export const metadata = {
   title: 'Session Customization',
-  description: 'Customize the FaceSign verification experience with branding, UI controls, and user experience settings.',
+  description: 'Customize the FaceSign verification permissions page and UI controls for a branded user experience.',
 }
 
 export const sections = [
   { title: 'Overview', id: 'overview' },
-  { title: 'Customization Options', id: 'customization-options' },
+  { title: 'Permissions Page', id: 'permissions-page' },
+  { title: 'UI Controls', id: 'ui-controls' },
+  { title: 'Multi-language Support', id: 'multi-language-support' },
   { title: 'Implementation', id: 'implementation' },
-  { title: 'Advanced Customization', id: 'advanced-customization' },
-  { title: 'Best Practices', id: 'best-practices' },
-  { title: 'Examples', id: 'examples' },
 ]
 
 # Session Customization
 
-Tailor the FaceSign verification experience to match your brand and user experience requirements. Customize colors, fonts, messaging, and UI behavior to create a seamless integration. {{ className: 'lead' }}
+Customize the FaceSign verification permissions page and UI controls to match your brand and user experience requirements. {{ className: 'lead' }}
 
 ## Overview {{ anchor: false }}
 
-Session customization allows you to control various aspects of the verification interface to match your application's look and feel. Customizations are applied when creating a session and affect the entire user journey.
+FaceSign provides customization options for the permissions page shown before verification begins and global UI control settings. Customizations are applied when creating a session.
 
-## Customization Options
+<Note>
+  Customizations are optional. If not provided, FaceSign uses sensible defaults with your configured avatar.
+</Note>
 
-### Branding
+---
 
-Customize the visual appearance to match your brand:
+## Permissions Page
+
+The permissions page appears before verification starts, requesting camera/microphone access. Customize text, background, and button appearance.
+
+<Row>
+  <Col>
+
+### Available Options
 
 <Properties>
-  <Property name="primaryColor" type="string">
-    Main brand color used for buttons and highlights
+  <Property name="buttonText" type="string">
+    Text displayed on the start button (e.g., "Begin Verification"). Defaults to "Continue".
   </Property>
-  <Property name="secondaryColor" type="string">
-    Accent color for secondary elements
+  <Property name="mainHeading" type="string">
+    Primary heading text shown at the top of the permissions page.
   </Property>
-  <Property name="logoUrl" type="string">
-    Your company logo displayed during verification
+  <Property name="subheading" type="string">
+    Secondary text providing additional context below the main heading.
+  </Property>
+  <Property name="backgroundType" type="enum">
+    Background display type: `"AVATAR"` (show avatar video) or `"COLOR"` (solid color). Defaults to `"AVATAR"`.
   </Property>
   <Property name="backgroundColor" type="string">
-    Overall background color
-  </Property>
-  <Property name="textColor" type="string">
-    Primary text color
+    Background color when `backgroundType` is `"COLOR"`. Hex or CSS color string (e.g., `"#f0f0f0"`).
   </Property>
 </Properties>
 
-### UI Controls
+  </Col>
+  <Col sticky>
 
-Control which UI elements are shown or hidden:
+```json {{ title: 'Permissions Page Customization' }}
+{
+  "permissionsPage": {
+    "mainHeading": "Identity Verification",
+    "subheading": "We need camera access to verify your identity",
+    "buttonText": "Start Verification",
+    "backgroundType": "COLOR",
+    "backgroundColor": "#1a202c"
+  }
+}
+```
+
+  </Col>
+</Row>
+
+---
+
+## UI Controls
+
+Global UI control settings that apply throughout the verification session.
+
+<Row>
+  <Col>
+
+### Available Options
 
 <Properties>
-  <Property name="showProgressBar" type="boolean">
-    Display verification progress
-  </Property>
-  <Property name="showSkipButton" type="boolean">
-    Allow users to skip optional steps
-  </Property>
-  <Property name="showHelpButton" type="boolean">
-    Display help/support options
-  </Property>
-  <Property name="allowCameraSwitch" type="boolean">
-    Let users switch between cameras
-  </Property>
-  <Property name="showTorchButton" type="boolean">
-    Display flashlight toggle for document scanning
+  <Property name="showUxControls" type="boolean">
+    Show or hide UX control elements during verification. Defaults to `true`.
   </Property>
 </Properties>
 
-### Messaging
+  </Col>
+  <Col sticky>
 
-Customize text and instructions shown to users:
+```json {{ title: 'UI Controls Customization' }}
+{
+  "controls": {
+    "showUxControls": false
+  }
+}
+```
+
+  </Col>
+</Row>
+
+---
+
+## Multi-language Support
+
+Permissions page text can be translated for multi-language sessions. Provide translations as key-value pairs where keys are language codes.
+
+<Row>
+  <Col>
+
+### Translation Fields
 
 <Properties>
-  <Property name="welcomeMessage" type="string">
-    Initial greeting text
+  <Property name="buttonTextTranslates" type="object">
+    Translations for button text. Keys are language codes (e.g., `"es"`, `"fr"`).
   </Property>
-  <Property name="completionMessage" type="string">
-    Success message after verification
+  <Property name="mainHeadingTranslates" type="object">
+    Translations for main heading.
   </Property>
-  <Property name="errorMessages" type="object">
-    Custom error text for different scenarios
-  </Property>
-  <Property name="instructionText" type="string">
-    Step-by-step guidance for users
+  <Property name="subheadingTranslates" type="object">
+    Translations for subheading.
   </Property>
 </Properties>
+
+<Note>
+  Use with the `langs` and `defaultLang` session parameters to enable language switching. See [Sessions](/sessions) for details.
+</Note>
+
+  </Col>
+  <Col sticky>
+
+```json {{ title: 'Multi-language Example' }}
+{
+  "permissionsPage": {
+    "mainHeading": "Identity Verification",
+    "mainHeadingTranslates": {
+      "es": "Verificación de Identidad",
+      "fr": "Vérification d'identité"
+    },
+    "subheading": "Camera access required",
+    "subheadingTranslates": {
+      "es": "Se requiere acceso a la cámara",
+      "fr": "Accès à la caméra requis"
+    },
+    "buttonText": "Continue",
+    "buttonTextTranslates": {
+      "es": "Continuar",
+      "fr": "Continuer"
+    }
+  }
+}
+```
+
+  </Col>
+</Row>
+
+---
 
 ## Implementation
 
-Include customization options when creating a session:
+Include customization options when creating a session. All fields are optional.
 
-<CodeGroup>
+<Row>
+  <Col>
 
-```typescript {{ title: 'TypeScript' }}
-const session = await client.sessions.create({
+### Complete Example
+
+This example shows all customization options combined: custom permissions page with color background, multi-language support for English/Spanish/French, and hidden UX controls for a minimal interface.
+
+  </Col>
+  <Col sticky>
+
+<TabbedCodeBlock
+  defaultLanguage="curl"
+  codeExamples={{
+    curl: `curl https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer sk_test_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "clientReferenceId": "user-123",
+  "langs": ["en", "es", "fr"],
+  "defaultLang": "en",
+  "flow": {
+    "nodes": [
+      { "id": "start", "type": "start", "outcome": "end" },
+      { "id": "end", "type": "end" }
+    ],
+    "edges": [
+      { "id": "e1", "source": "start", "target": "end" }
+    ]
+  },
+  "customization": {
+    "permissionsPage": {
+      "mainHeading": "Verify Your Identity",
+      "mainHeadingTranslates": {
+        "es": "Verifica tu Identidad",
+        "fr": "Vérifiez votre Identité"
+      },
+      "subheading": "This helps us keep your account secure",
+      "subheadingTranslates": {
+        "es": "Esto ayuda a mantener segura tu cuenta",
+        "fr": "Cela aide à sécuriser votre compte"
+      },
+      "buttonText": "Begin Verification",
+      "buttonTextTranslates": {
+        "es": "Comenzar Verificación",
+        "fr": "Commencer la Vérification"
+      },
+      "backgroundType": "COLOR",
+      "backgroundColor": "#1a202c"
+    },
+    "controls": {
+      "showUxControls": false
+    }
+  }
+}'`,
+    javascript: `const client = new Client({
+  auth: 'sk_test_...',
+  baseURL: 'https://api.dev.facesign.ai'
+})
+
+const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user-123',
-  metadata: { userId: '123' },
-  modules: [
-    { type: 'identityVerification' },
-    { type: 'documentAuthentication' }
+  langs: ['en', 'es', 'fr'],
+  defaultLang: 'en',
+  flow: [
+    { id: 'start', type: FSNodeType.START, outcome: 'end' },
+    { id: 'end', type: FSNodeType.END }
   ],
   customization: {
-    branding: {
-      primaryColor: '#007bff',
-      secondaryColor: '#6c757d',
-      logoUrl: 'https://your-domain.com/logo.png',
-      backgroundColor: '#ffffff',
-      textColor: '#333333'
+    permissionsPage: {
+      mainHeading: 'Verify Your Identity',
+      mainHeadingTranslates: {
+        es: 'Verifica tu Identidad',
+        fr: 'Vérifiez votre Identité'
+      },
+      subheading: 'This helps us keep your account secure',
+      subheadingTranslates: {
+        es: 'Esto ayuda a mantener segura tu cuenta',
+        fr: 'Cela aide à sécuriser votre compte'
+      },
+      buttonText: 'Begin Verification',
+      buttonTextTranslates: {
+        es: 'Comenzar Verificación',
+        fr: 'Commencer la Vérification'
+      },
+      backgroundType: 'COLOR',
+      backgroundColor: '#1a202c'
     },
-    ui: {
-      showProgressBar: true,
-      showSkipButton: false,
-      showHelpButton: true,
-      allowCameraSwitch: true,
-      showTorchButton: true
-    },
-    messaging: {
-      welcomeMessage: 'Welcome to our secure verification process',
-      completionMessage: 'Verification completed successfully!',
-      errorMessages: {
-        cameraPermission: 'Please allow camera access to continue',
-        networkError: 'Connection error. Please check your internet.'
-      }
+    controls: {
+      showUxControls: false
     }
   }
-})
-```
+})`,
+    python: `import facesignai
 
-```javascript {{ title: 'JavaScript' }}
-const session = await client.sessions.create({
-  clientReferenceId: 'user-123',
-  metadata: { userId: '123' },
-  modules: [
-    { type: 'identityVerification' },
-    { type: 'documentAuthentication' }
-  ],
-  customization: {
-    branding: {
-      primaryColor: '#007bff',
-      secondaryColor: '#6c757d',
-      logoUrl: 'https://your-domain.com/logo.png',
-      backgroundColor: '#ffffff',
-      textColor: '#333333'
+client = facesignai.Client(
+    auth='sk_test_...',
+    base_url='https://api.dev.facesign.ai'
+)
+
+response = client.session.create(
+    client_reference_id='user-123',
+    langs=['en', 'es', 'fr'],
+    default_lang='en',
+    flow={
+        'nodes': [
+            {'id': 'start', 'type': 'start', 'outcome': 'end'},
+            {'id': 'end', 'type': 'end'}
+        ],
+        'edges': [
+            {'id': 'e1', 'source': 'start', 'target': 'end'}
+        ]
     },
-    ui: {
-      showProgressBar: true,
-      showSkipButton: false,
-      showHelpButton: true,
-      allowCameraSwitch: true,
-      showTorchButton: true
-    },
-    messaging: {
-      welcomeMessage: 'Welcome to our secure verification process',
-      completionMessage: 'Verification completed successfully!',
-      errorMessages: {
-        cameraPermission: 'Please allow camera access to continue',
-        networkError: 'Connection error. Please check your internet.'
-      }
+    customization={
+        'permissionsPage': {
+            'mainHeading': 'Verify Your Identity',
+            'mainHeadingTranslates': {
+                'es': 'Verifica tu Identidad',
+                'fr': 'Vérifiez votre Identité'
+            },
+            'subheading': 'This helps us keep your account secure',
+            'subheadingTranslates': {
+                'es': 'Esto ayuda a mantener segura tu cuenta',
+                'fr': 'Cela aide à sécuriser votre compte'
+            },
+            'buttonText': 'Begin Verification',
+            'buttonTextTranslates': {
+                'es': 'Comenzar Verificación',
+                'fr': 'Commencer la Vérification'
+            },
+            'backgroundType': 'COLOR',
+            'backgroundColor': '#1a202c'
+        },
+        'controls': {
+            'showUxControls': False
+        }
     }
-  }
-})
-```
+)`
+  }}
+/>
 
-</CodeGroup>
+  </Col>
+</Row>
 
-## Advanced Customization
+---
 
-### Custom CSS
-
-For advanced styling, you can inject custom CSS:
-
-```typescript {{ title: 'Custom CSS' }}
-customization: {
-  css: `
-    .facesign-container {
-      font-family: 'Your Custom Font', sans-serif;
-      border-radius: 12px;
-    }
-    .facesign-button {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-  `
-}
-```
-
-### Responsive Design
-
-Customize appearance for different screen sizes:
-
-```typescript {{ title: 'Responsive Design' }}
-customization: {
-  responsive: {
-    mobile: {
-      fontSize: '14px',
-      padding: '16px'
-    },
-    desktop: {
-      fontSize: '16px',
-      padding: '24px'
-    }
-  }
-}
-```
-
-## Best Practices
-
-- Test customizations on different devices and browsers
-- Ensure sufficient color contrast for accessibility
-- Keep custom messages clear and actionable
-- Use high-quality logos and images
-- Consider your brand guidelines when choosing colors
-- Test with users to ensure the customized experience is intuitive
-
-## Examples
+## Common Examples
 
 ### Minimal Branding
 
-```typescript {{ title: 'Minimal Setup' }}
-customization: {
-  branding: {
-    primaryColor: '#2563eb',
-    logoUrl: 'https://example.com/logo.svg'
+Customize just the heading and button text:
+
+```json {{ title: 'Minimal Setup' }}
+{
+  "customization": {
+    "permissionsPage": {
+      "mainHeading": "Welcome to SecureBank",
+      "buttonText": "Get Started"
+    }
   }
 }
 ```
 
-### Full Customization
+### Avatar Background
 
-```typescript {{ title: 'Complete Setup' }}
-customization: {
-  branding: {
-    primaryColor: '#059669',
-    secondaryColor: '#d1fae5',
-    logoUrl: 'https://example.com/logo.svg',
-    backgroundColor: '#f9fafb',
-    textColor: '#111827'
-  },
-  ui: {
-    showProgressBar: true,
-    showHelpButton: true,
-    allowCameraSwitch: true
-  },
-  messaging: {
-    welcomeMessage: 'Let\'s verify your identity securely',
-    completionMessage: 'All set! Your identity has been verified.'
+Use avatar video as background (default behavior):
+
+```json {{ title: 'Avatar Background' }}
+{
+  "avatarId": "June_HR_public",
+  "customization": {
+    "permissionsPage": {
+      "backgroundType": "AVATAR",
+      "mainHeading": "Let's verify your identity",
+      "buttonText": "Start"
+    }
   }
 }
 ```
 
-<Warning>
-  Custom CSS and extensive UI modifications may affect the verification user experience. Test thoroughly to ensure all functionality remains accessible and intuitive.
-</Warning>
+### Color Background
+
+Use a solid color instead of avatar video:
+
+```json {{ title: 'Color Background' }}
+{
+  "customization": {
+    "permissionsPage": {
+      "backgroundType": "COLOR",
+      "backgroundColor": "#0f172a",
+      "mainHeading": "Identity Verification Required",
+      "subheading": "We'll guide you through the process",
+      "buttonText": "Continue"
+    }
+  }
+}
+```
+
+### Bilingual Session
+
+Support English and Spanish:
+
+```json {{ title: 'Bilingual Setup' }}
+{
+  "langs": ["en", "es"],
+  "defaultLang": "en",
+  "customization": {
+    "permissionsPage": {
+      "mainHeading": "Verification",
+      "mainHeadingTranslates": {
+        "es": "Verificación"
+      },
+      "buttonText": "Start",
+      "buttonTextTranslates": {
+        "es": "Comenzar"
+      }
+    }
+  }
+}
+```
+
+<Note>
+  Test your customizations across different devices and screen sizes to ensure a consistent user experience.
+</Note>

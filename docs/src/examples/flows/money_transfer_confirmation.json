@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "liveness",
+      "type": "liveness_detection",
+      "outcomes": {
+        "livenessDetected": "recognition",
+        "deepfakeDetected": "end",
+        "noFace": "end"
+      }
+    },
+    {
+      "id": "recognition",
+      "type": "recognition",
+      "collectionId": "verified_users",
+      "outcomes": {
+        "recognized": "end",
+        "notRecognized": "end",
+        "error": "end"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "liveness"
+    },
+    {
+      "id": "e2",
+      "source": "liveness",
+      "target": "recognition",
+      "condition": "livenessDetected"
+    },
+    {
+      "id": "e3",
+      "source": "liveness",
+      "target": "end",
+      "condition": "deepfakeDetected || noFace"
+    },
+    {
+      "id": "e4",
+      "source": "recognition",
+      "target": "end"
+    }
+  ]
+}

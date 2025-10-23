@@ -3,7 +3,7 @@
 import { Table, Badge, Code, Text, Box } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 
-interface Property {
+export interface Property {
   name: string
   type: string
   required?: boolean

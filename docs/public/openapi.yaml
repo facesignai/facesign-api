@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: FaceSign API
   description: |
-    The FaceSign API enables developers to create AI-powered identity verification flows with conversational interfaces, 
+    The FaceSign API enables developers to create AI-powered identity verification flows with conversational interfaces,
     biometric verification, document scanning, and multi-factor authentication.
-  version: 1.0.18
+  version: 1.0.19
   contact:
     name: FaceSign Support
     email: support@facesign.ai
@@ -487,10 +487,15 @@ components:
       allOf:
         - $ref: '#/components/schemas/FSNodeBase'
         - type: object
+          required:
+            - outcome
           properties:
             type:
               type: string
               enum: [start]
+            outcome:
+              type: string
+              description: The ID of the node to proceed to from the start node
 
     FSEndNode:
       allOf:

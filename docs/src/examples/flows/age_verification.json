@@ -1,0 +1,59 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "document",
+      "type": "document_scan",
+      "scanningMode": "SINGLE_SIDE",
+      "allowedDocumentTypes": ["MRTD_TYPE_PASSPORT", "MRTD_TYPE_ID_CARD", "MRTD_TYPE_DL"],
+      "outcomes": {
+        "scanSuccess": "validate_age",
+        "userCancelled": "end",
+        "scanTimeout": "end"
+      }
+    },
+    {
+      "id": "validate_age",
+      "type": "data_validation",
+      "validation": {
+        "type": "age_check",
+        "minimumAge": 21
+      },
+      "outcomes": {
+        "valid": "end",
+        "invalid": "end"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start",
+      "target": "document"
+    },
+    {
+      "id": "e2",
+      "source": "document",
+      "target": "validate_age",
+      "condition": "scanSuccess"
+    },
+    {
+      "id": "e3",
+      "source": "document",
+      "target": "end",
+      "condition": "userCancelled || scanTimeout"
+    },
+    {
+      "id": "e4",
+      "source": "validate_age",
+      "target": "end"
+    }
+  ]
+}

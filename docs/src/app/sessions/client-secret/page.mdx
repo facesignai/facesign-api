@@ -10,10 +10,10 @@ export const metadata = {
     ### Attributes
 
     <Properties>
-      <Property name="secret" type="string">Opaque token used by the hosted verification UI.</Property>
-      <Property name="createdAt" type="number">Unix timestamp when created.</Property>
-      <Property name="expireAt" type="number">Unix timestamp when the client secret expires (typically ~1h).</Property>
-      <Property name="url" type="string">Hosted verification URL containing the client secret.</Property>
+      <Property name="secret" type="string">Opaque token for accessing the hosted verification interface. Format: `cs` prefix followed by 32 hex characters.</Property>
+      <Property name="createdAt" type="number">Unix timestamp (milliseconds) when the client secret was created.</Property>
+      <Property name="expireAt" type="number">Unix timestamp (milliseconds) when the client secret expires (2 hours after creation).</Property>
+      <Property name="url" type="string">Complete hosted verification URL with embedded client secret query parameter.</Property>
     </Properties>
   </Col>
   <Col sticky>
@@ -25,10 +25,10 @@ export const metadata = {
 
     ```json {{ title: 'The Client Secret object' }}
     {
-      "secret": "cs_abc123",
-      "createdAt": 1705314600,
-      "expireAt": 1705318200,
-      "url": "https://verify.facesign.ai/?client_secret=cs_abc123"
+      "secret": "csea61d44d88d345e1b91622820bb73100",
+      "createdAt": 1761001508335,
+      "expireAt": 1761008708335,
+      "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100"
     }
     ```
   </Col>

@@ -38,36 +38,16 @@ client = FaceSignClient(
 )
 ```
 
-### 2. Create a Verification Session
+### 2. Create a Verification Session with Custom Flow
 
 ```python
-# Create a session with modules (legacy approach)
+# Create a session with a custom flow
 session_response = client.sessions.create(
     client_reference_id="user-12345",
     metadata={
         "user_id": "12345",
         "source": "python-app"
     },
-    modules=[
-        {"type": "identityVerification"},
-        {"type": "documentAuthentication"}
-    ],
-    initial_phrase="Welcome! I'll help you verify your identity.",
-    default_lang="en"
-)
-
-print(f"Session ID: {session_response.session.id}")
-print(f"Client Secret: {session_response.client_secret.secret}")
-print(f"Verification URL: {session_response.client_secret.url}")
-```
-
-### 3. Create with Flow-Based Configuration
-
-```python
-# Create a session with flow (recommended approach)
-flow_session = client.sessions.create(
-    client_reference_id="user-67890",
-    metadata={"source": "python-flow-app"},
     flow={
         "nodes": [
             {
@@ -81,7 +61,7 @@ flow_session = client.sessions.create(
                 "transitions": [{"id": "t1", "condition": "true"}]
             },
             {
-                "id": "face-scan", 
+                "id": "face-scan",
                 "type": "face_scan",
                 "mode": "capture",
                 "outcomes": {
@@ -99,11 +79,16 @@ flow_session = client.sessions.create(
             {"id": "e2", "source": "greeting", "target": "face-scan"},
             {"id": "e3", "source": "face-scan", "target": "end"}
         ]
-    }
+    },
+    default_lang="en"
 )
+
+print(f"Session ID: {session_response.session.id}")
+print(f"Client Secret: {session_response.client_secret.secret}")
+print(f"Verification URL: {session_response.client_secret.url}")
 ```
 
-### 4. Retrieve Session Status
+### 3. Retrieve Session Status
 
 ```python
 # Get session details
@@ -142,7 +127,17 @@ async def main():
         # Create session asynchronously
         session = await client.sessions.acreate(
             client_reference_id="async-user-123",
-            modules=[{"type": "identityVerification"}]
+            flow={
+                "nodes": [
+                    {"id": "start", "type": "start"},
+                    {"id": "verify", "type": "liveness_detection", "outcomes": {"livenessDetected": "end", "noFace": "end"}},
+                    {"id": "end", "type": "end"}
+                ],
+                "edges": [
+                    {"id": "e1", "source": "start", "target": "verify"},
+                    {"id": "e2", "source": "verify", "target": "end"}
+                ]
+            }
         )
         
         # List sessions asynchronously
@@ -188,7 +183,17 @@ from facesign import (
 try:
     session = client.sessions.create(
         client_reference_id="test-user",
-        modules=[{"type": "identityVerification"}]
+        flow={
+            "nodes": [
+                {"id": "start", "type": "start"},
+                {"id": "verify", "type": "liveness_detection", "outcomes": {"livenessDetected": "end", "noFace": "end"}},
+                {"id": "end", "type": "end"}
+            ],
+            "edges": [
+                {"id": "e1", "source": "start", "target": "verify"},
+                {"id": "e2", "source": "verify", "target": "end"}
+            ]
+        }
     )
 except AuthenticationError:
     print("Invalid API key")
@@ -214,11 +219,21 @@ from facesign import FaceSignClient
 
 def create_verification_view(request):
     client = FaceSignClient(settings.FACESIGN_API_KEY)
-    
+
     session = client.sessions.create(
         client_reference_id=f"user-{request.user.id}",
         metadata={"user_id": request.user.id},
-        modules=[{"type": "identityVerification"}]
+        flow={
+            "nodes": [
+                {"id": "start", "type": "start"},
+                {"id": "verify", "type": "liveness_detection", "outcomes": {"livenessDetected": "end", "noFace": "end"}},
+                {"id": "end", "type": "end"}
+            ],
+            "edges": [
+                {"id": "e1", "source": "start", "target": "verify"},
+                {"id": "e2", "source": "verify", "target": "end"}
+            ]
+        }
     )
     
     return JsonResponse({
@@ -241,7 +256,17 @@ client = FaceSignClient(os.getenv("FACESIGN_API_KEY"))
 def create_verification():
     session = client.sessions.create(
         client_reference_id="user-123",
-        modules=[{"type": "identityVerification"}]
+        flow={
+            "nodes": [
+                {"id": "start", "type": "start"},
+                {"id": "verify", "type": "liveness_detection", "outcomes": {"livenessDetected": "end", "noFace": "end"}},
+                {"id": "end", "type": "end"}
+            ],
+            "edges": [
+                {"id": "e1", "source": "start", "target": "verify"},
+                {"id": "e2", "source": "verify", "target": "end"}
+            ]
+        }
     )
     
     return jsonify({
@@ -265,7 +290,17 @@ async def create_verification():
     async with client:
         session = await client.sessions.acreate(
             client_reference_id="user-123",
-            modules=[{"type": "identityVerification"}]
+            flow={
+                "nodes": [
+                    {"id": "start", "type": "start"},
+                    {"id": "verify", "type": "liveness_detection", "outcomes": {"livenessDetected": "end", "noFace": "end"}},
+                    {"id": "end", "type": "end"}
+                ],
+                "edges": [
+                    {"id": "e1", "source": "start", "target": "verify"},
+                    {"id": "e2", "source": "verify", "target": "end"}
+                ]
+            }
         )
         
         return {

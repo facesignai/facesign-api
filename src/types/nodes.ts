@@ -32,10 +32,13 @@ export interface FSConditionalOutcome {
   condition: string
 }
 
+// Alias for OpenAPI compatibility - FSNodeTransition and FSConditionalOutcome are the same
+export type FSNodeTransition = FSConditionalOutcome
+
 export interface FSConversationNode extends FSNodeBase {
   type: FSNodeType.CONVERSATION
   prompt: string
-  outcomes: NonEmptyArray<FSConditionalOutcome>
+  transitions: NonEmptyArray<FSNodeTransition>
   doesNotRequireReply?: boolean
 }
 
@@ -57,11 +60,12 @@ export enum FSEnterEmailOutcome {
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
   outcomes: Record<FSEnterEmailOutcome, FSNodeId>
+  transitions?: FSNodeTransition[]
 }
 
 export interface FSDataValidationNode extends FSNodeBase {
   type: FSNodeType.DATA_VALIDATION
-  outcomes: NonEmptyArray<FSConditionalOutcome>
+  transitions: NonEmptyArray<FSNodeTransition>
   validation: {
     field: string
     action: string
@@ -115,20 +119,52 @@ export enum FSFaceScanOutcome {
   ERROR = "error",
 }
 
+export enum FSFaceScanMode {
+  CAPTURE = "capture",
+  COMPARE = "compare",
+}
+
+export enum FSReferenceImageSource {
+  SESSION = "session",
+  PROVIDED_DATA = "providedData",
+  URL = "url",
+}
+
 export interface FSFaceScanNode extends FSNodeBase {
   type: FSNodeType.FACE_SCAN
+  mode: FSFaceScanMode // REQUIRED - capture or compare mode
   outcomes: Record<FSFaceScanOutcome, FSNodeId>
 
-  // Capture configuration (always used)
+  // Capture/Compare configuration
   captureInstructions?: string
-  requireLivenessChallenge?: boolean
-  requireAILivenessCheck?: boolean
+  saveToField?: string
+  requireLiveness?: boolean
+  referenceImageSource?: FSReferenceImageSource
   referenceImageKey?: string
-  similarityThreshold?: number
+  referenceImageUrl?: string
+  similarityThreshold?: number // 0-1, for compare mode
 
-  // Advanced configuration
+  // Capture timing and detection
+  captureDelay?: number // milliseconds, default 3000
+  detectionInterval?: number // milliseconds, default 150
+
+  // Quality thresholds
+  qualityThreshold?: number // default 0.7
+  blurThreshold?: number // default 50
+  minFaceSize?: number // pixels, default 100
+  maxFaceSize?: number // pixels, default 400
+
+  // UI/UX configuration
   enableSound?: boolean // Enable audio feedback (default: true)
   enableHaptics?: boolean // Enable haptic feedback (default: true)
+
+  // Performance
+  useWebGL?: boolean // default true
+  maxRetries?: number // default 3
+
+  // Legacy fields (will be deprecated)
+  requireLivenessChallenge?: boolean // Use requireLiveness instead
+  requireAILivenessCheck?: boolean // Use requireLiveness instead
 }
 
 export enum FSTwoFactorChannel {

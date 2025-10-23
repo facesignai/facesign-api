@@ -40,17 +40,21 @@ curl https://api.dev.facesign.ai/sessions \
 ```
 
 ```typescript {{ title: 'TypeScript' }}
-import { FaceSign } from '@facesign/sdk';
+import Client from '@facesignai/api'
 
-const facesign = new FaceSign({
-  apiKey: 'sk_test_4eC39HqLyjWDarjtT1zdp7dc',
-});
+const client = new Client({
+  auth: 'sk_test_4eC39HqLyjWDarjtT1zdp7dc',
+  serverUrl: 'https://api.dev.facesign.ai'
+})
 ```
 
 ```python {{ title: 'Python' }}
-import facesign
+import facesignai
 
-facesign.api_key = 'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
+client = facesignai.Client(
+    auth='sk_test_4eC39HqLyjWDarjtT1zdp7dc',
+    base_url='https://api.dev.facesign.ai'
+)
 ```
 
 </CodeGroup>
@@ -66,18 +70,22 @@ FACESIGN_API_KEY=sk_test_4eC39HqLyjWDarjtT1zdp7dc
 ```
 
 ```typescript {{ title: 'TypeScript' }}
-import { FaceSign } from '@facesign/sdk';
+import Client from '@facesignai/api'
 
-const facesign = new FaceSign({
-  apiKey: process.env.FACESIGN_API_KEY,
-});
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  serverUrl: 'https://api.dev.facesign.ai'
+})
 ```
 
 ```python {{ title: 'Python' }}
 import os
-import facesign
+import facesignai
 
-facesign.api_key = os.environ.get('FACESIGN_API_KEY')
+client = facesignai.Client(
+    auth=os.environ.get('FACESIGN_API_KEY'),
+    base_url='https://api.dev.facesign.ai'
+)
 ```
 
 </CodeGroup>
@@ -86,18 +94,30 @@ facesign.api_key = os.environ.get('FACESIGN_API_KEY')
 
 ## Client-side authentication
 
-For client-side integrations, use session-specific client secrets instead of your API key:
+**Never use your API key on the client side!** Instead, create a session on your backend and provide the client secret URL to your end users:
 
-```typescript {{ title: 'Client-side' }}
-// Never use your API key on the client side!
-// Use the client_secret from a session instead
-const clientSecret = 'vs_1a2b3c4d5e6f_secret_abc123';
+```typescript {{ title: 'Backend: Create session and get client secret' }}
+import Client from '@facesignai/api'
 
-// Initialize the client-side SDK
-const facesignClient = new FaceSignClient({
-  clientSecret: clientSecret,
-});
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  serverUrl: 'https://api.dev.facesign.ai'
+})
+
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  metadata: {},
+  flow: { nodes: [...], edges: [...] }
+})
+
+// Client secret format: csea61d44d88d345e1b91622820bb73100
+// URL format: https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100
+
+// Redirect user to clientSecret.url
+res.redirect(clientSecret.url)
 ```
+
+The client secret is embedded in the session URL. Your end user navigates to `clientSecret.url` to begin verification. Client secrets expire after 2 hours by default.
 
 ## Rate limiting
 
@@ -119,16 +139,16 @@ If you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
 
 ## API versioning
 
-The FaceSign API uses date-based versioning. You can specify the API version using the `FaceSign-Version` header:
+The FaceSign API uses date-based versioning. The SDK automatically sends the `Facesign-Version` header with each request:
 
-```bash {{ title: 'Specify API version' }}
-curl https://api.facesign.ai/v1/sessions \
+```bash {{ title: 'API version header (sent automatically by SDK)' }}
+curl https://api.dev.facesign.ai/sessions \
   -H "Authorization: Bearer sk_test_..." \
-  -H "FaceSign-Version: 2024-01-15"
+  -H "Facesign-Version: 2024-12-18"
 ```
 
 <Note>
-  If you don't specify a version, your requests will use the API version that was current when your account was created.
+  The SDK uses version `2024-12-18` by default. This header is automatically included in all SDK requests.
 </Note>
 
 <CollapsibleSection title="Security Best Practices" variant="subtle">
@@ -145,47 +165,15 @@ curl https://api.facesign.ai/v1/sessions \
 
 </CollapsibleSection>
 
-## Webhook signatures
+## Webhook security
 
-For webhook endpoints, verify the signature to ensure requests are from FaceSign:
+FaceSign sends webhook events for session updates and media uploads. Currently, Dev environment webhooks use basic validation - you should verify events by fetching the session via API and checking your `clientReferenceId` or metadata.
 
-<CodeGroup>
+See [Webhooks](/webhooks) for complete documentation on event types and handling.
 
-```typescript {{ title: 'TypeScript' }}
-import crypto from 'crypto';
-
-function verifyWebhookSignature(
-  payload: string,
-  signature: string,
-  secret: string
-): boolean {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
-}
-```
-
-```python {{ title: 'Python' }}
-import hmac
-import hashlib
-
-def verify_webhook_signature(payload, signature, secret):
-    expected_signature = hmac.new(
-        secret.encode('utf-8'),
-        payload.encode('utf-8'),
-        hashlib.sha256
-    ).hexdigest()
-    
-    return hmac.compare_digest(signature, expected_signature)
-```
-
-</CodeGroup>
+<Note>
+  Signature-based webhook verification is planned for future releases. For now, validate events by fetching the session from the API.
+</Note>
 
 ## Next steps
 

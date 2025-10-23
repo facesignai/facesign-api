@@ -1,524 +1,510 @@
 export const metadata = {
   title: 'Sessions',
-  description: 'Learn how to create and manage verification sessions with the FaceSign API.',
+  description: 'Create and manage identity verification sessions using FaceSign\'s node-based flow system.',
 }
+
+export const sections = [
+  { title: 'Overview', id: 'overview' },
+  { title: 'Create a session', id: 'create-session' },
+  { title: 'Retrieve a session', id: 'retrieve-session' },
+  { title: 'List all sessions', id: 'list-sessions' },
+  { title: 'Session statuses', id: 'session-statuses' },
+]
 
 # Sessions
 
+Sessions are the core resource in FaceSign. Create a session to initiate an identity verification flow, then provide the client secret to your end user to begin verification. {{ className: 'lead' }}
 
-Sessions are the core of FaceSign's identity verification platform. A session represents a single identity verification flow powered by FaceSign's node-based flow system, guiding users through custom verification steps like conversational AI interactions, biometric checks, document scanning, and multi-factor authentication. {{ className: 'lead' }}
+## Overview {{ anchor: false }}
 
-<Note>
-  See API Reference for endpoints: <a href="/api#create-session">Create</a>, <a href="/api#get-session">Retrieve</a>, <a href="/api#list-sessions">List</a>, and <a href="/api#refresh-client-secret">Client secret</a>. For building flows, see <a href="/flows/mapping">Flow Builder → FSFlow Mapping</a>.
-</Note>
+A session represents a single identity verification journey. Each session contains:
 
-<Note>
-  Related objects: <a href="/sessions/object">The Session object</a> and <a href="/sessions/client-secret">The Client Secret object</a>.
-</Note>
+- A unique ID for tracking
+- Settings that define the verification flow
+- Status tracking the user's progress
+- A report with verification results (when complete)
 
-## How FaceSign Sessions Work
-
-<Row>
-  <Col>
-
-FaceSign sessions work similarly to how Stripe handles payments. When you integrate FaceSign, you create a session using the API and get a session object plus client secret, save the session to your database for tracking, provide the client secret to the FaceSign frontend, listen for webhooks that inform you about session progress, and update your database when webhooks arrive.
-
-This approach gives you faster performance (no repeated API calls), better reliability (your app doesn't depend on external API availability), enhanced control (all verification data is in your database), and a complete audit trail.
-
-  </Col>
-  <Col sticky>
-    <ApiEndpointsCard
-      items={[
-        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
-        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
-        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
-        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
-      ]}
-    />
-  </Col>
-</Row>
+Sessions use a **node-based flow system** where you define verification steps as nodes (like liveness detection, document scanning) connected by edges that determine the user's path through verification.
 
 ---
 
-## Create a session {{ tag: 'POST', label: '/sessions' }}
+## Create a session
+
+Create a new verification session by providing a flow definition. The flow contains nodes (verification steps) and edges (connections between steps).
 
 <Row>
   <Col>
 
-    Creates a new verification session. The response includes both the session object and a client secret for frontend integration.
+### Required parameters
 
-    ### Required attributes
+<Properties>
+  <Property name="flow" type="object">
+    Node-based flow definition containing:
+    - `nodes` - Array of FSNode objects (START, END, and verification steps)
+    - `edges` - Array of edge objects connecting nodes
 
-    <Properties>
-      <Property name="clientReferenceId" type="string">
-        Your internal reference ID to link this session to your user.
-      </Property>
-      <Property name="modules" type="array">
-        Array of verification modules to include. Each module has a `type` and configuration options.
-      </Property>
-    </Properties>
+    See [Custom Flows](/flows) for complete node type documentation.
+  </Property>
+</Properties>
 
-    ### Optional attributes
+### Optional parameters
 
-    <Properties>
-      <Property name="metadata" type="object">
-        Key-value pairs for storing additional information about the session.
-      </Property>
-      <Property name="initialPhrase" type="string">
-        Custom greeting message for the AI avatar.
-      </Property>
-      <Property name="finalPhrase" type="string">
-        Custom closing message for the AI avatar.
-      </Property>
-      <Property name="providedData" type="object">
-        Pre-filled data to pass to the verification flow.
-      </Property>
-      <Property name="avatarId" type="string">
-        ID of the AI avatar to use. Get available avatars from `/avatars` endpoint.
-      </Property>
-      <Property name="langs" type="array">
-        Array of supported language codes. Get available languages from `/langs` endpoint.
-      </Property>
-      <Property name="defaultLang" type="string">
-        Default language code (defaults to 'en').
-      </Property>
-      <Property name="zone" type="string">
-        Geographic zone: `es` or `eu` (defaults to 'es').
-      </Property>
-      <Property name="flow" type="object">
-        Custom node-based flow definition for advanced use cases.
-      </Property>
-      <Property name="customization" type="object">
-        UI customization options including colors and branding.
-      </Property>
-    </Properties>
+<Properties>
+  <Property name="clientReferenceId" type="string">
+    Your internal reference ID for this verification (e.g., your user ID).
+  </Property>
+  <Property name="metadata" type="object">
+    Custom key-value pairs attached to the session. Useful for storing additional context.
+  </Property>
+  <Property name="providedData" type="object">
+    Pre-fill data for the session (name, email, phone, etc.). Useful when you already know some user information.
+  </Property>
+  <Property name="avatarId" type="string">
+    ID of the AI avatar to use for conversation nodes. See [Avatars](/avatars) for available options.
+  </Property>
+  <Property name="langs" type="array">
+    Array of language codes supported in this session (e.g., `["en", "es", "fr"]`). User can switch between these languages.
+  </Property>
+  <Property name="defaultLang" type="string">
+    Default language code (e.g., `"en"`). Defaults to English if not specified.
+  </Property>
+  <Property name="zone" type="string">
+    Data residency zone: `"es"` (Spain) or `"eu"` (Europe). Determines where session data is stored.
+  </Property>
+  <Property name="customization" type="object">
+    UI customization options for permissions page and controls. See [Customization](/customization) for details.
+  </Property>
+  <Property name="videoAIAnalysisEnabled" type="boolean">
+    Enable AI analysis of user video recordings. Provides behavioral insights and fraud detection signals.
+  </Property>
+</Properties>
+
+### Returns
+
+Returns a session object with an embedded client secret. Provide the `clientSecret.url` to your end user to begin verification.
 
   </Col>
   <Col sticky>
-    <ApiEndpointsCard
-      items={[
-        { method: 'POST', label: 'Create Session', href: '/api#create-session' },
-        { method: 'GET', label: 'Get Session', href: '/api#get-session' },
-        { method: 'GET', label: 'List Sessions', href: '/api#list-sessions' },
-        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
-      ]}
-    />
-  </Col>
-</Row>
 
----
-
-## Create a session {{ tag: 'POST', label: '/sessions' }}
-
-<Row>
-  <Col>
-
-    <CodeGroup title="Request" tag="POST" label="/sessions">
-
-    ```bash {{ title: 'cURL' }}
-    curl https://api.dev.facesign.ai/sessions \
-      -H "Authorization: Bearer $FACESIGN_API_KEY" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "clientReferenceId": "user_123",
-        "metadata": {
-          "user_id": "usr_abc123",
-          "verification_type": "onboarding"
-        },
-        "flow": {
-          "nodes": [
-            { "id": "start", "type": "start" },
-            { "id": "end", "type": "end" }
-          ],
-          "edges": [
-            { "id": "e1", "source": "start", "target": "end" }
-          ]
-        }
-      }'
-    ```
-
-    ```typescript {{ title: 'TypeScript' }}
-    import { FaceSignClient } from '@facesign/api';
-
-    const client = new FaceSignClient({
-      auth: process.env.FACESIGN_API_KEY,
-    });
-
-    const { session, clientSecret } = await client.sessions.create({
-      clientReferenceId: 'user_123',
-      metadata: {
-        user_id: 'usr_abc123',
-        verification_type: 'onboarding'
+<TabbedCodeBlock
+  defaultLanguage="curl"
+  codeExamples={{
+    curl: `curl https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer sk_test_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+  "clientReferenceId": "user-123",
+  "metadata": {
+    "userId": "123",
+    "source": "web-app"
+  },
+  "flow": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "outcome": "liveness"
       },
-      modules: [
-        { type: 'identityVerification' },
-        { 
-          type: 'emailVerification',
-          email: 'user@example.com'
-        }
-      ]
-    });
-
-    // Save to your database
-    await db.verifications.create({
-      sessionId: session.id,
-      userId: 'user_123',
-      status: session.status,
-      createdAt: new Date(session.createdAt * 1000)
-    });
-
-    // Return client secret to frontend
-    return { clientSecret: clientSecret.secret };
-    ```
-
-    ```python {{ title: 'Python' }}
-    import facesign
-
-    client = facesign.Client(api_key="fs_live_...")
-
-    response = client.sessions.create(
-        client_reference_id="user_123",
-        metadata={
-            "user_id": "usr_abc123",
-            "verification_type": "onboarding"
-        },
-        modules=[
-            {"type": "identityVerification"},
-            {
-                "type": "emailVerification",
-                "email": "user@example.com"
-            }
-        ]
-    )
-
-    session = response.session
-    client_secret = response.client_secret
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-    {
-      "session": {
-        "id": "fs_session_abc123",
-        "createdAt": 1706284800,
-        "status": "requiresInput",
-        "settings": {
-          "clientReferenceId": "user_123",
-          "metadata": {
-            "user_id": "usr_abc123",
-            "verification_type": "onboarding"
-          },
-          "modules": [
-            { "type": "identityVerification" },
-            { 
-              "type": "emailVerification",
-              "email": "user@example.com"
-            }
-          ],
-          "defaultLang": "en",
-          "zone": "es"
+      {
+        "id": "liveness",
+        "type": "liveness_detection",
+        "outcomes": {
+          "livenessDetected": "document",
+          "deepfakeDetected": "end",
+          "noFace": "end"
         }
       },
-      "clientSecret": {
-        "secret": "fs_client_secret_xyz789",
-        "createdAt": 1706284800,
-        "expireAt": 1706288400,
-        "url": "https://verify.facesign.ai/?client_secret=fs_client_secret_xyz789"
+      {
+        "id": "document",
+        "type": "document_scan",
+        "scanningMode": "SINGLE_SIDE",
+        "allowedDocumentTypes": ["MRTD_TYPE_PASSPORT"],
+        "outcomes": {
+          "scanSuccess": "end",
+          "userCancelled": "end",
+          "scanTimeout": "end"
+        }
+      },
+      {
+        "id": "end",
+        "type": "end"
       }
+    ],
+    "edges": [
+      { "id": "e1", "source": "start", "target": "liveness" },
+      { "id": "e2", "source": "liveness", "target": "document" },
+      { "id": "e3", "source": "liveness", "target": "end" },
+      { "id": "e4", "source": "document", "target": "end" }
+    ]
+  },
+  "avatarId": "June_HR_public",
+  "videoAIAnalysisEnabled": true
+}'`,
+    javascript: `const client = new Client({
+  auth: 'sk_test_...',
+  baseURL: 'https://api.dev.facesign.ai'
+})
+
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  metadata: {
+    userId: '123',
+    source: 'web-app'
+  },
+  flow: [
+    {
+      id: 'start',
+      type: FSNodeType.START,
+      outcome: 'liveness'
+    },
+    {
+      id: 'liveness',
+      type: FSNodeType.LIVENESS_DETECTION,
+      outcomes: {
+        livenessDetected: 'document',
+        deepfakeDetected: 'end',
+        noFace: 'end'
+      }
+    },
+    {
+      id: 'document',
+      type: FSNodeType.DOCUMENT_SCAN,
+      scanningMode: 'SINGLE_SIDE',
+      allowedDocumentTypes: ['MRTD_TYPE_PASSPORT'],
+      outcomes: {
+        scanSuccess: 'end',
+        userCancelled: 'end',
+        scanTimeout: 'end'
+      }
+    },
+    {
+      id: 'end',
+      type: FSNodeType.END
     }
-    ```
+  ],
+  avatarId: 'June_HR_public',
+  videoAIAnalysisEnabled: true
+})
+
+// Redirect user to clientSecret.url to begin verification
+console.log(clientSecret.url)`,
+    python: `import facesignai
+
+client = facesignai.Client(
+    auth='sk_test_...',
+    base_url='https://api.dev.facesign.ai'
+)
+
+response = client.session.create(
+    client_reference_id='user-123',
+    metadata={
+        'user_id': '123',
+        'source': 'web-app'
+    },
+    flow={
+        'nodes': [
+            {
+                'id': 'start',
+                'type': 'start',
+                'outcome': 'liveness'
+            },
+            {
+                'id': 'liveness',
+                'type': 'liveness_detection',
+                'outcomes': {
+                    'livenessDetected': 'document',
+                    'deepfakeDetected': 'end',
+                    'noFace': 'end'
+                }
+            },
+            {
+                'id': 'document',
+                'type': 'document_scan',
+                'scanningMode': 'SINGLE_SIDE',
+                'allowedDocumentTypes': ['MRTD_TYPE_PASSPORT'],
+                'outcomes': {
+                    'scanSuccess': 'end',
+                    'userCancelled': 'end',
+                    'scanTimeout': 'end'
+                }
+            },
+            {
+                'id': 'end',
+                'type': 'end'
+            }
+        ],
+        'edges': [
+            {'id': 'e1', 'source': 'start', 'target': 'liveness'},
+            {'id': 'e2', 'source': 'liveness', 'target': 'document'},
+            {'id': 'e3', 'source': 'liveness', 'target': 'end'},
+            {'id': 'e4', 'source': 'document', 'target': 'end'}
+        ]
+    },
+    avatar_id='June_HR_public',
+    video_ai_analysis_enabled=True
+)
+
+session = response['session']
+client_secret = response['clientSecret']
+
+# Redirect user to client_secret['url'] to begin verification
+print(client_secret['url'])`
+  }}
+/>
+
+```json {{ title: 'Response' }}
+{
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1706284800,
+    "status": "requiresInput",
+    "settings": {
+      "clientReferenceId": "user-123",
+      "metadata": {
+        "userId": "123",
+        "source": "web-app"
+      },
+      "flow": {
+        "nodes": [...],
+        "edges": [...]
+      },
+      "avatarId": "June_HR_public",
+      "videoAIAnalysisEnabled": true
+    }
+  },
+  "clientSecret": {
+    "secret": "cs_abc123",
+    "createdAt": 1706284800,
+    "url": "https://session.dev.facesign.ai?cs=cs_abc123",
+    "expireAt": 1706292000
+  }
+}
+```
 
   </Col>
 </Row>
 
 ---
 
-## Retrieve a session {{ tag: 'GET', label: '/sessions/:id' }}
+## Retrieve a session
+
+Retrieve a session by its ID to check status and access verification results.
 
 <Row>
   <Col>
 
-    Retrieves the details of an existing session, including any verification results if the session has been completed.
+### Path parameters
+
+<Properties>
+  <Property name="sessionId" type="string">
+    The unique session identifier returned when creating a session.
+  </Property>
+</Properties>
+
+### Returns
+
+Returns a session object if a valid session ID was provided. The response includes the complete session state and report (if verification is complete).
 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request" tag="GET" label="/sessions/fs_session_abc123">
+<TabbedCodeBlock
+  defaultLanguage="curl"
+  codeExamples={{
+    curl: `curl https://api.dev.facesign.ai/sessions/sess_abc123 \\
+  -H "Authorization: Bearer sk_test_..."`,
+    javascript: `const { session } = await client.session.retrieve({
+  sessionId: 'sess_abc123'
+})
 
-    ```bash {{ title: 'cURL' }}
-    curl https://api.dev.facesign.ai/sessions/fs_session_abc123 \
-      -H "Authorization: Bearer $FACESIGN_API_KEY"
-    ```
+console.log(session.status)      // "complete"
+console.log(session.report)      // Verification results`,
+    python: `response = client.session.retrieve(
+    session_id='sess_abc123'
+)
 
-    ```typescript {{ title: 'TypeScript' }}
-    const { session, clientSecret } = await client.sessions.retrieve('fs_session_abc123');
-    
-    // Update your database with latest status
-    await db.verifications.update({
-      where: { sessionId: session.id },
-      data: {
-        status: session.status,
-        finishedAt: session.finishedAt ? new Date(session.finishedAt * 1000) : null,
-        isVerified: session.report?.isVerified || false
+session = response['session']
+print(session['status'])    # "complete"
+print(session['report'])    # Verification results`
+  }}
+/>
+
+```json {{ title: 'Response' }}
+{
+  "session": {
+    "id": "sess_abc123",
+    "createdAt": 1706284800,
+    "startedAt": 1706284850,
+    "finishedAt": 1706285000,
+    "status": "complete",
+    "settings": {
+      "clientReferenceId": "user-123",
+      "metadata": {
+        "userId": "123"
+      },
+      "flow": {
+        "nodes": [...],
+        "edges": [...]
       }
-    });
-    ```
-
-    ```python {{ title: 'Python' }}
-    response = client.sessions.retrieve("fs_session_abc123")
-    session = response.session
-    client_secret = response.client_secret
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-    {
-      "session": {
-        "id": "fs_session_abc123",
-        "createdAt": 1706284800,
-        "startedAt": 1706284850,
-        "finishedAt": 1706285200,
-        "status": "complete",
-        "settings": { /* session settings */ },
-        "report": {
-          "isVerified": true,
-          "livenessDetected": true,
-          "extractedData": {
+    },
+    "report": {
+      "transcript": [
+        {
+          "role": "system",
+          "text": "Welcome to identity verification",
+          "timestamp": 1706284850
+        }
+      ],
+      "lang": "en",
+      "nodeReports": [
+        {
+          "nodeId": "liveness",
+          "nodeType": "liveness_detection",
+          "outcome": "livenessDetected",
+          "timestamp": 1706284900
+        },
+        {
+          "nodeId": "document",
+          "nodeType": "document_scan",
+          "outcome": "scanSuccess",
+          "timestamp": 1706284950,
+          "data": {
+            "documentType": "MRTD_TYPE_PASSPORT",
             "firstName": "John",
             "lastName": "Doe",
-            "email": "user@example.com"
-          },
-          "aiAnalysis": {
-            "ageMin": 25,
-            "ageMax": 30,
-            "sex": "male",
-            "realPersonOrVirtual": "real",
-            "overallSummary": "Verification successful with high confidence"
+            "dateOfBirth": "1990-01-01"
           }
         }
-      },
-      "clientSecret": {
-        "secret": "fs_client_secret_xyz789",
-        "createdAt": 1706284800,
-        "expireAt": 1706288400,
-        "url": "https://verify.facesign.ai/?client_secret=fs_client_secret_xyz789"
-      }
+      ]
     }
-    ```
+  }
+}
+```
 
   </Col>
 </Row>
 
 ---
 
-## Refresh client secret {{ tag: 'GET', label: '/sessions/:id/refresh' }}
+## List all sessions
+
+Retrieve a paginated list of all sessions. Useful for building admin dashboards or syncing verification status.
 
 <Row>
   <Col>
 
-    Generates a new client secret for an existing session. This is useful if the original client secret has expired or been compromised. Note that old client secrets are immediately invalidated when a new one is generated.
+### Query parameters
+
+<Properties>
+  <Property name="limit" type="integer">
+    Maximum number of sessions to return (1-100). Defaults to 10.
+  </Property>
+  <Property name="startingAfter" type="string">
+    Session ID to start pagination after. Use for fetching the next page.
+  </Property>
+  <Property name="status" type="string">
+    Filter by status: `requiresInput`, `processing`, `complete`, or `canceled`.
+  </Property>
+  <Property name="clientReferenceId" type="string">
+    Filter by your internal reference ID.
+  </Property>
+</Properties>
+
+### Returns
+
+Returns an object with a `sessions` array and pagination metadata (`hasMore`, `lastId`).
 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request" tag="GET" label="/sessions/fs_session_abc123/refresh">
+<TabbedCodeBlock
+  defaultLanguage="curl"
+  codeExamples={{
+    curl: `curl "https://api.dev.facesign.ai/sessions?limit=10&status=complete" \\
+  -H "Authorization: Bearer sk_test_..."`,
+    javascript: `const { sessions, hasMore, lastId } = await client.session.list({
+  limit: 10,
+  status: 'complete'
+})
 
-    ```bash {{ title: 'cURL' }}
-    curl https://api.dev.facesign.ai/sessions/fs_session_abc123/refresh \
-      -H "Authorization: Bearer $FACESIGN_API_KEY"
-    ```
+// Fetch next page
+if (hasMore) {
+  const nextPage = await client.session.list({
+    limit: 10,
+    startingAfter: lastId
+  })
+}`,
+    python: `response = client.session.list(
+    limit=10,
+    status='complete'
+)
 
-    ```typescript {{ title: 'TypeScript' }}
-    const { clientSecret } = await client.sessions.refreshSecret('fs_session_abc123');
-    
-    // Provide new client secret to frontend
-    return { clientSecret: clientSecret.secret };
-    ```
+sessions = response['sessions']
+has_more = response['hasMore']
+last_id = response['lastId']
 
-    ```python {{ title: 'Python' }}
-    response = client.sessions.refresh_secret("fs_session_abc123")
-    client_secret = response.client_secret
-    ```
+# Fetch next page
+if has_more:
+    next_page = client.session.list(
+        limit=10,
+        starting_after=last_id
+    )`
+  }}
+/>
 
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
+```json {{ title: 'Response' }}
+{
+  "sessions": [
     {
-      "clientSecret": {
-        "secret": "fs_client_secret_new456",
-        "createdAt": 1706285000,
-        "expireAt": 1706288600,
-        "url": "https://verify.facesign.ai/?client_secret=fs_client_secret_new456"
+      "id": "sess_abc123",
+      "createdAt": 1706284800,
+      "status": "complete",
+      "settings": {
+        "clientReferenceId": "user-123",
+        "metadata": { "userId": "123" },
+        "flow": { "nodes": [...], "edges": [...] }
+      }
+    },
+    {
+      "id": "sess_def456",
+      "createdAt": 1706284700,
+      "status": "complete",
+      "settings": {
+        "clientReferenceId": "user-456",
+        "metadata": { "userId": "456" },
+        "flow": { "nodes": [...], "edges": [...] }
       }
     }
-    ```
+  ],
+  "hasMore": true,
+  "lastId": "sess_def456"
+}
+```
 
   </Col>
 </Row>
 
 ---
 
-## Session lifecycle
+## Session statuses
 
-Understanding the session lifecycle helps you build a robust integration. Here's how sessions progress through their states:
+Sessions move through different statuses as users progress through verification:
 
-```mermaid
-graph LR
-    A[Create Session] --> B[requiresInput]
-    B --> C[User Starts Flow]
-    C --> D[processing]
-    D --> E{Verification}
-    E -->|Success| F[complete]
-    E -->|Failure| G[complete]
-    E -->|User Exits| H[canceled]
-```
+<Properties>
+  <Property name="requiresInput" type="status">
+    Session created but user hasn't opened the verification URL yet.
+  </Property>
+  <Property name="processing" type="status">
+    User started verification and is actively going through the flow.
+  </Property>
+  <Property name="complete" type="status">
+    User completed all steps and reached an END node. Verification data is available in the report.
+  </Property>
+  <Property name="canceled" type="status">
+    Session was canceled (either by user closing the tab or via API).
+  </Property>
+</Properties>
 
-### Session statuses
-
-- **`requiresInput`** - Session created, waiting for user to begin verification
-- **`processing`** - User is actively going through the verification flow
-- **`complete`** - Verification finished (check `report.isVerified` for success/failure)
-- **`canceled`** - Session was cancelled by user or expired
-
-### Handling results with webhooks
-
-The recommended approach is to use webhooks to get real-time updates about session status changes:
-
-```typescript {{ title: 'Webhook handler' }}
-app.post('/webhooks/facesign', async (req, res) => {
-  const { type, data } = req.body;
-  
-  if (type === 'session.completed') {
-    const session = data.session;
-    
-    // Update your database
-    await db.verifications.update({
-      where: { sessionId: session.id },
-      data: {
-        status: session.status,
-        finishedAt: new Date(session.finishedAt * 1000),
-        isVerified: session.report?.isVerified || false,
-        extractedData: session.report?.extractedData || {}
-      }
-    });
-    
-    // Trigger your business logic
-    if (session.report?.isVerified) {
-      await approveUserAccount(session.settings.clientReferenceId);
-      await sendWelcomeEmail(session.settings.clientReferenceId);
-    } else {
-      await flagUserForReview(session.settings.clientReferenceId);
-    }
-  }
-  
-  res.status(200).send('OK');
-});
-```
-
-## Integration best practices
-
-### 1. Database-First Approach
-
-Store session data in your database immediately after creation:
-
-```typescript
-// Create session and store in your DB
-const { session, clientSecret } = await client.sessions.create(config);
-
-await db.verifications.create({
-  id: generateId(),
-  sessionId: session.id,
-  userId: userId,
-  status: session.status,
-  clientReferenceId: session.settings.clientReferenceId,
-  createdAt: new Date(session.createdAt * 1000),
-  metadata: session.settings.metadata
-});
-
-// Return client secret to frontend
-return { clientSecret: clientSecret.secret };
-```
-
-### 2. Use Webhooks for Real-Time Updates
-
-Don't poll the API for session updates. Use webhooks instead:
-
-```typescript
-// ❌ Don't do this - polling is slow and inefficient
-setInterval(async () => {
-  const { session } = await client.sessions.retrieve(sessionId);
-  updateDatabase(session);
-}, 5000);
-
-// ✅ Do this - use webhooks for real-time updates
-app.post('/webhooks/facesign', handleWebhook);
-```
-
-### 3. Handle Client Secret Expiration
-
-Client secrets expire after 1 hour. Handle expiration gracefully:
-
-```typescript
-async function getValidClientSecret(sessionId: string) {
-  const session = await db.verifications.findUnique({
-    where: { sessionId }
-  });
-  
-  if (!session.clientSecret || isExpired(session.clientSecretExpiry)) {
-    const { clientSecret } = await client.sessions.refreshSecret(sessionId);
-    
-    await db.verifications.update({
-      where: { sessionId },
-      data: {
-        clientSecret: clientSecret.secret,
-        clientSecretExpiry: new Date(clientSecret.expireAt * 1000)
-      }
-    });
-    
-    return clientSecret.secret;
-  }
-  
-  return session.clientSecret;
-}
-```
-
-### 4. Link Sessions to Your Users
-
-Always use `clientReferenceId` to link sessions to your users:
-
-```typescript
-const { session, clientSecret } = await client.sessions.create({
-  clientReferenceId: user.id, // Your internal user ID
-  metadata: {
-    email: user.email,
-    signupDate: user.createdAt.toISOString(),
-    source: 'web_signup'
-  },
-  modules: [{ type: 'identityVerification' }]
-});
-```
-
-### 5. Build Logic on Your Database
-
-Query your own database for verification status, don't call the API repeatedly:
-
-```typescript
-// ✅ Query your database
-async function getUserVerificationStatus(userId: string) {
-  return await db.verifications.findFirst({
-    where: { 
-      userId,
-      status: 'complete'
-    },
-    orderBy: { createdAt: 'desc' }
-  });
-}
-
-// Use in your application logic
-const verification = await getUserVerificationStatus(userId);
-if (verification?.isVerified) {
-  // Allow access to premium features
-}
-```
+<Note>
+  Sessions remain accessible indefinitely regardless of status. You can retrieve completed sessions at any time to access their verification reports.
+</Note>

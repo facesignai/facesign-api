@@ -67,56 +67,35 @@ const navigation: NavSection[] = [
   {
     title: 'Getting Started',
     items: [
-      { label: 'Introduction', href: '/docs#introduction' },
-      { label: 'Installation', href: '/docs#installation' },
-      { label: 'Authentication', href: '/docs#authentication' },
-      { label: 'First Session', href: '/docs#first-session' },
+      { label: 'Introduction', href: '/docs' },
+      { label: 'Quick Start', href: '/quickstart' },
+      { label: 'Authentication', href: '/authentication' },
     ],
   },
   {
     title: 'Core Concepts',
     items: [
-      { label: 'Sessions', href: '/docs#sessions' },
+      { label: 'Sessions', href: '/sessions' },
       { label: 'The Session object', href: '/sessions/object' },
       { label: 'The Client Secret object', href: '/sessions/client-secret' },
-      { label: 'Flows', href: '/docs#flows' },
+      { label: 'Flows', href: '/flows' },
       { label: 'The FSNode object', href: '/flows/fsnode' },
-      { label: 'Modules', href: '/docs#modules' },
-      { label: 'Webhooks', href: '/docs#webhooks' },
-    ],
-  },
-  {
-    title: 'Verification Modules',
-    items: [
-      { label: 'Email Verification', href: '/docs#email-verification' },
-      { label: 'SMS Verification', href: '/docs#sms-verification' },
-      { label: 'Document Authentication', href: '/docs#document-authentication' },
-      { label: 'Identity Verification', href: '/docs#identity-verification' },
-    ],
-  },
-  {
-    title: 'Biometric Features',
-    items: [
-      { label: 'Face Recognition', href: '/docs#face-recognition' },
-      { label: 'Liveness Detection', href: '/docs#liveness-detection' },
-      { label: 'Age Estimation', href: '/docs#age-estimation' },
+      { label: 'Webhooks', href: '/webhooks' },
     ],
   },
   {
     title: 'Advanced',
     items: [
-      { label: 'Customization', href: '/docs#customization' },
-      { label: 'Error Handling', href: '/docs#error-handling' },
-      { label: 'Languages', href: '/docs#languages' },
-      { label: 'Avatars', href: '/docs#avatars' },
+      { label: 'Customization', href: '/customization' },
+      { label: 'Error Handling', href: '/errors' },
+      { label: 'Languages', href: '/languages' },
+      { label: 'Avatars', href: '/avatars' },
     ],
   },
   {
     title: 'SDKs',
     items: [
-      { label: 'JavaScript/TypeScript', href: '/docs#sdk-javascript' },
-      { label: 'Python', href: '/docs#sdk-python' },
-      { label: 'Go', href: '/docs#sdk-go' },
+      { label: 'Overview', href: '/sdks' },
     ],
   },
 ]

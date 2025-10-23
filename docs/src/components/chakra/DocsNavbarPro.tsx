@@ -123,7 +123,19 @@ export function DocsNavbarPro() {
             {/* Desktop Navigation with underline */}
             <HStack gap="6" overflowY="auto" hideBelow="lg" h="full">
               {navItems.map((item) => {
-                const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                let isActive = false
+                if (item.href === '/docs') {
+                  // Docs tab: active on /docs OR any page that's not /api or homepage
+                  isActive = pathname === '/docs' ||
+                    (pathname !== '/' && !pathname?.startsWith('/api'))
+                } else if (item.href === '/api') {
+                  // API tab: active on /api or /api/*
+                  isActive = pathname === '/api' || pathname?.startsWith('/api/')
+                } else {
+                  // Default behavior for other items
+                  isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                }
+
                 return (
                   <TabNavLink
                     key={item.href}
@@ -208,7 +220,19 @@ export function DocsNavbarPro() {
                       py="2"
                     >
                       {navItems.map((item) => {
-                        const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                        let isActive = false
+                        if (item.href === '/docs') {
+                          // Docs tab: active on /docs OR any page that's not /api or homepage
+                          isActive = pathname === '/docs' ||
+                            (pathname !== '/' && !pathname?.startsWith('/api'))
+                        } else if (item.href === '/api') {
+                          // API tab: active on /api or /api/*
+                          isActive = pathname === '/api' || pathname?.startsWith('/api/')
+                        } else {
+                          // Default behavior for other items
+                          isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                        }
+
                         return (
                           <Menu.Item
                             key={item.href}

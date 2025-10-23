@@ -46,37 +46,11 @@ func main() {
 }
 ```
 
-### 2. Create a Verification Session
+### 2. Create a Verification Session with Custom Flow
 
 ```go
-// Create a session with modules (legacy approach)
+// Create a session with a custom flow
 ctx := context.Background()
-sessionResp, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
-    ClientReferenceID: "user-12345",
-    Metadata: map[string]interface{}{
-        "user_id": "12345",
-        "source":  "go-app",
-    },
-    Modules: []facesign.Module{
-        {Type: facesign.ModuleIdentityVerification},
-        {Type: facesign.ModuleDocumentAuthentication},
-    },
-    InitialPhrase: "Welcome! I'll help you verify your identity.",
-    DefaultLang:   "en",
-})
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Session ID: %s\n", sessionResp.Session.ID)
-fmt.Printf("Client Secret: %s\n", sessionResp.ClientSecret.Secret)
-fmt.Printf("Verification URL: %s\n", sessionResp.ClientSecret.URL)
-```
-
-### 3. Create with Flow-Based Configuration
-
-```go
-// Create a session with flow (recommended approach)
 flow := &facesign.Flow{
     Nodes: []facesign.Node{
         {
@@ -112,19 +86,25 @@ flow := &facesign.Flow{
     },
 }
 
-flowSession, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
-    ClientReferenceID: "user-67890",
+sessionResp, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
+    ClientReferenceID: "user-12345",
     Metadata: map[string]interface{}{
-        "source": "go-flow-app",
+        "user_id": "12345",
+        "source":  "go-app",
     },
-    Flow: flow,
+    Flow:        flow,
+    DefaultLang: "en",
 })
 if err != nil {
     log.Fatal(err)
 }
+
+fmt.Printf("Session ID: %s\n", sessionResp.Session.ID)
+fmt.Printf("Client Secret: %s\n", sessionResp.ClientSecret.Secret)
+fmt.Printf("Verification URL: %s\n", sessionResp.ClientSecret.URL)
 ```
 
-### 4. Retrieve Session Status
+### 3. Retrieve Session Status
 
 ```go
 // Get session details
@@ -140,7 +120,7 @@ if session.Session.Report != nil {
 }
 ```
 
-### 5. List Sessions
+### 4. List Sessions
 
 ```go
 // List recent sessions
@@ -194,8 +174,16 @@ for i := 0; i < 10; i++ {
         
         resp, err := client.Sessions.Create(ctx, &facesign.CreateSessionRequest{
             ClientReferenceID: userID,
-            Modules: []facesign.Module{
-                {Type: facesign.ModuleIdentityVerification},
+            Flow: &facesign.Flow{
+                Nodes: []facesign.Node{
+                    {ID: "start", Type: facesign.NodeTypeStart},
+                    {ID: "verify", Type: facesign.NodeTypeLivenessDetection, Outcomes: map[string]string{"livenessDetected": "end", "noFace": "end"}},
+                    {ID: "end", Type: facesign.NodeTypeEnd},
+                },
+                Edges: []facesign.Edge{
+                    {ID: "e1", Source: "start", Target: "verify"},
+                    {ID: "e2", Source: "verify", Target: "end"},
+                },
             },
         })
         if err != nil {
@@ -297,11 +285,19 @@ func createVerification(c *gin.Context) {
         return
     }
     
-    session, err := fsClient.Sessions.Create(c.Request.Context(), 
+    session, err := fsClient.Sessions.Create(c.Request.Context(),
         &facesign.CreateSessionRequest{
             ClientReferenceID: req.UserID,
-            Modules: []facesign.Module{
-                {Type: facesign.ModuleIdentityVerification},
+            Flow: &facesign.Flow{
+                Nodes: []facesign.Node{
+                    {ID: "start", Type: facesign.NodeTypeStart},
+                    {ID: "verify", Type: facesign.NodeTypeLivenessDetection, Outcomes: map[string]string{"livenessDetected": "end", "noFace": "end"}},
+                    {ID: "end", Type: facesign.NodeTypeEnd},
+                },
+                Edges: []facesign.Edge{
+                    {ID: "e1", Source: "start", Target: "verify"},
+                    {ID: "e2", Source: "verify", Target: "end"},
+                },
             },
         })
     if err != nil {
@@ -332,8 +328,16 @@ func createVerification(c echo.Context) error {
     session, err := fsClient.Sessions.Create(c.Request().Context(),
         &facesign.CreateSessionRequest{
             ClientReferenceID: c.Param("userId"),
-            Modules: []facesign.Module{
-                {Type: facesign.ModuleIdentityVerification},
+            Flow: &facesign.Flow{
+                Nodes: []facesign.Node{
+                    {ID: "start", Type: facesign.NodeTypeStart},
+                    {ID: "verify", Type: facesign.NodeTypeLivenessDetection, Outcomes: map[string]string{"livenessDetected": "end", "noFace": "end"}},
+                    {ID: "end", Type: facesign.NodeTypeEnd},
+                },
+                Edges: []facesign.Edge{
+                    {ID: "e1", Source: "start", Target: "verify"},
+                    {ID: "e2", Source: "verify", Target: "end"},
+                },
             },
         })
     if err != nil {
@@ -366,8 +370,16 @@ func createVerification(w http.ResponseWriter, r *http.Request) {
     session, err := fsClient.Sessions.Create(r.Context(),
         &facesign.CreateSessionRequest{
             ClientReferenceID: userID,
-            Modules: []facesign.Module{
-                {Type: facesign.ModuleIdentityVerification},
+            Flow: &facesign.Flow{
+                Nodes: []facesign.Node{
+                    {ID: "start", Type: facesign.NodeTypeStart},
+                    {ID: "verify", Type: facesign.NodeTypeLivenessDetection, Outcomes: map[string]string{"livenessDetected": "end", "noFace": "end"}},
+                    {ID: "end", Type: facesign.NodeTypeEnd},
+                },
+                Edges: []facesign.Edge{
+                    {ID: "e1", Source: "start", Target: "verify"},
+                    {ID: "e2", Source: "verify", Target: "end"},
+                },
             },
         })
     if err != nil {

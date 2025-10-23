@@ -746,12 +746,19 @@
           },
           {
             "type": "object",
+            "required": [
+              "outcome"
+            ],
             "properties": {
               "type": {
                 "type": "string",
                 "enum": [
                   "start"
                 ]
+              },
+              "outcome": {
+                "type": "string",
+                "description": "The ID of the node to proceed to from the start node"
               }
             }
           }
