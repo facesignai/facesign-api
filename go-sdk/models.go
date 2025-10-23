@@ -15,25 +15,24 @@ const (
 
 // Session statuses
 const (
-	SessionStatusPending   = "pending"
-	SessionStatusActive    = "active"
-	SessionStatusComplete  = "complete"
-	SessionStatusExpired   = "expired"
-	SessionStatusCancelled = "cancelled"
+	SessionStatusRequiresInput = "requiresInput"
+	SessionStatusProcessing    = "processing"
+	SessionStatusComplete      = "complete"
+	SessionStatusCanceled      = "canceled"
 )
 
 // Node types for flow-based sessions
 const (
-	NodeTypeStart            = "start"
-	NodeTypeEnd              = "end"
-	NodeTypeConversation     = "conversation"
-	NodeTypeFaceScan         = "face_scan"
-	NodeTypeDocumentScan     = "document_scan"
-	NodeTypeEmailInput       = "email_input"
-	NodeTypeSMSInput         = "sms_input"
-	NodeTypeEmailVerification = "email_verification"
-	NodeTypeSMSVerification   = "sms_verification"
-	NodeTypeConditional      = "conditional"
+	NodeTypeStart             = "start"
+	NodeTypeEnd               = "end"
+	NodeTypeConversation      = "conversation"
+	NodeTypeLivenessDetection = "liveness_detection"
+	NodeTypeEnterEmail        = "enter_email"
+	NodeTypeDataValidation    = "data_validation"
+	NodeTypeDocumentScan      = "document_scan"
+	NodeTypeRecognition       = "recognition"
+	NodeTypeFaceScan          = "face_scan"
+	NodeTypeTwoFactor         = "two_factor"
 )
 
 // Module represents a verification module
@@ -80,10 +79,11 @@ type Flow struct {
 type Node struct {
 	ID          string                 `json:"id"`
 	Type        string                 `json:"type"`
+	Outcome     string                 `json:"outcome,omitempty"`     // For FSStartNode - points to next node
 	Prompt      string                 `json:"prompt,omitempty"`
 	Mode        string                 `json:"mode,omitempty"`
-	Outcomes    map[string]string      `json:"outcomes,omitempty"`
-	Transitions []Transition           `json:"transitions,omitempty"`
+	Outcomes    map[string]string      `json:"outcomes,omitempty"`    // For other nodes with multiple outcomes
+	Transitions []Transition           `json:"transitions,omitempty"` // For conversation/data validation nodes
 	Data        map[string]interface{} `json:"data,omitempty"`
 }
 
@@ -121,9 +121,7 @@ type Avatar struct {
 type CreateSessionRequest struct {
 	ClientReferenceID string                 `json:"clientReferenceId"`
 	Metadata          map[string]interface{} `json:"metadata,omitempty"`
-	Modules           []Module               `json:"modules,omitempty"`
 	Flow              *Flow                  `json:"flow,omitempty"`
-	InitialPhrase     string                 `json:"initialPhrase,omitempty"`
 	DefaultLang       string                 `json:"defaultLang,omitempty"`
 	AvatarID          string                 `json:"avatarId,omitempty"`
 }

@@ -40,8 +40,9 @@ func main() {
 	flow := &facesign.Flow{
 		Nodes: []facesign.Node{
 			{
-				ID:   "start",
-				Type: facesign.NodeTypeStart,
+				ID:      "start",
+				Type:    facesign.NodeTypeStart,
+				Outcome: "greeting",
 			},
 			{
 				ID:     "greeting",
@@ -174,9 +175,8 @@ func main() {
 			}
 			break
 		}
-		
-		if status.Session.Status == facesign.SessionStatusExpired ||
-		   status.Session.Status == facesign.SessionStatusCancelled {
+
+		if status.Session.Status == facesign.SessionStatusCanceled {
 			fmt.Printf("\n❌ Session ended with status: %s\n", status.Session.Status)
 			break
 		}

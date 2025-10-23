@@ -205,4 +205,4 @@ func (c *Client) delete(ctx context.Context, path string) error {
 }
 
 // version is the SDK version
-const version = "1.0.0"
+const version = "1.1.0"
