@@ -301,30 +301,6 @@ export default function DocsPage() {
               </Card.Root>
             </NextLink>
 
-            <NextLink href="/flows" passHref legacyBehavior>
-              <Card.Root
-                as="a"
-                bg={cardBg}
-                borderWidth="1px"
-                borderColor={borderColor}
-                cursor="pointer"
-                _hover={{ borderColor: 'green.500', transform: 'translateY(-2px)', boxShadow: 'md' }}
-                transition="all 0.2s"
-              >
-                <Card.Body>
-                  <HStack justify="space-between" mb={2}>
-                    <Heading as="h3" size="md">
-                      Verification Flows
-                    </Heading>
-                    <FiArrowRight color="var(--chakra-colors-green-500)" />
-                  </HStack>
-                  <Text fontSize="sm" color="gray.600">
-                    Build custom verification flows using a node-graph system. Chain together conversation, liveness, document scan, and authentication nodes.
-                  </Text>
-                </Card.Body>
-              </Card.Root>
-            </NextLink>
-
             <NextLink href="/webhooks" passHref legacyBehavior>
               <Card.Root
                 as="a"

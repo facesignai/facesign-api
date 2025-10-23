@@ -62,7 +62,8 @@ function rehypeSlugify() {
   return (tree) => {
     let slugify = slugifyWithCounter()
     visit(tree, 'element', (node) => {
-      if (node.tagName === 'h2' && !node.properties.id) {
+      // Add IDs to h2, h3, and h4 headings for TOC and linking
+      if (['h2', 'h3', 'h4'].includes(node.tagName) && !node.properties.id) {
         node.properties.id = slugify(toString(node))
       }
     })

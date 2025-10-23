@@ -40,8 +40,8 @@ func main() {
     
     // Create client with optional configuration
     client := facesign.NewClient(apiKey,
-        facesign.WithBaseURL("https://api.facesign.ai"), // Production
-        // facesign.WithBaseURL("https://api.dev.facesign.ai"), // Development
+        facesign.WithBaseURL("https://api.dev.facesign.ai"), // Development (default for testing)
+        // facesign.WithBaseURL("https://api.facesign.ai"), // Production
     )
 }
 ```
@@ -418,7 +418,7 @@ func main() {
     
     serverURL := os.Getenv("FACESIGN_SERVER_URL")
     if serverURL == "" {
-        serverURL = "https://api.facesign.ai" // Default to production
+        serverURL = "https://api.dev.facesign.ai" // Default to development
     }
     
     client := facesign.NewClient(apiKey,

@@ -42,7 +42,7 @@ interface TOCItem {
   level: number
 }
 
-// Custom scroll spy hook from Chakra Pro
+// Custom scroll spy hook from Chakra Pro - Fixed for nested headings
 function useScrollSpy(options: { data: TOCItem[]; setActiveId: (ids: string[]) => void; rootMargin?: string }) {
   const { data, rootMargin = '-20% 0% -35% 0%', setActiveId } = options
   const env = useEnvironmentContext()
@@ -51,14 +51,76 @@ function useScrollSpy(options: { data: TOCItem[]; setActiveId: (ids: string[]) =
     const win = env.getWindow()
     const doc = env.getDocument()
 
+    // Track all currently intersecting entries
+    const intersectingEntries = new Map<string, IntersectionObserverEntry>()
+
+    const updateActiveHeading = () => {
+      const entries = Array.from(intersectingEntries.values())
+
+      if (entries.length === 0) return
+
+      // Find the entry closest to the top of the viewport
+      // Prefer entries that are just above or at the top
+      const sorted = entries.sort((a, b) => {
+        const aTop = a.boundingClientRect.top
+        const bTop = b.boundingClientRect.top
+
+        // If both are above viewport top (negative), prefer the one closer to 0 (most recent)
+        if (aTop < 0 && bTop < 0) {
+          return bTop - aTop // More negative = further up = lower priority
+        }
+
+        // If both are below viewport top (positive), prefer the one closer to 0 (highest on screen)
+        if (aTop >= 0 && bTop >= 0) {
+          return aTop - bTop
+        }
+
+        // If one is above and one below, prefer the one below (just entered)
+        return aTop < 0 ? 1 : -1
+      })
+
+      const best = sorted[0]
+
+      // Get the heading info to check level
+      const bestHeading = data.find(h => h.id === best.target.id)
+
+      // If we have multiple entries at similar positions, prefer deeper levels
+      const similarEntries = sorted.filter(entry => {
+        const diff = Math.abs(entry.boundingClientRect.top - best.boundingClientRect.top)
+        return diff < 100 // Within 100px considered "similar"
+      })
+
+      if (similarEntries.length > 1 && bestHeading) {
+        // Find the deepest level among similar entries
+        const deepest = similarEntries.reduce((prev, curr) => {
+          const prevHeading = data.find(h => h.id === prev.target.id)
+          const currHeading = data.find(h => h.id === curr.target.id)
+
+          if (!prevHeading || !currHeading) return prev
+
+          // Higher level number = deeper heading (h4 > h3 > h2)
+          return currHeading.level > prevHeading.level ? curr : prev
+        }, similarEntries[0])
+
+        setActiveId([deepest.target.id])
+      } else {
+        setActiveId([best.target.id])
+      }
+    }
+
     const observer = new win.IntersectionObserver(
       (entries) => {
-        const intersectingEntries = entries.filter(
-          (entry) => entry.isIntersecting,
-        )
-        if (intersectingEntries.length > 0) {
-          setActiveId(intersectingEntries.map((entry) => entry.target.id))
-        }
+        // Update our tracking map
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            intersectingEntries.set(entry.target.id, entry)
+          } else {
+            intersectingEntries.delete(entry.target.id)
+          }
+        })
+
+        // Recalculate which heading should be active
+        updateActiveHeading()
       },
       { rootMargin },
     )
@@ -86,23 +148,53 @@ export function TableOfContentsPro({ items, maxDepth = 3 }: TableOfContentsProPr
   // Extract headings from the page if items not provided
   useEffect(() => {
     if (!items) {
-      const elements = Array.from(
-        document.querySelectorAll('main h2, main h3, main h4')
-      )
-      const extractedHeadings: TOCItem[] = elements.map((elem) => ({
-        id: elem.id || elem.textContent?.toLowerCase().replace(/\s+/g, '-') || '',
-        text: elem.textContent || '',
-        level: parseInt(elem.tagName.charAt(1)),
-      }))
-      const filtered = extractedHeadings.filter(h => h.level <= maxDepth && h.id && h.text)
-      setHeadings(filtered)
+      let attempts = 0
+      const maxAttempts = 10
+      let timeoutId: NodeJS.Timeout
 
-      // Set initial active item
-      if (filtered.length > 0 && activeId.length === 0) {
-        setActiveId([filtered[0].id])
+      const extractHeadings = () => {
+        // Try multiple selectors to find headings in the rendered MDX content
+        const selectors = [
+          'article h2, article h3, article h4',
+          'main h2, main h3, main h4',
+          '[role="main"] h2, [role="main"] h3, [role="main"] h4'
+        ]
+
+        let elements: Element[] = []
+        for (const selector of selectors) {
+          elements = Array.from(document.querySelectorAll(selector))
+          if (elements.length > 0) break
+        }
+
+        if (elements.length > 0 || attempts >= maxAttempts) {
+          const extractedHeadings: TOCItem[] = elements.map((elem) => ({
+            id: elem.id || elem.textContent?.toLowerCase().replace(/\s+/g, '-') || '',
+            text: elem.textContent || '',
+            level: parseInt(elem.tagName.charAt(1)),
+          }))
+          const filtered = extractedHeadings.filter(h => h.level <= maxDepth && h.id && h.text)
+
+          if (filtered.length > 0) {
+            setHeadings(filtered)
+            // Set initial active item only if none is set
+            setActiveId(prev => prev.length === 0 ? [filtered[0].id] : prev)
+          }
+        } else {
+          // Content not ready, retry after delay
+          attempts++
+          timeoutId = setTimeout(extractHeadings, 100)
+        }
+      }
+
+      // Start extraction with small delay to allow MDX to render
+      timeoutId = setTimeout(extractHeadings, 50)
+
+      // Cleanup timeout on unmount
+      return () => {
+        if (timeoutId) clearTimeout(timeoutId)
       }
     }
-  }, [items, maxDepth, activeId.length])
+  }, [items, maxDepth])
 
   useScrollSpy({
     data: headings,
