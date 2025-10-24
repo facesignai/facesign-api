@@ -435,7 +435,7 @@ class DocumentVerificationService {
     return { valid: true }
   }
 
-  private isValidDocumentNumber(number: string, type: string): boolean {
+  private isValidDocumentNumber(_number: string, _type: string): boolean {
     // Implement format validation based on document type
     return true
   }

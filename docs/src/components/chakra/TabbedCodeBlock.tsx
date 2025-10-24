@@ -5,7 +5,6 @@ import {
   HStack,
   IconButton,
   Tabs,
-  Text,
 } from '@chakra-ui/react'
 import { IoLogoJavascript, IoLogoPython } from 'react-icons/io5'
 import { LuTerminal } from 'react-icons/lu'
@@ -23,6 +22,7 @@ interface TabbedCodeBlockProps {
     javascript?: string
   }
   defaultLanguage?: string
+  variant?: 'dark' | 'light'
 }
 
 interface LanguageConfig {
@@ -75,6 +75,7 @@ export function TabbedCodeBlock({
   title,
   codeExamples,
   defaultLanguage,
+  variant = 'dark',
 }: TabbedCodeBlockProps) {
   // Get available languages from provided code examples
   const availableLanguages = Object.keys(codeExamples).filter(
@@ -93,25 +94,9 @@ export function TabbedCodeBlock({
           language={languageConfigs[initialLanguage]?.language || 'bash'}
           meta={{ colorScheme: 'dark' }}
         >
-          <CodeBlock.Header
-            py="2"
-            borderBottomWidth="1px"
-            bg="gray.900"
-            color="white"
-            borderColor="gray.700"
-          >
+          <CodeBlock.Header borderBottomWidth="1px">
             <HStack flex="1" gap={2}>
-              {title && (
-                <Text
-                  textStyle="xs"
-                  color="gray.400"
-                  fontFamily="mono"
-                  fontWeight="bold"
-                  textTransform="uppercase"
-                >
-                  {title}
-                </Text>
-              )}
+              {title && <CodeBlock.Title>{title}</CodeBlock.Title>}
               <Tabs.List
                 border="0"
                 bg="transparent"
@@ -132,15 +117,6 @@ export function TabbedCodeBlock({
                       py={1}
                       fontSize="xs"
                       fontWeight="medium"
-                      color="gray.400"
-                      _selected={{
-                        color: 'green.400',
-                        bg: 'gray.800',
-                      }}
-                      _hover={{
-                        color: 'white',
-                        bg: 'gray.800',
-                      }}
                     >
                       <HStack gap={1}>
                         <Icon />
@@ -153,7 +129,7 @@ export function TabbedCodeBlock({
             </HStack>
             <CodeBlock.Control>
               <CodeBlock.CopyTrigger asChild>
-                <IconButton variant="ghost" size="2xs" color="white">
+                <IconButton variant="ghost" size="2xs">
                   <CodeBlock.CopyIndicator />
                 </IconButton>
               </CodeBlock.CopyTrigger>
@@ -173,8 +149,8 @@ export function TabbedCodeBlock({
                   language={config.language}
                   meta={{ colorScheme: 'dark' }}
                 >
-                  <CodeBlock.Content bg="gray.900" maxH="500px" overflowY="auto">
-                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
+                  <CodeBlock.Content maxH="500px" overflowY="auto">
+                    <CodeBlock.Code overflowX="auto">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
                   </CodeBlock.Content>

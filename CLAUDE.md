@@ -80,7 +80,7 @@ FaceSign uses a **node-graph architecture** for verification flows.
 
 ### Documentation Site Architecture
 
-Built with **Protocol template** (Tailwind Plus) and **Chakra UI v3**:
+**Chakra UI v3**:
 
 - **MDX content** - All docs in `.mdx` files under `docs/src/app/`
 - **FlexSearch** - Powers global search (`⌘K`)

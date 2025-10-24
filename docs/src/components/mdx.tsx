@@ -26,10 +26,7 @@ import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
 
 export const a = Link
 export { Button } from '@/components/Button'
-
-// DEPRECATED: These exports are kept for backward compatibility
-// but should be migrated to new components
-export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
+export { CodeGroup } from '@/components/CodeGroup'
 
 export function wrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -37,8 +34,7 @@ export function wrapper({ children }: { children: React.ReactNode }) {
       <Box
         as="article"
         py={8}
-        maxW="4xl"
-        mx="auto"
+        width="full"
         css={{
           '& h1': {
             fontSize: 'var(--chakra-fontSizes-3xl)',
@@ -325,5 +321,9 @@ export {
   Separator
 }
 
-// Export TabbedCodeBlock
+// Export code block components
 export { TabbedCodeBlock } from '@/components/chakra/TabbedCodeBlock'
+export { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+
+// Export parameter field components
+export { ParameterField, ParametersSection } from '@/components/chakra/ParameterField'

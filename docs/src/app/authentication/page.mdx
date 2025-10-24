@@ -32,63 +32,50 @@ FaceSign provides two types of API keys:
 
 Include your API key in the `Authorization` header of every request:
 
-<CodeGroup>
-
-```bash {{ title: 'cURL' }}
-curl https://api.dev.facesign.ai/sessions \
-  -H "Authorization: Bearer sk_test_4eC39HqLyjWDarjtT1zdp7dc"
-```
-
-```typescript {{ title: 'TypeScript' }}
-import Client from '@facesignai/api'
+<TabbedCodeBlock
+  defaultLanguage="curl"
+  codeExamples={{
+    curl: `curl https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer sk_test_4eC39HqLyjWDarjtT1zdp7dc"`,
+    javascript: `import Client from '@facesignai/api'
 
 const client = new Client({
   auth: 'sk_test_4eC39HqLyjWDarjtT1zdp7dc',
   serverUrl: 'https://api.dev.facesign.ai'
-})
-```
-
-```python {{ title: 'Python' }}
-import facesignai
+})`,
+    python: `import facesignai
 
 client = facesignai.Client(
     auth='sk_test_4eC39HqLyjWDarjtT1zdp7dc',
     base_url='https://api.dev.facesign.ai'
-)
-```
-
-</CodeGroup>
+)`
+  }}
+/>
 
 <CollapsibleSection title="Environment Variables" defaultOpen>
 
 We strongly recommend using environment variables to store your API keys:
 
-<CodeGroup>
-
-```bash {{ title: '.env' }}
-FACESIGN_API_KEY=sk_test_4eC39HqLyjWDarjtT1zdp7dc
-```
-
-```typescript {{ title: 'TypeScript' }}
-import Client from '@facesignai/api'
+<TabbedCodeBlock
+  defaultLanguage="bash"
+  codeExamples={{
+    bash: `# .env file
+FACESIGN_API_KEY=sk_test_4eC39HqLyjWDarjtT1zdp7dc`,
+    javascript: `import Client from '@facesignai/api'
 
 const client = new Client({
   auth: process.env.FACESIGN_API_KEY,
   serverUrl: 'https://api.dev.facesign.ai'
-})
-```
-
-```python {{ title: 'Python' }}
-import os
+})`,
+    python: `import os
 import facesignai
 
 client = facesignai.Client(
     auth=os.environ.get('FACESIGN_API_KEY'),
     base_url='https://api.dev.facesign.ai'
-)
-```
-
-</CodeGroup>
+)`
+  }}
+/>
 
 </CollapsibleSection>
 
@@ -96,8 +83,10 @@ client = facesignai.Client(
 
 **Never use your API key on the client side!** Instead, create a session on your backend and provide the client secret URL to your end users:
 
-```typescript {{ title: 'Backend: Create session and get client secret' }}
-import Client from '@facesignai/api'
+<SimpleCodeBlock
+  language="javascript"
+  title="Backend: Create session and get client secret"
+  code={`import Client from '@facesignai/api'
 
 const client = new Client({
   auth: process.env.FACESIGN_API_KEY,
@@ -114,8 +103,8 @@ const { session, clientSecret } = await client.session.create({
 // URL format: https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100
 
 // Redirect user to clientSecret.url
-res.redirect(clientSecret.url)
-```
+res.redirect(clientSecret.url)`}
+/>
 
 The client secret is embedded in the session URL. Your end user navigates to `clientSecret.url` to begin verification. Client secrets expire after 2 hours by default.
 
@@ -128,24 +117,29 @@ API requests are rate limited to ensure fair usage:
 
 If you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
 
-```json {{ title: 'Rate limit error' }}
-{
+<SimpleCodeBlock
+  language="json"
+  title="Rate limit error"
+  variant="light"
+  code={`{
   "error": {
     "type": "rate_limit_error",
     "message": "Too many requests. Please retry after 60 seconds."
   }
-}
-```
+}`}
+/>
 
 ## API versioning
 
 The FaceSign API uses date-based versioning. The SDK automatically sends the `Facesign-Version` header with each request:
 
-```bash {{ title: 'API version header (sent automatically by SDK)' }}
-curl https://api.dev.facesign.ai/sessions \
-  -H "Authorization: Bearer sk_test_..." \
-  -H "Facesign-Version: 2024-12-18"
-```
+<SimpleCodeBlock
+  language="bash"
+  title="API version header (sent automatically by SDK)"
+  code={`curl https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer sk_test_..." \\
+  -H "Facesign-Version: 2024-12-18"`}
+/>
 
 <Note>
   The SDK uses version `2024-12-18` by default. This header is automatically included in all SDK requests.

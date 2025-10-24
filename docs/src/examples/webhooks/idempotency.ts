@@ -350,14 +350,11 @@ async function processWithLock(
 // ============================================================================
 
 async function setupIdempotency() {
-  // Development: Use in-memory store
-  const inMemoryStore = new InMemoryIdempotencyStore()
-
   // Production: Use Redis store
   const redis = new Redis(process.env.REDIS_URL!)
   const redisStore = new RedisIdempotencyStore(redis, 86400) // 24 hour TTL
 
-  // Best: Use hybrid for performance
+  // Best: Use hybrid for performance (combines Redis with in-memory cache)
   const hybridStore = new HybridIdempotencyStore(redisStore)
 
   // Create middleware

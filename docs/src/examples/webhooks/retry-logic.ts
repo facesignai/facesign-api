@@ -329,7 +329,7 @@ function getRetryMetrics() {
 
 // Expose metrics endpoint
 export function setupMetricsEndpoint(app: any) {
-  app.get('/metrics/webhooks', (req: any, res: any) => {
+  app.get('/metrics/webhooks', (_req: any, res: any) => {
     res.json(getRetryMetrics())
   })
 }

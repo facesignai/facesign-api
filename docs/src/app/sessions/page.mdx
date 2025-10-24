@@ -37,47 +37,47 @@ Create a new verification session by providing a flow definition. The flow conta
 
 ### Required parameters
 
-<Properties>
-  <Property name="flow" type="object">
+<ParametersSection>
+  <ParameterField name="flow" type="object" required>
     Node-based flow definition containing:
     - `nodes` - Array of FSNode objects (START, END, and verification steps)
     - `edges` - Array of edge objects connecting nodes
 
     See [Custom Flows](/flows) for complete node type documentation.
-  </Property>
-</Properties>
+  </ParameterField>
+</ParametersSection>
 
 ### Optional parameters
 
-<Properties>
-  <Property name="clientReferenceId" type="string">
+<ParametersSection>
+  <ParameterField name="clientReferenceId" type="string">
     Your internal reference ID for this verification (e.g., your user ID).
-  </Property>
-  <Property name="metadata" type="object">
+  </ParameterField>
+  <ParameterField name="metadata" type="object">
     Custom key-value pairs attached to the session. Useful for storing additional context.
-  </Property>
-  <Property name="providedData" type="object">
+  </ParameterField>
+  <ParameterField name="providedData" type="object">
     Pre-fill data for the session (name, email, phone, etc.). Useful when you already know some user information.
-  </Property>
-  <Property name="avatarId" type="string">
+  </ParameterField>
+  <ParameterField name="avatarId" type="string">
     ID of the AI avatar to use for conversation nodes. See [Avatars](/avatars) for available options.
-  </Property>
-  <Property name="langs" type="array">
+  </ParameterField>
+  <ParameterField name="langs" type="array">
     Array of language codes supported in this session (e.g., `["en", "es", "fr"]`). User can switch between these languages.
-  </Property>
-  <Property name="defaultLang" type="string">
+  </ParameterField>
+  <ParameterField name="defaultLang" type="string">
     Default language code (e.g., `"en"`). Defaults to English if not specified.
-  </Property>
-  <Property name="zone" type="string">
+  </ParameterField>
+  <ParameterField name="zone" type="string">
     Data residency zone: `"es"` (Spain) or `"eu"` (Europe). Determines where session data is stored.
-  </Property>
-  <Property name="customization" type="object">
+  </ParameterField>
+  <ParameterField name="customization" type="object">
     UI customization options for permissions page and controls. See [Customization](/customization) for details.
-  </Property>
-  <Property name="videoAIAnalysisEnabled" type="boolean">
+  </ParameterField>
+  <ParameterField name="videoAIAnalysisEnabled" type="boolean">
     Enable AI analysis of user video recordings. Provides behavioral insights and fraud detection signals.
-  </Property>
-</Properties>
+  </ParameterField>
+</ParametersSection>
 
 ### Returns
 
@@ -252,8 +252,8 @@ print(client_secret['url'])`
   }}
 />
 
-```json {{ title: 'Response' }}
-{
+<SimpleCodeBlock
+  code={`{
   "session": {
     "id": "sess_abc123",
     "createdAt": 1706284800,
@@ -278,8 +278,11 @@ print(client_secret['url'])`
     "url": "https://session.dev.facesign.ai?cs=cs_abc123",
     "expireAt": 1706292000
   }
-}
-```
+}`}
+  language="json"
+  title="Response"
+  variant="light"
+/>
 
   </Col>
 </Row>
@@ -295,11 +298,11 @@ Retrieve a session by its ID to check status and access verification results.
 
 ### Path parameters
 
-<Properties>
-  <Property name="sessionId" type="string">
+<ParametersSection>
+  <ParameterField name="sessionId" type="string" required>
     The unique session identifier returned when creating a session.
-  </Property>
-</Properties>
+  </ParameterField>
+</ParametersSection>
 
 ### Returns
 
@@ -329,8 +332,8 @@ print(session['report'])    # Verification results`
   }}
 />
 
-```json {{ title: 'Response' }}
-{
+<SimpleCodeBlock
+  code={`{
   "session": {
     "id": "sess_abc123",
     "createdAt": 1706284800,
@@ -378,8 +381,11 @@ print(session['report'])    # Verification results`
       ]
     }
   }
-}
-```
+}`}
+  language="json"
+  title="Response"
+  variant="light"
+/>
 
   </Col>
 </Row>
@@ -395,20 +401,20 @@ Retrieve a paginated list of all sessions. Useful for building admin dashboards 
 
 ### Query parameters
 
-<Properties>
-  <Property name="limit" type="integer">
+<ParametersSection>
+  <ParameterField name="limit" type="integer">
     Maximum number of sessions to return (1-100). Defaults to 10.
-  </Property>
-  <Property name="startingAfter" type="string">
+  </ParameterField>
+  <ParameterField name="startingAfter" type="string">
     Session ID to start pagination after. Use for fetching the next page.
-  </Property>
-  <Property name="status" type="string">
+  </ParameterField>
+  <ParameterField name="status" type="string">
     Filter by status: `requiresInput`, `processing`, `complete`, or `canceled`.
-  </Property>
-  <Property name="clientReferenceId" type="string">
+  </ParameterField>
+  <ParameterField name="clientReferenceId" type="string">
     Filter by your internal reference ID.
-  </Property>
-</Properties>
+  </ParameterField>
+</ParametersSection>
 
 ### Returns
 
@@ -452,8 +458,8 @@ if has_more:
   }}
 />
 
-```json {{ title: 'Response' }}
-{
+<SimpleCodeBlock
+  code={`{
   "sessions": [
     {
       "id": "sess_abc123",
@@ -478,8 +484,11 @@ if has_more:
   ],
   "hasMore": true,
   "lastId": "sess_def456"
-}
-```
+}`}
+  language="json"
+  title="Response"
+  variant="light"
+/>
 
   </Col>
 </Row>
@@ -490,20 +499,20 @@ if has_more:
 
 Sessions move through different statuses as users progress through verification:
 
-<Properties>
-  <Property name="requiresInput" type="status">
+<ParametersSection>
+  <ParameterField name="requiresInput" type="status">
     Session created but user hasn't opened the verification URL yet.
-  </Property>
-  <Property name="processing" type="status">
+  </ParameterField>
+  <ParameterField name="processing" type="status">
     User started verification and is actively going through the flow.
-  </Property>
-  <Property name="complete" type="status">
+  </ParameterField>
+  <ParameterField name="complete" type="status">
     User completed all steps and reached an END node. Verification data is available in the report.
-  </Property>
-  <Property name="canceled" type="status">
+  </ParameterField>
+  <ParameterField name="canceled" type="status">
     Session was canceled (either by user closing the tab or via API).
-  </Property>
-</Properties>
+  </ParameterField>
+</ParametersSection>
 
 <Note>
   Sessions remain accessible indefinitely regardless of status. You can retrieve completed sessions at any time to access their verification reports.
