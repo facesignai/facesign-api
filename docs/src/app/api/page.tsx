@@ -1,20 +1,26 @@
 'use client'
 
 import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  HStack,
+  Accordion,
+  Alert,
   Badge,
+  Blockquote,
+  Box,
+  Card,
   Code,
   CodeBlock,
-  Table,
-  Separator,
-  Alert,
+  Float,
+  Flex,
   Grid,
+  Heading,
+  HStack,
   IconButton,
-  Card,
+  Separator,
+  Span,
+  Stack,
+  Table,
+  Text,
+  VStack,
 } from '@chakra-ui/react'
 import { ApiReferenceLayout } from '@/components/chakra/ApiReferenceLayout'
 import { ApiEndpointSplitView } from '@/components/chakra/ApiEndpointSplitView'
@@ -200,33 +206,21 @@ export default function ApiReferencePage() {
             {/* Right - Code */}
             <Box>
               <CodeBlock.AdapterProvider value={shikiAdapter}>
-                <CodeBlock.Root
-                  code="https://api.dev.facesign.ai"
-                  language="text"
-                  size="sm"
-                >
-                  <CodeBlock.Header
-                    py="2"
-                    borderBottomWidth="1px"
-                    bg="gray.900"
-                    color="white"
-                    borderColor="gray.700"
-                  >
-                    <HStack flex="1">
-                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">
-                        BASE URL
-                      </Text>
-                    </HStack>
-                    <CodeBlock.Control>
+                <CodeBlock.Root code="https://api.dev.facesign.ai" language="text" size="sm">
+                  <CodeBlock.Header>
+                    <CodeBlock.Title>
+                      BASE URLsf4
+                    </CodeBlock.Title>
+                    <Float placement="top-end" offset="5" zIndex="1">
                       <CodeBlock.CopyTrigger asChild>
-                        <IconButton variant="ghost" size="2xs" color="white">
+                        <IconButton variant="ghost" size="2xs">
                           <CodeBlock.CopyIndicator />
                         </IconButton>
                       </CodeBlock.CopyTrigger>
-                    </CodeBlock.Control>
+                    </Float>                    
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900">
-                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
+                  <CodeBlock.Content>
+                    <CodeBlock.Code>
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
                   </CodeBlock.Content>
@@ -312,45 +306,132 @@ export default function ApiReferencePage() {
               </Text>
             </Box>
 
-            {/* Right - Rate Limits Table */}
-            <VStack gap={4} align="stretch">
-              <ReferenceTable headers={['Endpoint', 'Limit', 'Window']}>
-                <Table.Row>
-                  <Table.Cell>Create Session</Table.Cell>
-                  <Table.Cell>100</Table.Cell>
-                  <Table.Cell>1 minute</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>Get Session</Table.Cell>
-                  <Table.Cell>1000</Table.Cell>
-                  <Table.Cell>1 minute</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>List Sessions</Table.Cell>
-                  <Table.Cell>100</Table.Cell>
-                  <Table.Cell>1 minute</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>All other endpoints</Table.Cell>
-                  <Table.Cell>500</Table.Cell>
-                  <Table.Cell>1 minute</Table.Cell>
-                </Table.Row>
-              </ReferenceTable>
+            {/* Right - Rate Limits Accordion */}
+            <Box borderWidth="1px" rounded="l2">
+              <Flex
+                bg="bg.subtle"
+                borderBottomWidth="1px"
+                px="4"
+                py="3"
+                fontWeight="medium"
+                flex="1"
+                textStyle="sm"
+                roundedTop="l2"
+              >
+                <Span flex="1">Endpoint</Span>
+                <Span w="20ch">Limit</Span>
+                <Span w="20ch">Window</Span>
+              </Flex>
 
-              <Alert.Root status="info">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>
-                    Rate limit information is included in response headers:
-                  </Alert.Title>
-                  <Alert.Description>
-                    <Code>X-RateLimit-Limit</Code>,
-                    <Code ml={2}>X-RateLimit-Remaining</Code>,
-                    <Code ml={2}>X-RateLimit-Reset</Code>
-                  </Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-            </VStack>
+              <Accordion.Root multiple>
+                <Accordion.Item value="create" _last={{ borderBottomWidth: '0' }}>
+                  <Accordion.ItemTrigger colorPalette="gray" px="4" rounded="none">
+                    <Flex flex="1" align="center">
+                      <Box textStyle="xs">Create Session</Box>
+                    </Flex>
+                    <Flex align="center" gap="8">
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">100</Span>
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">1 minute</Span>
+                      <Accordion.ItemIndicator />
+                    </Flex>
+                  </Accordion.ItemTrigger>
+                  <Accordion.ItemContent rounded="none">
+                    <Accordion.ItemBody py="0" bg="bg.subtle">
+                      <Box bg="bg.subtle" p="4" borderTopWidth="1px" w="full">
+                        <Stack gap="3" textStyle="sm">
+                          <Flex gap="2">
+                            <Span flex="1" textStyle="sm">Description</Span>
+                            <Text flex="1" color="fg.muted">Max requests to create sessions.</Text>
+                          </Flex>
+                        </Stack>
+                      </Box>
+                    </Accordion.ItemBody>
+                  </Accordion.ItemContent>
+                </Accordion.Item>
+
+                <Accordion.Item value="get" _last={{ borderBottomWidth: '0' }}>
+                  <Accordion.ItemTrigger colorPalette="gray" px="4" rounded="none">
+                    <Flex flex="1" align="center">
+                      <Box textStyle="xs">Get Session</Box>
+                    </Flex>
+                    <Flex align="center" gap="8">
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">1000</Span>
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">1 minute</Span>
+                      <Accordion.ItemIndicator />
+                    </Flex>
+                  </Accordion.ItemTrigger>
+                  <Accordion.ItemContent rounded="none">
+                    <Accordion.ItemBody py="0" bg="bg.subtle">
+                      <Box bg="bg.subtle" p="4" borderTopWidth="1px" w="full">
+                        <Stack gap="3" textStyle="sm">
+                          <Flex gap="2">
+                            <Span flex="1" textStyle="sm">Description</Span>
+                            <Text flex="1" color="fg.muted">Max requests to retrieve session by ID.</Text>
+                          </Flex>
+                        </Stack>
+                      </Box>
+                    </Accordion.ItemBody>
+                  </Accordion.ItemContent>
+                </Accordion.Item>
+
+                <Accordion.Item value="list" _last={{ borderBottomWidth: '0' }}>
+                  <Accordion.ItemTrigger colorPalette="gray" px="4" rounded="none">
+                    <Flex flex="1" align="center">
+                      <Box textStyle="xs">List Sessions</Box>
+                    </Flex>
+                    <Flex align="center" gap="8">
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">100</Span>
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">1 minute</Span>
+                      <Accordion.ItemIndicator />
+                    </Flex>
+                  </Accordion.ItemTrigger>
+                  <Accordion.ItemContent rounded="none">
+                    <Accordion.ItemBody py="0" bg="bg.subtle">
+                      <Box bg="bg.subtle" p="4" borderTopWidth="1px" w="full">
+                        <Stack gap="3" textStyle="sm">
+                          <Flex gap="2">
+                            <Span flex="1" textStyle="sm">Description</Span>
+                            <Text flex="1" color="fg.muted">Max requests to list sessions.</Text>
+                          </Flex>
+                        </Stack>
+                      </Box>
+                    </Accordion.ItemBody>
+                  </Accordion.ItemContent>
+                </Accordion.Item>
+
+                <Accordion.Item value="other" _last={{ borderBottomWidth: '0' }}>
+                  <Accordion.ItemTrigger colorPalette="gray" px="4" rounded="none">
+                    <Flex flex="1" align="center">
+                      <Box textStyle="xs">All other endpoints</Box>
+                    </Flex>
+                    <Flex align="center" gap="8">
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">500</Span>
+                      <Span w="20ch" textStyle="xs" fontFamily="mono">1 minute</Span>
+                      <Accordion.ItemIndicator />
+                    </Flex>
+                  </Accordion.ItemTrigger>
+                  <Accordion.ItemContent rounded="none">
+                    <Accordion.ItemBody py="0" bg="bg.subtle">
+                      <Box bg="bg.subtle" p="4" borderTopWidth="1px" w="full">
+                        <Stack gap="3" textStyle="sm">
+                          <Flex gap="2">
+                            <Span flex="1" textStyle="sm">Description</Span>
+                            <Text flex="1" color="fg.muted">General per-minute limit.</Text>
+                          </Flex>
+                        </Stack>
+                      </Box>
+                    </Accordion.ItemBody>
+                  </Accordion.ItemContent>
+                </Accordion.Item>
+              </Accordion.Root>
+            </Box>
+
+            <Blockquote.Root variant="subtle" colorPalette="gray">
+              <Blockquote.Content>
+                Rate limit information is included in response headers: <Code>X-RateLimit-Limit</Code>,
+                <Code ml={2}>X-RateLimit-Remaining</Code>, <Code ml={2}>X-RateLimit-Reset</Code>
+              </Blockquote.Content>
+            </Blockquote.Root>
           </Grid>
         </Box>
 
@@ -405,38 +486,36 @@ export default function ApiReferencePage() {
               </ReferenceTable>
             </Box>
 
-            {/* Right - Error Response Format */}
+            {/* Right - Error Response Format (standardized code block) */}
             <Box>
               <Heading as="h3" size="md" mb={4}>
                 Error Response Format
               </Heading>
-              <Card.Root variant="outline" bg="gray.50">
-                <Card.Header borderBottomWidth="1px" py={3}>
-                  <HStack justify="space-between">
-                    <Text fontFamily="mono" textTransform="uppercase" textStyle="xs" fontWeight="bold">
-                      Error Response
-                    </Text>
-                  </HStack>
-                </Card.Header>
-                <Card.Body p={4}>
-                  <Box
-                    as="pre"
-                    fontSize="xs"
-                    fontFamily="mono"
-                    whiteSpace="pre"
-                    overflow="auto"
-                    color="gray.800"
-                  >
-{`{
-  "error": {
-    "type": "validation_error",
-    "message": "The flow field is required",
-    "code": "missing_required_field"
-  }
-}`}
-                  </Box>
-                </Card.Body>
-              </Card.Root>
+              <CodeBlock.AdapterProvider value={shikiAdapter}>
+                <CodeBlock.Root code={JSON.stringify({
+                  error: {
+                    type: 'validation_error',
+                    message: 'The flow field is required',
+                    code: 'missing_required_field'
+                  }
+                }, null, 2)} language="json" size="sm">
+                  <CodeBlock.Header borderBottomWidth="1px" bg="gray.100" borderColor="gray.200">
+                    <CodeBlock.Title>Error Response</CodeBlock.Title>
+                    <CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
+                  </CodeBlock.Header>
+                  <CodeBlock.Content bg="gray.50">
+                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="gray.800">
+                      <CodeBlock.CodeText />
+                    </CodeBlock.Code>
+                  </CodeBlock.Content>
+                </CodeBlock.Root>
+              </CodeBlock.AdapterProvider>
             </Box>
           </Grid>
         </Box>
@@ -473,20 +552,19 @@ export default function ApiReferencePage() {
                 <CodeBlock.Root
                   code={JSON.stringify(simpleFlow, null, 2)}
                   language="json"
-                  size="sm"
-                  meta={{ colorScheme: 'dark' }}
+                  size="md"
                 >
-                  <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
-                    <HStack flex="1">
-                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">MINIMAL FLOW</Text>
-                    </HStack>
+                  <CodeBlock.Header>
+                    <CodeBlock.Title>
+                      MINIMAL FLOW ABCDEFG
+                    </CodeBlock.Title>
                     <CodeBlock.Control>
-                      <CodeBlock.CopyTrigger asChild>
-                        <IconButton variant="ghost" size="2xs" color="white">
-                          <CodeBlock.CopyIndicator />
-                        </IconButton>
-                      </CodeBlock.CopyTrigger>
-                    </CodeBlock.Control>
+                    <CodeBlock.CopyTrigger asChild>
+                      <IconButton variant="ghost" size="2xs">
+                        <CodeBlock.CopyIndicator />
+                      </IconButton>
+                    </CodeBlock.CopyTrigger>
+                  </CodeBlock.Control>
                   </CodeBlock.Header>
                   <CodeBlock.Content bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
@@ -570,19 +648,18 @@ export default function ApiReferencePage() {
                   code={JSON.stringify(emailFlow, null, 2)}
                   language="json"
                   size="sm"
-                  meta={{ colorScheme: 'dark' }}
                 >
                   <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
-                    <HStack flex="1">
-                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">EMAIL COLLECTION FLOW</Text>
-                    </HStack>
-                    <CodeBlock.Control>
-                      <CodeBlock.CopyTrigger asChild>
-                        <IconButton variant="ghost" size="2xs" color="white">
-                          <CodeBlock.CopyIndicator />
-                        </IconButton>
-                      </CodeBlock.CopyTrigger>
-                    </CodeBlock.Control>
+                    <CodeBlock.Title>
+                      EMAIL COLLECTION FLOW
+                    </CodeBlock.Title>
+                  <Float placement="top-end" offset="5" zIndex="1">
+                    <CodeBlock.CopyTrigger asChild>
+                      <IconButton variant="ghost" size="2xs">
+                        <CodeBlock.CopyIndicator />
+                      </IconButton>
+                    </CodeBlock.CopyTrigger>
+                  </Float>                    
                   </CodeBlock.Header>
                   <CodeBlock.Content bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
@@ -634,19 +711,18 @@ export default function ApiReferencePage() {
                   code={JSON.stringify(documentFlow, null, 2)}
                   language="json"
                   size="sm"
-                  meta={{ colorScheme: 'dark' }}
                 >
                   <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
-                    <HStack flex="1">
-                      <Text textStyle="xs" color="gray.400" fontFamily="mono" fontWeight="bold">CONDITIONAL FLOW</Text>
-                    </HStack>
-                    <CodeBlock.Control>
-                      <CodeBlock.CopyTrigger asChild>
-                        <IconButton variant="ghost" size="2xs" color="white">
-                          <CodeBlock.CopyIndicator />
-                        </IconButton>
-                      </CodeBlock.CopyTrigger>
-                    </CodeBlock.Control>
+                    <CodeBlock.Title>
+                      CONDITIONAL FLOW
+                    </CodeBlock.Title>
+                  <Float placement="top-end" offset="5" zIndex="1">
+                    <CodeBlock.CopyTrigger asChild>
+                      <IconButton variant="ghost" size="2xs">
+                        <CodeBlock.CopyIndicator />
+                      </IconButton>
+                    </CodeBlock.CopyTrigger>
+                  </Float>                    
                   </CodeBlock.Header>
                   <CodeBlock.Content bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">

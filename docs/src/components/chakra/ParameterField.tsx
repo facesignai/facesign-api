@@ -81,37 +81,7 @@ export function ParameterField({
         )}
       </HStack>
 
-      <Box
-        as="dd"
-        mt={0}
-        ml={0}
-        color="fg.muted"
-        fontSize="sm"
-        lineHeight="tall"
-        css={{
-          '& p': {
-            marginBottom: 'var(--chakra-spacing-2)',
-            '&:last-child': { marginBottom: 0 },
-          },
-          '& code': {
-            fontSize: 'var(--chakra-fontSizes-xs)',
-            backgroundColor: 'var(--chakra-colors-gray-100)',
-            paddingLeft: 'var(--chakra-spacing-1)',
-            paddingRight: 'var(--chakra-spacing-1)',
-            paddingTop: 'var(--chakra-spacing-0\\.5)',
-            paddingBottom: 'var(--chakra-spacing-0\\.5)',
-            borderRadius: 'var(--chakra-radii-sm)',
-            fontFamily: 'var(--chakra-fonts-mono)',
-            color: 'var(--chakra-colors-gray-800)',
-          },
-          '.chakra-ui-dark &': {
-            '& code': {
-              backgroundColor: 'var(--chakra-colors-gray-800)',
-              color: 'var(--chakra-colors-gray-200)',
-            },
-          },
-        }}
-      >
+      <Box as="dd" mt={0} ml={0} color="fg.muted" fontSize="sm" lineHeight="tall">
         {children}
       </Box>
     </Box>
@@ -138,7 +108,6 @@ export function ParametersSection({ children }: { children: React.ReactNode }) {
       overflow="hidden"
       mb={6}
       bg="bg.subtle"
-      _dark={{ bg: 'gray.800/50' }}
     >
       {children}
     </VStack>

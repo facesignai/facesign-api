@@ -22,7 +22,7 @@ interface TabbedCodeBlockProps {
     javascript?: string
   }
   defaultLanguage?: string
-  variant?: 'dark' | 'light'
+  variant?: 'dark' | 'light' | 'white'
 }
 
 interface LanguageConfig {
@@ -85,6 +85,32 @@ export function TabbedCodeBlock({
   // Determine default language
   const initialLanguage = defaultLanguage || availableLanguages[0] || 'bash'
 
+  // Map our high-level variants to Chakra token props (no theme/meta)
+  const styleMap = {
+    dark: {
+      headerBg: 'gray.900',
+      headerColor: 'white',
+      headerBorder: 'gray.700',
+      contentBg: 'gray.900',
+      codeColor: 'white',
+    },
+    light: {
+      headerBg: 'gray.100',
+      headerColor: 'gray.800',
+      headerBorder: 'gray.200',
+      contentBg: 'gray.50',
+      codeColor: 'gray.800',
+    },
+    white: {
+      headerBg: 'white',
+      headerColor: 'gray.800',
+      headerBorder: 'gray.200',
+      contentBg: 'white',
+      codeColor: 'gray.800',
+    },
+  } as const
+  const styles = styleMap[variant]
+
   return (
     <CodeBlock.AdapterProvider value={shikiAdapter}>
       <Tabs.Root defaultValue={initialLanguage} size="sm" variant="subtle" mb={8}>
@@ -92,9 +118,8 @@ export function TabbedCodeBlock({
           size="sm"
           code={codeExamples[initialLanguage as keyof typeof codeExamples] || ''}
           language={languageConfigs[initialLanguage]?.language || 'bash'}
-          meta={{ colorScheme: 'dark' }}
         >
-          <CodeBlock.Header borderBottomWidth="1px">
+          <CodeBlock.Header borderBottomWidth="1px" bg={styles.headerBg} color={styles.headerColor} borderColor={styles.headerBorder}>
             <HStack flex="1" gap={2}>
               {title && <CodeBlock.Title>{title}</CodeBlock.Title>}
               <Tabs.List
@@ -147,10 +172,9 @@ export function TabbedCodeBlock({
                   size="sm"
                   code={code}
                   language={config.language}
-                  meta={{ colorScheme: 'dark' }}
                 >
-                  <CodeBlock.Content maxH="500px" overflowY="auto">
-                    <CodeBlock.Code overflowX="auto">
+                  <CodeBlock.Content maxH="500px" overflowY="auto" bg={styles.contentBg}>
+                    <CodeBlock.Code overflowX="auto" color={styles.codeColor}>
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
                   </CodeBlock.Content>

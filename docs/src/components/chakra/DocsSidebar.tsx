@@ -29,23 +29,13 @@ const SideNavLink = chakra('a', {
     py: '1.5',
     _hover: {
       bg: 'gray.100',
-      _dark: {
-        bg: 'gray.800',
-      }
     },
     _current: {
       fontWeight: 'medium',
       color: 'green.600',
       bg: 'green.50',
-      _dark: {
-        color: 'green.400',
-        bg: 'green.900/20',
-      },
       _hover: {
         bg: 'green.50',
-        _dark: {
-          bg: 'green.900/20',
-        }
       }
     },
   },

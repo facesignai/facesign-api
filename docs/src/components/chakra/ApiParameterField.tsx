@@ -54,7 +54,7 @@ export function ApiParameterField({
                 display="flex"
                 href={`#${anchorId}`}
                 alignItems="center"
-                className="anchor-link"
+                data-anchor-link
                 transition="opacity 0.2s"
               >
                 <Flex
@@ -73,7 +73,7 @@ export function ApiParameterField({
               </Link>
             </Box>
 
-            <Text cursor="pointer" color={{ base: 'blue.600', _dark: 'blue.300' }} fontWeight="semibold" wordBreak="break-all">
+            <Text cursor="pointer" color="blue.600" fontWeight="semibold" wordBreak="break-all">
               {name}
             </Text>
 

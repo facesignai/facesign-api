@@ -21,14 +21,10 @@ const TocLink = chakra('a', {
     cursor: 'pointer',
     textDecoration: 'none',
     transition: 'all 0.15s ease',
-    paddingInlineStart: `calc(var(--toc-item-depth) * 0.75rem + 0.75rem)`,
     color: 'fg.muted',
     _current: {
       fontWeight: 'medium',
       color: 'green.600',
-      _dark: {
-        color: 'green.400',
-      }
     },
     _hover: {
       color: 'fg',
@@ -141,7 +137,7 @@ export function TableOfContents({ items, maxDepth = 3 }: TableOfContentsProps) {
       display={{ base: 'none', xl: 'block' }}
     >
       <HStack alignItems="center" mb="4" px="3">
-        <LuText color="var(--chakra-colors-fg-subtle)" />
+        <LuText color="fg.subtle" />
         <Heading textStyle="sm" fontWeight="medium">
           On this page
         </Heading>
@@ -154,9 +150,7 @@ export function TableOfContents({ items, maxDepth = 3 }: TableOfContentsProps) {
             <TocLink
               key={item.id}
               href={`#${item.id}`}
-              css={{
-                '--toc-item-depth': item.level - 2, // Adjust depth for h2, h3, h4
-              }}
+              paddingInlineStart={`calc(${Math.max(0, item.level - 2)} * 0.75rem + 0.75rem)`}
               onClick={(e: React.MouseEvent<HTMLAnchorElement>) => handleClick(e, item.id)}
               data-current={isActive || undefined}
               aria-current={isActive ? 'location' : undefined}

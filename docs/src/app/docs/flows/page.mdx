@@ -1,0 +1,40 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Callout } from '@/components/chakra/Callout'
+import { CodeTabs } from '@/components/chakra/CodeTabs'
+import { NextPrevNav } from '@/components/chakra/NextPrevNav'
+
+<PageHeader title="Flows" description="Compose verification steps as nodes with conditional branching." />
+
+<Prose>
+
+## Concepts
+
+A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).
+
+<Callout type="success">Keep flows minimal. Start with the fewest nodes, add more only if needed.</Callout>
+
+## Create a flow
+
+<CodeTabs codeExamples={{
+  curl: 'curl -X POST https://api.dev.facesign.ai/flows \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d @flow.json',
+  javascript: 'await fs.flows.create({ id: "flow_basic", nodes: [ { type: "email" }, { type: "document" } ] })',
+}} />
+
+## Get a flow
+
+<CodeTabs codeExamples={{
+  curl: 'curl https://api.dev.facesign.ai/flows/flow_basic -H "Authorization: Bearer YOUR_API_KEY"',
+  javascript: 'await fs.flows.get("flow_basic")',
+}} />
+
+## Next steps
+
+- Create a session against your flow.
+- Add webhook handlers for status updates.
+
+<NextPrevNav prev={{ href: '/docs/sessions', label: 'Sessions' }} next={{ href: '/docs/webhooks', label: 'Webhooks' }} />
+
+</Prose>
+
+

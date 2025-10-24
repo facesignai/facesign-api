@@ -114,7 +114,8 @@ export function DocsNavbarPro() {
                   src={logoSrc}
                   alt="FaceSign"
                   height={32}
-                  style={{ width: 'auto', height: '100%', objectFit: 'contain' }}
+                  sizes="128px"
+                  style={{ height: '100%', width: 'auto' }}
                 />
               </Box>
             </Box>
@@ -174,7 +175,7 @@ export function DocsNavbarPro() {
                 h="var(--sizes-10)"
                 borderRadius="md"
                 cursor="pointer"
-                _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}
+                _hover={{ bg: 'gray.100' }}
               >
                 <a
                   href="https://github.com/facesignai/api"
@@ -240,12 +241,7 @@ export function DocsNavbarPro() {
                             asChild
                           >
                             <NextLink href={item.href}>
-                              <HStack
-                                px="4"
-                                py="2"
-                                color={isActive ? 'green.600' : 'fg'}
-                                _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}
-                              >
+                              <HStack px="4" py="2" color={isActive ? 'green.600' : 'fg'} _hover={{ bg: 'gray.100' }}>
                                 {item.icon}
                                 <span>{item.label}</span>
                               </HStack>
@@ -258,7 +254,7 @@ export function DocsNavbarPro() {
 
                       <Menu.Item asChild value="github">
                         <a href="https://github.com/facesignai/api" target="_blank" rel="noreferrer">
-                          <HStack px="4" py="2" _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}>
+                          <HStack px="4" py="2" _hover={{ bg: 'gray.100' }}>
                             <FiGithub />
                             <span>GitHub</span>
                           </HStack>

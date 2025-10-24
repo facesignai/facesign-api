@@ -1,0 +1,42 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Callout } from '@/components/chakra/Callout'
+import { CodeTabs } from '@/components/chakra/CodeTabs'
+import { NextPrevNav } from '@/components/chakra/NextPrevNav'
+
+<PageHeader title="Sessions" description="Create and manage verification sessions." />
+
+<Prose>
+
+## When to use sessions
+
+Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context.
+
+<Callout type="info">Sessions should be created server‑side and handed to your client using a client secret.</Callout>
+
+## Create a session
+
+<CodeTabs codeExamples={{
+  curl: 'curl -X POST https://api.dev.facesign.ai/sessions \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d "{\\"flowId\\": \\\"flow_basic\\\"}"',
+  javascript: 'import { FaceSign } from "@facesignai/api"\n\nconst fs = new FaceSign({ apiKey: process.env.FACESIGN_API_KEY! })\nconst session = await fs.sessions.create({ flowId: "flow_basic" })',
+  python: 'from facesign import FaceSign\n\nfs = FaceSign(api_key=FACESIGN_API_KEY)\nsession = fs.sessions.create({"flowId": "flow_basic"})',
+  go: 'client := facesign.NewClient(os.Getenv("FACESIGN_API_KEY"))\nsession, err := client.Sessions.Create(ctx, facesign.CreateSessionRequest{FlowID: "flow_basic"})',
+}} />
+
+## Retrieve a session
+
+<CodeTabs codeExamples={{
+  curl: 'curl https://api.dev.facesign.ai/sessions/{SESSION_ID} -H "Authorization: Bearer YOUR_API_KEY"',
+  javascript: 'await fs.sessions.get(session.id)',
+}} />
+
+## Next steps
+
+- Attach a client secret and initialize the SDK in your app.
+- Listen for status changes via webhooks.
+
+<NextPrevNav next={{ href: '/docs/flows', label: 'Flows' }} />
+
+</Prose>
+
+

@@ -10,7 +10,7 @@ interface SimpleCodeBlockProps {
   code: string
   language?: string
   title?: string
-  variant?: 'dark' | 'light'
+  variant?: 'dark' | 'light' | 'white'
   showLineNumbers?: boolean
   maxHeight?: string
 }
@@ -42,6 +42,12 @@ export function SimpleCodeBlock({
   showLineNumbers: _showLineNumbers = false,
   maxHeight = '500px',
 }: SimpleCodeBlockProps) {
+  const styleMap = {
+    dark: { headerBg: 'gray.900', headerColor: 'white', headerBorder: 'gray.700', contentBg: 'gray.900', codeColor: 'white' },
+    light: { headerBg: 'gray.100', headerColor: 'gray.800', headerBorder: 'gray.200', contentBg: 'gray.50', codeColor: 'gray.800' },
+    white: { headerBg: 'white', headerColor: 'gray.800', headerBorder: 'gray.200', contentBg: 'white', codeColor: 'gray.800' },
+  } as const
+  const styles = styleMap[variant]
   return (
     <CodeBlock.AdapterProvider value={shikiAdapter}>
       <CodeBlock.Root
@@ -49,9 +55,8 @@ export function SimpleCodeBlock({
         size="sm"
         code={code}
         language={language}
-        meta={{ colorScheme: variant }}
       >
-        <CodeBlock.Header borderBottomWidth="1px">
+        <CodeBlock.Header borderBottomWidth="1px" bg={styles.headerBg} color={styles.headerColor} borderColor={styles.headerBorder}>
           {title && <CodeBlock.Title>{title}</CodeBlock.Title>}
           <CodeBlock.Control>
             <CodeBlock.CopyTrigger asChild>
@@ -62,8 +67,8 @@ export function SimpleCodeBlock({
           </CodeBlock.Control>
         </CodeBlock.Header>
 
-        <CodeBlock.Content maxH={maxHeight} overflowY="auto">
-          <CodeBlock.Code overflowX="auto">
+        <CodeBlock.Content maxH={maxHeight} overflowY="auto" bg={styles.contentBg}>
+          <CodeBlock.Code overflowX="auto" color={styles.codeColor}>
             <CodeBlock.CodeText />
           </CodeBlock.Code>
         </CodeBlock.Content>

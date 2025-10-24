@@ -1,0 +1,33 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Callout } from '@/components/chakra/Callout'
+import { CodeTabs } from '@/components/chakra/CodeTabs'
+import { NextPrevNav } from '@/components/chakra/NextPrevNav'
+
+<PageHeader title="Webhooks" description="Receive real‑time updates when session status changes." />
+
+<Prose>
+
+## Overview
+
+FaceSign sends POST requests to your webhook URL when a session changes status.
+
+<Callout type="warning">Verify signatures and use idempotency to avoid duplicate processing.</Callout>
+
+## Example event payload
+
+<CodeTabs codeExamples={{
+  javascript: '{\n  "type": "session.updated",\n  "data": { "id": "sess_123", "status": "completed" }\n}',
+}} />
+
+## Configure a webhook
+
+<CodeTabs codeExamples={{
+  curl: 'curl -X POST https://api.dev.facesign.ai/webhooks \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d "{\\"url\\": \\\"https://example.com/webhooks/facesign\\\"}"',
+}} />
+
+<NextPrevNav prev={{ href: '/docs/flows', label: 'Flows' }} />
+
+</Prose>
+
+
