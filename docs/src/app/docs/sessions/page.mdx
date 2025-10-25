@@ -1,7 +1,8 @@
 import { PageHeader } from '@/components/chakra/PageHeader'
 import { Prose } from '@/components/chakra/Prose'
-import { Callout } from '@/components/chakra/Callout'
+import { Blockquote } from '@chakra-ui/react'
 import { CodeTabs } from '@/components/chakra/CodeTabs'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { NextPrevNav } from '@/components/chakra/NextPrevNav'
 
 <PageHeader title="Sessions" description="Create and manage verification sessions." />
@@ -12,7 +13,12 @@ import { NextPrevNav } from '@/components/chakra/NextPrevNav'
 
 Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context.
 
-<Callout type="info">Sessions should be created server‑side and handed to your client using a client secret.</Callout>
+<Blockquote.Root variant="subtle" colorPalette="gray">
+  <Blockquote.Content>
+    Sessions should be created server‑side and handed to your client using a client secret.
+  </Blockquote.Content>
+  
+</Blockquote.Root>
 
 ## Create a session
 
@@ -29,6 +35,233 @@ Sessions represent a single verification attempt. They are short‑lived and sco
   curl: 'curl https://api.dev.facesign.ai/sessions/{SESSION_ID} -H "Authorization: Bearer YOUR_API_KEY"',
   javascript: 'await fs.sessions.get(session.id)',
 }} />
+
+## Client Secret
+
+<Blockquote.Root variant="subtle" colorPalette="gray">
+  <Blockquote.Content>
+    Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side.
+  </Blockquote.Content>
+  
+</Blockquote.Root>
+
+<SimpleCodeBlock
+  title="The Client Secret object"
+  language="json"
+  variant="light"
+  code={`{
+  "secret": "csea61d44d88d345e1b91622820bb73100",
+  "createdAt": 1761001508335,
+  "expireAt": 1761008708335,
+  "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100"
+}`}
+/>
+
+## Session object
+
+### Top-level attributes
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the session (e.g., `"sess_abc123"`).
+  </Property>
+  <Property name="createdAt" type="number">
+    Unix timestamp (milliseconds) when the session was created.
+  </Property>
+  <Property name="startedAt" type="number" nullable>
+    Unix timestamp when the user started the verification flow. Null if not started yet.
+  </Property>
+  <Property name="finishedAt" type="number" nullable>
+    Unix timestamp when the session finished or was canceled. Null if still in progress.
+  </Property>
+  <Property name="status" type="string">
+    Current session status: `requiresInput`, `processing`, `complete`, or `canceled`.
+  </Property>
+  <Property name="settings" type="object">
+    SessionSettings object containing flow configuration and metadata. See below for details.
+  </Property>
+  <Property name="version" type="string" nullable>
+    API version used for this session (e.g., `"2024-12-18"`).
+  </Property>
+  <Property name="report" type="object" nullable>
+    SessionReport object with verification results. Only present when status is `complete`. See below for details.
+  </Property>
+</Properties>
+
+### SessionSettings object
+
+The `settings` object contains the flow configuration and metadata for the session.
+
+<Properties>
+  <Property name="clientReferenceId" type="string" nullable>
+    Your internal reference ID for this verification (e.g., your user ID).
+  </Property>
+  <Property name="metadata" type="object">
+    Custom key-value pairs you attached to the session.
+  </Property>
+  <Property name="flow" type="object">
+    Node-based flow definition with `nodes` and `edges` arrays. See [Custom Flows](/flows) for details.
+  </Property>
+  <Property name="providedData" type="object" nullable>
+    Pre-filled user data (name, email, phone, etc.) provided when creating the session.
+  </Property>
+  <Property name="avatarId" type="string" nullable>
+    ID of the AI avatar used in conversation nodes.
+  </Property>
+  <Property name="langs" type="array" nullable>
+    Array of supported language codes (e.g., `["en", "es", "fr"]`).
+  </Property>
+  <Property name="defaultLang" type="string" nullable>
+    Default language code (e.g., `"en"`).
+  </Property>
+  <Property name="zone" type="string" nullable>
+    Data residency zone: `"es"` (Spain) or `"eu"` (Europe).
+  </Property>
+  <Property name="customization" type="object" nullable>
+    UI customization options for permissions page and controls. See [Customization](/customization).
+  </Property>
+  <Property name="videoAIAnalysisEnabled" type="boolean" nullable>
+    Whether AI video analysis is enabled for this session.
+  </Property>
+</Properties>
+
+### SessionReport object
+
+The `report` object contains verification results and is only present when the session status is `complete`.
+
+<Properties>
+  <Property name="transcript" type="array">
+    Array of conversation messages exchanged during the session. Each message has `role`, `text`, and `timestamp`.
+  </Property>
+  <Property name="aiAnalysis" type="object" nullable>
+    AI analysis results including sentiment, confidence scores, and behavioral insights.
+  </Property>
+  <Property name="location" type="object" nullable>
+    User's location data including country, region, city, and coordinates.
+  </Property>
+  <Property name="device" type="object" nullable>
+    Device information including browser, OS, and device type.
+  </Property>
+  <Property name="lang" type="string" nullable>
+    Language code used during the session.
+  </Property>
+  <Property name="nodeReports" type="array" nullable>
+    Array of node execution reports. Each report contains `nodeId`, `nodeType`, `outcome`, `timestamp`, and node-specific `data` (e.g., extracted document fields, face matching scores).
+  </Property>
+  <Property name="videoAIAnalysis" type="object" nullable>
+    Video AI analysis results if `videoAIAnalysisEnabled` was true. Includes behavioral insights and fraud detection signals.
+  </Property>
+</Properties>
+
+<SimpleCodeBlock
+  title="Session Object Example"
+  language="json"
+  variant="light"
+  code={`{
+  "id": "sess_abc123",
+  "createdAt": 1706284800000,
+  "startedAt": 1706284850000,
+  "finishedAt": 1706285000000,
+  "status": "complete",
+  "version": "2024-12-18",
+  "settings": {
+    "clientReferenceId": "user-123",
+    "metadata": {
+      "userId": "123",
+      "source": "web-app"
+    },
+    "flow": {
+      "nodes": [
+        {
+          "id": "start",
+          "type": "start",
+          "outcome": "liveness"
+        },
+        {
+          "id": "liveness",
+          "type": "liveness_detection",
+          "outcomes": {
+            "livenessDetected": "end",
+            "deepfakeDetected": "end",
+            "noFace": "end"
+          }
+        },
+        {
+          "id": "end",
+          "type": "end"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "source": "start",
+          "target": "liveness"
+        },
+        {
+          "id": "e2",
+          "source": "liveness",
+          "target": "end"
+        }
+      ]
+    },
+    "avatarId": "June_HR_public",
+    "defaultLang": "en",
+    "zone": "es",
+    "videoAIAnalysisEnabled": true
+  },
+  "report": {
+    "transcript": [
+      {
+        "role": "system",
+        "text": "Welcome to identity verification",
+        "timestamp": 1706284850000
+      },
+      {
+        "role": "user",
+        "text": "Hi",
+        "timestamp": 1706284855000
+      }
+    ],
+    "lang": "en",
+    "location": {
+      "country": "ES",
+      "region": "Madrid",
+      "city": "Madrid",
+      "lat": 40.4168,
+      "lon": -3.7038
+    },
+    "device": {
+      "browser": "Chrome",
+      "os": "macOS",
+      "deviceType": "desktop"
+    },
+    "nodeReports": [
+      {
+        "nodeId": "liveness",
+        "nodeType": "liveness_detection",
+        "outcome": "livenessDetected",
+        "timestamp": 1706284900000,
+        "data": {
+          "confidence": 0.95,
+          "livenessScore": 0.92
+        }
+      }
+    ],
+    "aiAnalysis": {
+      "sentiment": "positive",
+      "confidence": 0.88
+    },
+    "videoAIAnalysis": {
+      "fraudScore": 0.12,
+      "signals": {
+        "multiplePeople": false,
+        "screenRecording": false,
+        "environmentChanges": false
+      }
+    }
+  }
+}`}
+/>
 
 ## Next steps
 

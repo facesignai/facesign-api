@@ -1,7 +1,15 @@
+import { Prose } from '@/components/chakra/Prose'
+import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+
 export const metadata = {
   title: 'Avatars',
   description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.',
 }
+
+<Prose>
 
 # Avatars
 
@@ -36,108 +44,96 @@ FaceSign avatars are AI-powered virtual assistants that:
 
 ---
 
-## Get available avatars {{ tag: 'GET', label: '/avatars' }}
+## Get available avatars
 
-<Row>
-  <Col>
+Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience.
 
-    Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience.
+<RequestCodeBlock
+  method="GET"
+  path="/avatars"
+  codeExamples={{
+    curl: `curl https://api.dev.facesign.ai/avatars \\\n  -H "Authorization: Bearer sk_test_..."`,
+    typescript: `import Client from '@facesignai/api'
+import { FSNodeType } from '@facesignai/api'
 
-  </Col>
-  <Col sticky>
+const client = new Client({
+  auth: 'sk_test_...',
+  serverUrl: 'https://api.dev.facesign.ai'
+})
 
-    <CodeGroup title="Request" tag="GET" label="/avatars">
+const { avatars } = await client.avatars.retrieve()
 
-    ```bash {{ title: 'cURL' }}
-    curl https://api.dev.facesign.ai/avatars \
-      -H "Authorization: Bearer sk_test_..."
-    ```
+// Use in session creation
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user_123',
+  avatarId: avatars[0].id,
+  flow: {
+    nodes: [
+      { id: 'start', type: FSNodeType.START, outcome: 'end' },
+      { id: 'end', type: FSNodeType.END }
+    ],
+    edges: [{ id: 'e1', source: 'start', target: 'end' }]
+  }
+})`,
+    python: `import facesignai
 
-    ```typescript {{ title: 'TypeScript' }}
-    import Client from '@facesignai/api'
-    import { FSNodeType } from '@facesignai/api'
+client = facesignai.Client(
+    auth='sk_test_...',
+    base_url='https://api.dev.facesign.ai'
+)
 
-    const client = new Client({
-      auth: 'sk_test_...',
-      serverUrl: 'https://api.dev.facesign.ai'
-    })
+response = client.avatars.retrieve()
+avatars = response['avatars']
 
-    const { avatars } = await client.avatars.retrieve()
-
-    // Use in session creation
-    const { session, clientSecret } = await client.session.create({
-      clientReferenceId: 'user_123',
-      avatarId: avatars[0].id,
-      flow: {
-        nodes: [
-          { id: 'start', type: FSNodeType.START, outcome: 'end' },
-          { id: 'end', type: FSNodeType.END }
+# Use in session creation
+session_response = client.session.create(
+    client_reference_id='user_123',
+    avatar_id=avatars[0]['id'],
+    flow={
+        'nodes': [
+            {'id': 'start', 'type': 'start', 'outcome': 'end'},
+            {'id': 'end', 'type': 'end'}
         ],
-        edges: [{ id: 'e1', source: 'start', target: 'end' }]
-      }
-    })
-    ```
-
-    ```python {{ title: 'Python' }}
-    import facesignai
-
-    client = facesignai.Client(
-        auth='sk_test_...',
-        base_url='https://api.dev.facesign.ai'
-    )
-
-    response = client.avatars.retrieve()
-    avatars = response['avatars']
-
-    # Use in session creation
-    session_response = client.session.create(
-        client_reference_id='user_123',
-        avatar_id=avatars[0]['id'],
-        flow={
-            'nodes': [
-                {'id': 'start', 'type': 'start', 'outcome': 'end'},
-                {'id': 'end', 'type': 'end'}
-            ],
-            'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
-        }
-    )
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-    {
-      "avatars": [
-        {
-          "id": "avatar_sarah_professional",
-          "name": "Sarah",
-          "gender": "female",
-          "imageUrl": "https://cdn.facesign.ai/avatars/sarah_professional.jpg"
-        },
-        {
-          "id": "avatar_james_friendly",
-          "name": "James",
-          "gender": "male", 
-          "imageUrl": "https://cdn.facesign.ai/avatars/james_friendly.jpg"
-        },
-        {
-          "id": "avatar_maria_bilingual",
-          "name": "Maria",
-          "gender": "female",
-          "imageUrl": "https://cdn.facesign.ai/avatars/maria_bilingual.jpg"
-        },
-        {
-          "id": "avatar_alex_neutral",
-          "name": "Alex",
-          "gender": "unknown",
-          "imageUrl": "https://cdn.facesign.ai/avatars/alex_neutral.jpg"
-        }
-      ]
+        'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
     }
-    ```
+)
+`,
+  }}
+/>
 
-  </Col>
-</Row>
+<SimpleCodeBlock
+  title="Response"
+  language="json"
+  variant="light"
+  code={`{
+  "avatars": [
+    {
+      "id": "avatar_sarah_professional",
+      "name": "Sarah",
+      "gender": "female",
+      "imageUrl": "https://cdn.facesign.ai/avatars/sarah_professional.jpg"
+    },
+    {
+      "id": "avatar_james_friendly",
+      "name": "James",
+      "gender": "male",
+      "imageUrl": "https://cdn.facesign.ai/avatars/james_friendly.jpg"
+    },
+    {
+      "id": "avatar_maria_bilingual",
+      "name": "Maria",
+      "gender": "female",
+      "imageUrl": "https://cdn.facesign.ai/avatars/maria_bilingual.jpg"
+    },
+    {
+      "id": "avatar_alex_neutral",
+      "name": "Alex",
+      "gender": "unknown",
+      "imageUrl": "https://cdn.facesign.ai/avatars/alex_neutral.jpg"
+    }
+  ]
+}`}
+/>
 
 ---
 
@@ -147,115 +143,77 @@ FaceSign avatars are AI-powered virtual assistants that:
 
 Different avatars work better for different use cases and audiences:
 
-```typescript {{ title: 'Avatar selection by use case' }}
-const AVATAR_RECOMMENDATIONS = {
-  financial_services: {
-    avatarId: 'avatar_sarah_professional',
-    description: 'Professional, trustworthy appearance for banking and financial apps'
-  },
-  healthcare: {
-    avatarId: 'avatar_james_caring',
-    description: 'Warm, empathetic avatar for medical verification'
-  },
-  gaming: {
-    avatarId: 'avatar_alex_casual',
-    description: 'Casual, friendly avatar for gaming platforms'
-  },
-  enterprise: {
-    avatarId: 'avatar_david_corporate',
-    description: 'Business-appropriate avatar for B2B applications'
-  },
-  international: {
-    avatarId: 'avatar_maria_bilingual',
-    description: 'Multicultural avatar for global applications'
-  }
+<SimpleCodeBlock
+  title="Avatar selection by use case"
+  language="typescript"
+  variant="light"
+  code={`const AVATAR_RECOMMENDATIONS = {
+  financial_services: { avatarId: 'avatar_sarah_professional', description: 'Professional, trustworthy appearance for banking and financial apps' },
+  healthcare: { avatarId: 'avatar_james_caring', description: 'Warm, empathetic avatar for medical verification' },
+  gaming: { avatarId: 'avatar_alex_casual', description: 'Casual, friendly avatar for gaming platforms' },
+  enterprise: { avatarId: 'avatar_david_corporate', description: 'Business-appropriate avatar for B2B applications' },
+  international: { avatarId: 'avatar_maria_bilingual', description: 'Multicultural avatar for global applications' }
 };
 
 function selectAvatarForUseCase(useCase: string) {
   return AVATAR_RECOMMENDATIONS[useCase] || AVATAR_RECOMMENDATIONS.enterprise;
-}
-```
+}`}
+/>
 
 ### Dynamic avatar selection
 
 You can dynamically select avatars based on user preferences or demographics:
 
-```typescript {{ title: 'Dynamic avatar selection' }}
-async function selectPersonalizedAvatar(userId: string) {
-  // Get available avatars
+<SimpleCodeBlock
+  title="Dynamic avatar selection"
+  language="typescript"
+  variant="light"
+  code={`async function selectPersonalizedAvatar(userId: string) {
   const { avatars } = await client.avatars.list();
-  
-  // Get user preferences
   const user = await db.users.findUnique({ where: { id: userId } });
-  
-  // Filter avatars based on user preferences
   let preferredAvatars = avatars;
-  
   if (user.preferredAvatarGender) {
-    preferredAvatars = avatars.filter(avatar => 
-      avatar.gender === user.preferredAvatarGender || avatar.gender === 'unknown'
-    );
+    preferredAvatars = avatars.filter(avatar => avatar.gender === user.preferredAvatarGender || avatar.gender === 'unknown');
   }
-  
-  // Default to first available avatar if no preferences match
   return preferredAvatars[0] || avatars[0];
 }
 
 async function createPersonalizedSession(userId: string) {
   const selectedAvatar = await selectPersonalizedAvatar(userId)
-
   const { session, clientSecret } = await client.session.create({
     clientReferenceId: userId,
     avatarId: selectedAvatar.id,
     flow: {
-      nodes: [
-        { id: 'start', type: FSNodeType.START, outcome: 'end' },
-        { id: 'end', type: FSNodeType.END }
-      ],
-      edges: [{ id: 'e1', source: 'start', target: 'end' }]
+      nodes: [ { id: 'start', type: FSNodeType.START, outcome: 'end' }, { id: 'end', type: FSNodeType.END } ],
+      edges: [ { id: 'e1', source: 'start', target: 'end' } ]
     }
   })
-
   return { session, clientSecret }
-}
-```
+}`}
+/>
 
 ## Avatar customization
 
 Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.
 
-```typescript {{ title: 'Avatar with custom flow' }}
-const { session, clientSecret } = await client.session.create({
+<SimpleCodeBlock
+  title="Avatar with custom flow"
+  language="typescript"
+  variant="light"
+  code={`const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user_123',
   avatarId: 'June_HR_public',
   flow: {
     nodes: [
       { id: 'start', type: FSNodeType.START, outcome: 'greet' },
-      {
-        id: 'greet',
-        type: FSNodeType.CONVERSATION,
-        prompt: "Hi! I'm here to verify your identity. This will only take a moment.",
-        outcomes: [{ id: 'next', targetNodeId: 'liveness', condition: 'true' }]
-      },
-      {
-        id: 'liveness',
-        type: FSNodeType.LIVENESS_DETECTION,
-        outcomes: {
-          livenessDetected: 'end',
-          deepfakeDetected: 'end',
-          noFace: 'end'
-        }
-      },
+      { id: 'greet', type: FSNodeType.CONVERSATION, prompt: "Hi! I'm here to verify your identity. This will only take a moment.", outcomes: [{ id: 'next', targetNodeId: 'liveness', condition: 'true' }] },
+      { id: 'liveness', type: FSNodeType.LIVENESS_DETECTION, outcomes: { livenessDetected: 'end', deepfakeDetected: 'end', noFace: 'end' } },
       { id: 'end', type: FSNodeType.END }
     ],
-    edges: [
-      { id: 'e1', source: 'start', target: 'greet' },
-      { id: 'e2', source: 'greet', target: 'liveness' },
-      { id: 'e3', source: 'liveness', target: 'end' }
-    ]
+    edges: [ { id: 'e1', source: 'start', target: 'greet' }, { id: 'e2', source: 'greet', target: 'liveness' }, { id: 'e3', source: 'liveness', target: 'end' } ]
   }
-})
-```
+})`}
+/>
 
 ## Avatar selection UI
 
@@ -263,8 +221,7 @@ const { session, clientSecret } = await client.session.create({
 
 Provide an avatar selection interface before starting verification:
 
-```typescript {{ title: 'Avatar selection component' }}
-import React, { useState, useEffect } from 'react';
+<SimpleCodeBlock title="Avatar selection component" language="typescript" variant="light" code={`import React, { useState, useEffect } from 'react';
 
 interface Avatar {
   id: string;
@@ -276,7 +233,7 @@ interface Avatar {
 function AvatarSelector({ onAvatarSelect }: { onAvatarSelect: (avatar: Avatar) => void }) {
   const [avatars, setAvatars] = useState<Avatar[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
-  
+
   useEffect(() => {
     // Fetch available avatars
     fetch('/api/avatars')
@@ -286,24 +243,24 @@ function AvatarSelector({ onAvatarSelect }: { onAvatarSelect: (avatar: Avatar) =
         setSelectedAvatar(data.avatars[0]); // Default to first avatar
       });
   }, []);
-  
+
   const handleAvatarSelect = (avatar: Avatar) => {
     setSelectedAvatar(avatar);
     onAvatarSelect(avatar);
   };
-  
+
   return (
     <div className="avatar-selector">
       <h3>Choose your verification assistant:</h3>
       <div className="avatar-grid">
         {avatars.map(avatar => (
-          <div 
+          <div
             key={avatar.id}
-            className={`avatar-card ${selectedAvatar?.id === avatar.id ? 'selected' : ''}`}
+            className={\`avatar-card \${selectedAvatar?.id === avatar.id ? 'selected' : ''}\`}
             onClick={() => handleAvatarSelect(avatar)}
           >
-            <img 
-              src={avatar.imageUrl} 
+            <img
+              src={avatar.imageUrl}
               alt={avatar.name}
               className="avatar-image"
             />
@@ -327,16 +284,16 @@ function getAvatarDescription(avatar: Avatar): string {
     'avatar_maria_bilingual': 'Great for international users',
     'avatar_alex_neutral': 'Friendly and inclusive'
   };
-  
+
   return descriptions[avatar.id] || 'Helpful verification assistant';
 }
 
 function VerificationSetup() {
   const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
-  
+
   const startVerification = async () => {
     if (!selectedAvatar) return;
-    
+
     const response = await fetch('/api/create-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -344,18 +301,18 @@ function VerificationSetup() {
         avatarId: selectedAvatar.id
       })
     });
-    
+
     const { clientSecret } = await response.json();
-    
+
     // Start verification with selected avatar
     const facesign = new FaceSign({ clientSecret });
     await facesign.mount('#verification-container');
   };
-  
+
   return (
     <div>
       <AvatarSelector onAvatarSelect={setSelectedAvatar} />
-      <button 
+      <button
         onClick={startVerification}
         disabled={!selectedAvatar}
         className="start-verification-btn"
@@ -366,21 +323,20 @@ function VerificationSetup() {
     </div>
   );
 }
-```
+`}/>
 
 ### Preview avatar interactions
 
 Show users what to expect from their chosen avatar:
 
-```typescript {{ title: 'Avatar preview component' }}
-function AvatarPreview({ avatar }: { avatar: Avatar }) {
+<SimpleCodeBlock title="Avatar preview component" language="typescript" variant="light" code={`function AvatarPreview({ avatar }: { avatar: Avatar }) {
   return (
     <div className="avatar-preview">
       <div className="avatar-preview-header">
         <img src={avatar.imageUrl} alt={avatar.name} />
         <h4>Meet {avatar.name}</h4>
       </div>
-      
+
       <div className="preview-conversation">
         <div className="avatar-message">
           <p>Hi! I'm {avatar.name}. I'll guide you through the verification process step by step.</p>
@@ -395,7 +351,7 @@ function AvatarPreview({ avatar }: { avatar: Avatar }) {
           <p>Perfect! Let's begin with verifying your identity...</p>
         </div>
       </div>
-      
+
       <div className="preview-features">
         <h5>What {avatar.name} can help with:</h5>
         <ul>
@@ -408,7 +364,7 @@ function AvatarPreview({ avatar }: { avatar: Avatar }) {
     </div>
   );
 }
-```
+`}/>
 
 ## Best practices
 
@@ -416,17 +372,16 @@ function AvatarPreview({ avatar }: { avatar: Avatar }) {
 
 Choose avatars that align with your brand's personality and values:
 
-```typescript {{ title: 'Brand-avatar alignment' }}
-const BRAND_AVATAR_MAPPING = {
+<SimpleCodeBlock title="Brand-avatar alignment" language="typescript" variant="light" code={`const BRAND_AVATAR_MAPPING = {
   // Professional, trustworthy brands
   financial: ['avatar_sarah_professional', 'avatar_david_corporate'],
-  
+
   // Friendly, approachable brands
   consumer: ['avatar_james_friendly', 'avatar_emma_casual'],
-  
+
   // Healthcare and sensitive applications
   healthcare: ['avatar_dr_williams_caring', 'avatar_nurse_compassionate'],
-  
+
   // International or diverse audiences
   global: ['avatar_maria_bilingual', 'avatar_alex_neutral', 'avatar_sam_international']
 };
@@ -434,14 +389,13 @@ const BRAND_AVATAR_MAPPING = {
 function getRecommendedAvatars(brandCategory: string): string[] {
   return BRAND_AVATAR_MAPPING[brandCategory] || BRAND_AVATAR_MAPPING.consumer;
 }
-```
+`}/>
 
 ### 2. Consider cultural sensitivity
 
 Be mindful of cultural preferences when selecting avatars for different markets:
 
-```typescript {{ title: 'Cultural avatar considerations' }}
-const REGIONAL_AVATAR_PREFERENCES = {
+<SimpleCodeBlock title="Cultural avatar considerations" language="typescript" variant="light" code={`const REGIONAL_AVATAR_PREFERENCES = {
   'north-america': {
     preferred: ['avatar_sarah_professional', 'avatar_james_friendly'],
     culturalNote: 'Professional but approachable avatars work well'
@@ -462,7 +416,7 @@ const REGIONAL_AVATAR_PREFERENCES = {
 
 function selectCulturallyAppropriateAvatar(region: string, availableAvatars: Avatar[]) {
   const preferences = REGIONAL_AVATAR_PREFERENCES[region];
-  
+
   if (preferences) {
     // Find the first preferred avatar that's available
     for (const preferredId of preferences.preferred) {
@@ -470,18 +424,17 @@ function selectCulturallyAppropriateAvatar(region: string, availableAvatars: Ava
       if (avatar) return avatar;
     }
   }
-  
+
   // Fallback to neutral avatar
   return availableAvatars.find(a => a.gender === 'unknown') || availableAvatars[0];
 }
-```
+`}/>
 
 ### 3. Test avatar effectiveness
 
 Monitor how different avatars perform with your users:
 
-```typescript {{ title: 'Avatar performance tracking' }}
-interface AvatarMetrics {
+<SimpleCodeBlock title="Avatar performance tracking" language="typescript" variant="light" code={`interface AvatarMetrics {
   avatarId: string;
   completionRate: number;
   userSatisfaction: number;
@@ -499,49 +452,48 @@ async function trackAvatarPerformance(sessionId: string, avatarId: string, outco
 }
 
 async function getAvatarMetrics(timeframe: string): Promise<AvatarMetrics[]> {
-  return await analytics.query(`
-    SELECT 
+  return await analytics.query(\`
+    SELECT
       avatar_id,
       AVG(completion_rate) as completion_rate,
       AVG(user_satisfaction) as user_satisfaction,
       AVG(session_duration) as average_session_time,
       AVG(retry_rate) as retry_rate
-    FROM avatar_performance 
+    FROM avatar_performance
     WHERE created_at >= ?
     GROUP BY avatar_id
-  `, [timeframe]);
+  \`, [timeframe]);
 }
 
 // Use metrics to optimize avatar selection
 async function selectOptimalAvatar(userSegment: string): Promise<string> {
   const metrics = await getAvatarMetrics('30d');
-  
+
   // Find avatar with highest completion rate for this user segment
   const bestPerformer = metrics
     .filter(m => m.completionRate > 0.8) // Minimum threshold
     .sort((a, b) => b.completionRate - a.completionRate)[0];
-  
+
   return bestPerformer?.avatarId || 'avatar_default';
 }
-```
+`}/>
 
 ### 4. Cache avatar data
 
 Cache avatar information to improve performance:
 
-```typescript {{ title: 'Avatar caching' }}
-let cachedAvatars: Avatar[] | null = null;
+<SimpleCodeBlock title="Avatar caching" language="typescript" variant="light" code={`let cachedAvatars: Avatar[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 
 async function getAvailableAvatars(): Promise<Avatar[]> {
   const now = Date.now();
-  
+
   // Return cached version if still valid
   if (cachedAvatars && (now - cacheTimestamp) < CACHE_DURATION) {
     return cachedAvatars;
   }
-  
+
   // Fetch fresh data
   const { avatars } = await client.avatars.retrieve()
   cachedAvatars = avatars
@@ -549,10 +501,15 @@ async function getAvailableAvatars(): Promise<Avatar[]> {
 
   return avatars
 }
-```
+`}/>
 
 ## Next steps
 
-- [Sessions](/sessions) - Learn how to create sessions with avatar configuration
-- [Languages](/languages) - Configure multi-language support for your avatars
-- [Custom Flows](/flows) - Build sophisticated verification flows that leverage avatar interactions
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="4">
+  <DocLinkCard href="/docs/sessions" title="Sessions" description="Create sessions with avatar configuration" />
+  <DocLinkCard href="/languages" title="Languages" description="Configure multi-language support" />
+  <DocLinkCard href="/docs/flows" title="Custom Flows" description="Build node-based flows with avatars" />
+  
+</SimpleGrid>
+
+</Prose>

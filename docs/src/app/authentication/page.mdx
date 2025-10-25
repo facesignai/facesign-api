@@ -1,7 +1,13 @@
+import { Prose } from '@/components/chakra/Prose'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+
 export const metadata = {
   title: 'Authentication',
   description: 'Learn how to authenticate your API requests with FaceSign.',
 }
+
+<Prose>
 
 # Authentication
 
@@ -52,7 +58,7 @@ client = facesignai.Client(
   }}
 />
 
-<CollapsibleSection title="Environment Variables" defaultOpen>
+### Environment Variables
 
 We strongly recommend using environment variables to store your API keys:
 
@@ -76,8 +82,6 @@ client = facesignai.Client(
 )`
   }}
 />
-
-</CollapsibleSection>
 
 ## Client-side authentication
 
@@ -145,7 +149,7 @@ The FaceSign API uses date-based versioning. The SDK automatically sends the `Fa
   The SDK uses version `2024-12-18` by default. This header is automatically included in all SDK requests.
 </Note>
 
-<CollapsibleSection title="Security Best Practices" variant="subtle">
+### Security Best Practices
 
 1. **Never expose your API keys** - Keep them server-side only
 2. **Use environment variables** - Don't hardcode keys in your source code
@@ -156,8 +160,6 @@ The FaceSign API uses date-based versioning. The SDK automatically sends the `Fa
 <Warning>
   API keys provide complete access to your FaceSign account. Treat them like passwords and keep them secure.
 </Warning>
-
-</CollapsibleSection>
 
 ## Webhook security
 
@@ -173,14 +175,11 @@ See [Webhooks](/webhooks) for complete documentation on event types and handling
 
 Now that you understand authentication, you're ready to start making API requests:
 
-<div className="not-prose mt-6 flex flex-col gap-3">
-  <Button href="/quickstart" variant="text" arrow="right">
-    Follow the quick start guide
-  </Button>
-  <Button href="/sessions" variant="text" arrow="right">
-    Learn about sessions
-  </Button>
-  <Button href="/errors" variant="text" arrow="right">
-    Understand error handling
-  </Button>
-</div>
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="4">
+  <DocLinkCard href="/quickstart" title="Follow the quick start guide" />
+  <DocLinkCard href="/docs/sessions" title="Learn about sessions" />
+  <DocLinkCard href="/errors" title="Understand error handling" />
+  
+</SimpleGrid>
+
+</Prose>

@@ -1,3 +1,6 @@
+import { Prose } from '@/components/chakra/Prose'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+
 export const metadata = {
   title: 'Session Customization',
   description: 'Customize the FaceSign verification permissions page and UI controls for a branded user experience.',
@@ -10,6 +13,8 @@ export const sections = [
   { title: 'Multi-language Support', id: 'multi-language-support' },
   { title: 'Implementation', id: 'implementation' },
 ]
+
+<Prose>
 
 # Session Customization
 
@@ -28,9 +33,6 @@ FaceSign provides customization options for the permissions page shown before ve
 ## Permissions Page
 
 The permissions page appears before verification starts, requesting camera/microphone access. Customize text, background, and button appearance.
-
-<Row>
-  <Col>
 
 ### Available Options
 
@@ -52,11 +54,7 @@ The permissions page appears before verification starts, requesting camera/micro
   </Property>
 </Properties>
 
-  </Col>
-  <Col sticky>
-
-```json {{ title: 'Permissions Page Customization' }}
-{
+<SimpleCodeBlock title="Permissions Page Customization" language="json" variant="light" code={`{
   "permissionsPage": {
     "mainHeading": "Identity Verification",
     "subheading": "We need camera access to verify your identity",
@@ -64,20 +62,13 @@ The permissions page appears before verification starts, requesting camera/micro
     "backgroundType": "COLOR",
     "backgroundColor": "#1a202c"
   }
-}
-```
-
-  </Col>
-</Row>
+}`}/>
 
 ---
 
 ## UI Controls
 
 Global UI control settings that apply throughout the verification session.
-
-<Row>
-  <Col>
 
 ### Available Options
 
@@ -87,28 +78,15 @@ Global UI control settings that apply throughout the verification session.
   </Property>
 </Properties>
 
-  </Col>
-  <Col sticky>
-
-```json {{ title: 'UI Controls Customization' }}
-{
-  "controls": {
-    "showUxControls": false
-  }
-}
-```
-
-  </Col>
-</Row>
+<SimpleCodeBlock title="UI Controls Customization" language="json" variant="light" code={`{
+  "controls": { "showUxControls": false }
+}`}/>
 
 ---
 
 ## Multi-language Support
 
 Permissions page text can be translated for multi-language sessions. Provide translations as key-value pairs where keys are language codes.
-
-<Row>
-  <Col>
 
 ### Translation Fields
 
@@ -128,33 +106,16 @@ Permissions page text can be translated for multi-language sessions. Provide tra
   Use with the `langs` and `defaultLang` session parameters to enable language switching. See [Sessions](/sessions) for details.
 </Note>
 
-  </Col>
-  <Col sticky>
-
-```json {{ title: 'Multi-language Example' }}
-{
+<SimpleCodeBlock title="Multi-language Example" language="json" variant="light" code={`{
   "permissionsPage": {
     "mainHeading": "Identity Verification",
-    "mainHeadingTranslates": {
-      "es": "Verificación de Identidad",
-      "fr": "Vérification d'identité"
-    },
+    "mainHeadingTranslates": { "es": "Verificación de Identidad", "fr": "Vérification d'identité" },
     "subheading": "Camera access required",
-    "subheadingTranslates": {
-      "es": "Se requiere acceso a la cámara",
-      "fr": "Accès à la caméra requis"
-    },
+    "subheadingTranslates": { "es": "Se requiere acceso a la cámara", "fr": "Accès à la cámara requis" },
     "buttonText": "Continue",
-    "buttonTextTranslates": {
-      "es": "Continuar",
-      "fr": "Continuer"
-    }
+    "buttonTextTranslates": { "es": "Continuar", "fr": "Continuer" }
   }
-}
-```
-
-  </Col>
-</Row>
+}`}/>
 
 ---
 
@@ -162,15 +123,9 @@ Permissions page text can be translated for multi-language sessions. Provide tra
 
 Include customization options when creating a session. All fields are optional.
 
-<Row>
-  <Col>
-
 ### Complete Example
 
 This example shows all customization options combined: custom permissions page with color background, multi-language support for English/Spanish/French, and hidden UX controls for a minimal interface.
-
-  </Col>
-  <Col sticky>
 
 <TabbedCodeBlock
   defaultLanguage="curl"
@@ -302,9 +257,6 @@ response = client.session.create(
   }}
 />
 
-  </Col>
-</Row>
-
 ---
 
 ## Common Examples
@@ -313,40 +265,24 @@ response = client.session.create(
 
 Customize just the heading and button text:
 
-```json {{ title: 'Minimal Setup' }}
-{
-  "customization": {
-    "permissionsPage": {
-      "mainHeading": "Welcome to SecureBank",
-      "buttonText": "Get Started"
-    }
-  }
-}
-```
+<SimpleCodeBlock title="Minimal Setup" language="json" variant="light" code={`{
+  "customization": { "permissionsPage": { "mainHeading": "Welcome to SecureBank", "buttonText": "Get Started" } }
+}`}/>
 
 ### Avatar Background
 
 Use avatar video as background (default behavior):
 
-```json {{ title: 'Avatar Background' }}
-{
+<SimpleCodeBlock title="Avatar Background" language="json" variant="light" code={`{
   "avatarId": "June_HR_public",
-  "customization": {
-    "permissionsPage": {
-      "backgroundType": "AVATAR",
-      "mainHeading": "Let's verify your identity",
-      "buttonText": "Start"
-    }
-  }
-}
-```
+  "customization": { "permissionsPage": { "backgroundType": "AVATAR", "mainHeading": "Let's verify your identity", "buttonText": "Start" } }
+}`}/>
 
 ### Color Background
 
 Use a solid color instead of avatar video:
 
-```json {{ title: 'Color Background' }}
-{
+<SimpleCodeBlock title="Color Background" language="json" variant="light" code={`{
   "customization": {
     "permissionsPage": {
       "backgroundType": "COLOR",
@@ -356,32 +292,27 @@ Use a solid color instead of avatar video:
       "buttonText": "Continue"
     }
   }
-}
-```
+}`}/>
 
 ### Bilingual Session
 
 Support English and Spanish:
 
-```json {{ title: 'Bilingual Setup' }}
-{
+<SimpleCodeBlock title="Bilingual Setup" language="json" variant="light" code={`{
   "langs": ["en", "es"],
   "defaultLang": "en",
   "customization": {
     "permissionsPage": {
       "mainHeading": "Verification",
-      "mainHeadingTranslates": {
-        "es": "Verificación"
-      },
+      "mainHeadingTranslates": { "es": "Verificación" },
       "buttonText": "Start",
-      "buttonTextTranslates": {
-        "es": "Comenzar"
-      }
+      "buttonTextTranslates": { "es": "Comenzar" }
     }
   }
-}
-```
+}`}/>
 
 <Note>
   Test your customizations across different devices and screen sizes to ensure a consistent user experience.
 </Note>
+
+</Prose>

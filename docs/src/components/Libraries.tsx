@@ -1,7 +1,5 @@
 import Image from 'next/image'
-import { Heading } from '@chakra-ui/react'
-
-import { Button } from '@/components/Button'
+import { Heading, Card, HStack, Text, Button } from '@chakra-ui/react'
 import logoGo from '@/images/logos/go.svg'
 import logoNode from '@/images/logos/node.svg'
 import logoPhp from '@/images/logos/php.svg'
@@ -59,85 +57,54 @@ const upcomingLibraries = [
 
 export function Libraries() {
   return (
-    <div className="my-16 xl:max-w-none">
-      <Heading
-        as="h2"
-        textStyle="docs.heading"
-        fontSize="2xl"
-        id="official-libraries"
-        mb={4}
-      >
+    <div>
+      <Heading as="h2" id="official-libraries" mb={4}>
         Available SDKs
       </Heading>
-      <div className="not-prose mt-4 grid grid-cols-1 gap-x-6 gap-y-10 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
+      <HStack wrap="wrap" gap="4">
         {libraries.map((library) => (
-          <div key={library.name} className="flex flex-row-reverse gap-6">
-            <div className="flex-auto">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
-                  {library.name}
-                </h3>
-                <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">
-                  Available
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                {library.description}
-              </p>
-              <p className="mt-4">
-                <Button href={library.href} variant="text" arrow="right">
-                  {library.buttonText}
-                </Button>
-              </p>
-            </div>
-            <Image
-              src={library.logo}
-              alt=""
-              className="h-12 w-12"
-              unoptimized
-            />
-          </div>
+          <Card.Root key={library.name} maxW="md" flex="1" borderWidth="1px">
+            <Card.Body>
+              <HStack gap="3" align="start">
+                <Image src={library.logo} alt="" className="h-8 w-8" unoptimized />
+                <div>
+                  <HStack gap="2">
+                    <Text fontWeight="semibold">{library.name}</Text>
+                    <Text as="span" color="green.600" fontSize="xs">Available</Text>
+                  </HStack>
+                  <Text mt="1" color="fg.muted" fontSize="sm">{library.description}</Text>
+                  <Button asChild variant="plain" size="sm" mt="2">
+                    <a href={library.href}>{library.buttonText}</a>
+                  </Button>
+                </div>
+              </HStack>
+            </Card.Body>
+          </Card.Root>
         ))}
-      </div>
+      </HStack>
 
-      <Heading
-        as="h2"
-        textStyle="docs.heading"
-        fontSize="2xl"
-        id="upcoming-libraries"
-        mt={16}
-        mb={4}
-      >
+      <Heading as="h2" id="upcoming-libraries" mt={10} mb={4}>
         Planned SDKs
       </Heading>
-      <div className="not-prose mt-4 grid grid-cols-1 gap-x-6 gap-y-10 border-t border-zinc-900/5 pt-10 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
+      <HStack wrap="wrap" gap="4">
         {upcomingLibraries.map((library) => (
-          <div key={library.name} className="flex flex-row-reverse gap-6 opacity-75">
-            <div className="flex-auto">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
-                  {library.name}
-                </h3>
-                <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20">
-                  {library.timeline}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                {library.description}
-              </p>
-              <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
-                Coming soon
-              </p>
-            </div>
-            <Image
-              src={library.logo}
-              alt=""
-              className="h-12 w-12 opacity-50"
-              unoptimized
-            />
-          </div>
+          <Card.Root key={library.name} maxW="md" flex="1" borderWidth="1px" opacity={0.85}>
+            <Card.Body>
+              <HStack gap="3" align="start">
+                <Image src={library.logo} alt="" className="h-8 w-8" unoptimized />
+                <div>
+                  <HStack gap="2">
+                    <Text fontWeight="semibold">{library.name}</Text>
+                    <Text as="span" color="amber.700" fontSize="xs">{library.timeline}</Text>
+                  </HStack>
+                  <Text mt="1" color="fg.muted" fontSize="sm">{library.description}</Text>
+                  <Text mt="2" fontSize="xs" color="fg.muted">Coming soon</Text>
+                </div>
+              </HStack>
+            </Card.Body>
+          </Card.Root>
         ))}
-      </div>
+      </HStack>
     </div>
   )
 }

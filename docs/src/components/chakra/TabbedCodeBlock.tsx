@@ -75,7 +75,7 @@ export function TabbedCodeBlock({
   title,
   codeExamples,
   defaultLanguage,
-  variant = 'dark',
+  variant = 'light',
 }: TabbedCodeBlockProps) {
   // Get available languages from provided code examples
   const availableLanguages = Object.keys(codeExamples).filter(
@@ -118,6 +118,7 @@ export function TabbedCodeBlock({
           size="sm"
           code={codeExamples[initialLanguage as keyof typeof codeExamples] || ''}
           language={languageConfigs[initialLanguage]?.language || 'bash'}
+          bg={styles.contentBg}
         >
           <CodeBlock.Header borderBottomWidth="1px" bg={styles.headerBg} color={styles.headerColor} borderColor={styles.headerBorder}>
             <HStack flex="1" gap={2}>
@@ -172,6 +173,7 @@ export function TabbedCodeBlock({
                   size="sm"
                   code={code}
                   language={config.language}
+                  bg={styles.contentBg}
                 >
                   <CodeBlock.Content maxH="500px" overflowY="auto" bg={styles.contentBg}>
                     <CodeBlock.Code overflowX="auto" color={styles.codeColor}>

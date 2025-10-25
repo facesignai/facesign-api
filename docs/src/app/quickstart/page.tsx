@@ -9,6 +9,7 @@ import {
   Blockquote
 } from '@chakra-ui/react'
 import { DocsLayout } from '@/components/chakra/DocsLayout'
+import { Prose } from '@/components/chakra/Prose'
 import { DocsCodeBlock } from '@/components/chakra/DocsCodeBlock'
 import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
 import { TabbedCodeBlock } from '@/components/chakra/TabbedCodeBlock'
@@ -21,7 +22,8 @@ export const metadata = {
 export default function QuickstartPage() {
   return (
     <DocsLayout variant="docs">
-      <VStack align="stretch" gap={8} maxW="4xl">
+      <Prose>
+        <VStack align="stretch" gap={8}>
         {/* Header */}
         <Box>
           <Heading as="h1" size="2xl" mb={4}>
@@ -97,7 +99,6 @@ export default function QuickstartPage() {
           </Text>
 
           <RequestCodeBlock
-            variant="tabs"
             method="POST"
             path="/sessions (Dev)"
             codeExamples={{
@@ -210,7 +211,6 @@ print('Hosted URL:', data['clientSecret']['url'])`
           </Text>
 
           <RequestCodeBlock
-            variant="tabs"
             method="GET"
             path="/sessions/{id} (Dev)"
             codeExamples={{
@@ -235,21 +235,52 @@ print('Status:', session['status'])  # requiresInput, processing, complete, canc
           </Text>
         </Box>
 
+        {/* Receive session updates */}
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Receive session updates
+          </Heading>
+          <Blockquote.Root variant="subtle" colorPalette="gray" my={3}>
+            <Blockquote.Content>
+              Dev webhooks use basic validation. Verify events by fetching the session and checking your clientReferenceId or metadata.
+            </Blockquote.Content>
+          </Blockquote.Root>
+
+          <DocsCodeBlock
+            title="Minimal webhook handler (Next.js API route)"
+            language="typescript"
+            code={`// app/api/webhooks/facesign/route.ts
+import { NextResponse } from 'next/server'
+
+export async function POST(req: Request) {
+  const event = await req.json()
+
+  // Recommended: fetch session to verify details
+  // const r = await fetch('https://api.dev.facesign.ai/sessions/' + event.sessionId, {
+  //   headers: { Authorization: 'Bearer ' + process.env.FACESIGN_API_KEY }
+  // })
+  // const data = await r.json()
+
+  console.log('facesign.event', event.type)
+  return NextResponse.json({ received: true })
+}`}
+          />
+        </Box>
+
         <Separator />
 
         {/* Next Steps */}
-        <Box>
-          <Heading as="h2" size="lg" mb={4}>
-            Next Steps
-          </Heading>
-          <VStack align="start" gap={2}>
-            <Text>• <Link href="/flows" color="blue.500">Build custom flows</Link> with document scanning, liveness detection, and more</Text>
-            <Text>• <Link href="/webhooks" color="blue.500">Set up webhooks</Link> to receive real-time updates</Text>
-            <Text>• <Link href="/customization" color="blue.500">Customize the UI</Link> to match your brand</Text>
-            <Text>• <Link href="/api" color="blue.500">Explore the full API reference</Link></Text>
-          </VStack>
-        </Box>
-      </VStack>
+        <>
+          <h2>Next Steps</h2>
+          <ul>
+            <li><a href="/flows">Build custom flows</a> with document scanning, liveness detection, and more</li>
+            <li><a href="/webhooks">Set up webhooks</a> to receive real-time updates</li>
+            <li><a href="/customization">Customize the UI</a> to match your brand</li>
+            <li><a href="/api">Explore the full API reference</a></li>
+          </ul>
+        </>
+        </VStack>
+      </Prose>
     </DocsLayout>
   )
 }

@@ -1,7 +1,13 @@
+import { Prose } from '@/components/chakra/Prose'
+import { Table, SimpleGrid } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+
 export const metadata = {
   title: 'Languages',
   description: 'Learn how to retrieve and use supported languages for FaceSign verification sessions.',
 }
+
+<Prose>
 
 # Languages
 
@@ -9,21 +15,42 @@ FaceSign supports multiple languages for the verification interface, allowing yo
 
 ## Supported languages
 
-FaceSign currently supports the following languages:
+<SimpleGrid columns={{ base: 1, sm: 2 }} gap="4">
+  <Table.Root size="sm" variant="line">
+    <Table.Header>
+      <Table.Row>
+        <Table.ColumnHeader>Language</Table.ColumnHeader>
+        <Table.ColumnHeader textAlign="end">Code</Table.ColumnHeader>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      <Table.Row><Table.Cell>English (Default)</Table.Cell><Table.Cell textAlign="end">en</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Español</Table.Cell><Table.Cell textAlign="end">es</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Français</Table.Cell><Table.Cell textAlign="end">fr</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Deutsch</Table.Cell><Table.Cell textAlign="end">de</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Italiano</Table.Cell><Table.Cell textAlign="end">it</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Português</Table.Cell><Table.Cell textAlign="end">pt</Table.Cell></Table.Row>
+    </Table.Body>
+  </Table.Root>
 
-- **English (en)** - Default language
-- **Spanish (es)** - Español
-- **French (fr)** - Français
-- **German (de)** - Deutsch
-- **Italian (it)** - Italiano
-- **Portuguese (pt)** - Português
-- **Dutch (nl)** - Nederlands
-- **Polish (pl)** - Polski
-- **Russian (ru)** - Русский
-- **Japanese (ja)** - 日本語
-- **Korean (ko)** - 한국어
-- **Chinese Simplified (zh-CN)** - 简体中文
-- **Chinese Traditional (zh-TW)** - 繁體中文
+  <Table.Root size="sm" variant="line">
+    <Table.Header>
+      <Table.Row>
+        <Table.ColumnHeader>Language</Table.ColumnHeader>
+        <Table.ColumnHeader textAlign="end">Code</Table.ColumnHeader>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      <Table.Row><Table.Cell>Nederlands</Table.Cell><Table.Cell textAlign="end">nl</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Polski</Table.Cell><Table.Cell textAlign="end">pl</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>Русский</Table.Cell><Table.Cell textAlign="end">ru</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>日本語</Table.Cell><Table.Cell textAlign="end">ja</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>한국어</Table.Cell><Table.Cell textAlign="end">ko</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>简体中文</Table.Cell><Table.Cell textAlign="end">zh-CN</Table.Cell></Table.Row>
+      <Table.Row><Table.Cell>繁體中文</Table.Cell><Table.Cell textAlign="end">zh-TW</Table.Cell></Table.Row>
+    </Table.Body>
+  </Table.Root>
+</SimpleGrid>
 
 ## Language object
 
@@ -40,150 +67,31 @@ FaceSign currently supports the following languages:
 
 ## Get supported languages {{ tag: 'GET', label: '/langs' }}
 
-<Row>
-  <Col>
+Returns a list of all languages supported by FaceSign. Use these language codes when creating sessions to specify which languages should be available to users.
 
-    Returns a list of all languages supported by FaceSign. Use these language codes when creating sessions to specify which languages should be available to users.
+<CodeGroup title="Request" tag="GET" label="/langs">
 
-  </Col>
-  <Col sticky>
+```bash {{ title: 'cURL' }}
+curl https://api.dev.facesign.ai/langs \
+  -H "Authorization: Bearer sk_test_..."
+```
 
-    <CodeGroup title="Request" tag="GET" label="/langs">
+```typescript {{ title: 'TypeScript' }}
+import Client from '@facesignai/api'
+import { FSNodeType } from '@facesignai/api'
 
-    ```bash {{ title: 'cURL' }}
-    curl https://api.dev.facesign.ai/langs \
-      -H "Authorization: Bearer sk_test_..."
-    ```
+const client = new Client({
+  auth: 'sk_test_...',
+  serverUrl: 'https://api.dev.facesign.ai'
+})
 
-    ```typescript {{ title: 'TypeScript' }}
-    import Client from '@facesignai/api'
-    import { FSNodeType } from '@facesignai/api'
+const { langs } = await client.langs.retrieve()
 
-    const client = new Client({
-      auth: 'sk_test_...',
-      serverUrl: 'https://api.dev.facesign.ai'
-    })
-
-    const { langs } = await client.langs.retrieve()
-
-    // Use in session creation
-    const { session, clientSecret } = await client.session.create({
-      clientReferenceId: 'user_123',
-      langs: ['en', 'es', 'fr'],
-      defaultLang: 'en',
-      flow: {
-        nodes: [
-          { id: 'start', type: FSNodeType.START, outcome: 'end' },
-          { id: 'end', type: FSNodeType.END }
-        ],
-        edges: [{ id: 'e1', source: 'start', target: 'end' }]
-      }
-    })
-    ```
-
-    ```python {{ title: 'Python' }}
-    import facesignai
-
-    client = facesignai.Client(
-        auth='sk_test_...',
-        base_url='https://api.dev.facesign.ai'
-    )
-
-    response = client.langs.retrieve()
-    langs = response['langs']
-
-    # Use in session creation
-    session_response = client.session.create(
-        client_reference_id='user_123',
-        langs=['en', 'es', 'fr'],
-        default_lang='en',
-        flow={
-            'nodes': [
-                {'id': 'start', 'type': 'start', 'outcome': 'end'},
-                {'id': 'end', 'type': 'end'}
-            ],
-            'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
-        }
-    )
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-    {
-      "langs": [
-        {
-          "id": "en",
-          "title": "English"
-        },
-        {
-          "id": "es", 
-          "title": "Español"
-        },
-        {
-          "id": "fr",
-          "title": "Français"
-        },
-        {
-          "id": "de",
-          "title": "Deutsch"
-        },
-        {
-          "id": "it",
-          "title": "Italiano"
-        },
-        {
-          "id": "pt",
-          "title": "Português"
-        },
-        {
-          "id": "nl",
-          "title": "Nederlands"
-        },
-        {
-          "id": "pl",
-          "title": "Polski"
-        },
-        {
-          "id": "ru",
-          "title": "Русский"
-        },
-        {
-          "id": "ja",
-          "title": "日本語"
-        },
-        {
-          "id": "ko",
-          "title": "한국어"
-        },
-        {
-          "id": "zh-CN",
-          "title": "简体中文"
-        },
-        {
-          "id": "zh-TW",
-          "title": "繁體中文"
-        }
-      ]
-    }
-    ```
-
-  </Col>
-</Row>
-
----
-
-## Using languages in sessions
-
-### Basic language configuration
-
-When creating a session, you can specify which languages should be available and set a default language:
-
-```typescript {{ title: 'Configure session languages' }}
+// Use in session creation
 const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user_123',
-  langs: ['en', 'es', 'fr'], // Available languages for this session
-  defaultLang: 'en', // Default language if user's preference isn't available
+  langs: ['en', 'es', 'fr'],
+  defaultLang: 'en',
   flow: {
     nodes: [
       { id: 'start', type: FSNodeType.START, outcome: 'end' },
@@ -194,29 +102,136 @@ const { session, clientSecret } = await client.session.create({
 })
 ```
 
+```python {{ title: 'Python' }}
+import facesignai
+
+client = facesignai.Client(
+    auth='sk_test_...',
+    base_url='https://api.dev.facesign.ai'
+)
+
+response = client.langs.retrieve()
+langs = response['langs']
+
+# Use in session creation
+session_response = client.session.create(
+    client_reference_id='user_123',
+    langs=['en', 'es', 'fr'],
+    default_lang='en',
+    flow={
+        'nodes': [
+            {'id': 'start', 'type': 'start', 'outcome': 'end'},
+            {'id': 'end', 'type': 'end'}
+        ],
+        'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
+    }
+)
+```
+
+</CodeGroup>
+
+```json {{ title: 'Response' }}
+{
+  "langs": [
+    {
+      "id": "en",
+      "title": "English"
+    },
+    {
+      "id": "es",
+      "title": "Español"
+    },
+    {
+      "id": "fr",
+      "title": "Français"
+    },
+    {
+      "id": "de",
+      "title": "Deutsch"
+    },
+    {
+      "id": "it",
+      "title": "Italiano"
+    },
+    {
+      "id": "pt",
+      "title": "Português"
+    },
+    {
+      "id": "nl",
+      "title": "Nederlands"
+    },
+    {
+      "id": "pl",
+      "title": "Polski"
+    },
+    {
+      "id": "ru",
+      "title": "Русский"
+    },
+    {
+      "id": "ja",
+      "title": "日本語"
+    },
+    {
+      "id": "ko",
+      "title": "한국어"
+    },
+    {
+      "id": "zh-CN",
+      "title": "简体中文"
+    },
+    {
+      "id": "zh-TW",
+      "title": "繁體中文"
+    }
+  }
+}
+```
+
+---
+
+## Using languages in sessions
+
+### Basic language configuration
+
+When creating a session, you can specify which languages should be available and set a default language:
+
+<SimpleCodeBlock title="Configure session languages" language="typescript" variant="light" code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user_123',
+  langs: ['en', 'es', 'fr'], // Available languages for this session
+  defaultLang: 'en', // Default language if user's preference isn't available
+  flow: {
+    nodes: [
+      { id: 'start', type: FSNodeType.START, outcome: 'end' },
+      { id: 'end', type: FSNodeType.END }
+    ],
+    edges: [{ id: 'e1', source: 'start', target: 'end' }]
+  }
+})`}/>
+
 ### Dynamic language selection
 
 You can dynamically select languages based on user preferences or browser settings:
 
-```typescript {{ title: 'Dynamic language selection' }}
-async function createLocalizedSession(userId: string) {
+<SimpleCodeBlock title="Dynamic language selection" language="typescript" variant="light" maxHeight="400px" code={`async function createLocalizedSession(userId: string) {
   // Get available languages from FaceSign
   const { langs } = await client.languages.list();
   const availableLanguages = langs.map(lang => lang.id);
-  
+
   // Get user's preferred languages (from browser or user profile)
   const userLanguages = getUserPreferredLanguages(userId);
-  
+
   // Find intersection of user preferences and available languages
-  const supportedUserLanguages = userLanguages.filter(lang => 
+  const supportedUserLanguages = userLanguages.filter(lang =>
     availableLanguages.includes(lang)
   );
-  
+
   // Fallback to English if no matches
-  const sessionLanguages = supportedUserLanguages.length > 0 
-    ? supportedUserLanguages 
+  const sessionLanguages = supportedUserLanguages.length > 0
+    ? supportedUserLanguages
     : ['en'];
-  
+
   const { session, clientSecret } = await client.session.create({
     clientReferenceId: userId,
     langs: sessionLanguages,
@@ -239,19 +254,17 @@ function getUserPreferredLanguages(userId: string): string[] {
   if (user.preferredLanguage) {
     return [user.preferredLanguage];
   }
-  
+
   // Option 2: From browser Accept-Language header
   const acceptLanguage = request.headers['accept-language'];
   return parseAcceptLanguage(acceptLanguage);
-}
-```
+}`}/>
 
 ### Regional considerations
 
 Consider your target markets when selecting languages:
 
-```typescript {{ title: 'Regional language configuration' }}
-const REGIONAL_LANGUAGES = {
+<SimpleCodeBlock title="Regional language configuration" language="typescript" variant="light" maxHeight="400px" code={`const REGIONAL_LANGUAGES = {
   'north-america': ['en', 'es', 'fr'],
   'europe': ['en', 'de', 'fr', 'it', 'es', 'nl', 'pl'],
   'asia-pacific': ['en', 'ja', 'ko', 'zh-CN', 'zh-TW'],
@@ -276,8 +289,7 @@ async function createRegionalSession(userId: string, region: string) {
   })
 
   return { session, clientSecret }
-}
-```
+}`}/>
 
 ## Language selection UX
 
@@ -285,8 +297,7 @@ async function createRegionalSession(userId: string, region: string) {
 
 Provide a language selector in your frontend before starting verification:
 
-```typescript {{ title: 'Language selector with redirect' }}
-import React, { useState, useEffect } from 'react'
+<SimpleCodeBlock title="Language selector with redirect" language="typescript" variant="light" maxHeight="500px" code={`import React, { useState, useEffect } from 'react'
 
 interface Language {
   id: string
@@ -355,21 +366,19 @@ function VerificationFlow() {
       </button>
     </div>
   )
-}
-```
+}`}/>
 
 ### Auto-detect user language
 
 Automatically detect and use the user's browser language:
 
-```typescript {{ title: 'Auto-detect language' }}
-function detectUserLanguage(): string {
+<SimpleCodeBlock title="Auto-detect language" language="typescript" variant="light" maxHeight="400px" code={`function detectUserLanguage(): string {
   // Get browser language
   const browserLang = navigator.language.split('-')[0]; // e.g., 'en' from 'en-US'
-  
+
   // List of supported languages (you'd get this from the API)
   const supportedLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nl', 'pl', 'ru', 'ja', 'ko', 'zh'];
-  
+
   // Return detected language if supported, otherwise default to English
   return supportedLanguages.includes(browserLang) ? browserLang : 'en';
 }
@@ -391,8 +400,7 @@ async function createAutoLocalizedSession(userId: string) {
   })
 
   return { session, clientSecret }
-}
-```
+}`}/>
 
 ## Best practices
 
@@ -400,47 +408,42 @@ async function createAutoLocalizedSession(userId: string) {
 
 Cache the languages list to avoid unnecessary API calls:
 
-```typescript {{ title: 'Cache languages' }}
-let cachedLanguages: Language[] | null = null;
+<SimpleCodeBlock title="Cache languages" language="typescript" variant="light" maxHeight="300px" code={`let cachedLanguages: Language[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 async function getAvailableLanguages(): Promise<Language[]> {
   const now = Date.now();
-  
+
   // Return cached version if still valid
   if (cachedLanguages && (now - cacheTimestamp) < CACHE_DURATION) {
     return cachedLanguages;
   }
-  
+
   // Fetch fresh data
   const { langs } = await client.languages.list();
   cachedLanguages = langs;
   cacheTimestamp = now;
-  
+
   return langs;
-}
-```
+}`}/>
 
 ### 2. Provide language fallbacks
 
 Always include common languages as fallbacks:
 
-```typescript {{ title: 'Language fallbacks' }}
-function getLanguagesWithFallback(userPreferences: string[]): string[] {
+<SimpleCodeBlock title="Language fallbacks" language="typescript" variant="light" code={`function getLanguagesWithFallback(userPreferences: string[]): string[] {
   const fallbackLanguages = ['en', 'es']; // English and Spanish as common fallbacks
-  
+
   // Combine user preferences with fallbacks, removing duplicates
   return [...new Set([...userPreferences, ...fallbackLanguages])];
-}
-```
+}`}/>
 
 ### 3. Handle RTL languages
 
 For right-to-left languages, ensure your UI adapts accordingly:
 
-```typescript {{ title: 'RTL language support' }}
-const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
+<SimpleCodeBlock title="RTL language support" language="typescript" variant="light" maxHeight="300px" code={`const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
 
 function isRTLLanguage(langId: string): boolean {
   return RTL_LANGUAGES.includes(langId);
@@ -451,20 +454,18 @@ function applyLanguageDirection(langId: string) {
   const isRTL = isRTLLanguage(langId);
   document.dir = isRTL ? 'rtl' : 'ltr';
   document.documentElement.lang = langId;
-}
-```
+}`}/>
 
 ### 4. Store user language preference
 
 Remember user language choices for future sessions:
 
-```typescript {{ title: 'Store language preference' }}
-async function updateUserLanguagePreference(userId: string, langId: string) {
+<SimpleCodeBlock title="Store language preference" language="typescript" variant="light" maxHeight="400px" code={`async function updateUserLanguagePreference(userId: string, langId: string) {
   await db.users.update({
     where: { id: userId },
     data: { preferredLanguage: langId }
   });
-  
+
   // Also store in localStorage for immediate use
   localStorage.setItem('preferredLanguage', langId);
 }
@@ -473,14 +474,15 @@ function getUserLanguagePreference(userId?: string): string {
   // Try localStorage first for immediate access
   const storedLang = localStorage.getItem('preferredLanguage');
   if (storedLang) return storedLang;
-  
+
   // Fall back to browser language
   return detectUserLanguage();
-}
-```
+}`}/>
 
 ## Next steps
 
 - [Sessions](/sessions) - Learn how to create sessions with language configuration
 - [Avatars](/avatars) - Discover available AI avatars for different languages
 - [Custom Flows](/flows) - Build sophisticated verification flows with node-based system
+
+</Prose>

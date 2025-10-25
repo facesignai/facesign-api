@@ -1,37 +1,8 @@
 export const metadata = {
-  title: 'The Client Secret object',
-  description: 'Attributes and example of the Client Secret object.',
+  title: 'Client Secret (moved)',
+  description: 'This page has moved to /docs/sessions#client-secret.',
 }
 
-# The Client Secret object
+import { redirect } from 'next/navigation'
 
-<Row>
-  <Col>
-    ### Attributes
-
-    <Properties>
-      <Property name="secret" type="string">Opaque token for accessing the hosted verification interface. Format: `cs` prefix followed by 32 hex characters.</Property>
-      <Property name="createdAt" type="number">Unix timestamp (milliseconds) when the client secret was created.</Property>
-      <Property name="expireAt" type="number">Unix timestamp (milliseconds) when the client secret expires (2 hours after creation).</Property>
-      <Property name="url" type="string">Complete hosted verification URL with embedded client secret query parameter.</Property>
-    </Properties>
-  </Col>
-  <Col sticky>
-    <ApiEndpointsCard
-      items={[
-        { method: 'GET', label: 'Refresh Client Secret', href: '/api#refresh-client-secret' },
-      ]}
-    />
-
-    ```json {{ title: 'The Client Secret object' }}
-    {
-      "secret": "csea61d44d88d345e1b91622820bb73100",
-      "createdAt": 1761001508335,
-      "expireAt": 1761008708335,
-      "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100"
-    }
-    ```
-  </Col>
-</Row>
-
-
+{redirect('/docs/sessions#client-secret')}

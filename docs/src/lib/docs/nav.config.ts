@@ -18,8 +18,8 @@ export const navTree: NavNode[] = [
     label: 'Core Concepts',
     href: '/docs',
     children: [
-      { label: 'Sessions', href: '/sessions' },
-      { label: 'Flows', href: '/flows' },
+      { label: 'Sessions', href: '/docs/sessions' },
+      { label: 'Flows', href: '/docs/flows' },
       { label: 'Webhooks', href: '/webhooks' },
     ],
   },

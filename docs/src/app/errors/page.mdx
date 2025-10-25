@@ -1,7 +1,12 @@
+import { Prose } from '@/components/chakra/Prose'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+
 export const metadata = {
   title: 'Error Handling',
   description: 'Learn how to handle errors when using the FaceSign API.',
 }
+
+<Prose>
 
 # Error Handling
 
@@ -45,14 +50,9 @@ FaceSign returns the following HTTP status codes:
 
 All error responses follow a consistent format:
 
-```json {{ title: 'Error response' }}
-{
-  "error": {
-    "type": "validation_error",
-    "message": "The 'clientReferenceId' field is required"
-  }
-}
-```
+<SimpleCodeBlock title="Error response" language="json" variant="light" code={`{
+  "error": { "type": "validation_error", "message": "The 'clientReferenceId' field is required" }
+}`}/>
 
 ### Error object properties
 
@@ -237,43 +237,25 @@ except Exception as err:
 
 ### Authentication errors
 
-```json {{ title: 'Invalid API key' }}
-{
-  "error": {
-    "type": "authentication_error",
-    "message": "Invalid API key provided.",
-    "code": "invalid_api_key"
-  }
-}
-```
+<SimpleCodeBlock title="Invalid API key" language="json" variant="light" code={`{
+  "error": { "type": "authentication_error", "message": "Invalid API key provided.", "code": "invalid_api_key" }
+}`}/>
 
 **Solution**: Check that you're using the correct API key and that it hasn't been revoked.
 
 ### Validation errors
 
-```json {{ title: 'Missing required parameter' }}
-{
-  "error": {
-    "type": "validation_error",
-    "message": "The 'clientReferenceId' field is required.",
-    "code": "parameter_missing"
-  }
-}
-```
+<SimpleCodeBlock title="Missing required parameter" language="json" variant="light" code={`{
+  "error": { "type": "validation_error", "message": "The 'clientReferenceId' field is required.", "code": "parameter_missing" }
+}`}/>
 
 **Solution**: Ensure all required parameters are included in your request. Check the error message for details about which field is invalid.
 
 ### Rate limit errors
 
-```json {{ title: 'Rate limit exceeded' }}
-{
-  "error": {
-    "type": "rate_limit_error",
-    "message": "Too many requests. Please retry after 60 seconds.",
-    "code": "rate_limit_exceeded"
-  }
-}
-```
+<SimpleCodeBlock title="Rate limit exceeded" language="json" variant="light" code={`{
+  "error": { "type": "rate_limit_error", "message": "Too many requests. Please retry after 60 seconds.", "code": "rate_limit_exceeded" }
+}`}/>
 
 **Solution**: Implement exponential backoff and respect the `Retry-After` header.
 
@@ -390,14 +372,4 @@ If you encounter persistent errors:
 2. Review your request parameters against the API documentation
 3. Contact support with the request ID from the error response
 
-<div className="not-prose mt-6 flex flex-col gap-3">
-  <Button href="/authentication" variant="text" arrow="right">
-    Review authentication
-  </Button>
-  <Button href="/webhooks" variant="text" arrow="right">
-    Set up webhooks
-  </Button>
-  <Button href="/rate-limits" variant="text" arrow="right">
-    Learn about rate limits
-  </Button>
-</div>
+</Prose>

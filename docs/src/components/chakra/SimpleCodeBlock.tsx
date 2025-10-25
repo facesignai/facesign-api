@@ -13,6 +13,7 @@ interface SimpleCodeBlockProps {
   variant?: 'dark' | 'light' | 'white'
   showLineNumbers?: boolean
   maxHeight?: string
+  wordWrap?: boolean
 }
 
 /**
@@ -40,23 +41,45 @@ export function SimpleCodeBlock({
   title,
   variant = 'dark',
   showLineNumbers: _showLineNumbers = false,
-  maxHeight = '500px',
+  maxHeight = '360px',
+  wordWrap = true,
 }: SimpleCodeBlockProps) {
-  const styleMap = {
-    dark: { headerBg: 'gray.900', headerColor: 'white', headerBorder: 'gray.700', contentBg: 'gray.900', codeColor: 'white' },
-    light: { headerBg: 'gray.100', headerColor: 'gray.800', headerBorder: 'gray.200', contentBg: 'gray.50', codeColor: 'gray.800' },
-    white: { headerBg: 'white', headerColor: 'gray.800', headerBorder: 'gray.200', contentBg: 'white', codeColor: 'gray.800' },
-  } as const
-  const styles = styleMap[variant]
-  return (
+  // Inline Chakra tokens per variant to style the code block chrome
+  const headerBg = variant === 'dark' ? 'gray.900' : variant === 'white' ? 'white' : 'gray.100'
+  const headerColor = variant === 'dark' ? 'white' : 'gray.800'
+  const headerBorder = variant === 'dark' ? 'gray.700' : 'gray.200'
+  const contentBg = variant === 'dark' ? 'gray.900' : variant === 'white' ? 'white' : 'gray.50'
+  const codeColor = variant === 'dark' ? 'white' : 'gray.800'
+  const plain = variant !== 'dark'
+  return plain ? (
+    <CodeBlock.Root mb="6" size="sm" code={code} language={language} meta={{ wordWrap }} bg={contentBg}>
+      <CodeBlock.Header borderBottomWidth="1px" bg={headerBg} color={headerColor} borderColor={headerBorder}>
+        {title && <CodeBlock.Title>{title}</CodeBlock.Title>}
+        <CodeBlock.Control>
+          <CodeBlock.CopyTrigger asChild>
+            <IconButton variant="ghost" size="2xs">
+              <CodeBlock.CopyIndicator />
+            </IconButton>
+          </CodeBlock.CopyTrigger>
+        </CodeBlock.Control>
+      </CodeBlock.Header>
+      <CodeBlock.Content maxH={maxHeight} overflowY="auto" overflowX="hidden" bg={contentBg}>
+        <CodeBlock.Code overflowX="hidden" color={codeColor} bg="transparent">
+          <CodeBlock.CodeText />
+        </CodeBlock.Code>
+      </CodeBlock.Content>
+    </CodeBlock.Root>
+  ) : (
     <CodeBlock.AdapterProvider value={shikiAdapter}>
       <CodeBlock.Root
         mb="6"
         size="sm"
         code={code}
         language={language}
+        meta={{ colorScheme: 'dark', wordWrap }}
+        bg={contentBg}
       >
-        <CodeBlock.Header borderBottomWidth="1px" bg={styles.headerBg} color={styles.headerColor} borderColor={styles.headerBorder}>
+        <CodeBlock.Header borderBottomWidth="1px" bg={headerBg} color={headerColor} borderColor={headerBorder}>
           {title && <CodeBlock.Title>{title}</CodeBlock.Title>}
           <CodeBlock.Control>
             <CodeBlock.CopyTrigger asChild>
@@ -66,9 +89,8 @@ export function SimpleCodeBlock({
             </CodeBlock.CopyTrigger>
           </CodeBlock.Control>
         </CodeBlock.Header>
-
-        <CodeBlock.Content maxH={maxHeight} overflowY="auto" bg={styles.contentBg}>
-          <CodeBlock.Code overflowX="auto" color={styles.codeColor}>
+        <CodeBlock.Content maxH={maxHeight} overflowY="auto" overflowX="hidden" bg={contentBg}>
+          <CodeBlock.Code overflowX="hidden" color={codeColor} bg="transparent">
             <CodeBlock.CodeText />
           </CodeBlock.Code>
         </CodeBlock.Content>

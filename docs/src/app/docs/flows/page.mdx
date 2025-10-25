@@ -1,8 +1,8 @@
 import { PageHeader } from '@/components/chakra/PageHeader'
 import { Prose } from '@/components/chakra/Prose'
-import { Callout } from '@/components/chakra/Callout'
 import { CodeTabs } from '@/components/chakra/CodeTabs'
 import { NextPrevNav } from '@/components/chakra/NextPrevNav'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 
 <PageHeader title="Flows" description="Compose verification steps as nodes with conditional branching." />
 
@@ -12,13 +12,11 @@ import { NextPrevNav } from '@/components/chakra/NextPrevNav'
 
 A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).
 
-<Callout type="success">Keep flows minimal. Start with the fewest nodes, add more only if needed.</Callout>
-
 ## Create a flow
 
 <CodeTabs codeExamples={{
   curl: 'curl -X POST https://api.dev.facesign.ai/flows \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d @flow.json',
-  javascript: 'await fs.flows.create({ id: "flow_basic", nodes: [ { type: "email" }, { type: "document" } ] })',
+  javascript: 'await fs.flows.create({ id: "flow_basic", nodes: [ { type: "enter_email" }, { type: "document_scan" } ] })',
 }} />
 
 ## Get a flow
@@ -27,6 +25,36 @@ A flow defines the ordered (or conditional) nodes a user must complete (e.g., Em
   curl: 'curl https://api.dev.facesign.ai/flows/flow_basic -H "Authorization: Bearer YOUR_API_KEY"',
   javascript: 'await fs.flows.get("flow_basic")',
 }} />
+
+## FSNode object
+
+### Node types
+
+<Properties>
+  <Property name="type" type="enum">
+    One of `start`, `end`, `conversation`, `liveness_detection`, `enter_email`, `data_validation`, `document_scan`, `recognition`, `face_scan`, `two_factor`.
+  </Property>
+  <Property name="id" type="string">Unique identifier within the flow.</Property>
+</Properties>
+
+### Minimal flow JSON
+
+<SimpleCodeBlock
+  title="Minimal FSFlow"
+  language="json"
+  variant="light"
+  code={`{
+  "nodes": [
+    { "id": "start", "type": "start", "outcome": "conv1" },
+    { "id": "conv1", "type": "conversation", "prompt": "Hello!", "transitions": [{ "id": "any", "condition": "true" }] },
+    { "id": "end", "type": "end" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "start", "target": "conv1" },
+    { "id": "e2", "source": "conv1", "target": "end" }
+  ]
+}`}
+/>
 
 ## Next steps
 

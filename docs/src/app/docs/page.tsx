@@ -2,12 +2,14 @@
 
 import { Box, Heading, Text, VStack, HStack, Button, Card, SimpleGrid } from '@chakra-ui/react'
 import { DocsLayout } from '@/components/chakra/DocsLayout'
+import { Prose } from '@/components/chakra/Prose'
 import NextLink from 'next/link'
 
 export default function DocsPage() {
   return (
     <DocsLayout variant="docs">
-      <VStack align="stretch" gap={10}>
+      <Prose>
+        <VStack align="stretch" gap={10}>
         <Box>
           <Heading as="h1" size="2xl" mb={3}>
             FaceSign Documentation
@@ -58,7 +60,8 @@ export default function DocsPage() {
             </HStack>
           </Card.Body>
         </Card.Root>
-      </VStack>
+        </VStack>
+      </Prose>
     </DocsLayout>
   )
 }

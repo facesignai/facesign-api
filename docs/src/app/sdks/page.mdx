@@ -1,4 +1,5 @@
 import { Libraries } from '@/components/Libraries'
+import { Prose } from '@/components/chakra/Prose'
 
 export const metadata = {
   title: 'FaceSign SDKs',
@@ -12,6 +13,8 @@ export const sections = [
   { title: 'Planned SDKs', id: 'upcoming-libraries' },
 ]
 
+<Prose>
+
 # FaceSign SDKs
 
 The recommended way to interact with the FaceSign API is by using our official SDKs. Choose from multiple programming languages to integrate FaceSign identity verification into your applications. {{ className: 'lead' }}
@@ -22,5 +25,7 @@ Get up and running quickly with our comprehensive installation guides:
 
 - **[Python Installation Guide](/quickstart/python-installation)** - Complete setup guide for Python SDK with Django, Flask, and FastAPI examples
 - **[Go Installation Guide](/quickstart/go-installation)** - Step-by-step guide for Go SDK with framework integration examples
+
+</Prose>
 
 <Libraries />

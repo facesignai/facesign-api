@@ -51,7 +51,6 @@ export function DocsLayout({
         <Box
           flex="1"
           minW="0"
-          ml={showSidebar && (isDocsPage || isApiPage) ? { base: 0, lg: '280px' } : 0}
           display="flex"
         >
           {/* Main content */}
@@ -60,7 +59,7 @@ export function DocsLayout({
             flex="1"
             minW="0"
             py={6}
-            px={effectiveVariant === 'api' ? { base: 4, md: 5, lg: 6 } : { base: 4, md: 6, lg: 8 }}
+            px={{ base: 4, md: 6, lg: 6 }}
           >
             {children}
           </Box>
