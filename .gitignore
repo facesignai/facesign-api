@@ -7,6 +7,10 @@ build
 sandbox
 .DS_Store
 
+# Next.js build output
+.next/
+out/
+
 # Environment variables (never commit API keys)
 .env
 .env.local
