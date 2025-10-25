@@ -1,3 +1,5 @@
+import { NextPrevNav } from '@/components/chakra/NextPrevNav'
+
 # Python SDK Installation Guide
 
 Get started with the FaceSign Python SDK for server-side identity verification integration.
@@ -81,7 +83,7 @@ flow_session = client.sessions.create(
                 "transitions": [{"id": "t1", "condition": "true"}]
             },
             {
-                "id": "face-scan", 
+                "id": "face-scan",
                 "type": "face_scan",
                 "mode": "capture",
                 "outcomes": {
@@ -144,10 +146,10 @@ async def main():
             client_reference_id="async-user-123",
             modules=[{"type": "identityVerification"}]
         )
-        
+
         # List sessions asynchronously
         sessions = await client.sessions.alist(limit=5)
-        
+
         # Get languages asynchronously
         languages = await client.languages.aget()
 
@@ -179,7 +181,7 @@ for avatar in avatars.avatars:
 
 ```python
 from facesign import (
-    FaceSignAPIError, 
+    FaceSignAPIError,
     AuthenticationError,
     ValidationError,
     NotFoundError
@@ -214,13 +216,13 @@ from facesign import FaceSignClient
 
 def create_verification_view(request):
     client = FaceSignClient(settings.FACESIGN_API_KEY)
-    
+
     session = client.sessions.create(
         client_reference_id=f"user-{request.user.id}",
         metadata={"user_id": request.user.id},
         modules=[{"type": "identityVerification"}]
     )
-    
+
     return JsonResponse({
         "session_id": session.session.id,
         "verification_url": session.client_secret.url
@@ -243,7 +245,7 @@ def create_verification():
         client_reference_id="user-123",
         modules=[{"type": "identityVerification"}]
     )
-    
+
     return jsonify({
         "session_id": session.session.id,
         "verification_url": session.client_secret.url
@@ -267,7 +269,7 @@ async def create_verification():
             client_reference_id="user-123",
             modules=[{"type": "identityVerification"}]
         )
-        
+
         return {
             "session_id": session.session.id,
             "verification_url": session.client_secret.url
@@ -315,14 +317,9 @@ dev_client = FaceSignClient(
 
 # Production environment
 prod_client = FaceSignClient(
-    api_key="prod_api_key", 
+    api_key="prod_api_key",
     server_url="https://api.facesign.ai"
 )
 ```
 
-## Next Steps
-
-- Read the [API Reference](/api-reference) for detailed endpoint documentation
-- Explore [Session Management](/sessions) to understand verification flows
-- Check out [Error Handling](/errors) for comprehensive error management
-- Learn about [Webhooks](/webhooks) for real-time status updates
+<NextPrevNav prev={{ href: '/quickstart', label: 'Quick Start' }} />

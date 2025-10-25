@@ -1,5 +1,7 @@
 import { Prose } from '@/components/chakra/Prose'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
 
 export const metadata = {
   title: 'Error Handling',
@@ -50,7 +52,7 @@ FaceSign returns the following HTTP status codes:
 
 All error responses follow a consistent format:
 
-<SimpleCodeBlock title="Error response" language="json" variant="light" code={`{
+<SimpleCodeBlock title="Error response" language="json" code={`{
   "error": { "type": "validation_error", "message": "The 'clientReferenceId' field is required" }
 }`}/>
 
@@ -237,7 +239,7 @@ except Exception as err:
 
 ### Authentication errors
 
-<SimpleCodeBlock title="Invalid API key" language="json" variant="light" code={`{
+<SimpleCodeBlock title="Invalid API key" language="json" code={`{
   "error": { "type": "authentication_error", "message": "Invalid API key provided.", "code": "invalid_api_key" }
 }`}/>
 
@@ -245,7 +247,7 @@ except Exception as err:
 
 ### Validation errors
 
-<SimpleCodeBlock title="Missing required parameter" language="json" variant="light" code={`{
+<SimpleCodeBlock title="Missing required parameter" language="json" code={`{
   "error": { "type": "validation_error", "message": "The 'clientReferenceId' field is required.", "code": "parameter_missing" }
 }`}/>
 
@@ -253,7 +255,7 @@ except Exception as err:
 
 ### Rate limit errors
 
-<SimpleCodeBlock title="Rate limit exceeded" language="json" variant="light" code={`{
+<SimpleCodeBlock title="Rate limit exceeded" language="json" code={`{
   "error": { "type": "rate_limit_error", "message": "Too many requests. Please retry after 60 seconds.", "code": "rate_limit_exceeded" }
 }`}/>
 
@@ -368,8 +370,16 @@ response = create_session_with_retry(client, {
 
 If you encounter persistent errors:
 
-1. Check the [API status page](https://status.facesign.ai) for any ongoing issues
-2. Review your request parameters against the API documentation
-3. Contact support with the request ID from the error response
+- Check the [API status page](https://status.facesign.ai) for any ongoing issues
+- Review your request parameters against the API documentation
+- Contact support with the request ID from the error response
+
+## Next steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="8">
+  <DocLinkCard href="/quickstart" title="Quick Start" description="Get started in 5 minutes" />
+  <DocLinkCard href="/api" title="API Reference" description="Complete endpoint documentation" />
+  <DocLinkCard href="/authentication" title="Authentication" description="Secure your API requests" />
+</SimpleGrid>
 
 </Prose>

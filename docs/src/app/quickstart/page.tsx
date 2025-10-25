@@ -6,13 +6,15 @@ import {
   Code,
   Link,
   Separator,
-  Blockquote
+  Blockquote,
+  SimpleGrid
 } from '@chakra-ui/react'
 import { DocsLayout } from '@/components/chakra/DocsLayout'
 import { Prose } from '@/components/chakra/Prose'
 import { DocsCodeBlock } from '@/components/chakra/DocsCodeBlock'
 import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
 import { TabbedCodeBlock } from '@/components/chakra/TabbedCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 
 export const metadata = {
   title: 'Quick Start',
@@ -270,15 +272,16 @@ export async function POST(req: Request) {
         <Separator />
 
         {/* Next Steps */}
-        <>
-          <h2>Next Steps</h2>
-          <ul>
-            <li><a href="/flows">Build custom flows</a> with document scanning, liveness detection, and more</li>
-            <li><a href="/webhooks">Set up webhooks</a> to receive real-time updates</li>
-            <li><a href="/customization">Customize the UI</a> to match your brand</li>
-            <li><a href="/api">Explore the full API reference</a></li>
-          </ul>
-        </>
+        <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Next Steps
+          </Heading>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="4">
+            <DocLinkCard href="/docs/flows" title="Custom Flows" description="Build verification flows with nodes" />
+            <DocLinkCard href="/docs/webhooks" title="Webhooks" description="Real-time session updates" />
+            <DocLinkCard href="/customization" title="Customization" description="Brand your verification UI" />
+          </SimpleGrid>
+        </Box>
         </VStack>
       </Prose>
     </DocsLayout>

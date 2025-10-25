@@ -66,13 +66,15 @@ export function Libraries() {
           <Card.Root key={library.name} maxW="md" flex="1" borderWidth="1px">
             <Card.Body>
               <HStack gap="3" align="start">
-                <Image src={library.logo} alt="" className="h-8 w-8" unoptimized />
-                <div>
+                <Image src={library.logo} alt="" width={24} height={24} unoptimized />
+                <div style={{ minWidth: 0 }}>
                   <HStack gap="2">
                     <Text fontWeight="semibold">{library.name}</Text>
                     <Text as="span" color="green.600" fontSize="xs">Available</Text>
                   </HStack>
-                  <Text mt="1" color="fg.muted" fontSize="sm">{library.description}</Text>
+                  <Text mt="1" color="fg.muted" fontSize="sm" overflowWrap="anywhere" lineClamp={3}>
+                    {library.description}
+                  </Text>
                   <Button asChild variant="plain" size="sm" mt="2">
                     <a href={library.href}>{library.buttonText}</a>
                   </Button>
@@ -91,13 +93,15 @@ export function Libraries() {
           <Card.Root key={library.name} maxW="md" flex="1" borderWidth="1px" opacity={0.85}>
             <Card.Body>
               <HStack gap="3" align="start">
-                <Image src={library.logo} alt="" className="h-8 w-8" unoptimized />
-                <div>
+                <Image src={library.logo} alt="" width={24} height={24} unoptimized />
+                <div style={{ minWidth: 0 }}>
                   <HStack gap="2">
                     <Text fontWeight="semibold">{library.name}</Text>
                     <Text as="span" color="amber.700" fontSize="xs">{library.timeline}</Text>
                   </HStack>
-                  <Text mt="1" color="fg.muted" fontSize="sm">{library.description}</Text>
+                  <Text mt="1" color="fg.muted" fontSize="sm" overflowWrap="anywhere" lineClamp={3}>
+                    {library.description}
+                  </Text>
                   <Text mt="2" fontSize="xs" color="fg.muted">Coming soon</Text>
                 </div>
               </HStack>

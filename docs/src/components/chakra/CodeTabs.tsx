@@ -14,17 +14,16 @@ interface CodeTabsProps {
     ts?: string
   }
   defaultLanguage?: string
-  variant?: 'dark' | 'light' | 'white'
 }
 
-export function CodeTabs({ title, codeExamples, defaultLanguage, variant = 'dark' }: CodeTabsProps) {
+export function CodeTabs({ title, codeExamples, defaultLanguage }: CodeTabsProps) {
   // Map ts -> javascript temporarily if needed
   const mapped = { ...codeExamples }
   if (mapped.ts && !mapped.javascript) {
     mapped.javascript = mapped.ts
     delete (mapped as any).ts
   }
-  return <TabbedCodeBlock title={title} codeExamples={mapped as any} defaultLanguage={defaultLanguage} variant={variant} />
+  return <TabbedCodeBlock title={title} codeExamples={mapped as any} defaultLanguage={defaultLanguage} />
 }
 
 

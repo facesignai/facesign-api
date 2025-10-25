@@ -1,6 +1,7 @@
 import { Prose } from '@/components/chakra/Prose'
 import { Table, SimpleGrid } from '@chakra-ui/react'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 
 export const metadata = {
   title: 'Languages',
@@ -197,7 +198,7 @@ session_response = client.session.create(
 
 When creating a session, you can specify which languages should be available and set a default language:
 
-<SimpleCodeBlock title="Configure session languages" language="typescript" variant="light" code={`const { session, clientSecret } = await client.session.create({
+<SimpleCodeBlock title="Configure session languages" language="typescript" code={`const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user_123',
   langs: ['en', 'es', 'fr'], // Available languages for this session
   defaultLang: 'en', // Default language if user's preference isn't available
@@ -214,7 +215,7 @@ When creating a session, you can specify which languages should be available and
 
 You can dynamically select languages based on user preferences or browser settings:
 
-<SimpleCodeBlock title="Dynamic language selection" language="typescript" variant="light" maxHeight="400px" code={`async function createLocalizedSession(userId: string) {
+<SimpleCodeBlock title="Dynamic language selection" language="typescript" maxHeight="400px" code={`async function createLocalizedSession(userId: string) {
   // Get available languages from FaceSign
   const { langs } = await client.languages.list();
   const availableLanguages = langs.map(lang => lang.id);
@@ -264,7 +265,7 @@ function getUserPreferredLanguages(userId: string): string[] {
 
 Consider your target markets when selecting languages:
 
-<SimpleCodeBlock title="Regional language configuration" language="typescript" variant="light" maxHeight="400px" code={`const REGIONAL_LANGUAGES = {
+<SimpleCodeBlock title="Regional language configuration" language="typescript" maxHeight="400px" code={`const REGIONAL_LANGUAGES = {
   'north-america': ['en', 'es', 'fr'],
   'europe': ['en', 'de', 'fr', 'it', 'es', 'nl', 'pl'],
   'asia-pacific': ['en', 'ja', 'ko', 'zh-CN', 'zh-TW'],
@@ -297,7 +298,7 @@ async function createRegionalSession(userId: string, region: string) {
 
 Provide a language selector in your frontend before starting verification:
 
-<SimpleCodeBlock title="Language selector with redirect" language="typescript" variant="light" maxHeight="500px" code={`import React, { useState, useEffect } from 'react'
+<SimpleCodeBlock title="Language selector with redirect" language="typescript" maxHeight="500px" code={`import React, { useState, useEffect } from 'react'
 
 interface Language {
   id: string
@@ -372,7 +373,7 @@ function VerificationFlow() {
 
 Automatically detect and use the user's browser language:
 
-<SimpleCodeBlock title="Auto-detect language" language="typescript" variant="light" maxHeight="400px" code={`function detectUserLanguage(): string {
+<SimpleCodeBlock title="Auto-detect language" language="typescript" maxHeight="400px" code={`function detectUserLanguage(): string {
   // Get browser language
   const browserLang = navigator.language.split('-')[0]; // e.g., 'en' from 'en-US'
 
@@ -408,7 +409,7 @@ async function createAutoLocalizedSession(userId: string) {
 
 Cache the languages list to avoid unnecessary API calls:
 
-<SimpleCodeBlock title="Cache languages" language="typescript" variant="light" maxHeight="300px" code={`let cachedLanguages: Language[] | null = null;
+<SimpleCodeBlock title="Cache languages" language="typescript" maxHeight="300px" code={`let cachedLanguages: Language[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -432,7 +433,7 @@ async function getAvailableLanguages(): Promise<Language[]> {
 
 Always include common languages as fallbacks:
 
-<SimpleCodeBlock title="Language fallbacks" language="typescript" variant="light" code={`function getLanguagesWithFallback(userPreferences: string[]): string[] {
+<SimpleCodeBlock title="Language fallbacks" language="typescript" code={`function getLanguagesWithFallback(userPreferences: string[]): string[] {
   const fallbackLanguages = ['en', 'es']; // English and Spanish as common fallbacks
 
   // Combine user preferences with fallbacks, removing duplicates
@@ -443,7 +444,7 @@ Always include common languages as fallbacks:
 
 For right-to-left languages, ensure your UI adapts accordingly:
 
-<SimpleCodeBlock title="RTL language support" language="typescript" variant="light" maxHeight="300px" code={`const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
+<SimpleCodeBlock title="RTL language support" language="typescript" maxHeight="300px" code={`const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'];
 
 function isRTLLanguage(langId: string): boolean {
   return RTL_LANGUAGES.includes(langId);
@@ -460,7 +461,7 @@ function applyLanguageDirection(langId: string) {
 
 Remember user language choices for future sessions:
 
-<SimpleCodeBlock title="Store language preference" language="typescript" variant="light" maxHeight="400px" code={`async function updateUserLanguagePreference(userId: string, langId: string) {
+<SimpleCodeBlock title="Store language preference" language="typescript" maxHeight="400px" code={`async function updateUserLanguagePreference(userId: string, langId: string) {
   await db.users.update({
     where: { id: userId },
     data: { preferredLanguage: langId }
@@ -481,8 +482,10 @@ function getUserLanguagePreference(userId?: string): string {
 
 ## Next steps
 
-- [Sessions](/sessions) - Learn how to create sessions with language configuration
-- [Avatars](/avatars) - Discover available AI avatars for different languages
-- [Custom Flows](/flows) - Build sophisticated verification flows with node-based system
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="8">
+  <DocLinkCard href="/docs/sessions" title="Sessions" description="Use languages in sessions" />
+  <DocLinkCard href="/avatars" title="Avatars" description="Multi-language avatars" />
+  <DocLinkCard href="/customization" title="Customization" description="Customize UI text" />
+</SimpleGrid>
 
 </Prose>
