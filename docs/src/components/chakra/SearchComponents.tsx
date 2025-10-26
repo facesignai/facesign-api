@@ -95,7 +95,7 @@ export const SearchDialog = (props: Omit<DialogRootProps, 'children'>) => {
               {query && results.length === 0 && !isLoading && (
                 <Box p="8" textAlign="center">
                   <Text color="fg.muted" fontSize="sm">
-                    No results found for "{query}"
+                    {`No results found for "${query}"`}
                   </Text>
                 </Box>
               )}
