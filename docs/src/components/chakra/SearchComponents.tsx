@@ -128,7 +128,7 @@ export const SearchDialog = (props: Omit<DialogRootProps, 'children'>) => {
                             </>
                           )}
                         </HStack>
-                        <Text fontSize="xs" color="fg.muted" noOfLines={2}>
+                        <Text fontSize="xs" color="fg.muted" lineClamp={2}>
                           {truncateContent(result.content, 120)}
                         </Text>
                       </VStack>
