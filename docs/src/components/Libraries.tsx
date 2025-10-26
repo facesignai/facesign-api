@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Heading, Card, HStack, Text, Button } from '@chakra-ui/react'
+import { Heading, Card, SimpleGrid, HStack, VStack, Text, Button, Badge, Box } from '@chakra-ui/react'
 import logoGo from '@/images/logos/go.svg'
 import logoNode from '@/images/logos/node.svg'
 import logoPhp from '@/images/logos/php.svg'
@@ -57,58 +57,151 @@ const upcomingLibraries = [
 
 export function Libraries() {
   return (
-    <div>
-      <Heading as="h2" id="official-libraries" mb={4}>
+    <Box>
+      {/* Available SDKs Section */}
+      <Heading as="h2" id="official-libraries" fontSize="2xl" fontWeight="semibold" mb={6} mt={12}>
         Available SDKs
       </Heading>
-      <HStack wrap="wrap" gap="4">
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6} mb={12}>
         {libraries.map((library) => (
-          <Card.Root key={library.name} maxW="md" flex="1" borderWidth="1px">
-            <Card.Body>
-              <HStack gap="3" align="start">
-                <Image src={library.logo} alt="" width={24} height={24} unoptimized />
-                <div style={{ minWidth: 0 }}>
-                  <HStack gap="2">
-                    <Text fontWeight="semibold">{library.name}</Text>
-                    <Text as="span" color="green.600" fontSize="xs">Available</Text>
+          <Card.Root
+            key={library.name}
+            borderWidth="1px"
+            borderColor="gray.200"
+            _dark={{ borderColor: 'gray.700' }}
+            _hover={{
+              borderColor: 'green.500',
+              boxShadow: 'sm',
+              _dark: { borderColor: 'green.400' },
+            }}
+            transition="all 0.2s"
+          >
+            <Card.Body p={6}>
+              <VStack align="start" gap={4}>
+                {/* Icon Container */}
+                <Box
+                  p={3}
+                  borderRadius="lg"
+                  bg="gray.50"
+                  _dark={{ bg: 'gray.800' }}
+                >
+                  <Image src={library.logo} alt="" width={40} height={40} unoptimized />
+                </Box>
+
+                {/* Title and Badge */}
+                <VStack align="start" gap={2} w="full">
+                  <HStack justify="space-between" w="full">
+                    <Text
+                      flex="1"
+                      minW="0"
+                      fontSize="lg"
+                      fontWeight="semibold"
+                      color="gray.900"
+                      _dark={{ color: 'white' }}
+                    >
+                      {library.name}
+                    </Text>
+                    <Badge colorPalette="green" size="sm" flexShrink={0}>
+                      Available
+                    </Badge>
                   </HStack>
-                  <Text mt="1" color="fg.muted" fontSize="sm" overflowWrap="anywhere" lineClamp={3}>
+
+                  {/* Description */}
+                  <Text
+                    fontSize="sm"
+                    color="gray.600"
+                    _dark={{ color: 'gray.400' }}
+                    lineHeight="tall"
+                    wordBreak="break-word"
+                  >
                     {library.description}
                   </Text>
-                  <Button asChild variant="plain" size="sm" mt="2">
-                    <a href={library.href}>{library.buttonText}</a>
-                  </Button>
-                </div>
-              </HStack>
+                </VStack>
+
+                {/* Button */}
+                <Button
+                  asChild
+                  variant="ghost"
+                  colorPalette="green"
+                  size="sm"
+                  mt={2}
+                  _hover={{ textDecoration: 'underline' }}
+                >
+                  <a href={library.href} target="_blank" rel="noopener noreferrer">
+                    {library.buttonText} →
+                  </a>
+                </Button>
+              </VStack>
             </Card.Body>
           </Card.Root>
         ))}
-      </HStack>
+      </SimpleGrid>
 
-      <Heading as="h2" id="upcoming-libraries" mt={10} mb={4}>
+      {/* Planned SDKs Section */}
+      <Heading as="h2" id="upcoming-libraries" fontSize="2xl" fontWeight="semibold" mb={6} mt={12}>
         Planned SDKs
       </Heading>
-      <HStack wrap="wrap" gap="4">
+      <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
         {upcomingLibraries.map((library) => (
-          <Card.Root key={library.name} maxW="md" flex="1" borderWidth="1px" opacity={0.85}>
-            <Card.Body>
-              <HStack gap="3" align="start">
-                <Image src={library.logo} alt="" width={24} height={24} unoptimized />
-                <div style={{ minWidth: 0 }}>
-                  <HStack gap="2">
-                    <Text fontWeight="semibold">{library.name}</Text>
-                    <Text as="span" color="amber.700" fontSize="xs">{library.timeline}</Text>
+          <Card.Root
+            key={library.name}
+            borderWidth="1px"
+            borderColor="gray.200"
+            _dark={{ borderColor: 'gray.700' }}
+            opacity={0.9}
+          >
+            <Card.Body p={6}>
+              <VStack align="start" gap={4}>
+                {/* Icon Container */}
+                <Box
+                  p={3}
+                  borderRadius="lg"
+                  bg="gray.50"
+                  _dark={{ bg: 'gray.800' }}
+                  opacity={0.7}
+                >
+                  <Image src={library.logo} alt="" width={40} height={40} unoptimized />
+                </Box>
+
+                {/* Title and Timeline */}
+                <VStack align="start" gap={2} w="full">
+                  <HStack justify="space-between" w="full">
+                    <Text
+                      flex="1"
+                      minW="0"
+                      fontSize="lg"
+                      fontWeight="semibold"
+                      color="gray.900"
+                      _dark={{ color: 'white' }}
+                    >
+                      {library.name}
+                    </Text>
+                    <Badge colorPalette="orange" size="sm" flexShrink={0}>
+                      {library.timeline}
+                    </Badge>
                   </HStack>
-                  <Text mt="1" color="fg.muted" fontSize="sm" overflowWrap="anywhere" lineClamp={3}>
+
+                  {/* Description */}
+                  <Text
+                    fontSize="sm"
+                    color="gray.600"
+                    _dark={{ color: 'gray.400' }}
+                    lineHeight="tall"
+                    wordBreak="break-word"
+                  >
                     {library.description}
                   </Text>
-                  <Text mt="2" fontSize="xs" color="fg.muted">Coming soon</Text>
-                </div>
-              </HStack>
+
+                  {/* Coming Soon */}
+                  <Text fontSize="xs" color="gray.500" _dark={{ color: 'gray.500' }} fontStyle="italic" mt={2}>
+                    Coming soon
+                  </Text>
+                </VStack>
+              </VStack>
             </Card.Body>
           </Card.Root>
         ))}
-      </HStack>
-    </div>
+      </SimpleGrid>
+    </Box>
   )
 }

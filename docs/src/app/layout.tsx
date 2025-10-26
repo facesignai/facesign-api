@@ -1,5 +1,6 @@
 import { type Metadata, type Viewport } from 'next'
 import { Provider } from '@/components/ui/provider'
+import { SearchProvider } from '@/components/SearchProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -34,7 +35,9 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <Provider>
-          {children}
+          <SearchProvider>
+            {children}
+          </SearchProvider>
         </Provider>
         <script
           dangerouslySetInnerHTML={{

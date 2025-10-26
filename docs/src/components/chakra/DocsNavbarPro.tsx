@@ -1,11 +1,11 @@
 'use client'
 
 import { Box, Flex, HStack, IconButton, Menu, Portal } from '@chakra-ui/react'
-import { useState } from 'react'
 import { LuMenu } from 'react-icons/lu'
 import { FiBook, FiCode, FiGithub } from 'react-icons/fi'
 import { ColorModeButton } from '@/components/ui/color-mode'
 import { SearchDialog, SearchBarTrigger, SearchButtonTrigger } from './SearchComponents'
+import { useSearch } from '@/components/SearchProvider'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
@@ -60,28 +60,7 @@ const TabNavLink = ({
 
 export function DocsNavbarPro() {
   const pathname = usePathname()
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-
-  async function handleCopyForAI() {
-    try {
-      const slug = (pathname || '/docs').replace(/^\/+/, '') || 'docs'
-      const res = await fetch(`/llms/${slug}.txt`)
-      if (res.ok) {
-        const text = await res.text()
-        await navigator.clipboard.writeText(text)
-        return
-      }
-      const main = document.querySelector('main, [role="main"]') as HTMLElement | null
-      const text = main ? main.innerText : document.body.innerText
-      await navigator.clipboard.writeText(text)
-    } catch (e) {
-      try {
-        await navigator.clipboard.writeText(document.body.innerText)
-      } catch {
-        // Silently fail if clipboard access is denied
-      }
-    }
-  }
+  const { isOpen: isSearchOpen, setIsOpen: setIsSearchOpen } = useSearch()
 
   const navItems = [
     { label: 'Docs', href: '/docs', icon: <FiBook /> },
@@ -160,11 +139,6 @@ export function DocsNavbarPro() {
                 <SearchBarTrigger onClick={() => setIsSearchOpen(true)} />
               </Box>
 
-              {/* Copy for AI */}
-              <IconButton aria-label="Copy page for AI" variant="ghost" size="sm" onClick={handleCopyForAI}>
-                ⧉
-              </IconButton>
-
               {/* GitHub link */}
               <Box
                 asChild
@@ -178,7 +152,7 @@ export function DocsNavbarPro() {
                 _hover={{ bg: 'gray.100' }}
               >
                 <a
-                  href="https://github.com/facesignai/api"
+                  href="https://github.com/facesignai/facesign-api"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="GitHub"
@@ -253,7 +227,7 @@ export function DocsNavbarPro() {
                       <Box borderTopWidth="1px" my="2" />
 
                       <Menu.Item asChild value="github">
-                        <a href="https://github.com/facesignai/api" target="_blank" rel="noreferrer">
+                        <a href="https://github.com/facesignai/facesign-api" target="_blank" rel="noreferrer">
                           <HStack px="4" py="2" _hover={{ bg: 'gray.100' }}>
                             <FiGithub />
                             <span>GitHub</span>

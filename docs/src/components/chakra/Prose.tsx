@@ -8,7 +8,7 @@ interface ProseProps {
 
 export function Prose({ children }: ProseProps) {
   return (
-    <Box maxW="3xl">
+    <Box maxW="4xl">
       {children}
     </Box>
   )

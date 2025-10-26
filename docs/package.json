@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 4002",
+    "prebuild": "node scripts/build-search-index.mjs",
     "build": "next build",
     "start": "next start --port 4002",
-    "lint": "next lint"
+    "lint": "next lint",
+    "search:build": "node scripts/build-search-index.mjs"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {

@@ -52,14 +52,15 @@ export function DocsLayout({
           flex="1"
           minW="0"
           display="flex"
+          gap={{ base: 0, xl: 8 }}
         >
           {/* Main content */}
           <Box
             as="main"
-            flex="1"
-            minW="0"
+            w="100%"
+            maxW={{ base: '100%', xl: '65rem' }}
             py={6}
-            px={{ base: 4, md: 6, lg: 6 }}
+            px={{ base: 4, md: 6, lg: 8 }}
           >
             {children}
           </Box>
@@ -69,8 +70,12 @@ export function DocsLayout({
             <Box
               display={{ base: 'none', xl: 'block' }}
               flexShrink={0}
-              w="20rem"
-              pl={4}
+              w="15rem"
+              position="sticky"
+              top="80px"
+              alignSelf="flex-start"
+              height="calc(100vh - 80px)"
+              overflowY="auto"
             >
               <TableOfContentsPro />
             </Box>
