@@ -1,10 +1,11 @@
 'use client'
 
 import { RedocStandalone } from 'redoc'
+import { Box } from '@chakra-ui/react'
 
 export function ApiReferenceClient() {
   return (
-    <div className="min-h-screen w-full">
+    <Box minH="100vh" w="full">
       <RedocStandalone
         specUrl="/openapi.yaml"
         options={{
@@ -45,6 +46,6 @@ export function ApiReferenceClient() {
           }
         }}
       />
-    </div>
+    </Box>
   )
 }

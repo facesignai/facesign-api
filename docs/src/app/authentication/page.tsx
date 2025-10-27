@@ -17,10 +17,10 @@ export default function AuthenticationPage() {
     <DocsLayout variant="docs">
       <Prose>
       <Heading as="h1" size="2xl" mb={4}>Authentication</Heading>
-      <p className="lead">
+      <Text fontSize="xl" color="gray.600" _dark={{ color: 'gray.400' }} mb={6}>
         The FaceSign API uses API keys to authenticate requests. You can view and manage your API
         keys in the FaceSign Dashboard.
-      </p>
+      </Text>
 
       <Heading as="h2" size="lg" mt={8} mb={4}>API Keys</Heading>
       <p>FaceSign provides two types of API keys:</p>
