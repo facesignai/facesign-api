@@ -1,26 +1,14 @@
 import { createShikiAdapter } from '@chakra-ui/react'
-import type { Highlighter } from 'shiki'
-
-// Singleton cache for the highlighter instance
-let highlighterPromise: Promise<Highlighter> | null = null
 
 export const shikiAdapter = createShikiAdapter({
   async load() {
-    // Return cached promise if available
-    if (highlighterPromise) {
-      return highlighterPromise
-    }
-
-    // Create and cache the highlighter promise
-    highlighterPromise = (async () => {
-      const { createHighlighter } = await import('shiki')
-      return createHighlighter({
-        langs: ['bash', 'javascript', 'typescript', 'python', 'json', 'go'],
-        themes: ['github-light', 'github-dark'],
-      })
-    })()
-
-    return highlighterPromise
+    // Always create a fresh highlighter instance
+    // This avoids disposal issues in React Strict Mode
+    const { createHighlighter } = await import('shiki')
+    return createHighlighter({
+      langs: ['bash', 'javascript', 'typescript', 'python', 'json', 'go'],
+      themes: ['github-light', 'github-dark'],
+    })
   },
   theme: { light: 'github-light', dark: 'github-dark' },
 })
