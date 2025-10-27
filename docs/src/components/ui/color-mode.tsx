@@ -1,27 +1,48 @@
 'use client'
 
 import { ClientOnly, IconButton, Skeleton } from '@chakra-ui/react'
-import { ThemeProvider, useTheme as useNextTheme } from 'next-themes'
-import type { ComponentProps } from 'react'
 import * as React from 'react'
 import { LuMoon, LuSun } from 'react-icons/lu'
 
-export interface ColorModeProviderProps extends ComponentProps<typeof ThemeProvider> {}
+export interface ColorModeProviderProps {
+  children: React.ReactNode
+}
 
-export function ColorModeProvider(props: ColorModeProviderProps) {
-  return (
-    <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
-  )
+export function ColorModeProvider({ children }: ColorModeProviderProps) {
+  return <>{children}</>
 }
 
 export function useColorMode() {
-  const { resolvedTheme, setTheme } = useNextTheme()
-  const toggleColorMode = () => {
-    setTheme(resolvedTheme === 'light' ? 'dark' : 'light')
-  }
+  // For Chakra v3, we need to use the context directly
+  const [colorMode, setColorMode] = React.useState<'light' | 'dark'>('light')
+
+  React.useEffect(() => {
+    // Get from localStorage or system preference
+    const stored = localStorage.getItem('chakra-ui-color-mode')
+    if (stored) {
+      setColorMode(stored as 'light' | 'dark')
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      setColorMode(prefersDark ? 'dark' : 'light')
+    }
+  }, [])
+
+  const toggleColorMode = React.useCallback(() => {
+    setColorMode(prev => {
+      const next = prev === 'light' ? 'dark' : 'light'
+      localStorage.setItem('chakra-ui-color-mode', next)
+      document.documentElement.classList.toggle('dark', next === 'dark')
+      return next
+    })
+  }, [])
+
   return {
-    colorMode: resolvedTheme as 'light' | 'dark',
-    setColorMode: setTheme,
+    colorMode,
+    setColorMode: (mode: 'light' | 'dark') => {
+      setColorMode(mode)
+      localStorage.setItem('chakra-ui-color-mode', mode)
+      document.documentElement.classList.toggle('dark', mode === 'dark')
+    },
     toggleColorMode,
   }
 }

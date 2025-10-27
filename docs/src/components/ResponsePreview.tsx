@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import clsx from 'clsx'
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import { Box, Badge, Tabs, Button, Code, VStack, HStack, Text, Heading } from '@chakra-ui/react'
 
 interface ResponsePreviewProps {
   responses: {
@@ -14,109 +13,105 @@ interface ResponsePreviewProps {
 }
 
 function StatusBadge({ status }: { status: number }) {
-  const getStatusColor = (status: number) => {
-    if (status >= 200 && status < 300) {
-      return 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20'
-    } else if (status >= 400 && status < 500) {
-      return 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20'
-    } else if (status >= 500) {
-      return 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20'
-    }
-    return 'bg-zinc-50 text-zinc-700 ring-zinc-600/20 dark:bg-zinc-500/10 dark:text-zinc-400 dark:ring-zinc-500/20'
+  const getStatusColor = (status: number): 'green' | 'red' | 'gray' => {
+    if (status >= 200 && status < 300) return 'green'
+    if (status >= 400) return 'red'
+    return 'gray'
   }
 
   return (
-    <span className={clsx(
-      'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset',
-      getStatusColor(status)
-    )}>
+    <Badge colorPalette={getStatusColor(status)} size="sm">
       {status}
-    </span>
+    </Badge>
   )
 }
 
 function JsonViewer({ data }: { data: Record<string, any> }) {
-  const [copyCount, setCopyCount] = useState(0)
-  const copied = copyCount > 0
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
     navigator.clipboard.writeText(JSON.stringify(data, null, 2))
-    setCopyCount(count => count + 1)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
-  // Format JSON without weird highlighting issues
   const formattedJson = JSON.stringify(data, null, 2)
 
   return (
-    <div className="relative">
-      <button
+    <Box position="relative">
+      <Button
         onClick={handleCopy}
-        className={clsx(
-          'absolute right-2 top-2 z-10 rounded px-2 py-1 text-xs font-medium transition-all',
-          copied 
-            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-            : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'
-        )}
+        position="absolute"
+        right={2}
+        top={2}
+        zIndex={10}
+        size="xs"
+        colorPalette={copied ? 'green' : 'gray'}
       >
         {copied ? 'Copied!' : 'Copy'}
-      </button>
-      
-      <pre className="overflow-x-auto rounded-lg bg-zinc-900 p-4 text-sm leading-relaxed dark:bg-zinc-950">
-        <code className="block text-zinc-100 dark:text-zinc-100" style={{ whiteSpace: 'pre' }}>
+      </Button>
+
+      <Box
+        as="pre"
+        overflowX="auto"
+        borderRadius="lg"
+        bg="gray.900"
+        _dark={{ bg: 'gray.950' }}
+        p={4}
+        fontSize="sm"
+        lineHeight="relaxed"
+      >
+        <Code display="block" color="gray.100" whiteSpace="pre">
           {formattedJson}
-        </code>
-      </pre>
-    </div>
+        </Code>
+      </Box>
+    </Box>
   )
 }
 
 export function ResponsePreview({ responses, title = "Response Examples" }: ResponsePreviewProps) {
   return (
-    <div className="my-6">
-      <h4 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-white">
+    <Box my={6}>
+      <Heading as="h4" size="sm" mb={4}>
         {title}
-      </h4>
-      
-      <TabGroup>
-        <TabList className="flex space-x-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+      </Heading>
+
+      <Tabs.Root defaultValue="0">
+        <Tabs.List bg="gray.100" _dark={{ bg: 'gray.800' }} borderRadius="lg" p={1}>
           {responses.map((response, index) => (
-            <Tab
+            <Tabs.Trigger
               key={index}
-              className={({ selected }) =>
-                clsx(
-                  'w-full rounded-md py-2 px-3 text-xs font-medium leading-5 transition-all',
-                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                  selected
-                    ? 'bg-white text-zinc-900 shadow dark:bg-zinc-700 dark:text-white'
-                    : 'text-zinc-600 hover:bg-white/[0.12] hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
-                )
-              }
+              value={String(index)}
+              w="full"
+              borderRadius="md"
+              py={2}
+              px={3}
+              fontSize="xs"
+              fontWeight="medium"
             >
-              <div className="flex items-center justify-center gap-2">
+              <HStack gap={2} justify="center">
                 <StatusBadge status={response.status} />
-                <span className="hidden sm:inline">{response.description}</span>
-              </div>
-            </Tab>
+                <Text hideBelow="sm">{response.description}</Text>
+              </HStack>
+            </Tabs.Trigger>
           ))}
-        </TabList>
-        
-        <TabPanels className="mt-4">
-          {responses.map((response, index) => (
-            <TabPanel key={index} className="focus:outline-none">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <StatusBadge status={response.status} />
-                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    {response.description}
-                  </span>
-                </div>
-                
-                <JsonViewer data={response.example} />
-              </div>
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </TabGroup>
-    </div>
+        </Tabs.List>
+
+        {responses.map((response, index) => (
+          <Tabs.Content key={index} value={String(index)} mt={4}>
+            <VStack align="stretch" gap={4}>
+              <HStack gap={3}>
+                <StatusBadge status={response.status} />
+                <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
+                  {response.description}
+                </Text>
+              </HStack>
+
+              <JsonViewer data={response.example} />
+            </VStack>
+          </Tabs.Content>
+        ))}
+      </Tabs.Root>
+    </Box>
   )
 }

@@ -15,7 +15,7 @@ export default function NotFound() {
             Page not found
           </Heading>
           <Text fontSize="md" color="gray.600" _dark={{ color: 'gray.400' }} mt={2}>
-            Sorry, we couldn't find the page you're looking for.
+            Sorry, we couldn&apos;t find the page you&apos;re looking for.
           </Text>
           <Box mt={8}>
             <Button href="/" arrow="right">
