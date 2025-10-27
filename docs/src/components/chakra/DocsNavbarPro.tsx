@@ -88,13 +88,13 @@ export function DocsNavbarPro() {
               alignItems="center"
               _hover={{ textDecoration: 'none' }}
             >
-              <Box h={8} w="auto" position="relative">
+              <Box h={8} position="relative">
                 <Image
                   src={logoSrc}
                   alt="FaceSign"
                   height={32}
                   sizes="128px"
-                  style={{ height: '100%', width: 'auto' }}
+                  style={{ height: 'auto', width: 'auto' }}
                 />
               </Box>
             </Box>

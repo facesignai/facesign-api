@@ -1,14 +1,54 @@
 import { createShikiAdapter } from '@chakra-ui/react'
+import type { Highlighter } from 'shiki'
+
+// Singleton cache for Shiki highlighter instance
+let highlighterInstance: Highlighter | null = null
+let highlighterPromise: Promise<Highlighter> | null = null
 
 export const shikiAdapter = createShikiAdapter({
   async load() {
-    // Always create a fresh highlighter instance
-    // This avoids disposal issues in React Strict Mode
-    const { createHighlighter } = await import('shiki')
-    return createHighlighter({
-      langs: ['bash', 'javascript', 'typescript', 'python', 'json', 'go'],
-      themes: ['github-light', 'github-dark'],
-    })
+    // Return cached instance if available
+    if (highlighterInstance) {
+      return highlighterInstance
+    }
+
+    // Return in-flight promise if loading
+    if (highlighterPromise) {
+      return highlighterPromise
+    }
+
+    // Create new instance
+    highlighterPromise = (async () => {
+      const { createHighlighter } = await import('shiki')
+      const highlighter = await createHighlighter({
+        langs: ['bash', 'javascript', 'typescript', 'python', 'json', 'go'],
+        themes: ['github-light', 'github-dark'],
+      })
+      highlighterInstance = highlighter
+      highlighterPromise = null
+      return highlighter
+    })()
+
+    return highlighterPromise
   },
   theme: { light: 'github-light', dark: 'github-dark' },
 })
+
+// Cleanup function for when the module is disposed (HMR, etc.)
+if (typeof window !== 'undefined') {
+  const cleanup = () => {
+    if (highlighterInstance) {
+      highlighterInstance.dispose()
+      highlighterInstance = null
+      highlighterPromise = null
+    }
+  }
+
+  // Clean up on page unload
+  window.addEventListener('beforeunload', cleanup)
+
+  // HMR cleanup
+  if (import.meta.hot) {
+    import.meta.hot.dispose(cleanup)
+  }
+}

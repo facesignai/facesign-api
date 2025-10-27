@@ -350,7 +350,13 @@ export function SimpleCodeBlock({
     const initialLanguage = defaultLanguage || availableLanguages[0] || 'bash'
 
     const content = (
-      <Tabs.Root defaultValue={initialLanguage} size={size} variant="subtle" mb={8}>
+      <Tabs.Root
+        defaultValue={initialLanguage}
+        size={size}
+        variant="subtle"
+        mb={8}
+        multiple={false}
+      >
         <CodeBlock.Root
           size={size}
           code={codeExamples[initialLanguage as keyof typeof codeExamples] || ''}
