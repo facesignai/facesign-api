@@ -47,8 +47,10 @@ if (typeof window !== 'undefined') {
   // Clean up on page unload
   window.addEventListener('beforeunload', cleanup)
 
-  // HMR cleanup
-  if (import.meta.hot) {
-    import.meta.hot.dispose(cleanup)
+  // HMR cleanup (Vite/Next.js HMR support)
+  // @ts-expect-error - HMR API varies by bundler
+  if (typeof module !== 'undefined' && module.hot) {
+    // @ts-expect-error - HMR API varies by bundler
+    module.hot.dispose(cleanup)
   }
 }

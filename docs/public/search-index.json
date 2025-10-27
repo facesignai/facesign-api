@@ -13,10 +13,58 @@
       "url": "/api"
     },
     {
-      "id": "/api-reference",
-      "title": "Page",
-      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
-      "url": "/api-reference"
+      "id": "/client-secrets",
+      "title": "Client Secrets",
+      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
+      "url": "/client-secrets"
+    },
+    {
+      "id": "/client-secrets#0",
+      "title": "Client Secrets",
+      "heading": "How client secrets work",
+      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
+      "url": "/client-secrets#how-client-secrets-work",
+      "section": "How client secrets work"
+    },
+    {
+      "id": "/client-secrets#1",
+      "title": "Client Secrets",
+      "heading": "Client secret properties",
+      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
+      "url": "/client-secrets#client-secret-properties",
+      "section": "Client secret properties"
+    },
+    {
+      "id": "/client-secrets#2",
+      "title": "Client Secrets",
+      "heading": "Creating sessions with client secrets",
+      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
+      "url": "/client-secrets#creating-sessions-with-client-secrets",
+      "section": "Creating sessions with client secrets"
+    },
+    {
+      "id": "/client-secrets#3",
+      "title": "Client Secrets",
+      "heading": "Redirecting users to verification",
+      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
+      "url": "/client-secrets#redirecting-users-to-verification",
+      "section": "Redirecting users to verification"
+    },
+    {
+      "id": "/client-secrets#5",
+      "title": "Client Secrets",
+      "heading": "Security considerations",
+      "content": "Security considerations",
+      "url": "/client-secrets#security-considerations",
+      "section": "Security considerations"
+    },
+    {
+      "id": "/client-secrets#9",
+      "title": "Client Secrets",
+      "heading": "Next steps",
+      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
+      "url": "/client-secrets#next-steps",
+      "section": "Next steps"
     },
     {
       "id": "/authentication",
@@ -69,6 +117,12 @@
       "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
       "url": "/avatars#avatar-customization",
       "section": "Avatar customization"
+    },
+    {
+      "id": "/api-reference",
+      "title": "Page",
+      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
+      "url": "/api-reference"
     },
     {
       "id": "/customization",
@@ -191,60 +245,6 @@
       "content": "Getting help Need help with persistent errors? • Check the API status page for any ongoing issues • Review your request parameters against the API documentation • Contact support with the request ID from the error response",
       "url": "/errors#getting-help",
       "section": "Getting help"
-    },
-    {
-      "id": "/client-secrets",
-      "title": "Client Secrets",
-      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
-      "url": "/client-secrets"
-    },
-    {
-      "id": "/client-secrets#0",
-      "title": "Client Secrets",
-      "heading": "How client secrets work",
-      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
-      "url": "/client-secrets#how-client-secrets-work",
-      "section": "How client secrets work"
-    },
-    {
-      "id": "/client-secrets#1",
-      "title": "Client Secrets",
-      "heading": "Client secret properties",
-      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
-      "url": "/client-secrets#client-secret-properties",
-      "section": "Client secret properties"
-    },
-    {
-      "id": "/client-secrets#2",
-      "title": "Client Secrets",
-      "heading": "Creating sessions with client secrets",
-      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
-      "url": "/client-secrets#creating-sessions-with-client-secrets",
-      "section": "Creating sessions with client secrets"
-    },
-    {
-      "id": "/client-secrets#3",
-      "title": "Client Secrets",
-      "heading": "Redirecting users to verification",
-      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
-      "url": "/client-secrets#redirecting-users-to-verification",
-      "section": "Redirecting users to verification"
-    },
-    {
-      "id": "/client-secrets#5",
-      "title": "Client Secrets",
-      "heading": "Security considerations",
-      "content": "Security considerations",
-      "url": "/client-secrets#security-considerations",
-      "section": "Security considerations"
-    },
-    {
-      "id": "/client-secrets#9",
-      "title": "Client Secrets",
-      "heading": "Next steps",
-      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
-      "url": "/client-secrets#next-steps",
-      "section": "Next steps"
     },
     {
       "id": "/languages",
@@ -371,12 +371,6 @@
       "section": "Example event payload"
     },
     {
-      "id": "/flows/fsnode",
-      "title": "FSNode (moved)",
-      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
-      "url": "/flows/fsnode"
-    },
-    {
       "id": "/flows/mapping",
       "title": "Flow Builder → FSFlow Mapping",
       "content": "title: 'Flow Builder → FSFlow Mapping', description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.', } Flow Builder → FSFlow Mapping This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (SessionSettings.flow). Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail ",
@@ -421,6 +415,12 @@
       "content": "Using the FSFlow with the API On success you receive { session, clientSecret }; send users to clientSecret.url.",
       "url": "/flows/mapping#using-the-fsflow-with-the-api",
       "section": "Using the FSFlow with the API"
+    },
+    {
+      "id": "/flows/fsnode",
+      "title": "FSNode (moved)",
+      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
+      "url": "/flows/fsnode"
     },
     {
       "id": "/quickstart/go-installation",
@@ -563,16 +563,16 @@
       "section": "Next Steps"
     },
     {
-      "id": "/sessions/client-secret",
-      "title": "Client Secret (moved)",
-      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
-      "url": "/sessions/client-secret"
-    },
-    {
       "id": "/sessions/object",
       "title": "Session Object (moved)",
       "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
       "url": "/sessions/object"
+    },
+    {
+      "id": "/sessions/client-secret",
+      "title": "Client Secret (moved)",
+      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
+      "url": "/sessions/client-secret"
     },
     {
       "id": "/webhooks/signed-headers",

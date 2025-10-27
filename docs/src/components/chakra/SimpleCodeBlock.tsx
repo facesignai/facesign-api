@@ -355,7 +355,6 @@ export function SimpleCodeBlock({
         size={size}
         variant="subtle"
         mb={8}
-        multiple={false}
       >
         <CodeBlock.Root
           size={size}
