@@ -1,6 +1,6 @@
 'use client'
 
-import { Table, Badge, Code, Text, Box } from '@chakra-ui/react'
+import { Table, Badge, Code, Box } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 
 export interface Property {
@@ -66,9 +66,9 @@ export function PropertiesTable({ properties, title, showType = true }: Properti
   return (
     <Box mb={8}>
       {title && (
-        <Text fontSize="lg" fontWeight="semibold" mb={4}>
+        <Box fontSize="lg" fontWeight="semibold" mb={4}>
           {title}
-        </Text>
+        </Box>
       )}
       <Box
         borderWidth="1px"
@@ -108,16 +108,16 @@ export function PropertiesTable({ properties, title, showType = true }: Properti
                   </Table.Cell>
                 )}
                 <Table.Cell>
-                  <Text fontSize="sm">{property.description}</Text>
+                  <Box fontSize="sm">{property.description}</Box>
                   {property.default && (
-                    <Text fontSize="xs" color="gray.600" mt={1}>
+                    <Box fontSize="xs" color="gray.600" mt={1}>
                       Default: <Code fontSize="xs">{property.default}</Code>
-                    </Text>
+                    </Box>
                   )}
                   {property.example && (
-                    <Text fontSize="xs" color="gray.600" mt={1}>
+                    <Box fontSize="xs" color="gray.600" mt={1}>
                       Example: <Code fontSize="xs">{property.example}</Code>
-                    </Text>
+                    </Box>
                   )}
                 </Table.Cell>
               </Table.Row>

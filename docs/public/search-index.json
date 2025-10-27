@@ -19,58 +19,6 @@
       "url": "/authentication"
     },
     {
-      "id": "/api-reference",
-      "title": "Page",
-      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
-      "url": "/api-reference"
-    },
-    {
-      "id": "/avatars",
-      "title": "Avatars",
-      "content": "title: 'Avatars', description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.', } Avatars FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }} How avatars work FaceSign avatars are AI-powered virtual assistants tha",
-      "url": "/avatars"
-    },
-    {
-      "id": "/avatars#0",
-      "title": "Avatars",
-      "heading": "How avatars work",
-      "content": "How avatars work FaceSign avatars are AI-powered virtual assistants that: - Guide users through each step of the verification process - Adapt their conversation based on the flow nodes you've configured - Speak multiple languages and adjust their communication style accordingly - Provide real-time f",
-      "url": "/avatars#how-avatars-work",
-      "section": "How avatars work"
-    },
-    {
-      "id": "/avatars#1",
-      "title": "Avatars",
-      "heading": "Avatar object",
-      "content": "Avatar object Unique identifier for the avatar. Human-readable name of the avatar. Avatar gender: male, female, or unknown. URL to the avatar's profile image for display in your interface. ---",
-      "url": "/avatars#avatar-object",
-      "section": "Avatar object"
-    },
-    {
-      "id": "/avatars#2",
-      "title": "Avatars",
-      "heading": "Get available avatars",
-      "content": "Get available avatars Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience. GET /avatars } languageSwitcher=\"dropdown\" size=\"lg\" codeExamples={{ curl: curl https://api.dev.facesign.ai/avatars \\\\\\n -H \"Aut",
-      "url": "/avatars#get-available-avatars",
-      "section": "Get available avatars"
-    },
-    {
-      "id": "/avatars#3",
-      "title": "Avatars",
-      "heading": "Choosing the right avatar",
-      "content": "Choosing the right avatar",
-      "url": "/avatars#choosing-the-right-avatar",
-      "section": "Choosing the right avatar"
-    },
-    {
-      "id": "/avatars#6",
-      "title": "Avatars",
-      "heading": "Avatar customization",
-      "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
-      "url": "/avatars#avatar-customization",
-      "section": "Avatar customization"
-    },
-    {
       "id": "/client-secrets",
       "title": "Client Secrets",
       "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
@@ -123,6 +71,58 @@
       "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
       "url": "/client-secrets#next-steps",
       "section": "Next steps"
+    },
+    {
+      "id": "/avatars",
+      "title": "Avatars",
+      "content": "title: 'Avatars', description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.', } Avatars FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }} How avatars work FaceSign avatars are AI-powered virtual assistants tha",
+      "url": "/avatars"
+    },
+    {
+      "id": "/avatars#0",
+      "title": "Avatars",
+      "heading": "How avatars work",
+      "content": "How avatars work FaceSign avatars are AI-powered virtual assistants that: - Guide users through each step of the verification process - Adapt their conversation based on the flow nodes you've configured - Speak multiple languages and adjust their communication style accordingly - Provide real-time f",
+      "url": "/avatars#how-avatars-work",
+      "section": "How avatars work"
+    },
+    {
+      "id": "/avatars#1",
+      "title": "Avatars",
+      "heading": "Avatar object",
+      "content": "Avatar object Unique identifier for the avatar. Human-readable name of the avatar. Avatar gender: male, female, or unknown. URL to the avatar's profile image for display in your interface. ---",
+      "url": "/avatars#avatar-object",
+      "section": "Avatar object"
+    },
+    {
+      "id": "/avatars#2",
+      "title": "Avatars",
+      "heading": "Get available avatars",
+      "content": "Get available avatars Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience. GET /avatars } languageSwitcher=\"dropdown\" size=\"lg\" codeExamples={{ curl: curl https://api.dev.facesign.ai/avatars \\\\\\n -H \"Aut",
+      "url": "/avatars#get-available-avatars",
+      "section": "Get available avatars"
+    },
+    {
+      "id": "/avatars#3",
+      "title": "Avatars",
+      "heading": "Choosing the right avatar",
+      "content": "Choosing the right avatar",
+      "url": "/avatars#choosing-the-right-avatar",
+      "section": "Choosing the right avatar"
+    },
+    {
+      "id": "/avatars#6",
+      "title": "Avatars",
+      "heading": "Avatar customization",
+      "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
+      "url": "/avatars#avatar-customization",
+      "section": "Avatar customization"
+    },
+    {
+      "id": "/api-reference",
+      "title": "Page",
+      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
+      "url": "/api-reference"
     },
     {
       "id": "/customization",
@@ -301,7 +301,7 @@
     {
       "id": "/sdks",
       "title": "FaceSign SDKs",
-      "content": "title: 'FaceSign SDKs', description: 'Official SDKs and client libraries for integrating FaceSign identity verification into your applications.', } { title: 'Quick Start Guides', id: 'quick-start-guides' }, { title: 'Available SDKs', id: 'official-libraries' }, { title: 'Planned SDKs', id: 'upcoming-libraries' }, ] FaceSign SDKs The recommended way to interact with the FaceSign API is by using our official SDKs. Choose from multiple programming languages to integrate FaceSign identity verificati",
+      "content": "title: 'FaceSign SDKs', description: 'Official SDKs and client libraries for integrating FaceSign identity verification into your applications.', } { title: 'Quick Start Guides', id: 'quick-start-guides' }, { title: 'Available SDKs', id: 'official-libraries' }, ] FaceSign SDKs The recommended way to interact with the FaceSign API is by using our official SDKs. Choose from multiple programming languages to integrate FaceSign identity verification into your applications. {{ className: 'lead' }} Qu",
       "url": "/sdks"
     },
     {
@@ -371,12 +371,6 @@
       "section": "Example event payload"
     },
     {
-      "id": "/flows/fsnode",
-      "title": "FSNode (moved)",
-      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
-      "url": "/flows/fsnode"
-    },
-    {
       "id": "/flows/mapping",
       "title": "Flow Builder → FSFlow Mapping",
       "content": "title: 'Flow Builder → FSFlow Mapping', description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.', } Flow Builder → FSFlow Mapping This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (SessionSettings.flow). Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail ",
@@ -421,6 +415,12 @@
       "content": "Using the FSFlow with the API On success you receive { session, clientSecret }; send users to clientSecret.url.",
       "url": "/flows/mapping#using-the-fsflow-with-the-api",
       "section": "Using the FSFlow with the API"
+    },
+    {
+      "id": "/flows/fsnode",
+      "title": "FSNode (moved)",
+      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
+      "url": "/flows/fsnode"
     },
     {
       "id": "/quickstart/go-installation",
@@ -563,18 +563,6 @@
       "section": "Next Steps"
     },
     {
-      "id": "/sessions/client-secret",
-      "title": "Client Secret (moved)",
-      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
-      "url": "/sessions/client-secret"
-    },
-    {
-      "id": "/sessions/object",
-      "title": "Session Object (moved)",
-      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
-      "url": "/sessions/object"
-    },
-    {
       "id": "/webhooks/signed-headers",
       "title": "Webhook Signed Headers",
       "content": "title: 'Webhook Signed Headers', description: 'Design for signing FaceSign webhook deliveries and verifying signatures on your server.', } Webhook Signed Headers This page describes a recommended, Stripe-style design for signing webhook deliveries and verifying them on your server. Dev currently sends unsigned webhooks; this guide is future-facing for when signatures are enabled. Header format - Header: FaceSign-Signature - Value: t={unixts},v1={hexhmacsha256(rawbody, whsec...)} - t: Unix timest",
@@ -627,6 +615,18 @@
       "content": "Rotation & rollout - Secrets: whsec... stored in env/secret manager; never log or expose client-side - Rotation: dual-signing window (two v1= values) or scheduled cutover; remove old key when consumers rotate - Current Dev behavior: unsigned; verify by fetching the session via sessionId for now",
       "url": "/webhooks/signed-headers#rotation-&-rollout",
       "section": "Rotation & rollout"
+    },
+    {
+      "id": "/sessions/client-secret",
+      "title": "Client Secret (moved)",
+      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
+      "url": "/sessions/client-secret"
+    },
+    {
+      "id": "/sessions/object",
+      "title": "Session Object (moved)",
+      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
+      "url": "/sessions/object"
     }
   ]
 }
