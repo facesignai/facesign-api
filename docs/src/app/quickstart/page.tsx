@@ -1,6 +1,9 @@
 import {
+  Badge,
   Box,
   Heading,
+  HStack,
+  Span,
   Text,
   VStack,
   Code,
@@ -12,8 +15,7 @@ import {
 import { DocsLayout } from '@/components/chakra/DocsLayout'
 import { Prose } from '@/components/chakra/Prose'
 import { DocsCodeBlock } from '@/components/chakra/DocsCodeBlock'
-import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
-import { TabbedCodeBlock } from '@/components/chakra/TabbedCodeBlock'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 
 export const metadata = {
@@ -62,8 +64,9 @@ export default function QuickstartPage() {
 
           <Text mt={4} mb={2}>Optional SDK installation:</Text>
 
-          <TabbedCodeBlock
+          <SimpleCodeBlock
             defaultLanguage="npm"
+            languageSwitcher="tabs"
             codeExamples={{
               npm: "npm install @facesignai/api",
               python: "pip install facesignai",
@@ -100,9 +103,15 @@ export default function QuickstartPage() {
             POST to Dev with a minimal flow (<Code>start</Code> → <Code>end</Code>).
           </Text>
 
-          <RequestCodeBlock
-            method="POST"
-            path="/sessions (Dev)"
+          <SimpleCodeBlock
+            headerLeft={
+              <HStack>
+                <Badge colorPalette="teal" fontWeight="bold">POST</Badge>
+                <Span textStyle="xs">/sessions (Dev)</Span>
+              </HStack>
+            }
+            languageSwitcher="dropdown"
+            size="lg"
             codeExamples={{
               curl: `curl -X POST https://api.dev.facesign.ai/sessions \\
   -H "Authorization: Bearer $FACESIGN_API_KEY" \\
@@ -212,9 +221,15 @@ print('Hosted URL:', data['clientSecret']['url'])`
             Use the session ID to poll status or fetch results.
           </Text>
 
-          <RequestCodeBlock
-            method="GET"
-            path="/sessions/{id} (Dev)"
+          <SimpleCodeBlock
+            headerLeft={
+              <HStack>
+                <Badge colorPalette="green" fontWeight="bold">GET</Badge>
+                <Span textStyle="xs">/sessions/{'{id}'} (Dev)</Span>
+              </HStack>
+            }
+            languageSwitcher="dropdown"
+            size="lg"
             codeExamples={{
               curl: `curl https://api.dev.facesign.ai/sessions/sess_abc123 \\
   -H "Authorization: Bearer $FACESIGN_API_KEY"`,

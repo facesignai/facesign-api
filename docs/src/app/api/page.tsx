@@ -9,7 +9,6 @@ import {
   Card,
   Code,
   CodeBlock,
-  Float,
   Flex,
   Grid,
   Heading,
@@ -206,21 +205,21 @@ export default function ApiReferencePage() {
             {/* Right - Code */}
             <Box>
               <CodeBlock.AdapterProvider value={shikiAdapter}>
-                <CodeBlock.Root code="https://api.dev.facesign.ai" language="text" size="sm">
-                  <CodeBlock.Header>
+                <CodeBlock.Root code="https://api.dev.facesign.ai" language="text" size="sm" bg="gray.900">
+                  <CodeBlock.Header borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
                     <CodeBlock.Title>
-                      BASE URLsf4
+                      BASE URL
                     </CodeBlock.Title>
-                    <Float placement="top-end" offset="5" zIndex="1">
+                    <CodeBlock.Control>
                       <CodeBlock.CopyTrigger asChild>
-                        <IconButton variant="ghost" size="2xs">
+                        <IconButton variant="ghost" size="2xs" color="white">
                           <CodeBlock.CopyIndicator />
                         </IconButton>
                       </CodeBlock.CopyTrigger>
-                    </Float>                    
+                    </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content>
-                    <CodeBlock.Code>
+                  <CodeBlock.Content maxH="360px" overflowY="auto" bg="gray.900">
+                    <CodeBlock.Code color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
                   </CodeBlock.Content>
@@ -257,9 +256,9 @@ export default function ApiReferencePage() {
                   code="Authorization: Bearer YOUR_API_KEY"
                   language="text"
                   size="sm"
+                  bg="gray.900"
                 >
                   <CodeBlock.Header
-                    py="2"
                     borderBottomWidth="1px"
                     bg="gray.900"
                     color="white"
@@ -278,7 +277,7 @@ export default function ApiReferencePage() {
                       </CodeBlock.CopyTrigger>
                     </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900">
+                  <CodeBlock.Content maxH="360px" overflowY="auto" bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
@@ -498,7 +497,7 @@ export default function ApiReferencePage() {
                     message: 'The flow field is required',
                     code: 'missing_required_field'
                   }
-                }, null, 2)} language="json" size="sm">
+                }, null, 2)} language="json" size="sm" bg="gray.50">
                   <CodeBlock.Header borderBottomWidth="1px" bg="gray.100" borderColor="gray.200">
                     <CodeBlock.Title>Error Response</CodeBlock.Title>
                     <CodeBlock.Control>
@@ -509,7 +508,7 @@ export default function ApiReferencePage() {
                       </CodeBlock.CopyTrigger>
                     </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.50">
+                  <CodeBlock.Content maxH="360px" overflowY="auto" bg="gray.50">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="gray.800">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
@@ -553,20 +552,21 @@ export default function ApiReferencePage() {
                   code={JSON.stringify(simpleFlow, null, 2)}
                   language="json"
                   size="md"
+                  bg="gray.900"
                 >
-                  <CodeBlock.Header>
+                  <CodeBlock.Header borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
                     <CodeBlock.Title>
-                      MINIMAL FLOW ABCDEFG
+                      MINIMAL FLOW
                     </CodeBlock.Title>
                     <CodeBlock.Control>
-                    <CodeBlock.CopyTrigger asChild>
-                      <IconButton variant="ghost" size="2xs">
-                        <CodeBlock.CopyIndicator />
-                      </IconButton>
-                    </CodeBlock.CopyTrigger>
-                  </CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs" color="white">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900">
+                  <CodeBlock.Content maxH="500px" overflowY="auto" bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
@@ -648,20 +648,21 @@ export default function ApiReferencePage() {
                   code={JSON.stringify(emailFlow, null, 2)}
                   language="json"
                   size="sm"
+                  bg="gray.900"
                 >
-                  <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
+                  <CodeBlock.Header borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
                     <CodeBlock.Title>
                       EMAIL COLLECTION FLOW
                     </CodeBlock.Title>
-                  <Float placement="top-end" offset="5" zIndex="1">
-                    <CodeBlock.CopyTrigger asChild>
-                      <IconButton variant="ghost" size="2xs">
-                        <CodeBlock.CopyIndicator />
-                      </IconButton>
-                    </CodeBlock.CopyTrigger>
-                  </Float>                    
+                    <CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs" color="white">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900">
+                  <CodeBlock.Content maxH="500px" overflowY="auto" bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
@@ -711,20 +712,21 @@ export default function ApiReferencePage() {
                   code={JSON.stringify(documentFlow, null, 2)}
                   language="json"
                   size="sm"
+                  bg="gray.900"
                 >
-                  <CodeBlock.Header py="2" borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
+                  <CodeBlock.Header borderBottomWidth="1px" bg="gray.900" color="white" borderColor="gray.700">
                     <CodeBlock.Title>
                       CONDITIONAL FLOW
                     </CodeBlock.Title>
-                  <Float placement="top-end" offset="5" zIndex="1">
-                    <CodeBlock.CopyTrigger asChild>
-                      <IconButton variant="ghost" size="2xs">
-                        <CodeBlock.CopyIndicator />
-                      </IconButton>
-                    </CodeBlock.CopyTrigger>
-                  </Float>                    
+                    <CodeBlock.Control>
+                      <CodeBlock.CopyTrigger asChild>
+                        <IconButton variant="ghost" size="2xs" color="white">
+                          <CodeBlock.CopyIndicator />
+                        </IconButton>
+                      </CodeBlock.CopyTrigger>
+                    </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900">
+                  <CodeBlock.Content maxH="500px" overflowY="auto" bg="gray.900">
                     <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
@@ -1065,12 +1067,9 @@ export default function ApiReferencePage() {
 }`}
                   language="json"
                   size="sm"
-                  meta={{
-                    colorScheme: 'dark',
-                  }}
+                  bg="gray.900"
                 >
                   <CodeBlock.Header
-                    py="2"
                     borderBottomWidth="1px"
                     bg="gray.900"
                     color="white"
@@ -1089,8 +1088,8 @@ export default function ApiReferencePage() {
                       </CodeBlock.CopyTrigger>
                     </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900" maxH="400px" overflowY="auto">
-                    <CodeBlock.Code fontSize="xs" overflowX="auto">
+                  <CodeBlock.Content bg="gray.900" maxH="500px" overflowY="auto">
+                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
                   </CodeBlock.Content>
@@ -1159,12 +1158,9 @@ async function processWebhook(webhook) {
 }`}
                   language="javascript"
                   size="sm"
-                  meta={{
-                    colorScheme: 'dark',
-                  }}
+                  bg="gray.900"
                 >
                   <CodeBlock.Header
-                    py="2"
                     borderBottomWidth="1px"
                     bg="gray.900"
                     color="white"
@@ -1183,8 +1179,8 @@ async function processWebhook(webhook) {
                       </CodeBlock.CopyTrigger>
                     </CodeBlock.Control>
                   </CodeBlock.Header>
-                  <CodeBlock.Content bg="gray.900" maxH="400px" overflowY="auto">
-                    <CodeBlock.Code fontSize="xs" overflowX="auto">
+                  <CodeBlock.Content bg="gray.900" maxH="500px" overflowY="auto">
+                    <CodeBlock.Code fontSize="xs" overflowX="auto" color="white">
                       <CodeBlock.CodeText />
                     </CodeBlock.Code>
                   </CodeBlock.Content>

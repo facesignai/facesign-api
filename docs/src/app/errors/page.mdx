@@ -1,7 +1,8 @@
 import { Prose } from '@/components/chakra/Prose'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { DocLinkCard } from '@/components/chakra/DocLinkCard'
-import { SimpleGrid } from '@chakra-ui/react'
+import { SimpleGrid, Card, HStack, VStack, Text, Circle, Blockquote } from '@chakra-ui/react'
+import { LuCheck } from 'react-icons/lu'
 
 export const metadata = {
   title: 'Error Handling',
@@ -18,7 +19,7 @@ The FaceSign API uses conventional HTTP response codes to indicate the success o
 
 FaceSign returns the following HTTP status codes:
 
-<Properties>
+<Properties showType={false}>
   <Property name="200 OK">
     The request was successful.
   </Property>
@@ -72,7 +73,7 @@ All error responses follow a consistent format:
 
 ## Error types
 
-<Properties>
+<Properties showType={false}>
   <Property name="authentication_error">
     Failure to properly authenticate in the request.
   </Property>
@@ -94,10 +95,12 @@ All error responses follow a consistent format:
 
 Here's how to properly handle errors when using the FaceSign SDK:
 
-<CodeGroup title="Error handling examples">
-
-```typescript {{ title: 'TypeScript' }}
-import Client from '@facesignai/api'
+<SimpleCodeBlock
+  title="Error handling examples"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `import Client from '@facesignai/api'
 import { FSNodeType } from '@facesignai/api'
 
 const client = new Client({
@@ -122,7 +125,7 @@ try {
 } catch (err) {
   // Parse error response from API
   try {
-    const errorResponse = JSON.parse((err as Error).message)
+    const errorResponse = JSON.parse(err.message)
     const { type, message, code } = errorResponse.error
 
     if (type === 'validation_error') {
@@ -137,60 +140,10 @@ try {
     }
   } catch {
     // Handle non-JSON errors (network issues, etc.)
-    console.error('Request failed:', (err as Error).message)
-  }
-}
-```
-
-```javascript {{ title: 'JavaScript' }}
-import Client from '@facesignai/api'
-
-const client = new Client({
-  auth: 'sk_test_...',
-  serverUrl: 'https://api.dev.facesign.ai'
-})
-
-try {
-  const { session, clientSecret } = await client.session.create({
-    clientReferenceId: 'user-123',
-    metadata: { source: 'web-app' },
-    flow: {
-      nodes: [
-        { id: 'start', type: 'start', outcome: 'end' },
-        { id: 'end', type: 'end' }
-      ],
-      edges: [{ id: 'e1', source: 'start', target: 'end' }]
-    }
-  })
-
-  console.log('Session created:', session.id)
-} catch (err) {
-  // Parse error response
-  try {
-    const errorResponse = JSON.parse(err.message)
-    const { type, message, code } = errorResponse.error
-
-    switch (type) {
-      case 'validation_error':
-        console.error('Validation error:', message, code)
-        break
-      case 'authentication_error':
-        console.error('Check your API key')
-        break
-      case 'rate_limit_error':
-        console.error('Rate limited:', message)
-        break
-      default:
-        console.error('API error:', message)
-    }
-  } catch {
     console.error('Request failed:', err.message)
   }
-}
-```
-
-```python {{ title: 'Python' }}
-import json
+}`,
+    python: `import json
 import facesignai
 
 client = facesignai.Client(
@@ -230,10 +183,9 @@ except Exception as err:
         else:
             print(f"API error: {message}")
     except (json.JSONDecodeError, KeyError):
-        print(f"Request failed: {str(err)}")
-```
-
-</CodeGroup>
+        print(f"Request failed: {str(err)}")`
+  }}
+/>
 
 ## Common errors and solutions
 
@@ -265,10 +217,12 @@ except Exception as err:
 
 For transient errors like network issues and rate limiting, implement exponential backoff:
 
-<CodeGroup title="Retry with exponential backoff">
-
-```typescript {{ title: 'TypeScript' }}
-import Client from '@facesignai/api'
+<SimpleCodeBlock
+  title="Retry with exponential backoff"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `import Client from '@facesignai/api'
 import type { SessionSettings } from '@facesignai/api'
 
 async function createSessionWithRetry(
@@ -311,11 +265,8 @@ const { session } = await createSessionWithRetry(client, {
   clientReferenceId: 'user-123',
   metadata: {},
   flow: { nodes: [...], edges: [...] }
-})
-```
-
-```python {{ title: 'Python' }}
-import time
+})`,
+    python: `import time
 import json
 import facesignai
 
@@ -334,7 +285,7 @@ def create_session_with_retry(client, params, max_retries=3):
                 error_type = error_response.get('error', {}).get('type')
 
                 # Don't retry validation or authentication errors
-                if error_type in ['validation_error', 'authentication_error']:
+                if (error_type in ['validation_error', 'authentication_error']):
                     raise
             except (json.JSONDecodeError, KeyError):
                 pass  # Continue with retry
@@ -351,28 +302,146 @@ response = create_session_with_retry(client, {
     'client_reference_id': 'user-123',
     'metadata': {},
     'flow': {'nodes': [...], 'edges': [...]}
-})
-```
-
-</CodeGroup>
+})`
+  }}
+/>
 
 ## Best practices
 
-1. **Always handle errors gracefully** - Don't let API errors crash your application
-2. **Log errors for debugging** - Save error messages and context for troubleshooting
-3. **Implement retry logic** - Use exponential backoff for transient errors
-4. **Respect rate limits** - Monitor your usage and implement proper throttling
-5. **Parse error responses** - Extract `type`, `message`, and `code` from error objects
-6. **Show user-friendly messages** - Don't expose technical error details to end users
-7. **Handle network failures** - Catch both API errors and network issues
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={4} my={8}>
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Handle errors gracefully</Text>
+          <Text fontSize="sm" color="gray.600">
+            Don't let API errors crash your application
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Log errors for debugging</Text>
+          <Text fontSize="sm" color="gray.600">
+            Save error messages and context for troubleshooting
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Implement retry logic</Text>
+          <Text fontSize="sm" color="gray.600">
+            Use exponential backoff for transient errors
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Respect rate limits</Text>
+          <Text fontSize="sm" color="gray.600">
+            Monitor your usage and implement proper throttling
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Parse error responses</Text>
+          <Text fontSize="sm" color="gray.600">
+            Extract `type`, `message`, and `code` from error objects
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Show user-friendly messages</Text>
+          <Text fontSize="sm" color="gray.600">
+            Don't expose technical error details to end users
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="green.100" color="green.600" flexShrink={0}>
+          <LuCheck />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Handle network failures</Text>
+          <Text fontSize="sm" color="gray.600">
+            Catch both API errors and network issues
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
 
 ## Getting help
 
-If you encounter persistent errors:
-
-- Check the [API status page](https://status.facesign.ai) for any ongoing issues
-- Review your request parameters against the API documentation
-- Contact support with the request ID from the error response
+<Blockquote.Root variant="subtle" colorPalette="blue" my={6}>
+  <Blockquote.Content>
+    <Text fontWeight="semibold" mb={3}>
+      Need help with persistent errors?
+    </Text>
+    <VStack align="start" gap={2}>
+      <Text>
+        • Check the <a href="https://status.facesign.ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--chakra-colors-blue-600)', textDecoration: 'underline' }}>API status page</a> for any ongoing issues
+      </Text>
+      <Text>
+        • Review your request parameters against the API documentation
+      </Text>
+      <Text>
+        • Contact support with the request ID from the error response
+      </Text>
+    </VStack>
+  </Blockquote.Content>
+</Blockquote.Root>
 
 ## Next steps
 

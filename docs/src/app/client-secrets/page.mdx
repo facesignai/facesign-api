@@ -40,10 +40,12 @@ Client secrets provide a secure way to redirect users to the verification flow:
 
 Use your backend SDK to create a session and get the client secret URL:
 
-<CodeGroup title="Backend: Create session">
-
-```typescript {{ title: 'TypeScript' }}
-import Client from '@facesignai/api'
+<SimpleCodeBlock
+  title="Backend: Create session"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `import Client from '@facesignai/api'
 import { FSNodeType } from '@facesignai/api'
 
 const client = new Client({
@@ -81,11 +83,8 @@ const { session, clientSecret } = await client.session.create({
 //   createdAt: 1761001508335,
 //   url: "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100",
 //   expireAt: 1761008708335
-// }
-```
-
-```python {{ title: 'Python' }}
-import facesignai
+// }`,
+    python: `import facesignai
 
 client = facesignai.Client(
     auth=os.environ.get('FACESIGN_API_KEY'),
@@ -125,10 +124,9 @@ client_secret = response['clientSecret']
 #   'createdAt': 1761001508335,
 #   'url': 'https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100',
 #   'expireAt': 1761008708335
-# }
-```
-
-</CodeGroup>
+# }`
+  }}
+/>
 
 ---
 
@@ -136,10 +134,12 @@ client_secret = response['clientSecret']
 
 Once you have the client secret, redirect your users to the hosted verification interface:
 
-<CodeGroup title="Frontend integration">
-
-```typescript {{ title: 'Express.js' }}
-app.get('/start-verification', async (req, res) => {
+<SimpleCodeBlock
+  title="Frontend integration"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `app.get('/start-verification', async (req, res) => {
   // Create session on backend
   const { session, clientSecret } = await client.session.create({
     clientReferenceId: req.user.id,
@@ -151,9 +151,8 @@ app.get('/start-verification', async (req, res) => {
   res.redirect(clientSecret.url)
   // URL: https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100
 })
-```
 
-```typescript {{ title: 'Next.js API Route' }}
+// Next.js API Route
 import Client from '@facesignai/api'
 
 export async function GET(request: Request) {
@@ -170,11 +169,8 @@ export async function GET(request: Request) {
 
   // Redirect to hosted verification
   return Response.redirect(clientSecret.url)
-}
-```
-
-```python {{ title: 'Flask' }}
-from flask import redirect
+}`,
+    python: `from flask import redirect
 import facesignai
 
 @app.route('/start-verification')
@@ -188,10 +184,9 @@ def start_verification():
 
     # Redirect user to hosted verification
     return redirect(response['clientSecret']['url'])
-    # URL: https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100
-```
-
-</CodeGroup>
+    # URL: https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100`
+  }}
+/>
 
 ### Mobile integration
 
@@ -233,9 +228,12 @@ Unlike API keys, client secrets are designed to be safe for URL exposure:
 3. **Secure transmission** - Always use HTTPS when transmitting client secrets
 4. **Don't store long-term** - Client secrets are meant for immediate use
 
-<CodeGroup title="Secure implementation">
-
-```typescript {{ title: 'Backend endpoint' }}
+<SimpleCodeBlock
+  title="Secure implementation"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `// Backend endpoint
 import Client from '@facesignai/api'
 import { FSNodeType } from '@facesignai/api'
 
@@ -295,16 +293,15 @@ app.post('/api/create-verification', authenticate, async (req, res) => {
     res.status(500).json({ error: 'Failed to create verification session' })
   }
 })
-```
 
-```typescript {{ title: 'Frontend implementation' }}
+// Frontend implementation
 async function startVerification() {
   try {
     // Fetch verification URL from your secure backend
     const response = await fetch('/api/create-verification', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${userToken}`,
+        'Authorization': \`Bearer \${userToken}\`,
         'Content-Type': 'application/json'
       }
     })
@@ -323,10 +320,9 @@ async function startVerification() {
     console.error('Verification startup failed:', error)
     showErrorMessage('Unable to start verification')
   }
-}
-```
-
-</CodeGroup>
+}`
+  }}
+/>
 
 ### Handling expiration
 

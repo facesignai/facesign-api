@@ -1,6 +1,6 @@
 'use client'
 
-import { TabbedCodeBlock } from './TabbedCodeBlock'
+import { SimpleCodeBlock } from './SimpleCodeBlock'
 
 interface CodeTabsProps {
   title?: string
@@ -11,19 +11,27 @@ interface CodeTabsProps {
     go?: string
     curl?: string
     javascript?: string
+    typescript?: string
     ts?: string
   }
   defaultLanguage?: string
 }
 
 export function CodeTabs({ title, codeExamples, defaultLanguage }: CodeTabsProps) {
-  // Map ts -> javascript temporarily if needed
+  // Map ts -> typescript if needed
   const mapped = { ...codeExamples }
-  if (mapped.ts && !mapped.javascript) {
-    mapped.javascript = mapped.ts
+  if (mapped.ts) {
+    mapped.typescript = mapped.ts
     delete (mapped as any).ts
   }
-  return <TabbedCodeBlock title={title} codeExamples={mapped as any} defaultLanguage={defaultLanguage} />
+  return (
+    <SimpleCodeBlock
+      title={title}
+      codeExamples={mapped}
+      defaultLanguage={defaultLanguage}
+      languageSwitcher="tabs"
+    />
+  )
 }
 
 

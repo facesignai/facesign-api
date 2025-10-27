@@ -18,37 +18,90 @@ FaceSign supports multiple languages for the verification interface, allowing yo
 
 <SimpleGrid columns={{ base: 1, sm: 2 }} gap="4">
   <Table.Root size="sm" variant="line">
-    <Table.Header>
-      <Table.Row>
-        <Table.ColumnHeader>Language</Table.ColumnHeader>
-        <Table.ColumnHeader textAlign="end">Code</Table.ColumnHeader>
-      </Table.Row>
-    </Table.Header>
     <Table.Body>
-      <Table.Row><Table.Cell>English (Default)</Table.Cell><Table.Cell textAlign="end">en</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Español</Table.Cell><Table.Cell textAlign="end">es</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Français</Table.Cell><Table.Cell textAlign="end">fr</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Deutsch</Table.Cell><Table.Cell textAlign="end">de</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Italiano</Table.Cell><Table.Cell textAlign="end">it</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Português</Table.Cell><Table.Cell textAlign="end">pt</Table.Cell></Table.Row>
+      <Table.Row>
+        <Table.Cell>English (Default)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>en</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Spanish (Español)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>es</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>French (Français)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>fr</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>German (Deutsch)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>de</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Italian (Italiano)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>it</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Portuguese (Português)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>pt</Code>
+        </Table.Cell>
+      </Table.Row>
     </Table.Body>
   </Table.Root>
 
   <Table.Root size="sm" variant="line">
-    <Table.Header>
-      <Table.Row>
-        <Table.ColumnHeader>Language</Table.ColumnHeader>
-        <Table.ColumnHeader textAlign="end">Code</Table.ColumnHeader>
-      </Table.Row>
-    </Table.Header>
     <Table.Body>
-      <Table.Row><Table.Cell>Nederlands</Table.Cell><Table.Cell textAlign="end">nl</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Polski</Table.Cell><Table.Cell textAlign="end">pl</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>Русский</Table.Cell><Table.Cell textAlign="end">ru</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>日本語</Table.Cell><Table.Cell textAlign="end">ja</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>한국어</Table.Cell><Table.Cell textAlign="end">ko</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>简体中文</Table.Cell><Table.Cell textAlign="end">zh-CN</Table.Cell></Table.Row>
-      <Table.Row><Table.Cell>繁體中文</Table.Cell><Table.Cell textAlign="end">zh-TW</Table.Cell></Table.Row>
+      <Table.Row>
+        <Table.Cell>Dutch (Nederlands)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>nl</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Polish (Polski)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>pl</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Russian (Русский)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>ru</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Japanese (日本語)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>ja</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Korean (한국어)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>ko</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Chinese (Simplified) (简体中文)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>zh-CN</Code>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Chinese (Traditional) (繁體中文)</Table.Cell>
+        <Table.Cell textAlign="end">
+          <Code>zh-TW</Code>
+        </Table.Cell>
+      </Table.Row>
     </Table.Body>
   </Table.Root>
 </SimpleGrid>
@@ -70,15 +123,14 @@ FaceSign supports multiple languages for the verification interface, allowing yo
 
 Returns a list of all languages supported by FaceSign. Use these language codes when creating sessions to specify which languages should be available to users.
 
-<CodeGroup title="Request" tag="GET" label="/langs">
-
-```bash {{ title: 'cURL' }}
-curl https://api.dev.facesign.ai/langs \
-  -H "Authorization: Bearer sk_test_..."
-```
-
-```typescript {{ title: 'TypeScript' }}
-import Client from '@facesignai/api'
+<SimpleCodeBlock
+  title="Request"
+  defaultLanguage="bash"
+  languageSwitcher="tabs"
+  codeExamples={{
+    bash: `curl https://api.dev.facesign.ai/langs \\
+  -H "Authorization: Bearer sk_test_..."`,
+    javascript: `import Client from '@facesignai/api'
 import { FSNodeType } from '@facesignai/api'
 
 const client = new Client({
@@ -100,11 +152,8 @@ const { session, clientSecret } = await client.session.create({
     ],
     edges: [{ id: 'e1', source: 'start', target: 'end' }]
   }
-})
-```
-
-```python {{ title: 'Python' }}
-import facesignai
+})`,
+    python: `import facesignai
 
 client = facesignai.Client(
     auth='sk_test_...',
@@ -126,13 +175,11 @@ session_response = client.session.create(
         ],
         'edges': [{'id': 'e1', 'source': 'start', 'target': 'end'}]
     }
-)
-```
+)`
+  }}
+/>
 
-</CodeGroup>
-
-```json {{ title: 'Response' }}
-{
+<SimpleCodeBlock title="Response" language="json" code={`{
   "langs": [
     {
       "id": "en",
@@ -186,9 +233,8 @@ session_response = client.session.create(
       "id": "zh-TW",
       "title": "繁體中文"
     }
-  }
-}
-```
+  ]
+}`} />
 
 ---
 

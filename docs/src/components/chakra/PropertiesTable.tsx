@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 
 export interface Property {
   name: string
-  type: string
+  type?: string
   required?: boolean
   description: string | ReactNode
   default?: string
@@ -16,6 +16,7 @@ export interface Property {
 interface PropertiesTableProps {
   properties: Property[]
   title?: string
+  showType?: boolean // Control Type column visibility (defaults to true)
 }
 
 /**
@@ -45,7 +46,7 @@ interface PropertiesTableProps {
  *   ]}
  * />
  */
-export function PropertiesTable({ properties, title }: PropertiesTableProps) {
+export function PropertiesTable({ properties, title, showType = true }: PropertiesTableProps) {
   // Flatten properties with their children for rendering
   const flattenProperties = (props: Property[], depth = 0): Array<{ property: Property; depth: number }> => {
     const result: Array<{ property: Property; depth: number }> = []
@@ -80,7 +81,7 @@ export function PropertiesTable({ properties, title }: PropertiesTableProps) {
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>Name</Table.ColumnHeader>
-              <Table.ColumnHeader>Type</Table.ColumnHeader>
+              {showType && <Table.ColumnHeader>Type</Table.ColumnHeader>}
               <Table.ColumnHeader>Description</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
@@ -99,11 +100,13 @@ export function PropertiesTable({ properties, title }: PropertiesTableProps) {
                     )}
                   </Box>
                 </Table.Cell>
-                <Table.Cell>
-                  <Code fontSize="xs" colorPalette="gray">
-                    {property.type}
-                  </Code>
-                </Table.Cell>
+                {showType && (
+                  <Table.Cell>
+                    <Code fontSize="xs" colorPalette="gray">
+                      {property.type}
+                    </Code>
+                  </Table.Cell>
+                )}
                 <Table.Cell>
                   <Text fontSize="sm">{property.description}</Text>
                   {property.default && (

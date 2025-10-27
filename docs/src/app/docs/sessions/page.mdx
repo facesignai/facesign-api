@@ -1,9 +1,10 @@
 import { PageHeader } from '@/components/chakra/PageHeader'
 import { Prose } from '@/components/chakra/Prose'
-import { Blockquote } from '@chakra-ui/react'
+import { Blockquote, SimpleGrid } from '@chakra-ui/react'
 import { CodeTabs } from '@/components/chakra/CodeTabs'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { NextPrevNav } from '@/components/chakra/NextPrevNav'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 
 <PageHeader title="Sessions" description="Create and manage verification sessions." />
 
@@ -48,7 +49,6 @@ Sessions represent a single verification attempt. They are short‑lived and sco
 <SimpleCodeBlock
   title="The Client Secret object"
   language="json"
-  variant="light"
   code={`{
   "secret": "csea61d44d88d345e1b91622820bb73100",
   "createdAt": 1761001508335,
@@ -156,7 +156,6 @@ The `report` object contains verification results and is only present when the s
 <SimpleCodeBlock
   title="Session Object Example"
   language="json"
-  variant="light"
   code={`{
   "id": "sess_abc123",
   "createdAt": 1706284800000,
@@ -265,8 +264,23 @@ The `report` object contains verification results and is only present when the s
 
 ## Next steps
 
-- Attach a client secret and initialize the SDK in your app.
-- Listen for status changes via webhooks.
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="8">
+  <DocLinkCard
+    href="/client-secrets"
+    title="Client Secrets"
+    description="Securely share sessions with end users"
+  />
+  <DocLinkCard
+    href="/docs/webhooks"
+    title="Webhooks"
+    description="Listen for session status changes"
+  />
+  <DocLinkCard
+    href="/sdks"
+    title="SDKs"
+    description="Initialize the SDK in your app"
+  />
+</SimpleGrid>
 
 <NextPrevNav next={{ href: '/docs/flows', label: 'Flows' }} />
 

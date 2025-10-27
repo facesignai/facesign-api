@@ -22,11 +22,9 @@ import { ApiEndpointsCard } from '@/components/chakra/ApiEndpointsCard'
 // Import new Chakra components
 import { DocsCodeBlock } from '@/components/chakra/DocsCodeBlock'
 import { PropertiesTable, type Property } from '@/components/chakra/PropertiesTable'
-import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
 
 export const a = Link
 export { Button } from '@/components/Button'
-export { CodeGroup } from '@/components/CodeGroup'
 
 export function wrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -139,7 +137,7 @@ export function Col({
   )
 }
 
-export function Properties({ children }: { children: React.ReactNode }) {
+export function Properties({ children, showType = true }: { children: React.ReactNode; showType?: boolean }) {
   // Convert MDX Property children to PropertiesTable format
   const properties: Property[] = React.Children.toArray(children)
     .filter((child): child is React.ReactElement => {
@@ -153,7 +151,7 @@ export function Properties({ children }: { children: React.ReactNode }) {
       }
     })
 
-  return <PropertiesTable properties={properties} />
+  return <PropertiesTable properties={properties} showType={showType} />
 }
 
 export function Property({
@@ -212,7 +210,6 @@ export { ApiEndpoint, FlowDiagram, ResponsePreview, CollapsibleSection, ApiEndpo
 export {
   DocsCodeBlock,
   PropertiesTable,
-  RequestCodeBlock,
   Grid,
   VStack,
   HStack,
@@ -222,8 +219,7 @@ export {
   Separator
 }
 
-// Export code block components
-export { TabbedCodeBlock } from '@/components/chakra/TabbedCodeBlock'
+// Export code block component
 export { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 
 // Export parameter field components

@@ -133,16 +133,17 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     pre: (props) => {
       // Simple pre styling with Chakra design system
       // CodeBlock component is used via TabbedCodeBlock and SimpleCodeBlock custom components
+      // Note: backgroundColor is NOT set here - Shiki inline styles control the background
       return (
         <pre
           style={{
             marginBottom: 'var(--chakra-spacing-6)',
             borderRadius: 'var(--chakra-radii-md)',
             overflow: 'auto',
-            backgroundColor: 'var(--chakra-colors-gray-800)',
             padding: 'var(--chakra-spacing-4)',
-            fontSize: 'var(--chakra-fontSizes-xs)',
+            fontSize: 'var(--chakra-fontSizes-sm)',
             fontFamily: 'var(--chakra-fonts-mono)',
+            lineHeight: '1.7',
           }}
           {...props}
         />

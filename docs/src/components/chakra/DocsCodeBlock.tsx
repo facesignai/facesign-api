@@ -1,7 +1,7 @@
 'use client'
 
-import { RequestCodeBlock } from './RequestCodeBlock'
-import { CodeBlock } from '@chakra-ui/react'
+import { SimpleCodeBlock } from './SimpleCodeBlock'
+import { CodeBlock, Badge, HStack, Span } from '@chakra-ui/react'
 import { shikiAdapter } from '@/lib/shiki-adapter'
 import { useEffect, useState } from 'react'
 
@@ -63,22 +63,27 @@ export function DocsCodeBlock({
   showLineNumbers: _showLineNumbers = false,
   maxHeight = '500px'
 }: DocsCodeBlockProps) {
-  // If we have method and path, use RequestCodeBlock for API-style
+  // If we have method and path, use SimpleCodeBlock for API-style
   if (method && path && examples) {
     // Filter out undefined values and ensure we have the expected format
     const codeExamples: Record<string, string> = {}
 
     if (examples.curl) codeExamples.curl = examples.curl
-    if (examples.javascript || examples.typescript) {
-      codeExamples.javascript = examples.javascript || examples.typescript || ''
-    }
+    if (examples.javascript) codeExamples.javascript = examples.javascript
+    if (examples.typescript) codeExamples.typescript = examples.typescript
     if (examples.python) codeExamples.python = examples.python
     if (examples.go) codeExamples.go = examples.go
 
     return (
-      <RequestCodeBlock
-        method={method}
-        path={path}
+      <SimpleCodeBlock
+        headerLeft={
+          <HStack>
+            <Badge colorPalette={method === 'GET' ? 'green' : method === 'POST' ? 'teal' : method === 'DELETE' ? 'red' : 'blue'} fontWeight="bold">{method}</Badge>
+            <Span textStyle="xs">{path}</Span>
+          </HStack>
+        }
+        languageSwitcher="dropdown"
+        size="lg"
         codeExamples={codeExamples}
       />
     )

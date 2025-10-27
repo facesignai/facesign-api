@@ -1,8 +1,7 @@
 import { Prose } from '@/components/chakra/Prose'
-import { RequestCodeBlock } from '@/components/chakra/RequestCodeBlock'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { DocLinkCard } from '@/components/chakra/DocLinkCard'
-import { SimpleGrid } from '@chakra-ui/react'
+import { Badge, HStack, Span, SimpleGrid } from '@chakra-ui/react'
 
 export const metadata = {
   title: 'Avatars',
@@ -48,9 +47,15 @@ FaceSign avatars are AI-powered virtual assistants that:
 
 Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience.
 
-<RequestCodeBlock
-  method="GET"
-  path="/avatars"
+<SimpleCodeBlock
+  headerLeft={
+    <HStack>
+      <Badge colorPalette="green" fontWeight="bold">GET</Badge>
+      <Span textStyle="xs">/avatars</Span>
+    </HStack>
+  }
+  languageSwitcher="dropdown"
+  size="lg"
   codeExamples={{
     curl: `curl https://api.dev.facesign.ai/avatars \\\n  -H "Authorization: Bearer sk_test_..."`,
     typescript: `import Client from '@facesignai/api'
@@ -104,7 +109,6 @@ session_response = client.session.create(
 <SimpleCodeBlock
   title="Response"
   language="json"
-  variant="light"
   code={`{
   "avatars": [
     {
@@ -146,7 +150,6 @@ Different avatars work better for different use cases and audiences:
 <SimpleCodeBlock
   title="Avatar selection by use case"
   language="typescript"
-  variant="light"
   code={`const AVATAR_RECOMMENDATIONS = {
   financial_services: { avatarId: 'avatar_sarah_professional', description: 'Professional, trustworthy appearance for banking and financial apps' },
   healthcare: { avatarId: 'avatar_james_caring', description: 'Warm, empathetic avatar for medical verification' },
@@ -167,7 +170,6 @@ You can dynamically select avatars based on user preferences or demographics:
 <SimpleCodeBlock
   title="Dynamic avatar selection"
   language="typescript"
-  variant="light"
   code={`async function selectPersonalizedAvatar(userId: string) {
   const { avatars } = await client.avatars.list();
   const user = await db.users.findUnique({ where: { id: userId } });
@@ -199,7 +201,6 @@ Avatars adapt their conversational style based on the verification flow nodes yo
 <SimpleCodeBlock
   title="Avatar with custom flow"
   language="typescript"
-  variant="light"
   code={`const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user_123',
   avatarId: 'June_HR_public',
@@ -221,7 +222,7 @@ Avatars adapt their conversational style based on the verification flow nodes yo
 
 Provide an avatar selection interface before starting verification:
 
-<SimpleCodeBlock title="Avatar selection component" language="typescript" variant="light" code={`import React, { useState, useEffect } from 'react';
+<SimpleCodeBlock title="Avatar selection component" language="typescript" code={`import React, { useState, useEffect } from 'react';
 
 interface Avatar {
   id: string;
@@ -329,7 +330,7 @@ function VerificationSetup() {
 
 Show users what to expect from their chosen avatar:
 
-<SimpleCodeBlock title="Avatar preview component" language="typescript" variant="light" code={`function AvatarPreview({ avatar }: { avatar: Avatar }) {
+<SimpleCodeBlock title="Avatar preview component" language="typescript" code={`function AvatarPreview({ avatar }: { avatar: Avatar }) {
   return (
     <div className="avatar-preview">
       <div className="avatar-preview-header">
@@ -372,7 +373,7 @@ Show users what to expect from their chosen avatar:
 
 Choose avatars that align with your brand's personality and values:
 
-<SimpleCodeBlock title="Brand-avatar alignment" language="typescript" variant="light" code={`const BRAND_AVATAR_MAPPING = {
+<SimpleCodeBlock title="Brand-avatar alignment" language="typescript" code={`const BRAND_AVATAR_MAPPING = {
   // Professional, trustworthy brands
   financial: ['avatar_sarah_professional', 'avatar_david_corporate'],
 
@@ -395,7 +396,7 @@ function getRecommendedAvatars(brandCategory: string): string[] {
 
 Be mindful of cultural preferences when selecting avatars for different markets:
 
-<SimpleCodeBlock title="Cultural avatar considerations" language="typescript" variant="light" code={`const REGIONAL_AVATAR_PREFERENCES = {
+<SimpleCodeBlock title="Cultural avatar considerations" language="typescript" code={`const REGIONAL_AVATAR_PREFERENCES = {
   'north-america': {
     preferred: ['avatar_sarah_professional', 'avatar_james_friendly'],
     culturalNote: 'Professional but approachable avatars work well'
@@ -434,7 +435,7 @@ function selectCulturallyAppropriateAvatar(region: string, availableAvatars: Ava
 
 Monitor how different avatars perform with your users:
 
-<SimpleCodeBlock title="Avatar performance tracking" language="typescript" variant="light" code={`interface AvatarMetrics {
+<SimpleCodeBlock title="Avatar performance tracking" language="typescript" code={`interface AvatarMetrics {
   avatarId: string;
   completionRate: number;
   userSatisfaction: number;
@@ -482,7 +483,7 @@ async function selectOptimalAvatar(userSegment: string): Promise<string> {
 
 Cache avatar information to improve performance:
 
-<SimpleCodeBlock title="Avatar caching" language="typescript" variant="light" code={`let cachedAvatars: Avatar[] | null = null;
+<SimpleCodeBlock title="Avatar caching" language="typescript" code={`let cachedAvatars: Avatar[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 

@@ -7,13 +7,15 @@ import {
   Code,
   Grid,
   Heading,
+  HStack,
   Skeleton,
+  Span,
   Stack,
   Tabs,
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { RequestCodeBlock } from './RequestCodeBlock'
+import { SimpleCodeBlock } from './SimpleCodeBlock'
 import { ResponseCodeBlock } from './ResponseCodeBlock'
 import { ApiParameterField } from './ApiParameterField'
 
@@ -301,9 +303,15 @@ export function ApiEndpointSplitView({
         >
           <VStack align="stretch" gap={4}>
             {/* Request Code Block */}
-            <RequestCodeBlock
-              method={method}
-              path={path}
+            <SimpleCodeBlock
+              headerLeft={
+                <HStack>
+                  <Badge colorPalette={method === 'GET' ? 'green' : method === 'POST' ? 'teal' : method === 'DELETE' ? 'red' : 'blue'} fontWeight="bold">{method}</Badge>
+                  <Span textStyle="xs">{path}</Span>
+                </HStack>
+              }
+              languageSwitcher="dropdown"
+              size="lg"
               codeExamples={examples}
             />
 

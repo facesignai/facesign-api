@@ -7,62 +7,64 @@
       "url": "/page"
     },
     {
-      "id": "/authentication",
-      "title": "Page",
-      "content": "title: 'Authentication', description: 'Learn how to authenticate your API requests with FaceSign.', } return ( Authentication The FaceSign API uses API keys to authenticate requests. You can view and manage your API keys in the FaceSign Dashboard. API Keys FaceSign provides two types of API keys: Test mode keys - Start with sktest and can be used for development and testing Production mode keys - Start with sklive and should be used in your production environment Test mode keys have the same cap",
-      "url": "/authentication"
-    },
-    {
       "id": "/api-reference",
       "title": "Page",
       "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
       "url": "/api-reference"
     },
     {
-      "id": "/avatars",
-      "title": "Avatars",
-      "content": "title: 'Avatars', description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.', } Avatars FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }} How avatars work FaceSign avatars are AI-powered virtual assistants tha",
-      "url": "/avatars"
+      "id": "/client-secrets",
+      "title": "Client Secrets",
+      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
+      "url": "/client-secrets"
     },
     {
-      "id": "/avatars#0",
-      "title": "Avatars",
-      "heading": "How avatars work",
-      "content": "How avatars work FaceSign avatars are AI-powered virtual assistants that: - Guide users through each step of the verification process - Adapt their conversation based on the flow nodes you've configured - Speak multiple languages and adjust their communication style accordingly - Provide real-time f",
-      "url": "/avatars#how-avatars-work",
-      "section": "How avatars work"
+      "id": "/client-secrets#0",
+      "title": "Client Secrets",
+      "heading": "How client secrets work",
+      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
+      "url": "/client-secrets#how-client-secrets-work",
+      "section": "How client secrets work"
     },
     {
-      "id": "/avatars#1",
-      "title": "Avatars",
-      "heading": "Avatar object",
-      "content": "Avatar object Unique identifier for the avatar. Human-readable name of the avatar. Avatar gender: male, female, or unknown. URL to the avatar's profile image for display in your interface. ---",
-      "url": "/avatars#avatar-object",
-      "section": "Avatar object"
+      "id": "/client-secrets#1",
+      "title": "Client Secrets",
+      "heading": "Client secret properties",
+      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
+      "url": "/client-secrets#client-secret-properties",
+      "section": "Client secret properties"
     },
     {
-      "id": "/avatars#2",
-      "title": "Avatars",
-      "heading": "Get available avatars",
-      "content": "Get available avatars Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience. ---",
-      "url": "/avatars#get-available-avatars",
-      "section": "Get available avatars"
+      "id": "/client-secrets#2",
+      "title": "Client Secrets",
+      "heading": "Creating sessions with client secrets",
+      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
+      "url": "/client-secrets#creating-sessions-with-client-secrets",
+      "section": "Creating sessions with client secrets"
     },
     {
-      "id": "/avatars#3",
-      "title": "Avatars",
-      "heading": "Choosing the right avatar",
-      "content": "Choosing the right avatar",
-      "url": "/avatars#choosing-the-right-avatar",
-      "section": "Choosing the right avatar"
+      "id": "/client-secrets#3",
+      "title": "Client Secrets",
+      "heading": "Redirecting users to verification",
+      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
+      "url": "/client-secrets#redirecting-users-to-verification",
+      "section": "Redirecting users to verification"
     },
     {
-      "id": "/avatars#6",
-      "title": "Avatars",
-      "heading": "Avatar customization",
-      "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
-      "url": "/avatars#avatar-customization",
-      "section": "Avatar customization"
+      "id": "/client-secrets#5",
+      "title": "Client Secrets",
+      "heading": "Security considerations",
+      "content": "Security considerations",
+      "url": "/client-secrets#security-considerations",
+      "section": "Security considerations"
+    },
+    {
+      "id": "/client-secrets#9",
+      "title": "Client Secrets",
+      "heading": "Next steps",
+      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
+      "url": "/client-secrets#next-steps",
+      "section": "Next steps"
     },
     {
       "id": "/customization",
@@ -111,58 +113,22 @@
       "section": "Implementation"
     },
     {
-      "id": "/client-secrets",
-      "title": "Client Secrets",
-      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
-      "url": "/client-secrets"
+      "id": "/authentication",
+      "title": "Page",
+      "content": "title: 'Authentication', description: 'Learn how to authenticate your API requests with FaceSign.', } return ( Authentication The FaceSign API uses API keys to authenticate requests. You can view and manage your API keys in the FaceSign Dashboard. API Keys FaceSign provides two types of API keys: TEST Test Mode Keys Start with sktest Perfect for development and testing. Same capabilities as production keys but won&apos;t charge your account. All sessions are clearly marked as test mode. LIVE Pro",
+      "url": "/authentication"
     },
     {
-      "id": "/client-secrets#0",
-      "title": "Client Secrets",
-      "heading": "How client secrets work",
-      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
-      "url": "/client-secrets#how-client-secrets-work",
-      "section": "How client secrets work"
+      "id": "/api",
+      "title": "Page",
+      "content": "'use client' Accordion, Alert, Badge, Blockquote, Box, Card, Code, CodeBlock, Flex, Grid, Heading, HStack, IconButton, Separator, Span, Stack, Table, Text, VStack, } from '@chakra-ui/react' / DESIGN GUIDELINES FOR API DOCUMENTATION This page follows a consistent Stripe-style split-column layout pattern: 1. DARK CODE BLOCKS (bg: gray.900) - \"Copy This Code\" - Use for executable code snippets users will copy/paste - Examples: Request code (cURL, JavaScript, Python), Response JSON, Auth headers - C",
+      "url": "/api"
     },
     {
-      "id": "/client-secrets#1",
-      "title": "Client Secrets",
-      "heading": "Client secret properties",
-      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
-      "url": "/client-secrets#client-secret-properties",
-      "section": "Client secret properties"
-    },
-    {
-      "id": "/client-secrets#2",
-      "title": "Client Secrets",
-      "heading": "Creating sessions with client secrets",
-      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
-      "url": "/client-secrets#creating-sessions-with-client-secrets",
-      "section": "Creating sessions with client secrets"
-    },
-    {
-      "id": "/client-secrets#3",
-      "title": "Client Secrets",
-      "heading": "Redirecting users to verification",
-      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface:",
-      "url": "/client-secrets#redirecting-users-to-verification",
-      "section": "Redirecting users to verification"
-    },
-    {
-      "id": "/client-secrets#5",
-      "title": "Client Secrets",
-      "heading": "Security considerations",
-      "content": "Security considerations",
-      "url": "/client-secrets#security-considerations",
-      "section": "Security considerations"
-    },
-    {
-      "id": "/client-secrets#9",
-      "title": "Client Secrets",
-      "heading": "Next steps",
-      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
-      "url": "/client-secrets#next-steps",
-      "section": "Next steps"
+      "id": "/docs",
+      "title": "Page",
+      "content": "'use client' return ( FaceSign Documentation Build white‑label verification flows with FaceSign. Guides, concepts, and tutorials. Sessions Create and manage verification sessions; lifecycle, statuses, best practices. Flows Compose verification nodes with branching and outcomes. Webhooks Receive real‑time updates about session status changes securely. Need endpoint details? Open API Reference ) }",
+      "url": "/docs"
     },
     {
       "id": "/errors",
@@ -214,7 +180,7 @@
       "id": "/errors#9",
       "title": "Error Handling",
       "heading": "Implementing retry logic",
-      "content": "Implementing retry logic For transient errors like network issues and rate limiting, implement exponential backoff:",
+      "content": "Implementing retry logic For transient errors like network issues and rate limiting, implement exponential backoff: setTimeout(resolve, delay)) } } throw lastError } // Usage const { session } = await createSessionWithRetry(client, { clientReferenceId: 'user-123', metadata: {}, flow: { nodes: [...],",
       "url": "/errors#implementing-retry-logic",
       "section": "Implementing retry logic"
     },
@@ -222,7 +188,7 @@
       "id": "/errors#10",
       "title": "Error Handling",
       "heading": "Best practices",
-      "content": "Best practices 1. Always handle errors gracefully - Don't let API errors crash your application 2. Log errors for debugging - Save error messages and context for troubleshooting 3. Implement retry logic - Use exponential backoff for transient errors 4. Respect rate limits - Monitor your usage and im",
+      "content": "Best practices Handle errors gracefully Don't let API errors crash your application Log errors for debugging Save error messages and context for troubleshooting Implement retry logic Use exponential backoff for transient errors Respect rate limits Monitor your usage and implement proper throttling P",
       "url": "/errors#best-practices",
       "section": "Best practices"
     },
@@ -230,33 +196,107 @@
       "id": "/errors#11",
       "title": "Error Handling",
       "heading": "Getting help",
-      "content": "Getting help If you encounter persistent errors: - Check the API status page for any ongoing issues - Review your request parameters against the API documentation - Contact support with the request ID from the error response",
+      "content": "Getting help Need help with persistent errors? • Check the API status page for any ongoing issues • Review your request parameters against the API documentation • Contact support with the request ID from the error response",
       "url": "/errors#getting-help",
       "section": "Getting help"
     },
     {
-      "id": "/api",
-      "title": "Page",
-      "content": "'use client' Accordion, Alert, Badge, Blockquote, Box, Card, Code, CodeBlock, Float, Flex, Grid, Heading, HStack, IconButton, Separator, Span, Stack, Table, Text, VStack, } from '@chakra-ui/react' / DESIGN GUIDELINES FOR API DOCUMENTATION This page follows a consistent Stripe-style split-column layout pattern: 1. DARK CODE BLOCKS (bg: gray.900) - \"Copy This Code\" - Use for executable code snippets users will copy/paste - Examples: Request code (cURL, JavaScript, Python), Response JSON, Auth head",
-      "url": "/api"
+      "id": "/avatars",
+      "title": "Avatars",
+      "content": "title: 'Avatars', description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.', } Avatars FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }} How avatars work FaceSign avatars are AI-powered virtual assistants tha",
+      "url": "/avatars"
+    },
+    {
+      "id": "/avatars#0",
+      "title": "Avatars",
+      "heading": "How avatars work",
+      "content": "How avatars work FaceSign avatars are AI-powered virtual assistants that: - Guide users through each step of the verification process - Adapt their conversation based on the flow nodes you've configured - Speak multiple languages and adjust their communication style accordingly - Provide real-time f",
+      "url": "/avatars#how-avatars-work",
+      "section": "How avatars work"
+    },
+    {
+      "id": "/avatars#1",
+      "title": "Avatars",
+      "heading": "Avatar object",
+      "content": "Avatar object Unique identifier for the avatar. Human-readable name of the avatar. Avatar gender: male, female, or unknown. URL to the avatar's profile image for display in your interface. ---",
+      "url": "/avatars#avatar-object",
+      "section": "Avatar object"
+    },
+    {
+      "id": "/avatars#2",
+      "title": "Avatars",
+      "heading": "Get available avatars",
+      "content": "Get available avatars Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience. GET /avatars } languageSwitcher=\"dropdown\" size=\"lg\" codeExamples={{ curl: curl https://api.dev.facesign.ai/avatars \\\\\\n -H \"Aut",
+      "url": "/avatars#get-available-avatars",
+      "section": "Get available avatars"
+    },
+    {
+      "id": "/avatars#3",
+      "title": "Avatars",
+      "heading": "Choosing the right avatar",
+      "content": "Choosing the right avatar",
+      "url": "/avatars#choosing-the-right-avatar",
+      "section": "Choosing the right avatar"
+    },
+    {
+      "id": "/avatars#6",
+      "title": "Avatars",
+      "heading": "Avatar customization",
+      "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
+      "url": "/avatars#avatar-customization",
+      "section": "Avatar customization"
+    },
+    {
+      "id": "/languages",
+      "title": "Languages",
+      "content": "title: 'Languages', description: 'Learn how to retrieve and use supported languages for FaceSign verification sessions.', } Languages FaceSign supports multiple languages for the verification interface, allowing you to provide a localized experience for users worldwide. The /langs endpoint returns all available languages that can be used in your verification sessions. {{ className: 'lead' }} Supported languages English (Default) en Spanish (Español) es French (Français) fr German (Deutsch) de It",
+      "url": "/languages"
+    },
+    {
+      "id": "/languages#0",
+      "title": "Languages",
+      "heading": "Supported languages",
+      "content": "Supported languages English (Default) en Spanish (Español) es French (Français) fr German (Deutsch) de Italian (Italiano) it Portuguese (Português) pt Dutch (Nederlands) nl Polish (Polski) pl Russian (Русский) ru Japanese (日本語) ja Korean (한국어) ko Chinese (Simplified) (简体中文) zh-CN Chinese (Traditiona",
+      "url": "/languages#supported-languages",
+      "section": "Supported languages"
+    },
+    {
+      "id": "/languages#1",
+      "title": "Languages",
+      "heading": "Language object",
+      "content": "Language object Language code (ISO 639-1 format). Human-readable language name in the language itself. ---",
+      "url": "/languages#language-object",
+      "section": "Language object"
+    },
+    {
+      "id": "/languages#2",
+      "title": "Languages",
+      "heading": "Get supported languages",
+      "content": "Get supported languages {{ tag: 'GET', label: '/langs' }} Returns a list of all languages supported by FaceSign. Use these language codes when creating sessions to specify which languages should be available to users. ---",
+      "url": "/languages#get-supported-languages",
+      "section": "Get supported languages"
+    },
+    {
+      "id": "/languages#3",
+      "title": "Languages",
+      "heading": "Using languages in sessions",
+      "content": "Using languages in sessions",
+      "url": "/languages#using-languages-in-sessions",
+      "section": "Using languages in sessions"
+    },
+    {
+      "id": "/languages#7",
+      "title": "Languages",
+      "heading": "Language selection UX",
+      "content": "Language selection UX",
+      "url": "/languages#language-selection-ux",
+      "section": "Language selection UX"
     },
     {
       "id": "/quickstart",
       "title": "Quick Start",
-      "content": "Box, Heading, Text, VStack, Code, Link, Separator, Blockquote, SimpleGrid } from '@chakra-ui/react' title: 'Quick Start', description: 'Get up and running with the FaceSign API in under 5 minutes.', } return ( {/ Header /} Quick Start This quickstart shows a minimal 3-step Dev flow to get a hosted verification session running. Keep your API keys server-side and use environment variables. {/ Step 1 /} Step 1 — Install and set your API key Get your key from the FaceSign dashboard (Settings → API K",
+      "content": "Badge, Box, Heading, HStack, Span, Text, VStack, Code, Link, Separator, Blockquote, SimpleGrid } from '@chakra-ui/react' title: 'Quick Start', description: 'Get up and running with the FaceSign API in under 5 minutes.', } return ( {/ Header /} Quick Start This quickstart shows a minimal 3-step Dev flow to get a hosted verification session running. Keep your API keys server-side and use environment variables. {/ Step 1 /} Step 1 — Install and set your API key Get your key from the FaceSign dashbo",
       "url": "/quickstart"
-    },
-    {
-      "id": "/docs",
-      "title": "Page",
-      "content": "'use client' return ( FaceSign Documentation Build white‑label verification flows with FaceSign. Guides, concepts, and tutorials. Sessions Create and manage verification sessions; lifecycle, statuses, best practices. Flows Compose verification nodes with branching and outcomes. Webhooks Receive real‑time updates about session status changes securely. Need endpoint details? Open API Reference ) }",
-      "url": "/docs"
-    },
-    {
-      "id": "/languages",
-      "title": "Use in session creation",
-      "content": "title: 'Languages', description: 'Learn how to retrieve and use supported languages for FaceSign verification sessions.', } return ( Languages FaceSign supports multiple languages for the verification interface, allowing you to provide a localized experience for users worldwide. The /langs endpoint returns all available languages that can be used in your verification sessions. Supported languages Language Code English (Default) en Español es Français fr Deutsch de Italiano it Português pt Langua",
-      "url": "/languages"
     },
     {
       "id": "/sdks",
@@ -273,74 +313,114 @@
       "section": "Quick Start Guides"
     },
     {
-      "id": "/quickstart/python-installation",
-      "title": "Python SDK Installation Guide",
-      "content": "Python SDK Installation Guide Get started with the FaceSign Python SDK for server-side identity verification integration. Installation Install the FaceSign Python SDK using pip: Or using poetry: Requirements - Python 3.8 or higher - HTTP library: httpx (automatically installed) - Validation: pydantic (automatically installed) Quick Start 1. Initialize the Client 2. Create a Verification Session with Custom Flow 3. Retrieve Session Status 5. List Sessions Async Usage The SDK supports async/await ",
-      "url": "/quickstart/python-installation"
+      "id": "/docs/flows",
+      "title": "Page",
+      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness). Create a flow Get a flow FSNode object Node types One of start, end, conversation, livenessdetection, enteremail, datavalidation, documentscan, recognition, facescan, twofactor. Unique identifier within the flow. Minimal flow JSON Next steps",
+      "url": "/docs/flows"
     },
     {
-      "id": "/quickstart/python-installation#0",
-      "title": "Python SDK Installation Guide",
-      "heading": "Installation",
-      "content": "Installation Install the FaceSign Python SDK using pip: Or using poetry:",
-      "url": "/quickstart/python-installation#installation",
-      "section": "Installation"
+      "id": "/docs/flows#0",
+      "title": "Page",
+      "heading": "Concepts",
+      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).",
+      "url": "/docs/flows#concepts",
+      "section": "Concepts"
     },
     {
-      "id": "/quickstart/python-installation#1",
-      "title": "Python SDK Installation Guide",
-      "heading": "Requirements",
-      "content": "Requirements - Python 3.8 or higher - HTTP library: httpx (automatically installed) - Validation: pydantic (automatically installed)",
-      "url": "/quickstart/python-installation#requirements",
-      "section": "Requirements"
+      "id": "/docs/sessions",
+      "title": "Page",
+      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret. Create a session Retrieve a session Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side. Session object Top-level attributes Unique identifier for the session (e.g., \"sessabc123\"). Unix t",
+      "url": "/docs/sessions"
     },
     {
-      "id": "/quickstart/python-installation#7",
-      "title": "Python SDK Installation Guide",
-      "heading": "Async Usage",
-      "content": "Async Usage The SDK supports async/await patterns:",
-      "url": "/quickstart/python-installation#async-usage",
-      "section": "Async Usage"
+      "id": "/docs/sessions#0",
+      "title": "Page",
+      "heading": "When to use sessions",
+      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret.",
+      "url": "/docs/sessions#when-to-use-sessions",
+      "section": "When to use sessions"
     },
     {
-      "id": "/quickstart/python-installation#8",
-      "title": "Python SDK Installation Guide",
-      "heading": "Get Available Resources",
-      "content": "Get Available Resources",
-      "url": "/quickstart/python-installation#get-available-resources",
-      "section": "Get Available Resources"
+      "id": "/docs/sessions#3",
+      "title": "Page",
+      "heading": "Client Secret",
+      "content": "Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side.",
+      "url": "/docs/sessions#client-secret",
+      "section": "Client Secret"
     },
     {
-      "id": "/quickstart/python-installation#12",
-      "title": "Python SDK Installation Guide",
-      "heading": "Framework Integration",
-      "content": "Framework Integration",
-      "url": "/quickstart/python-installation#framework-integration",
-      "section": "Framework Integration"
+      "id": "/docs/webhooks",
+      "title": "Page",
+      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing. Example event payload Configure a webhook",
+      "url": "/docs/webhooks"
     },
     {
-      "id": "/quickstart/python-installation#16",
-      "title": "Python SDK Installation Guide",
-      "heading": "Environment Variables",
-      "content": "Environment Variables",
-      "url": "/quickstart/python-installation#environment-variables",
-      "section": "Environment Variables"
+      "id": "/docs/webhooks#0",
+      "title": "Page",
+      "heading": "Overview",
+      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing.",
+      "url": "/docs/webhooks#overview",
+      "section": "Overview"
     },
     {
-      "id": "/quickstart/python-installation#18",
-      "title": "Python SDK Installation Guide",
-      "heading": "Development vs Production",
-      "content": "Development vs Production",
-      "url": "/quickstart/python-installation#development-vs-production",
-      "section": "Development vs Production"
+      "id": "/docs/webhooks#1",
+      "title": "Page",
+      "heading": "Example event payload",
+      "content": "Example event payload",
+      "url": "/docs/webhooks#example-event-payload",
+      "section": "Example event payload"
     },
     {
-      "id": "/quickstart/python-installation#19",
-      "title": "Python SDK Installation Guide",
-      "heading": "Next Steps",
-      "content": "Next Steps - Read the API Reference for detailed endpoint documentation - Explore Session Management to understand verification flows - Check out Error Handling for comprehensive error management - Learn about Webhooks for real-time status updates",
-      "url": "/quickstart/python-installation#next-steps",
-      "section": "Next Steps"
+      "id": "/flows/fsnode",
+      "title": "FSNode (moved)",
+      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
+      "url": "/flows/fsnode"
+    },
+    {
+      "id": "/flows/mapping",
+      "title": "Flow Builder → FSFlow Mapping",
+      "content": "title: 'Flow Builder → FSFlow Mapping', description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.', } Flow Builder → FSFlow Mapping This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (SessionSettings.flow). Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail ",
+      "url": "/flows/mapping"
+    },
+    {
+      "id": "/flows/mapping#0",
+      "title": "Flow Builder → FSFlow Mapping",
+      "heading": "Node type mapping",
+      "content": "Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail | | Data Validation | datavalidation | | Document Scan | documentscan | | Recognition | recognition | |",
+      "url": "/flows/mapping#node-type-mapping",
+      "section": "Node type mapping"
+    },
+    {
+      "id": "/flows/mapping#1",
+      "title": "Flow Builder → FSFlow Mapping",
+      "heading": "Edges",
+      "content": "Edges Each connection in the canvas becomes an FSEdge:",
+      "url": "/flows/mapping#edges",
+      "section": "Edges"
+    },
+    {
+      "id": "/flows/mapping#2",
+      "title": "Flow Builder → FSFlow Mapping",
+      "heading": "Minimal translation example",
+      "content": "Minimal translation example Flow Builder (conceptual): Start → Conversation → End FSFlow JSON:",
+      "url": "/flows/mapping#minimal-translation-example",
+      "section": "Minimal translation example"
+    },
+    {
+      "id": "/flows/mapping#3",
+      "title": "Flow Builder → FSFlow Mapping",
+      "heading": "Checklist before exporting",
+      "content": "Checklist before exporting - Every node has a unique id and a valid type - All outcomes/branches point to an existing node id - There is exactly one start and at least one path to an end - Optional prompts/validation rules set as needed",
+      "url": "/flows/mapping#checklist-before-exporting",
+      "section": "Checklist before exporting"
+    },
+    {
+      "id": "/flows/mapping#4",
+      "title": "Flow Builder → FSFlow Mapping",
+      "heading": "Using the FSFlow with the API",
+      "content": "Using the FSFlow with the API On success you receive { session, clientSecret }; send users to clientSecret.url.",
+      "url": "/flows/mapping#using-the-fsflow-with-the-api",
+      "section": "Using the FSFlow with the API"
     },
     {
       "id": "/quickstart/go-installation",
@@ -413,130 +493,86 @@
       "section": "Next Steps"
     },
     {
-      "id": "/flows/fsnode",
-      "title": "FSNode (moved)",
-      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
-      "url": "/flows/fsnode"
+      "id": "/quickstart/python-installation",
+      "title": "Python SDK Installation Guide",
+      "content": "Python SDK Installation Guide Get started with the FaceSign Python SDK for server-side identity verification integration. Installation Install the FaceSign Python SDK using pip: Or using poetry: Requirements - Python 3.8 or higher - HTTP library: httpx (automatically installed) - Validation: pydantic (automatically installed) Quick Start 1. Initialize the Client 2. Create a Verification Session with Custom Flow 3. Retrieve Session Status 5. List Sessions Async Usage The SDK supports async/await ",
+      "url": "/quickstart/python-installation"
     },
     {
-      "id": "/flows/mapping",
-      "title": "Flow Builder → FSFlow Mapping",
-      "content": "title: 'Flow Builder → FSFlow Mapping', description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.', } Flow Builder → FSFlow Mapping This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (SessionSettings.flow). Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail ",
-      "url": "/flows/mapping"
+      "id": "/quickstart/python-installation#0",
+      "title": "Python SDK Installation Guide",
+      "heading": "Installation",
+      "content": "Installation Install the FaceSign Python SDK using pip: Or using poetry:",
+      "url": "/quickstart/python-installation#installation",
+      "section": "Installation"
     },
     {
-      "id": "/flows/mapping#0",
-      "title": "Flow Builder → FSFlow Mapping",
-      "heading": "Node type mapping",
-      "content": "Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail | | Data Validation | datavalidation | | Document Scan | documentscan | | Recognition | recognition | |",
-      "url": "/flows/mapping#node-type-mapping",
-      "section": "Node type mapping"
+      "id": "/quickstart/python-installation#1",
+      "title": "Python SDK Installation Guide",
+      "heading": "Requirements",
+      "content": "Requirements - Python 3.8 or higher - HTTP library: httpx (automatically installed) - Validation: pydantic (automatically installed)",
+      "url": "/quickstart/python-installation#requirements",
+      "section": "Requirements"
     },
     {
-      "id": "/flows/mapping#1",
-      "title": "Flow Builder → FSFlow Mapping",
-      "heading": "Edges",
-      "content": "Edges Each connection in the canvas becomes an FSEdge:",
-      "url": "/flows/mapping#edges",
-      "section": "Edges"
+      "id": "/quickstart/python-installation#7",
+      "title": "Python SDK Installation Guide",
+      "heading": "Async Usage",
+      "content": "Async Usage The SDK supports async/await patterns:",
+      "url": "/quickstart/python-installation#async-usage",
+      "section": "Async Usage"
     },
     {
-      "id": "/flows/mapping#2",
-      "title": "Flow Builder → FSFlow Mapping",
-      "heading": "Minimal translation example",
-      "content": "Minimal translation example Flow Builder (conceptual): Start → Conversation → End FSFlow JSON:",
-      "url": "/flows/mapping#minimal-translation-example",
-      "section": "Minimal translation example"
+      "id": "/quickstart/python-installation#8",
+      "title": "Python SDK Installation Guide",
+      "heading": "Get Available Resources",
+      "content": "Get Available Resources",
+      "url": "/quickstart/python-installation#get-available-resources",
+      "section": "Get Available Resources"
     },
     {
-      "id": "/flows/mapping#3",
-      "title": "Flow Builder → FSFlow Mapping",
-      "heading": "Checklist before exporting",
-      "content": "Checklist before exporting - Every node has a unique id and a valid type - All outcomes/branches point to an existing node id - There is exactly one start and at least one path to an end - Optional prompts/validation rules set as needed",
-      "url": "/flows/mapping#checklist-before-exporting",
-      "section": "Checklist before exporting"
+      "id": "/quickstart/python-installation#12",
+      "title": "Python SDK Installation Guide",
+      "heading": "Framework Integration",
+      "content": "Framework Integration",
+      "url": "/quickstart/python-installation#framework-integration",
+      "section": "Framework Integration"
     },
     {
-      "id": "/flows/mapping#4",
-      "title": "Flow Builder → FSFlow Mapping",
-      "heading": "Using the FSFlow with the API",
-      "content": "Using the FSFlow with the API On success you receive { session, clientSecret }; send users to clientSecret.url.",
-      "url": "/flows/mapping#using-the-fsflow-with-the-api",
-      "section": "Using the FSFlow with the API"
+      "id": "/quickstart/python-installation#16",
+      "title": "Python SDK Installation Guide",
+      "heading": "Environment Variables",
+      "content": "Environment Variables",
+      "url": "/quickstart/python-installation#environment-variables",
+      "section": "Environment Variables"
     },
     {
-      "id": "/docs/flows",
-      "title": "Page",
-      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness). Create a flow Get a flow FSNode object Node types One of start, end, conversation, livenessdetection, enteremail, datavalidation, documentscan, recognition, facescan, twofactor. Unique identifier within the flow. Minimal flow JSON Next steps - Create a session against your flow. - Add webhook handlers for status updates.",
-      "url": "/docs/flows"
+      "id": "/quickstart/python-installation#18",
+      "title": "Python SDK Installation Guide",
+      "heading": "Development vs Production",
+      "content": "Development vs Production",
+      "url": "/quickstart/python-installation#development-vs-production",
+      "section": "Development vs Production"
     },
     {
-      "id": "/docs/flows#0",
-      "title": "Page",
-      "heading": "Concepts",
-      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).",
-      "url": "/docs/flows#concepts",
-      "section": "Concepts"
+      "id": "/quickstart/python-installation#19",
+      "title": "Python SDK Installation Guide",
+      "heading": "Next Steps",
+      "content": "Next Steps - Read the API Reference for detailed endpoint documentation - Explore Session Management to understand verification flows - Check out Error Handling for comprehensive error management - Learn about Webhooks for real-time status updates",
+      "url": "/quickstart/python-installation#next-steps",
+      "section": "Next Steps"
     },
     {
-      "id": "/docs/flows#6",
-      "title": "Page",
-      "heading": "Next steps",
-      "content": "Next steps - Create a session against your flow. - Add webhook handlers for status updates.",
-      "url": "/docs/flows#next-steps",
-      "section": "Next steps"
+      "id": "/sessions/object",
+      "title": "Session Object (moved)",
+      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
+      "url": "/sessions/object"
     },
     {
-      "id": "/docs/sessions",
-      "title": "Page",
-      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret. Create a session Retrieve a session Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side. Session object Top-level attributes Unique identifier for the session (e.g., \"sessabc123\"). Unix t",
-      "url": "/docs/sessions"
-    },
-    {
-      "id": "/docs/sessions#0",
-      "title": "Page",
-      "heading": "When to use sessions",
-      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret.",
-      "url": "/docs/sessions#when-to-use-sessions",
-      "section": "When to use sessions"
-    },
-    {
-      "id": "/docs/sessions#3",
-      "title": "Page",
-      "heading": "Client Secret",
-      "content": "Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side.",
-      "url": "/docs/sessions#client-secret",
-      "section": "Client Secret"
-    },
-    {
-      "id": "/docs/sessions#8",
-      "title": "Page",
-      "heading": "Next steps",
-      "content": "Next steps - Attach a client secret and initialize the SDK in your app. - Listen for status changes via webhooks.",
-      "url": "/docs/sessions#next-steps",
-      "section": "Next steps"
-    },
-    {
-      "id": "/docs/webhooks",
-      "title": "Page",
-      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing. Example event payload Configure a webhook",
-      "url": "/docs/webhooks"
-    },
-    {
-      "id": "/docs/webhooks#0",
-      "title": "Page",
-      "heading": "Overview",
-      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing.",
-      "url": "/docs/webhooks#overview",
-      "section": "Overview"
-    },
-    {
-      "id": "/docs/webhooks#1",
-      "title": "Page",
-      "heading": "Example event payload",
-      "content": "Example event payload",
-      "url": "/docs/webhooks#example-event-payload",
-      "section": "Example event payload"
+      "id": "/sessions/client-secret",
+      "title": "Client Secret (moved)",
+      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
+      "url": "/sessions/client-secret"
     },
     {
       "id": "/webhooks/signed-headers",
@@ -591,18 +627,6 @@
       "content": "Rotation & rollout - Secrets: whsec... stored in env/secret manager; never log or expose client-side - Rotation: dual-signing window (two v1= values) or scheduled cutover; remove old key when consumers rotate - Current Dev behavior: unsigned; verify by fetching the session via sessionId for now",
       "url": "/webhooks/signed-headers#rotation-&-rollout",
       "section": "Rotation & rollout"
-    },
-    {
-      "id": "/sessions/client-secret",
-      "title": "Client Secret (moved)",
-      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
-      "url": "/sessions/client-secret"
-    },
-    {
-      "id": "/sessions/object",
-      "title": "Session Object (moved)",
-      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
-      "url": "/sessions/object"
     }
   ]
 }

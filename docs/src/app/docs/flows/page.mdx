@@ -3,6 +3,8 @@ import { Prose } from '@/components/chakra/Prose'
 import { CodeTabs } from '@/components/chakra/CodeTabs'
 import { NextPrevNav } from '@/components/chakra/NextPrevNav'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { SimpleGrid } from '@chakra-ui/react'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 
 <PageHeader title="Flows" description="Compose verification steps as nodes with conditional branching." />
 
@@ -42,7 +44,6 @@ A flow defines the ordered (or conditional) nodes a user must complete (e.g., Em
 <SimpleCodeBlock
   title="Minimal FSFlow"
   language="json"
-  variant="light"
   code={`{
   "nodes": [
     { "id": "start", "type": "start", "outcome": "conv1" },
@@ -58,8 +59,23 @@ A flow defines the ordered (or conditional) nodes a user must complete (e.g., Em
 
 ## Next steps
 
-- Create a session against your flow.
-- Add webhook handlers for status updates.
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="8">
+  <DocLinkCard
+    href="/docs/sessions"
+    title="Sessions"
+    description="Create a session against your flow"
+  />
+  <DocLinkCard
+    href="/docs/webhooks"
+    title="Webhooks"
+    description="Add webhook handlers for status updates"
+  />
+  <DocLinkCard
+    href="/flows/fsnode"
+    title="FSNode Reference"
+    description="Explore all available node types"
+  />
+</SimpleGrid>
 
 <NextPrevNav prev={{ href: '/docs/sessions', label: 'Sessions' }} next={{ href: '/docs/webhooks', label: 'Webhooks' }} />
 
