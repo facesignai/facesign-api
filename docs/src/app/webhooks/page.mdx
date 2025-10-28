@@ -1,0 +1,641 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator, Tabs } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+
+export const metadata = {
+  title: 'Webhooks',
+  description: 'Real-time event notifications for session lifecycle changes.',
+}
+
+<PageHeader title="Webhooks" description="Receive real-time notifications when session events occur." />
+
+<Prose>
+
+## Overview
+
+Webhooks allow you to receive real-time HTTP POST notifications when events occur in your FaceSign sessions. This enables you to:
+
+- Track session progress without polling
+- Update your database when verification completes
+- Handle errors and retries automatically
+- Send notifications to users
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Webhook Security</Alert.Title>
+    <Alert.Description>
+      Production webhooks include cryptographic signatures for validation.
+      Always verify webhook signatures in production to ensure authenticity.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+<Separator my={8} />
+
+## Setting Up Webhooks
+
+### 1. Create an Endpoint
+
+Create an HTTPS endpoint in your application to receive webhook events:
+
+<SimpleCodeBlock
+  title="Example Webhook Handler"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `// Next.js API Route: /api/webhooks/facesign
+export async function POST(req) {
+  const event = await req.json()
+
+  // Log the event
+  console.log('Received webhook:', event.type, event.sessionId)
+
+  // Handle different event types
+  switch (event.type) {
+    case 'session.complete':
+      await handleSessionComplete(event)
+      break
+    case 'session.canceled':
+      await handleSessionCanceled(event)
+      break
+    // Handle other events...
+  }
+
+  // Always return 200 to acknowledge receipt
+  return Response.json({ received: true })
+}`,
+    python: `# Flask webhook handler
+from flask import Flask, request, jsonify
+import logging
+
+app = Flask(__name__)
+
+@app.route('/webhooks/facesign', methods=['POST'])
+def handle_webhook():
+    event = request.json
+
+    # Log the event
+    logging.info(f"Received webhook: {event['type']} for session {event['sessionId']}")
+
+    # Handle different event types
+    if event['type'] == 'session.complete':
+        handle_session_complete(event)
+    elif event['type'] == 'session.canceled':
+        handle_session_canceled(event)
+
+    # Always return 200 to acknowledge receipt
+    return jsonify({'received': True}), 200`,
+    go: `// Go webhook handler
+func handleWebhook(w http.ResponseWriter, r *http.Request) {
+    var event WebhookEvent
+    json.NewDecoder(r.Body).Decode(&event)
+
+    // Log the event
+    log.Printf("Received webhook: %s for session %s", event.Type, event.SessionID)
+
+    // Handle different event types
+    switch event.Type {
+    case "session.complete":
+        handleSessionComplete(event)
+    case "session.canceled":
+        handleSessionCanceled(event)
+    }
+
+    // Always return 200 to acknowledge receipt
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]bool{"received": true})
+}`
+  }}
+/>
+
+### 2. Configure Webhook URL
+
+Provide your webhook URL when creating a session:
+
+<SimpleCodeBlock
+  language="javascript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  webhookUrl: 'https://your-domain.com/api/webhooks/facesign',
+  flow: {
+    // ... your flow configuration
+  }
+})`}
+/>
+
+<Separator my={8} />
+
+## Event Types
+
+FaceSign sends the following webhook events during the session lifecycle:
+
+<Table.Root variant="outline" size="sm" my={6}>
+  <Table.Header>
+    <Table.Row>
+      <Table.ColumnHeader>Event Type</Table.ColumnHeader>
+      <Table.ColumnHeader>Description</Table.ColumnHeader>
+      <Table.ColumnHeader>When Sent</Table.ColumnHeader>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell><Code>session.created</Code></Table.Cell>
+      <Table.Cell>Session was created</Table.Cell>
+      <Table.Cell>After successful session creation</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.requiresInput</Code></Table.Cell>
+      <Table.Cell>User opened verification URL</Table.Cell>
+      <Table.Cell>When user first accesses the session</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.processing</Code></Table.Cell>
+      <Table.Cell>Session is being processed</Table.Cell>
+      <Table.Cell>During verification steps</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.complete</Code></Table.Cell>
+      <Table.Cell>Verification completed successfully</Table.Cell>
+      <Table.Cell>When flow reaches END node</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.incomplete</Code></Table.Cell>
+      <Table.Cell>User closed tab before completion</Table.Cell>
+      <Table.Cell>Browser tab/window closed</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.canceled</Code></Table.Cell>
+      <Table.Cell>Session was canceled</Table.Cell>
+      <Table.Cell>User or API canceled session</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.expired</Code></Table.Cell>
+      <Table.Cell>Session expired</Table.Cell>
+      <Table.Cell>After session timeout (2 hours)</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell><Code>session.error</Code></Table.Cell>
+      <Table.Cell>Error occurred during session</Table.Cell>
+      <Table.Cell>On unrecoverable errors</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>
+
+<Separator my={8} />
+
+## Webhook Payload Examples
+
+All webhook events include these common fields:
+
+<SimpleCodeBlock
+  title="Common Webhook Fields"
+  language="typescript"
+  code={`interface WebhookEvent {
+  type: string           // Event type (e.g., "session.complete")
+  sessionId: string      // Session ID (e.g., "sess_abc123")
+  timestamp: number      // Unix timestamp in milliseconds
+  environment: string    // "sandbox" or "production"
+  version: string        // API version (e.g., "2024-12-18")
+}`}
+/>
+
+### session.created
+
+Sent when a session is first created via the API:
+
+<SimpleCodeBlock
+  title="session.created payload"
+  language="json"
+  code={`{
+  "type": "session.created",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761594651878,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "clientReferenceId": "user-123",
+    "metadata": {
+      "source": "web-app",
+      "plan": "premium"
+    },
+    "clientSecretUrl": "https://session.facesign.ai?cs=csea61d44d88d3...",
+    "expiresAt": 1761601851878
+  }
+}`}
+/>
+
+### session.requiresInput
+
+Sent when the user opens the verification URL:
+
+<SimpleCodeBlock
+  title="session.requiresInput payload"
+  language="json"
+  code={`{
+  "type": "session.requiresInput",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761594751000,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
+    "ipAddress": "203.0.113.42",
+    "currentNode": "start",
+    "sessionUrl": "https://session.facesign.ai?cs=csea61d44d88d3..."
+  }
+}`}
+/>
+
+### session.processing
+
+Sent when the session begins processing verification steps:
+
+<SimpleCodeBlock
+  title="session.processing payload"
+  language="json"
+  code={`{
+  "type": "session.processing",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761594851000,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "currentNode": "document_scan",
+    "currentNodeType": "DOCUMENT_SCAN",
+    "progress": {
+      "completedNodes": ["start", "enter_email"],
+      "remainingNodes": ["document_scan", "liveness_detection", "end"],
+      "percentComplete": 40
+    }
+  }
+}`}
+/>
+
+### session.complete
+
+Sent when verification completes successfully:
+
+<SimpleCodeBlock
+  title="session.complete payload"
+  language="json"
+  code={`{
+  "type": "session.complete",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761595051000,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "clientReferenceId": "user-123",
+    "metadata": {
+      "source": "web-app",
+      "plan": "premium"
+    },
+    "report": {
+      "verificationStatus": "verified",
+      "riskScore": 0.12,
+      "documentsScanned": ["driver_license"],
+      "biometricChecks": {
+        "liveness": true,
+        "faceMatch": true,
+        "faceMatchScore": 0.98
+      },
+      "mediaUrls": {
+        "faceImage": "https://media.facesign.ai/sessions/sess_abc123/face.jpg?token=...",
+        "documentFront": "https://media.facesign.ai/sessions/sess_abc123/doc_front.jpg?token=...",
+        "documentBack": "https://media.facesign.ai/sessions/sess_abc123/doc_back.jpg?token=..."
+      },
+      "mediaUrlsExpireAt": 1761595951000,  // 15 minutes after completion
+      "extractedData": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "dateOfBirth": "1990-01-15",
+        "documentNumber": "D123456789",
+        "documentExpiry": "2028-01-15",
+        "address": "123 Main St, City, State 12345"
+      }
+    },
+    "completedAt": 1761595051000
+  }
+}`}
+/>
+
+### session.incomplete
+
+Sent when user closes browser before completing:
+
+<SimpleCodeBlock
+  title="session.incomplete payload"
+  language="json"
+  code={`{
+  "type": "session.incomplete",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761594951000,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "lastActiveNode": "document_scan",
+    "lastActiveNodeType": "DOCUMENT_SCAN",
+    "progress": {
+      "completedNodes": ["start", "enter_email"],
+      "incompleteNode": "document_scan",
+      "percentComplete": 40
+    },
+    "reason": "user_closed_tab",
+    "canResume": true,
+    "resumeUrl": "https://session.facesign.ai?cs=csea61d44d88d3..."
+  }
+}`}
+/>
+
+### session.canceled
+
+Sent when session is explicitly canceled:
+
+<SimpleCodeBlock
+  title="session.canceled payload"
+  language="json"
+  code={`{
+  "type": "session.canceled",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761594951000,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "canceledBy": "user",  // "user", "api", or "system"
+    "reason": "User clicked cancel button",
+    "lastActiveNode": "liveness_detection",
+    "progress": {
+      "completedNodes": ["start", "enter_email", "document_scan"],
+      "percentComplete": 60
+    }
+  }
+}`}
+/>
+
+### session.expired
+
+Sent when session expires after timeout:
+
+<SimpleCodeBlock
+  title="session.expired payload"
+  language="json"
+  code={`{
+  "type": "session.expired",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761601851878,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "createdAt": 1761594651878,
+    "expiredAt": 1761601851878,
+    "lastActivity": 1761595051000,
+    "progress": {
+      "completedNodes": ["start"],
+      "lastActiveNode": "enter_email",
+      "percentComplete": 20
+    }
+  }
+}`}
+/>
+
+### session.error
+
+Sent when an unrecoverable error occurs:
+
+<SimpleCodeBlock
+  title="session.error payload"
+  language="json"
+  code={`{
+  "type": "session.error",
+  "sessionId": "sess_abc123",
+  "timestamp": 1761594951000,
+  "environment": "production",
+  "version": "2024-12-18",
+  "data": {
+    "error": {
+      "code": "DOCUMENT_SCAN_FAILED",
+      "message": "Unable to process document image",
+      "details": "Image quality too low for OCR extraction",
+      "node": "document_scan_1",
+      "nodeType": "DOCUMENT_SCAN"
+    },
+    "canRetry": true,
+    "retryUrl": "https://session.facesign.ai?cs=csea61d44d88d3...",
+    "progress": {
+      "completedNodes": ["start", "enter_email"],
+      "failedNode": "document_scan",
+      "percentComplete": 40
+    }
+  }
+}`}
+/>
+
+<Separator my={8} />
+
+## Media URLs
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>15-Minute Media Access</Alert.Title>
+    <Alert.Description>
+      Media URLs (images, documents) in webhook payloads are signed and expire 15 minutes after generation.
+      Download and store media immediately if you need permanent access.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+Media URLs are provided in the `session.complete` event:
+
+<SimpleCodeBlock
+  title="Downloading Media Files"
+  language="javascript"
+  code={`async function downloadMedia(mediaUrls) {
+  // Download face image
+  if (mediaUrls.faceImage) {
+    const response = await fetch(mediaUrls.faceImage)
+    const blob = await response.blob()
+    // Store in your system
+    await storeFile(blob, 'face.jpg')
+  }
+
+  // Download documents
+  if (mediaUrls.documentFront) {
+    const response = await fetch(mediaUrls.documentFront)
+    const blob = await response.blob()
+    await storeFile(blob, 'document_front.jpg')
+  }
+
+  // URLs expire at mediaUrlsExpireAt timestamp
+  console.log('Media expires at:', new Date(mediaUrls.mediaUrlsExpireAt))
+}`}
+/>
+
+<Separator my={8} />
+
+## Webhook Security
+
+### Signature Validation (Production)
+
+<Alert.Root status="warning" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Coming Soon</Alert.Title>
+    <Alert.Description>
+      Webhook signature validation is not yet implemented. For now, validate webhooks by:
+      1. Checking the sessionId exists in your system
+      2. Verifying the clientReferenceId matches your records
+      3. Using HTTPS endpoints only
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+Future signature validation will work like:
+
+<SimpleCodeBlock
+  title="Webhook Signature Validation (Future)"
+  language="javascript"
+  code={`import crypto from 'crypto'
+
+function validateWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(payload))
+    .digest('hex')
+
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  )
+}
+
+// In your webhook handler
+export async function POST(req) {
+  const payload = await req.json()
+  const signature = req.headers.get('X-FaceSign-Signature')
+
+  if (!validateWebhookSignature(payload, signature, WEBHOOK_SECRET)) {
+    return Response.json({ error: 'Invalid signature' }, { status: 401 })
+  }
+
+  // Process valid webhook...
+}`}
+/>
+
+<Separator my={8} />
+
+## Error Handling
+
+### Retry Logic
+
+FaceSign will retry failed webhook deliveries with exponential backoff:
+
+- 1st retry: After 1 minute
+- 2nd retry: After 5 minutes
+- 3rd retry: After 15 minutes
+- 4th retry: After 1 hour
+- 5th retry: After 6 hours
+
+Your endpoint should:
+1. Always return HTTP 200 for successfully received events
+2. Return 4xx for invalid payloads (won't retry)
+3. Return 5xx for temporary failures (will retry)
+
+### Idempotency
+
+Webhooks may be delivered more than once. Use the `sessionId` and `timestamp` to ensure idempotent processing:
+
+<SimpleCodeBlock
+  title="Idempotent Webhook Processing"
+  language="javascript"
+  code={`const processedEvents = new Set()
+
+export async function handleWebhook(event) {
+  const eventKey = \`\${event.sessionId}-\${event.type}-\${event.timestamp}\`
+
+  // Skip if already processed
+  if (processedEvents.has(eventKey)) {
+    console.log('Duplicate webhook, skipping:', eventKey)
+    return { received: true }
+  }
+
+  // Process the event
+  await processEvent(event)
+
+  // Mark as processed
+  processedEvents.add(eventKey)
+
+  return { received: true }
+}`}
+/>
+
+<Separator my={8} />
+
+## Testing Webhooks
+
+### Local Development
+
+Use ngrok or similar tools to test webhooks locally:
+
+<SimpleCodeBlock
+  title="Testing with ngrok"
+  language="bash"
+  code={`# Start your local server
+npm run dev  # Runs on http://localhost:3000
+
+# In another terminal, expose it via ngrok
+ngrok http 3000
+
+# Use the ngrok URL for webhooks
+# https://abc123.ngrok.io/api/webhooks/facesign`}
+/>
+
+### Webhook Testing Service
+
+You can use webhook.site for quick testing:
+
+1. Go to https://webhook.site
+2. Copy your unique URL
+3. Use it as your webhook URL when creating sessions
+4. View incoming webhooks in real-time
+
+<Separator my={8} />
+
+## Best Practices
+
+1. **Always return 200 OK** - Even if processing fails, acknowledge receipt
+2. **Process asynchronously** - Don't block the webhook response
+3. **Implement idempotency** - Handle duplicate deliveries gracefully
+4. **Store event data** - Keep webhook payloads for debugging
+5. **Monitor failures** - Set up alerts for webhook processing errors
+6. **Validate payloads** - Check sessionId and clientReferenceId
+7. **Handle all event types** - Even if you don't process them yet
+8. **Download media immediately** - URLs expire after 15 minutes
+
+<Separator my={8} />
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/api"
+    title="API Reference"
+    description="Complete API documentation"
+  />
+  <DocLinkCard
+    href="/sessions/object"
+    title="Session Object"
+    description="Understand session structure"
+  />
+  <DocLinkCard
+    href="/errors"
+    title="Error Handling"
+    description="Handle errors gracefully"
+  />
+</SimpleGrid>
+
+</Prose>

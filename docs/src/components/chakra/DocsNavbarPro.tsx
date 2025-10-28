@@ -105,11 +105,11 @@ export function DocsNavbarPro() {
               {navItems.map((item) => {
                 let isActive = false
                 if (item.href === '/docs') {
-                  // Docs tab: active on /docs OR any page that's not /api or homepage
+                  // Docs tab: active on /docs OR any page except /api, /api/*, and /api-* pages
                   isActive = pathname === '/docs' ||
-                    (pathname !== '/' && !pathname?.startsWith('/api'))
+                    (pathname !== '/' && pathname !== '/api' && !pathname?.startsWith('/api/') && !pathname?.startsWith('/api-'))
                 } else if (item.href === '/api') {
-                  // API tab: active on /api or /api/*
+                  // API tab: active ONLY on /api or /api/* (not /api-*)
                   isActive = pathname === '/api' || pathname?.startsWith('/api/')
                 } else {
                   // Default behavior for other items
@@ -197,11 +197,11 @@ export function DocsNavbarPro() {
                       {navItems.map((item) => {
                         let isActive = false
                         if (item.href === '/docs') {
-                          // Docs tab: active on /docs OR any page that's not /api or homepage
+                          // Docs tab: active on /docs OR any page except /api, /api/*, and /api-* pages
                           isActive = pathname === '/docs' ||
-                            (pathname !== '/' && !pathname?.startsWith('/api'))
+                            (pathname !== '/' && pathname !== '/api' && !pathname?.startsWith('/api/') && !pathname?.startsWith('/api-'))
                         } else if (item.href === '/api') {
-                          // API tab: active on /api or /api/*
+                          // API tab: active ONLY on /api or /api/* (not /api-*)
                           isActive = pathname === '/api' || pathname?.startsWith('/api/')
                         } else {
                           // Default behavior for other items

@@ -1,0 +1,533 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator, Grid, Stack, Link } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+import { ReferenceTable } from '@/components/chakra/ReferenceTable'
+import { LuInfo, LuAlertCircle, LuCheck, LuShieldCheck, LuSparkles, LuZap, LuLock, LuGlobe } from 'react-icons/lu'
+
+export const metadata = {
+  title: 'API Versioning',
+  description: 'Understanding FaceSign API versions, deprecation policy, and migration strategy.',
+}
+
+<PageHeader
+  title="API Versioning"
+  description="How we version the FaceSign API, handle breaking changes, and support backward compatibility."
+/>
+
+<Prose>
+
+## Current Version
+
+<Card.Root variant="outline" borderColor="blue.200" my={6}>
+  <Card.Body>
+    <HStack justify="space-between" mb={4}>
+      <Box>
+        <Text fontWeight="semibold" fontSize="lg">Current Stable Version</Text>
+        <Code fontSize="2xl" colorPalette="blue">2024-12-18</Code>
+      </Box>
+      <Badge size="lg" colorPalette="green">Stable</Badge>
+    </HStack>
+    <Text color="fg.muted">Released December 18, 2024</Text>
+    <Text mt={2}>SDK Version: <Code>1.0.19</Code></Text>
+  </Card.Body>
+</Card.Root>
+
+## Version Header
+
+All API requests should include the version header to ensure consistent behavior:
+
+<SimpleCodeBlock
+  title="Setting API Version"
+  defaultLanguage="typescript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    typescript: `import { Client } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  // Version is set automatically to latest stable
+  // Override if needed:
+  headers: {
+    'Facesign-Version': '2024-12-18'
+  }
+})`,
+    curl: `curl https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Facesign-Version: 2024-12-18"`,
+    python: `import facesignai
+
+client = facesignai.Client(
+    auth=os.environ.get('FACESIGN_API_KEY'),
+    headers={
+        'Facesign-Version': '2024-12-18'
+    }
+)`
+  }}
+/>
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Version Pinning Recommended</Alert.Title>
+    <Alert.Description>
+      We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Version History
+
+<Stack gap={4} my={8}>
+  <Card.Root variant="outline" borderLeftWidth="4px" borderLeftColor="green.500">
+    <Card.Body>
+      <HStack justify="space-between" mb={2}>
+        <Box>
+          <Heading size="md">2024-12-18</Heading>
+          <Text fontSize="sm" color="fg.muted">v1.0.18</Text>
+        </Box>
+        <Badge colorPalette="green" size="lg">Current</Badge>
+      </HStack>
+      <Heading size="sm" mb={2}>Two-Factor Authentication Split</Heading>
+      <Text fontSize="sm" color="fg.muted" mb={3}>Breaking changes for improved 2FA flexibility</Text>
+      <Stack gap={2} fontSize="sm">
+        <HStack>
+          <Badge size="sm" colorPalette="red">Breaking</Badge>
+          <Text>Split <Code size="xs">TWO_FACTOR</Code> into <Code size="xs">TWO_FACTOR_EMAIL</Code> and <Code size="xs">TWO_FACTOR_SMS</Code></Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="blue">Enhancement</Badge>
+          <Text>Standardized timestamp format to Unix milliseconds</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="yellow">Deprecated</Badge>
+          <Text>Removed <Code size="xs">testMode</Code> in favor of environment-based testing</Text>
+        </HStack>
+      </Stack>
+      <Box mt={3}>
+        <Link href="/migration" color="blue.500">View Migration Guide →</Link>
+      </Box>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root variant="outline" borderLeftWidth="4px" borderLeftColor="blue.400">
+    <Card.Body>
+      <HStack justify="space-between" mb={2}>
+        <Box>
+          <Heading size="md">2024-10-15</Heading>
+          <Text fontSize="sm" color="fg.muted">v1.0.17</Text>
+        </Box>
+      </HStack>
+      <Heading size="sm" mb={2}>Performance Improvements</Heading>
+      <Text fontSize="sm" color="fg.muted" mb={3}>Optimizations and new features</Text>
+      <Stack gap={2} fontSize="sm">
+        <HStack>
+          <Badge size="sm" colorPalette="green">New</Badge>
+          <Text>Added <Code size="xs">videoAIAnalysisEnabled</Code> for fraud detection</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="blue">Enhancement</Badge>
+          <Text>50% faster session creation response times</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="blue">Enhancement</Badge>
+          <Text>Improved webhook retry logic with exponential backoff</Text>
+        </HStack>
+      </Stack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root variant="outline" borderLeftWidth="4px" borderLeftColor="purple.400">
+    <Card.Body>
+      <HStack justify="space-between" mb={2}>
+        <Box>
+          <Heading size="md">2024-08-20</Heading>
+          <Text fontSize="sm" color="fg.muted">v1.0.16</Text>
+        </Box>
+      </HStack>
+      <Heading size="sm" mb={2}>Internationalization Update</Heading>
+      <Text fontSize="sm" color="fg.muted" mb={3}>Expanded language support</Text>
+      <Stack gap={2} fontSize="sm">
+        <HStack>
+          <Badge size="sm" colorPalette="green">New</Badge>
+          <Text>Added support for 15 new languages</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="green">New</Badge>
+          <Text>RTL support for Arabic and Hebrew</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="blue">Enhancement</Badge>
+          <Text>Improved AI conversation in non-English languages</Text>
+        </HStack>
+      </Stack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root variant="outline" borderLeftWidth="4px" borderLeftColor="orange.400">
+    <Card.Body>
+      <HStack justify="space-between" mb={2}>
+        <Box>
+          <Heading size="md">2024-06-10</Heading>
+          <Text fontSize="sm" color="fg.muted">v1.0.15</Text>
+        </Box>
+      </HStack>
+      <Heading size="sm" mb={2}>Security Enhancements</Heading>
+      <Text fontSize="sm" color="fg.muted" mb={3}>Improved security features</Text>
+      <Stack gap={2} fontSize="sm">
+        <HStack>
+          <Badge size="sm" colorPalette="green">New</Badge>
+          <Text>Added webhook signature verification</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="blue">Enhancement</Badge>
+          <Text>Upgraded to TLS 1.3 minimum</Text>
+        </HStack>
+        <HStack>
+          <Badge size="sm" colorPalette="blue">Enhancement</Badge>
+          <Text>Enhanced liveness detection algorithms</Text>
+        </HStack>
+      </Stack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root variant="outline" borderLeftWidth="4px" borderLeftColor="teal.400">
+    <Card.Body>
+      <HStack justify="space-between" mb={2}>
+        <Box>
+          <Heading size="md">2024-03-01</Heading>
+          <Text fontSize="sm" color="fg.muted">v1.0.0</Text>
+        </Box>
+        <Badge colorPalette="purple" size="lg">GA</Badge>
+      </HStack>
+      <Heading size="sm" mb={2}>General Availability</Heading>
+      <Text fontSize="sm" color="fg.muted" mb={3}>Initial stable release</Text>
+      <Stack gap={2} fontSize="sm">
+        <Text>• Complete node-based flow system</Text>
+        <Text>• Document verification with BlinkID</Text>
+        <Text>• AI conversational verification</Text>
+        <Text>• Webhook support</Text>
+        <Text>• Multi-language support (10 languages)</Text>
+      </Stack>
+    </Card.Body>
+  </Card.Root>
+</Stack>
+
+## Versioning Strategy
+
+### Semantic Versioning
+
+We follow semantic versioning for our SDKs:
+
+<ReferenceTable headers={['Type', 'When', 'Example']}>
+  <Table.Row>
+    <Table.Cell>MAJOR</Table.Cell>
+    <Table.Cell>Breaking API changes</Table.Cell>
+    <Table.Cell>1.0.0 → 2.0.0</Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>MINOR</Table.Cell>
+    <Table.Cell>New features (backward compatible)</Table.Cell>
+    <Table.Cell>1.0.0 → 1.1.0</Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>PATCH</Table.Cell>
+    <Table.Cell>Bug fixes (backward compatible)</Table.Cell>
+    <Table.Cell>1.0.0 → 1.0.1</Table.Cell>
+  </Table.Row>
+</ReferenceTable>
+
+### API Date Versioning
+
+The API itself uses date-based versioning:
+
+<SimpleCodeBlock
+  title="Version Format"
+  language="text"
+  code={`YYYY-MM-DD
+
+Examples:
+• 2024-12-18 - Current stable version
+• 2024-10-15 - Previous version
+• 2024-03-01 - Initial GA release`}
+/>
+
+## Deprecation Policy
+
+<Card.Root variant="outline" borderColor="orange.200" my={6}>
+  <Card.Header bg="orange.50">
+    <Heading size="md">⏰ Deprecation Timeline</Heading>
+  </Card.Header>
+  <Card.Body>
+    <Stack gap={4}>
+      <HStack align="start">
+        <Badge colorPalette="yellow">6 Months</Badge>
+        <Box flex="1">
+          <Text fontWeight="semibold">Deprecation Notice</Text>
+          <Text fontSize="sm" color="fg.muted">Feature marked as deprecated in documentation and API responses</Text>
+        </Box>
+      </HStack>
+
+      <HStack align="start">
+        <Badge colorPalette="orange">3 Months</Badge>
+        <Box flex="1">
+          <Text fontWeight="semibold">Warning Headers</Text>
+          <Text fontSize="sm" color="fg.muted">API returns deprecation warnings in response headers</Text>
+        </Box>
+      </HStack>
+
+      <HStack align="start">
+        <Badge colorPalette="red">0 Months</Badge>
+        <Box flex="1">
+          <Text fontWeight="semibold">Feature Removed</Text>
+          <Text fontSize="sm" color="fg.muted">Deprecated feature is removed from the API</Text>
+        </Box>
+      </HStack>
+    </Stack>
+  </Card.Body>
+</Card.Root>
+
+### Deprecation Headers
+
+When using deprecated features, the API returns warning headers:
+
+<SimpleCodeBlock
+  title="Deprecation Response Headers"
+  language="text"
+  code={`HTTP/1.1 200 OK
+Facesign-Version: 2024-12-18
+Facesign-Deprecation: true
+Facesign-Sunset: 2025-06-18
+Warning: 299 - "The 'testMode' parameter is deprecated. Use test API keys instead."
+Link: <https://docs.facesign.ai/migration>; rel="deprecation"`}
+/>
+
+## Backward Compatibility
+
+### Compatibility Guarantees
+
+We guarantee backward compatibility for:
+
+- ✅ All non-deprecated endpoints
+- ✅ Request/response field names
+- ✅ Required vs optional field status
+- ✅ Authentication methods
+- ✅ Error response formats
+- ✅ Webhook payload structure
+
+### Non-Breaking Changes
+
+These changes are considered backward compatible:
+
+- Adding new optional fields to requests
+- Adding new fields to responses
+- Adding new endpoints
+- Adding new node types
+- Adding new enum values
+- Increasing rate limits
+
+### Breaking Changes
+
+These require a new API version:
+
+- Removing or renaming endpoints
+- Removing or renaming fields
+- Changing field types
+- Changing required/optional status
+- Modifying authentication
+- Changing error codes
+
+## Version Migration
+
+### Checking Your Version
+
+<SimpleCodeBlock
+  title="Get Current API Version"
+  defaultLanguage="typescript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    typescript: `// Check version from response headers
+const response = await client.session.list()
+console.log(response.headers['facesign-version'])
+// Output: "2024-12-18"
+
+// Get SDK version
+import { version } from '@facesignai/api/package.json'
+console.log(version) // "1.0.19"`,
+    curl: `# Version is returned in response headers
+curl -I https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Response headers:
+# Facesign-Version: 2024-12-18`,
+    python: `# Check version from response
+response = client.session.list()
+print(response.headers['Facesign-Version'])
+# Output: "2024-12-18"
+
+# Get SDK version
+import facesignai
+print(facesignai.__version__)  # "1.0.19"`
+  }}
+/>
+
+### Testing New Versions
+
+<SimpleCodeBlock
+  title="Test with Beta Version"
+  language="typescript"
+  code={`// Test upcoming version in sandbox
+const client = new Client({
+  auth: process.env.FACESIGN_TEST_KEY,  // Use test key
+  headers: {
+    'Facesign-Version': 'beta'  // Test beta features
+  }
+})
+
+// Or test specific upcoming version
+const client = new Client({
+  auth: process.env.FACESIGN_TEST_KEY,
+  headers: {
+    'Facesign-Version': '2025-01-15'  // Test future version
+  }
+})`}
+/>
+
+## Version Support Matrix
+
+<ReferenceTable headers={['SDK Version', 'API Versions', 'Status', 'Support']}>
+  <Table.Row>
+    <Table.Cell>1.0.19</Table.Cell>
+    <Table.Cell>2024-12-18, 2024-10-15</Table.Cell>
+    <Table.Cell>Current</Table.Cell>
+    <Table.Cell>Full Support</Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>1.0.18</Table.Cell>
+    <Table.Cell>2024-12-18, 2024-10-15</Table.Cell>
+    <Table.Cell>Current</Table.Cell>
+    <Table.Cell>Full Support</Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>1.0.17</Table.Cell>
+    <Table.Cell>2024-10-15, 2024-08-20</Table.Cell>
+    <Table.Cell>Maintenance</Table.Cell>
+    <Table.Cell>Security Updates Only</Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>1.0.16</Table.Cell>
+    <Table.Cell>2024-08-20, 2024-06-10</Table.Cell>
+    <Table.Cell>Deprecated</Table.Cell>
+    <Table.Cell>Until June 2025</Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>&lt; 1.0.16</Table.Cell>
+    <Table.Cell>2024-03-01</Table.Cell>
+    <Table.Cell>Unsupported</Table.Cell>
+    <Table.Cell>No Support</Table.Cell>
+  </Table.Row>
+</ReferenceTable>
+
+## Subscribing to Updates
+
+### Version Announcements
+
+Stay informed about API changes:
+
+1. **Email Notifications**: Updates sent to account admin emails
+2. **Dashboard Alerts**: Shown in the FaceSign dashboard
+3. **SDK Warnings**: Deprecation warnings in SDK responses
+4. **Changelog RSS**: Subscribe to `https://docs.facesign.ai/changelog.rss`
+
+### Webhook for Version Changes
+
+<SimpleCodeBlock
+  title="Version Change Webhook"
+  language="json"
+  code={`{
+  "type": "api.version.deprecated",
+  "timestamp": 1761595200000,
+  "data": {
+    "deprecatedVersion": "2024-06-10",
+    "deprecatedFeatures": ["testMode", "legacy_node_types"],
+    "sunsetDate": "2025-06-10",
+    "migrationGuide": "https://docs.facesign.ai/migration/2024-12-18"
+  }
+}`}
+/>
+
+## Best Practices
+
+<Card.Root variant="outline" borderColor="green.200" my={6}>
+  <Card.Header bg="green.50">
+    <Heading size="md">✅ Version Management Best Practices</Heading>
+  </Card.Header>
+  <Card.Body>
+    <Stack gap={4}>
+      <Box>
+        <Text fontWeight="semibold">Always Pin Versions in Production</Text>
+        <Text fontSize="sm" color="fg.muted">Explicitly set the API version to avoid unexpected changes</Text>
+      </Box>
+
+      <Box>
+        <Text fontWeight="semibold">Test New Versions in Sandbox First</Text>
+        <Text fontSize="sm" color="fg.muted">Use test API keys to validate changes before production</Text>
+      </Box>
+
+      <Box>
+        <Text fontWeight="semibold">Monitor Deprecation Warnings</Text>
+        <Text fontSize="sm" color="fg.muted">Check response headers for deprecation notices</Text>
+      </Box>
+
+      <Box>
+        <Text fontWeight="semibold">Keep SDKs Updated</Text>
+        <Text fontSize="sm" color="fg.muted">Update SDKs regularly for bug fixes and improvements</Text>
+      </Box>
+
+      <Box>
+        <Text fontWeight="semibold">Plan Migration Windows</Text>
+        <Text fontSize="sm" color="fg.muted">Schedule version migrations during low-traffic periods</Text>
+      </Box>
+
+      <Box>
+        <Text fontWeight="semibold">Use Feature Flags</Text>
+        <Text fontSize="sm" color="fg.muted">Implement feature flags for gradual rollouts</Text>
+      </Box>
+    </Stack>
+  </Card.Body>
+</Card.Root>
+
+## Getting Help
+
+For version-related questions:
+
+- **Migration Support**: migration@facesign.ai
+- **Technical Support**: support@facesign.ai
+- **Dashboard**: [dashboard.facesign.ai/versions](https://dashboard.facesign.ai/versions)
+- **Status Page**: [status.facesign.ai](https://status.facesign.ai)
+
+<Separator my={8} />
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/migration"
+    title="Migration Guide"
+    description="Migrate to latest version"
+  />
+  <DocLinkCard
+    href="/api"
+    title="API Reference"
+    description="Complete API documentation"
+  />
+  <DocLinkCard
+    href="/errors"
+    title="Error Handling"
+    description="Handle version errors"
+  />
+</SimpleGrid>
+
+</Prose>

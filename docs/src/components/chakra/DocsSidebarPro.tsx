@@ -70,14 +70,17 @@ const navigation: NavSection[] = [
       { label: 'Introduction', href: '/docs' },
       { label: 'Quick Start', href: '/quickstart' },
       { label: 'Authentication', href: '/authentication' },
+      { label: 'Environments', href: '/environments' },
     ],
   },
   {
     title: 'Core Concepts',
     items: [
       { label: 'Sessions', href: '/docs/sessions' },
-      { label: 'Flows', href: '/docs/flows' },
-      { label: 'Webhooks', href: '/docs/webhooks' },
+      { label: 'Flows', href: '/flows/node-reference' },
+      { label: 'Flow Designer', href: '/flow-designer' },
+      { label: 'Flow Examples', href: '/flow-examples' },
+      { label: 'Webhooks', href: '/webhooks' },
     ],
   },
   {
@@ -87,12 +90,7 @@ const navigation: NavSection[] = [
       { label: 'Error Handling', href: '/errors' },
       { label: 'Languages', href: '/languages' },
       { label: 'Avatars', href: '/avatars' },
-    ],
-  },
-  {
-    title: 'SDKs',
-    items: [
-      { label: 'Overview', href: '/sdks' },
+      { label: 'SDKs', href: '/sdks' },
     ],
   },
 ]

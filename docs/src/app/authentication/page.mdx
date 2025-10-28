@@ -1,16 +1,18 @@
 import { PageHeader } from '@/components/chakra/PageHeader'
 import { Prose } from '@/components/chakra/Prose'
-import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator } from '@chakra-ui/react'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator, Accordion, Circle, Link } from '@chakra-ui/react'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 import { SimpleGrid } from '@chakra-ui/react'
+import { Warning } from '@/components/mdx'
+import { LuCheck, LuX } from 'react-icons/lu'
 
 export const metadata = {
-  title: 'API Keys',
-  description: 'Managing authentication keys for the FaceSign API.',
+  title: 'Authentication',
+  description: 'Learn how to authenticate your API requests with FaceSign.',
 }
 
-<PageHeader title="API Keys" description="Obtain and manage your FaceSign API authentication keys." />
+<PageHeader title="Authentication" description="Authenticate your API requests using API keys." />
 
 <Prose>
 
@@ -40,7 +42,7 @@ FaceSign uses API keys to authenticate requests. You'll need different keys for 
           <Table.Cell>
             <Code size="sm">https://api.dev.facesign.ai</Code>
           </Table.Cell>
-          <Table.Cell>Testing with sample data</Table.Cell>
+          <Table.Cell>Testing and development</Table.Cell>
         </Table.Row>
         <Table.Row>
           <Table.Cell>
@@ -61,152 +63,63 @@ FaceSign uses API keys to authenticate requests. You'll need different keys for 
 
 <Separator my={8} />
 
-## Getting Your API Keys
+## Getting API Keys
 
-### Sandbox (Test) Keys
+### Sandbox Keys
 
-<Card.Root variant="subtle" bg="blue.50" my={6}>
+<Card.Root variant="subtle" bg="blue.50" my={6} _dark={{ bg: 'blue.900/20' }}>
   <Card.Body>
-    <VStack align="start" gap={3}>
-      <Heading size="md">📧 Request Sandbox Access</Heading>
-      <Text>1. Contact your FaceSign administrator for provisioning</Text>
-      <Text>2. You'll receive access credentials for the Sandbox environment</Text>
-      <Text>3. Login to Flow Designer at <Code>https://create.facesign.ai</Code></Text>
-      <Text>4. Navigate to <strong>Settings → API Keys</strong></Text>
-      <Text>5. Copy your test key (starts with <Code>sk_test_</Code>)</Text>
+    <VStack align="start" gap={2}>
+      <Text fontWeight="semibold">Request Sandbox Access</Text>
+      <Text fontSize="sm">Contact your FaceSign administrator for provisioning. You'll receive access to the Sandbox environment and can generate test keys at <Code fontSize="xs">create.facesign.ai</Code></Text>
     </VStack>
   </Card.Body>
 </Card.Root>
 
 ### Production Keys
 
-<Card.Root variant="subtle" bg="green.50" my={6}>
+<Card.Root variant="subtle" bg="green.50" my={6} _dark={{ bg: 'green.900/20' }}>
   <Card.Body>
-    <VStack align="start" gap={3}>
-      <Heading size="md">🚀 Production Access</Heading>
-      <Text>1. Contact <Code>sales@facesign.ai</Code> for production access</Text>
-      <Text>2. Complete the onboarding process</Text>
-      <Text>3. Receive production credentials</Text>
-      <Text>4. Access your production dashboard</Text>
-      <Text>5. Generate production keys (starts with <Code>sk_live_</Code>)</Text>
+    <VStack align="start" gap={2}>
+      <Text fontWeight="semibold">Production Access</Text>
+      <Text fontSize="sm">Contact <Code fontSize="xs">sales@facesign.ai</Code> to set up production access and receive your live API keys.</Text>
     </VStack>
   </Card.Body>
 </Card.Root>
 
-<Alert.Root status="warning" variant="subtle" my={6}>
-  <Alert.Indicator />
-  <Alert.Content>
-    <Alert.Title>Security Best Practices</Alert.Title>
-    <Alert.Description>
-      • Never commit API keys to version control<br/>
-      • Use environment variables to store keys<br/>
-      • Rotate keys regularly<br/>
-      • Use different keys for different environments<br/>
-      • Restrict key permissions when possible
-    </Alert.Description>
-  </Alert.Content>
-</Alert.Root>
+<Warning title="Security Warning">
+  Keep your API keys secure! Never commit them to version control or expose them in client-side code.
+</Warning>
 
 <Separator my={8} />
 
 ## Using API Keys
 
-### Setting Environment Variables
+Include your API key in the Authorization header of every request:
 
 <SimpleCodeBlock
-  title="Local Development (.env file)"
-  language="bash"
-  code={`# Sandbox/Development
-FACESIGN_API_KEY=sk_test_your_test_key_here
-
-# Production (use separate .env.production)
-FACESIGN_API_KEY=sk_live_your_production_key_here`}
-/>
-
-### SDK Configuration
-
-<SimpleCodeBlock
-  defaultLanguage="javascript"
+  defaultLanguage="bash"
   languageSwitcher="tabs"
   codeExamples={{
-    javascript: `import { Client } from '@facesignai/api'
+    bash: `curl https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    javascript: `import Client from '@facesignai/api'
 
-// Automatically uses correct base URL based on key type
 const client = new Client({
-  auth: process.env.FACESIGN_API_KEY,
-  // Optional: explicitly set base URL
-  serverUrl: process.env.NODE_ENV === 'production'
-    ? 'https://api.facesign.ai'
-    : 'https://api.dev.facesign.ai'
+  auth: process.env.FACESIGN_API_KEY
 })`,
     python: `import os
 import facesignai
 
-# Configure client with API key
 client = facesignai.Client(
-    auth=os.environ.get('FACESIGN_API_KEY'),
-    # Optional: explicitly set base URL
-    base_url='https://api.dev.facesign.ai' if 'test' in os.environ.get('FACESIGN_API_KEY', '') else 'https://api.facesign.ai'
+    auth=os.environ.get('FACESIGN_API_KEY')
 )`,
-    go: `import (
-    "os"
-    facesign "github.com/facesignai/go-sdk"
-)
-
-// Configure client
-client := facesign.NewClient(
-    facesign.WithAPIKey(os.Getenv("FACESIGN_API_KEY")),
-    // Optional: explicitly set base URL
-    facesign.WithBaseURL("https://api.dev.facesign.ai"),
-)`
   }}
 />
 
-### Direct API Calls
+### Environment Detection
 
-<SimpleCodeBlock
-  title="Using with cURL"
-  language="bash"
-  code={`# Sandbox environment
-curl -X POST https://api.dev.facesign.ai/sessions \\
-  -H "Authorization: Bearer $FACESIGN_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"flow": {...}}'
-
-# Production environment
-curl -X POST https://api.facesign.ai/sessions \\
-  -H "Authorization: Bearer $FACESIGN_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"flow": {...}}'`}
-/>
-
-<Separator my={8} />
-
-## Key Management
-
-### Rotating Keys
-
-It's recommended to rotate your API keys periodically:
-
-1. Generate a new key in your dashboard
-2. Update your application to use the new key
-3. Verify the new key is working
-4. Deactivate the old key
-
-### Revoking Keys
-
-If a key is compromised:
-
-1. Immediately revoke the key in your dashboard
-2. Generate a new key
-3. Update all applications using the compromised key
-4. Review API logs for any unauthorized usage
-
-<Separator my={8} />
-
-## Environment Detection
-
-The SDK can automatically detect which environment to use based on your key:
+The SDK automatically detects which environment to use based on your key prefix:
 
 <SimpleCodeBlock
   title="Automatic Environment Detection"
@@ -226,16 +139,97 @@ const client = new Client({
     <Alert.Title>Smart Routing</Alert.Title>
     <Alert.Description>
       The SDK automatically routes requests to the correct environment based on your API key prefix.
-      Test keys route to the Sandbox, live keys route to Production.
+      Test keys route to Sandbox, live keys route to Production.
     </Alert.Description>
   </Alert.Content>
 </Alert.Root>
 
 <Separator my={8} />
 
-## Troubleshooting
+## Client-Side Authentication
 
-### Common Issues
+**Never use your API key on the client side!** Instead, create a session on your backend and provide the client secret URL to your end users:
+
+<SimpleCodeBlock
+  title="Create session on backend"
+  language="javascript"
+  code={`import Client from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  metadata: {},
+  flow: { nodes: [...], edges: [...] }
+})
+
+// Send clientSecret to your frontend
+return { clientSecret }`}
+/>
+
+<Separator my={8} />
+
+## Test vs Production
+
+<Box my={6} borderWidth="1px" borderRadius="lg" overflow="hidden">
+  <Table.Root size="sm">
+    <Table.Header>
+      <Table.Row bg="gray.50" _dark={{ bg: 'gray.800' }}>
+        <Table.ColumnHeader>Feature</Table.ColumnHeader>
+        <Table.ColumnHeader>Test Mode</Table.ColumnHeader>
+        <Table.ColumnHeader>Production Mode</Table.ColumnHeader>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      <Table.Row>
+        <Table.Cell fontWeight="medium">Key prefix</Table.Cell>
+        <Table.Cell><Code>sk_test_</Code></Table.Cell>
+        <Table.Cell><Code>sk_live_</Code></Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell fontWeight="medium">Environment</Table.Cell>
+        <Table.Cell>Development & Testing</Table.Cell>
+        <Table.Cell>Production</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell fontWeight="medium">Sessions marked</Table.Cell>
+        <Table.Cell>
+          <HStack>
+            <LuCheck color="green" />
+            <Text>Yes, as test mode</Text>
+          </HStack>
+        </Table.Cell>
+        <Table.Cell>
+          <HStack>
+            <LuX color="gray" />
+            <Text>No</Text>
+          </HStack>
+        </Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell fontWeight="medium">Full API access</Table.Cell>
+        <Table.Cell>
+          <HStack>
+            <LuCheck color="green" />
+            <Text>Yes</Text>
+          </HStack>
+        </Table.Cell>
+        <Table.Cell>
+          <HStack>
+            <LuCheck color="green" />
+            <Text>Yes</Text>
+          </HStack>
+        </Table.Cell>
+      </Table.Row>
+    </Table.Body>
+  </Table.Root>
+</Box>
+
+<Separator my={8} />
+
+## Troubleshooting
 
 <Accordion.Root multiple={true} size="lg">
   <Accordion.Item value="auth-error">
@@ -287,22 +281,18 @@ const client = new Client({
 
 ## Next Steps
 
-<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+<SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="8">
   <DocLinkCard
     href="/quickstart"
     title="Quick Start"
     description="Create your first session"
   />
   <DocLinkCard
-    href="/authentication"
-    title="Authentication"
-    description="Learn about request signing"
+    href="/docs/sessions"
+    title="Sessions"
+    description="Learn about verification sessions"
   />
-  <DocLinkCard
-    href="/flow-designer"
-    title="Flow Designer"
-    description="Design flows in the Sandbox"
-  />
+  <DocLinkCard href="/environments" title="Environments" description="Sandbox vs Production" />
 </SimpleGrid>
 
 </Prose>

@@ -1,0 +1,760 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator, Grid, Stack, Tabs } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+import { ReferenceTable } from '@/components/chakra/ReferenceTable'
+import { LuSparkles, LuGitBranch, LuUsers, LuFlaskConical, LuTrendingUp, LuWebhook } from 'react-icons/lu'
+
+export const metadata = {
+  title: 'Flow Examples',
+  description: 'Real-world verification flow patterns for different use cases.',
+}
+
+<PageHeader
+  title="Flow Examples"
+  description="Production-ready verification flows for common identity verification scenarios."
+/>
+
+<Prose>
+
+## Overview
+
+FaceSign's node-based flow system allows you to create sophisticated verification workflows tailored to your specific requirements. Here are battle-tested flows for common use cases.
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Flow Designer Available</Alert.Title>
+    <Alert.Description>
+      Use the <a href="/flow-designer">Flow Designer</a> at <a href="https://create.facesign.ai" target="_blank">create.facesign.ai</a> to visually build and test these flows before implementing them in code.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Basic Identity Verification
+
+### Simple Liveness Check
+
+The most basic flow for verifying a person is physically present and not using a photo or video.
+
+<SimpleCodeBlock
+  title="Basic Liveness Detection"
+  language="typescript"
+  code={`import { Client, FSNodeType } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'liveness'
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'liveness' },
+      { id: 'e2', source: 'liveness', target: 'end' }
+    ]
+  }
+})`}
+/>
+
+### Document Verification with Selfie
+
+Standard KYC flow: verify government ID and match it with a selfie.
+
+<SimpleCodeBlock
+  title="Document + Face Match"
+  language="typescript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'doc'
+      },
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        outcomes: {
+          verified: 'face',
+          fraudDetected: 'end',
+          manualReview: 'end',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'face',
+        type: FSNodeType.FACE_SCAN,
+        usePreviousImage: 'doc',  // Match against document photo
+        outcomes: {
+          matched: 'liveness',
+          notMatched: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'doc' },
+      { id: 'e2', source: 'doc', target: 'face' },
+      { id: 'e3', source: 'face', target: 'liveness' },
+      { id: 'e4', source: 'liveness', target: 'end' }
+    ]
+  }
+})`}
+/>
+
+## Advanced Verification Flows
+
+### Multi-Factor Authentication Flow
+
+Combine email and SMS verification with biometric checks.
+
+<SimpleCodeBlock
+  title="Email + SMS + Biometric"
+  language="typescript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  metadata: {
+    userEmail: 'user@example.com',
+    userPhone: '+1234567890'
+  },
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'email'
+      },
+      {
+        id: 'email',
+        type: FSNodeType.ENTER_EMAIL,
+        outcomes: {
+          emailEntered: 'email_otp'
+        }
+      },
+      {
+        id: 'email_otp',
+        type: FSNodeType.TWO_FACTOR_EMAIL,
+        outcomes: {
+          verified: 'sms_otp',
+          maxAttemptsReached: 'end',
+          expired: 'end'
+        }
+      },
+      {
+        id: 'sms_otp',
+        type: FSNodeType.TWO_FACTOR_SMS,
+        phoneNumber: '+1234567890',  // Pre-filled from metadata
+        outcomes: {
+          verified: 'liveness',
+          maxAttemptsReached: 'end',
+          expired: 'end'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'email' },
+      { id: 'e2', source: 'email', target: 'email_otp' },
+      { id: 'e3', source: 'email_otp', target: 'sms_otp' },
+      { id: 'e4', source: 'sms_otp', target: 'liveness' },
+      { id: 'e5', source: 'liveness', target: 'end' }
+    ]
+  }
+})`}
+/>
+
+### Conversational AI Verification
+
+Use AI-powered conversation for dynamic verification questions.
+
+<SimpleCodeBlock
+  title="AI Conversational Flow"
+  language="typescript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'user-123',
+  avatarId: 'June_HR_public',  // AI Avatar
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'conversation'
+      },
+      {
+        id: 'conversation',
+        type: FSNodeType.CONVERSATION,
+        aiConfig: {
+          systemPrompt: 'You are a friendly identity verification assistant. Ask the user to confirm their name and date of birth.',
+          verificationQuestions: [
+            'What is your full legal name?',
+            'What is your date of birth?',
+            'What city were you born in?'
+          ],
+          maxTurns: 5,
+          language: 'en'
+        },
+        outcomes: {
+          verified: 'doc',
+          notVerified: 'end',
+          timeout: 'end'
+        }
+      },
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        outcomes: {
+          verified: 'liveness',
+          fraudDetected: 'end',
+          manualReview: 'end',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'conversation' },
+      { id: 'e2', source: 'conversation', target: 'doc' },
+      { id: 'e3', source: 'doc', target: 'liveness' },
+      { id: 'e4', source: 'liveness', target: 'end' }
+    ]
+  }
+})`}
+/>
+
+## Industry-Specific Flows
+
+### Financial Services KYC
+
+Complete KYC flow for banking and financial services with enhanced fraud detection.
+
+<SimpleCodeBlock
+  title="Banking KYC Flow"
+  language="typescript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'account-application-789',
+  webhookUrl: 'https://api.bank.com/webhooks/facesign',
+  metadata: {
+    applicationId: '789',
+    productType: 'checking_account',
+    riskLevel: 'standard'
+  },
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'doc'
+      },
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        allowedDocuments: [
+          'passport',
+          'drivers_license',
+          'national_id'
+        ],
+        extractData: true,  // Extract all document fields
+        outcomes: {
+          verified: 'validation',
+          fraudDetected: 'end',
+          manualReview: 'manual_review',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'validation',
+        type: FSNodeType.DATA_VALIDATION,
+        validations: [
+          {
+            field: 'age',
+            operator: 'gte',
+            value: 18
+          },
+          {
+            field: 'documentExpiry',
+            operator: 'gt',
+            value: 'now'
+          },
+          {
+            field: 'country',
+            operator: 'in',
+            value: ['US', 'CA', 'GB', 'EU']
+          }
+        ],
+        outcomes: {
+          valid: 'face',
+          invalid: 'end'
+        }
+      },
+      {
+        id: 'face',
+        type: FSNodeType.FACE_SCAN,
+        usePreviousImage: 'doc',
+        outcomes: {
+          matched: 'liveness',
+          notMatched: 'manual_review',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        enhancedDetection: true,  // Extra fraud checks
+        outcomes: {
+          livenessDetected: 'recognition',
+          deepfakeDetected: 'manual_review',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'recognition',
+        type: FSNodeType.RECOGNITION,
+        database: 'fraud_watchlist',  // Check against fraud database
+        outcomes: {
+          notFound: 'end',  // Good - not in fraud database
+          found: 'manual_review'  // Found in fraud database
+        }
+      },
+      {
+        id: 'manual_review',
+        type: FSNodeType.END,
+        status: 'manual_review_required'
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'doc' },
+      { id: 'e2', source: 'doc', target: 'validation', condition: 'verified' },
+      { id: 'e3', source: 'doc', target: 'manual_review', condition: 'manualReview' },
+      { id: 'e4', source: 'validation', target: 'face', condition: 'valid' },
+      { id: 'e5', source: 'face', target: 'liveness', condition: 'matched' },
+      { id: 'e6', source: 'face', target: 'manual_review', condition: 'notMatched' },
+      { id: 'e7', source: 'liveness', target: 'recognition', condition: 'livenessDetected' },
+      { id: 'e8', source: 'liveness', target: 'manual_review', condition: 'deepfakeDetected' },
+      { id: 'e9', source: 'recognition', target: 'end', condition: 'notFound' },
+      { id: 'e10', source: 'recognition', target: 'manual_review', condition: 'found' }
+    ]
+  },
+  // Enhanced settings for financial services
+  videoAIAnalysisEnabled: true,  // AI fraud analysis
+  zone: 'us-east',  // Data residency
+  expiresAt: Date.now() + (30 * 60 * 1000)  // 30 min expiry
+})`}
+/>
+
+### Healthcare Patient Verification
+
+HIPAA-compliant patient identity verification flow.
+
+<SimpleCodeBlock
+  title="Healthcare Patient ID"
+  language="typescript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'patient-' + patientId,
+  metadata: {
+    patientId: patientId,
+    appointmentId: appointmentId,
+    provider: 'Dr. Smith',
+    verificationType: 'telehealth'
+  },
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'conversation'
+      },
+      {
+        id: 'conversation',
+        type: FSNodeType.CONVERSATION,
+        aiConfig: {
+          systemPrompt: 'Verify patient identity for telehealth appointment. Confirm name and date of birth.',
+          verificationQuestions: [
+            'Please state your full name for our records',
+            'Can you confirm your date of birth?'
+          ],
+          maxTurns: 3,
+          recordAudio: true  // For audit trail
+        },
+        outcomes: {
+          verified: 'doc',
+          notVerified: 'end',
+          timeout: 'end'
+        }
+      },
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        allowedDocuments: [
+          'drivers_license',
+          'passport',
+          'state_id',
+          'insurance_card'  // Healthcare specific
+        ],
+        extractData: true,
+        outcomes: {
+          verified: 'face',
+          fraudDetected: 'end',
+          manualReview: 'end',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'face',
+        type: FSNodeType.FACE_SCAN,
+        usePreviousImage: 'doc',
+        storeForFutureVerification: true,  // For return visits
+        outcomes: {
+          matched: 'end',
+          notMatched: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'conversation' },
+      { id: 'e2', source: 'conversation', target: 'doc' },
+      { id: 'e3', source: 'doc', target: 'face' },
+      { id: 'e4', source: 'face', target: 'end' }
+    ]
+  },
+  // HIPAA compliance settings
+  zone: 'us-healthcare',  // HIPAA-compliant infrastructure
+  dataRetention: 7,  // Days to retain data
+  encryptionLevel: 'high',
+  webhookUrl: 'https://api.hospital.com/webhooks/patient-verification'
+})`}
+/>
+
+### Age Verification for Restricted Content
+
+Quick age verification for alcohol, gambling, or adult content.
+
+<SimpleCodeBlock
+  title="Age Verification Flow"
+  language="typescript"
+  code={`const { session, clientSecret } = await client.session.create({
+  clientReferenceId: 'age-check-' + userId,
+  metadata: {
+    purpose: 'age_verification',
+    minAge: 21,
+    platform: 'web'
+  },
+  flow: {
+    nodes: [
+      {
+        id: 'start',
+        type: FSNodeType.START,
+        outcome: 'doc'
+      },
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        allowedDocuments: [
+          'drivers_license',
+          'passport',
+          'national_id'
+        ],
+        extractData: true,
+        extractFields: ['dateOfBirth'],  // Only need DOB
+        outcomes: {
+          verified: 'age_check',
+          fraudDetected: 'end',
+          manualReview: 'end',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'age_check',
+        type: FSNodeType.DATA_VALIDATION,
+        validations: [
+          {
+            field: 'age',
+            operator: 'gte',
+            value: 21  // Minimum age requirement
+          }
+        ],
+        outcomes: {
+          valid: 'liveness',
+          invalid: 'underage'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        quickMode: true,  // Faster, less strict check
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'underage',
+        type: FSNodeType.END,
+        status: 'age_requirement_not_met'
+      },
+      {
+        id: 'end',
+        type: FSNodeType.END
+      }
+    ],
+    edges: [
+      { id: 'e1', source: 'start', target: 'doc' },
+      { id: 'e2', source: 'doc', target: 'age_check' },
+      { id: 'e3', source: 'age_check', target: 'liveness', condition: 'valid' },
+      { id: 'e4', source: 'age_check', target: 'underage', condition: 'invalid' },
+      { id: 'e5', source: 'liveness', target: 'end' }
+    ]
+  },
+  // Quick verification settings
+  expiresAt: Date.now() + (15 * 60 * 1000),  // 15 min expiry
+  dataRetention: 1  // Delete after 1 day
+})`}
+/>
+
+## Conditional Flow Patterns
+
+### Risk-Based Verification
+
+Adjust verification requirements based on risk assessment.
+
+<SimpleCodeBlock
+  title="Dynamic Risk-Based Flow"
+  language="typescript"
+  code={`// Determine risk level based on your business logic
+const riskLevel = await assessUserRisk(userId)  // 'low', 'medium', 'high'
+
+// Build flow based on risk
+const buildRiskBasedFlow = (risk: string) => {
+  const baseNodes = [
+    {
+      id: 'start',
+      type: FSNodeType.START,
+      outcome: risk === 'low' ? 'liveness' : 'doc'
+    },
+    {
+      id: 'end',
+      type: FSNodeType.END
+    }
+  ]
+
+  const edges = []
+
+  if (risk === 'low') {
+    // Low risk: Just liveness
+    baseNodes.push({
+      id: 'liveness',
+      type: FSNodeType.LIVENESS_DETECTION,
+      outcomes: {
+        livenessDetected: 'end',
+        deepfakeDetected: 'end',
+        noFace: 'end'
+      }
+    })
+    edges.push(
+      { id: 'e1', source: 'start', target: 'liveness' },
+      { id: 'e2', source: 'liveness', target: 'end' }
+    )
+  }
+
+  if (risk === 'medium') {
+    // Medium risk: Doc + Liveness
+    baseNodes.push(
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        outcomes: {
+          verified: 'liveness',
+          fraudDetected: 'end',
+          manualReview: 'end',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        outcomes: {
+          livenessDetected: 'end',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      }
+    )
+    edges.push(
+      { id: 'e1', source: 'start', target: 'doc' },
+      { id: 'e2', source: 'doc', target: 'liveness' },
+      { id: 'e3', source: 'liveness', target: 'end' }
+    )
+  }
+
+  if (risk === 'high') {
+    // High risk: Full KYC + 2FA
+    baseNodes.push(
+      {
+        id: 'doc',
+        type: FSNodeType.DOCUMENT_SCAN,
+        enhancedFraudDetection: true,
+        outcomes: {
+          verified: 'face',
+          fraudDetected: 'end',
+          manualReview: 'end',
+          invalidDocument: 'end'
+        }
+      },
+      {
+        id: 'face',
+        type: FSNodeType.FACE_SCAN,
+        usePreviousImage: 'doc',
+        outcomes: {
+          matched: 'liveness',
+          notMatched: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'liveness',
+        type: FSNodeType.LIVENESS_DETECTION,
+        enhancedDetection: true,
+        outcomes: {
+          livenessDetected: 'sms',
+          deepfakeDetected: 'end',
+          noFace: 'end'
+        }
+      },
+      {
+        id: 'sms',
+        type: FSNodeType.TWO_FACTOR_SMS,
+        phoneNumber: userPhone,
+        outcomes: {
+          verified: 'end',
+          maxAttemptsReached: 'end',
+          expired: 'end'
+        }
+      }
+    )
+    edges.push(
+      { id: 'e1', source: 'start', target: 'doc' },
+      { id: 'e2', source: 'doc', target: 'face' },
+      { id: 'e3', source: 'face', target: 'liveness' },
+      { id: 'e4', source: 'liveness', target: 'sms' },
+      { id: 'e5', source: 'sms', target: 'end' }
+    )
+  }
+
+  return { nodes: baseNodes, edges }
+}
+
+// Create session with risk-appropriate flow
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: userId,
+  metadata: {
+    riskLevel: riskLevel,
+    assessmentScore: riskScore
+  },
+  flow: buildRiskBasedFlow(riskLevel),
+  webhookUrl: 'https://api.example.com/webhooks/verification'
+})`}
+/>
+
+## Testing Your Flows
+
+Before deploying to production:
+
+1. **Use Flow Designer**: Test flows visually at [create.facesign.ai](https://create.facesign.ai)
+2. **Sandbox Testing**: Use test API keys to verify flow logic
+3. **Error Handling**: Test all failure paths
+4. **Performance**: Monitor flow completion times
+5. **Compliance**: Ensure flows meet regulatory requirements
+
+<Separator my={8} />
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/flow-designer"
+    title="Flow Designer"
+    description="Build flows visually"
+  />
+  <DocLinkCard
+    href="/flows"
+    title="Flow Concepts"
+    description="Deep dive into flow system"
+  />
+  <DocLinkCard
+    href="/api#create-session"
+    title="API Reference"
+    description="Session creation details"
+  />
+</SimpleGrid>
+
+</Prose>

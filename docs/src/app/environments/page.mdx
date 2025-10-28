@@ -1,0 +1,602 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator, SimpleGrid } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { LuCheck, LuX } from 'react-icons/lu'
+
+export const metadata = {
+  title: 'Development vs Production',
+  description: 'Complete guide to FaceSign environments and when to use each.',
+}
+
+<PageHeader title="Development vs Production" description="Understanding FaceSign's dual environment system for safe testing and live verification." />
+
+<Prose>
+
+## Environment Overview
+
+FaceSign provides two distinct environments to ensure safe development and testing without exposing real user data:
+
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={4} my={6}>
+  <Card.Root variant="outline" borderColor="blue.200">
+    <Card.Header bg="blue.50">
+      <HStack justify="space-between">
+        <Heading size="md">Development (Sandbox)</Heading>
+        <Badge colorPalette="blue" size="lg">TEST</Badge>
+      </HStack>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={3}>
+        <Text><strong>Base URL:</strong> <Code>api.dev.facesign.ai</Code></Text>
+        <Text><strong>API Keys:</strong> <Code>sk_test_...</Code></Text>
+        <Text><strong>Purpose:</strong> Testing, demos, development</Text>
+        <Text><strong>Data:</strong> Test data only (NO PII)</Text>
+        <Text><strong>Flow Designer:</strong> ✅ Available</Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root variant="outline" borderColor="green.200">
+    <Card.Header bg="green.50">
+      <HStack justify="space-between">
+        <Heading size="md">Production</Heading>
+        <Badge colorPalette="green" size="lg">LIVE</Badge>
+      </HStack>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={3}>
+        <Text><strong>Base URL:</strong> <Code>api.facesign.ai</Code></Text>
+        <Text><strong>API Keys:</strong> <Code>sk_live_...</Code></Text>
+        <Text><strong>Purpose:</strong> Live verification</Text>
+        <Text><strong>Data:</strong> Real user data (PII)</Text>
+        <Text><strong>Flow Designer:</strong> ❌ Not available</Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+<Separator my={8} />
+
+## Complete Environment Comparison
+
+<Card.Root variant="outline" my={6}>
+  <Card.Body>
+    <Table.Root size="sm">
+      <Table.Header>
+        <Table.Row>
+          <Table.ColumnHeader>Feature</Table.ColumnHeader>
+          <Table.ColumnHeader>Development</Table.ColumnHeader>
+          <Table.ColumnHeader>Production</Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">API Endpoint</Table.Cell>
+          <Table.Cell><Code size="sm">https://api.dev.facesign.ai</Code></Table.Cell>
+          <Table.Cell><Code size="sm">https://api.facesign.ai</Code></Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Session URL</Table.Cell>
+          <Table.Cell><Code size="sm">https://session.dev.facesign.ai</Code></Table.Cell>
+          <Table.Cell><Code size="sm">https://session.facesign.ai</Code></Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Flow Designer</Table.Cell>
+          <Table.Cell><Code size="sm">https://create.facesign.ai</Code></Table.Cell>
+          <Table.Cell>Not available</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">API Key Format</Table.Cell>
+          <Table.Cell><Code size="sm">sk_test_...</Code></Table.Cell>
+          <Table.Cell><Code size="sm">sk_live_...</Code></Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Rate Limits</Table.Cell>
+          <Table.Cell>100 requests/minute</Table.Cell>
+          <Table.Cell>1000 requests/minute</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Data Retention</Table.Cell>
+          <Table.Cell>7 days</Table.Cell>
+          <Table.Cell>Based on contract</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Webhook Signatures</Table.Cell>
+          <Table.Cell>Optional</Table.Cell>
+          <Table.Cell>Required</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Support</Table.Cell>
+          <Table.Cell>Community</Table.Cell>
+          <Table.Cell>Priority SLA</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table.Root>
+  </Card.Body>
+</Card.Root>
+
+<Separator my={8} />
+
+## When to Use Each Environment
+
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={4} my={6}>
+  {/* Development Use Cases */}
+  <Card.Root>
+    <Card.Header>
+      <Heading size="sm">Use Development Environment For:</Heading>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={2} fontSize="sm">
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Initial integration and development</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Testing flow logic and configurations</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Creating demos for stakeholders</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Training team members</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Debugging and troubleshooting</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Automated testing (CI/CD)</Text></HStack>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  {/* Production Use Cases */}
+  <Card.Root>
+    <Card.Header>
+      <Heading size="sm">Use Production Environment For:</Heading>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={2} fontSize="sm">
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Real user identity verification</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Customer onboarding</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Compliance and KYC requirements</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Live authentication flows</Text></HStack>
+        <HStack><Box color="gray.500"><LuCheck /></Box><Text>Production monitoring and analytics</Text></HStack>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  {/* Warning - spans both columns on desktop */}
+  <Card.Root gridColumn={{ base: "auto", md: "span 2" }}>
+    <Card.Header>
+      <HStack>
+        <Box color="red.500"><LuX /></Box>
+        <Heading size="sm">Never in Development</Heading>
+      </HStack>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={2} fontSize="sm">
+        <HStack><Box color="red.500"><LuX /></Box><Text>Real user data or PII</Text></HStack>
+        <HStack><Box color="red.500"><LuX /></Box><Text>Actual identity documents</Text></HStack>
+        <HStack><Box color="red.500"><LuX /></Box><Text>Production API keys</Text></HStack>
+        <HStack><Box color="red.500"><LuX /></Box><Text>Sensitive business logic</Text></HStack>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+<Separator my={8} />
+
+## Configuring Your Application
+
+### Automatic Environment Detection
+
+The SDK automatically routes to the correct environment based on your API key:
+
+<SimpleCodeBlock
+  title="Automatic Environment Routing"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `import { Client } from '@facesignai/api'
+
+// SDK automatically detects environment from key prefix
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+// sk_test_... → https://api.dev.facesign.ai
+// sk_live_... → https://api.facesign.ai`,
+    python: `import facesignai
+
+# SDK automatically detects environment from key prefix
+client = facesignai.Client(
+    auth=os.environ.get('FACESIGN_API_KEY')
+)
+
+# sk_test_... → https://api.dev.facesign.ai
+# sk_live_... → https://api.facesign.ai`,
+    go: `import facesign "github.com/facesignai/go-sdk"
+
+// SDK automatically detects environment from key prefix
+client := facesign.NewClient(
+    facesign.WithAPIKey(os.Getenv("FACESIGN_API_KEY"))
+)
+
+// sk_test_... → https://api.dev.facesign.ai
+// sk_live_... → https://api.facesign.ai`
+  }}
+/>
+
+### Manual Environment Configuration
+
+For explicit control, you can manually set the base URL:
+
+<SimpleCodeBlock
+  title="Manual Environment Configuration"
+  language="javascript"
+  code={`// Development environment
+const devClient = new Client({
+  auth: process.env.FACESIGN_TEST_KEY,
+  serverUrl: 'https://api.dev.facesign.ai'
+})
+
+// Production environment
+const prodClient = new Client({
+  auth: process.env.FACESIGN_LIVE_KEY,
+  serverUrl: 'https://api.facesign.ai'
+})`}
+/>
+
+### Environment Variables
+
+Best practice for managing environments:
+
+<SimpleCodeBlock
+  title=".env.development"
+  language="bash"
+  code={`# Development Environment
+FACESIGN_API_KEY=sk_test_your_test_key_here
+FACESIGN_BASE_URL=https://api.dev.facesign.ai
+FACESIGN_WEBHOOK_URL=https://your-dev-server.ngrok.io/webhooks
+NODE_ENV=development`}
+/>
+
+<SimpleCodeBlock
+  title=".env.production"
+  language="bash"
+  code={`# Production Environment
+FACESIGN_API_KEY=sk_live_your_live_key_here
+FACESIGN_BASE_URL=https://api.facesign.ai
+FACESIGN_WEBHOOK_URL=https://your-domain.com/webhooks
+NODE_ENV=production`}
+/>
+
+<Separator my={8} />
+
+## Environment-Specific Features
+
+### Development Only Features
+
+<Table.Root variant="simple" size="sm" my={6}>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Flow Designer</Table.Cell>
+      <Table.Cell>Visual flow creation and testing</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Test Identities</Table.Cell>
+      <Table.Cell>Pre-configured sample users</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Mock Documents</Table.Cell>
+      <Table.Cell>Sample ID documents for testing</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Debug Mode</Table.Cell>
+      <Table.Cell>Detailed error messages and logs</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Reset Data</Table.Cell>
+      <Table.Cell>Clear test data anytime</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>
+
+### Production Only Features
+
+<Table.Root variant="simple" size="sm" my={6}>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Webhook Signatures</Table.Cell>
+      <Table.Cell>Cryptographic validation</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">High Availability</Table.Cell>
+      <Table.Cell>99.9% uptime SLA</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Advanced Analytics</Table.Cell>
+      <Table.Cell>Detailed verification metrics</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Compliance Reports</Table.Cell>
+      <Table.Cell>KYC/AML audit trails</Table.Cell>
+    </Table.Row>
+    <Table.Row>
+      <Table.Cell fontWeight="semibold">Priority Support</Table.Cell>
+      <Table.Cell>24/7 technical assistance</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>
+
+<Separator my={8} />
+
+## Migration Strategy
+
+### Development to Production Checklist
+
+Before moving to production, ensure:
+
+<VStack align="start" gap={3} my={6} pl={4}>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>1.</Box>
+    <Text><strong>Replace API Keys</strong> - Switch from sk_test_ to sk_live_</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>2.</Box>
+    <Text><strong>Update Base URLs</strong> - Remove ".dev" from all endpoints</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>3.</Box>
+    <Text><strong>Implement Webhook Validation</strong> - Add signature verification</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>4.</Box>
+    <Text><strong>Add Error Handling</strong> - Handle production edge cases</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>5.</Box>
+    <Text><strong>Set Up Monitoring</strong> - Track success rates and errors</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>6.</Box>
+    <Text><strong>Configure Logging</strong> - Never log PII</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>7.</Box>
+    <Text><strong>Test Failover</strong> - Implement retry logic</Text>
+  </HStack>
+  <HStack align="start">
+    <Box color="blue.500" mt={1}>8.</Box>
+    <Text><strong>Review Security</strong> - Audit all endpoints</Text>
+  </HStack>
+</VStack>
+
+### Environment Switching Code
+
+<SimpleCodeBlock
+  title="Environment-Aware Configuration"
+  language="javascript"
+  code={`class FaceSignService {
+  constructor() {
+    this.isDevelopment = process.env.NODE_ENV !== 'production'
+
+    this.client = new Client({
+      auth: this.isDevelopment
+        ? process.env.FACESIGN_TEST_KEY
+        : process.env.FACESIGN_LIVE_KEY,
+      serverUrl: this.isDevelopment
+        ? 'https://api.dev.facesign.ai'
+        : 'https://api.facesign.ai'
+    })
+
+    // Different webhook URLs
+    this.webhookUrl = this.isDevelopment
+      ? process.env.DEV_WEBHOOK_URL
+      : process.env.PROD_WEBHOOK_URL
+
+    // Different logging levels
+    this.logLevel = this.isDevelopment ? 'debug' : 'error'
+  }
+
+  async createSession(params) {
+    try {
+      const response = await this.client.session.create({
+        ...params,
+        webhookUrl: this.webhookUrl,
+        metadata: {
+          ...params.metadata,
+          environment: this.isDevelopment ? 'dev' : 'prod'
+        }
+      })
+
+      if (this.isDevelopment) {
+        console.debug('Session created:', response)
+      }
+
+      return response
+    } catch (error) {
+      if (this.isDevelopment) {
+        console.error('Detailed error:', error)
+      }
+      throw error
+    }
+  }
+}`}
+/>
+
+<Separator my={8} />
+
+## Common Pitfalls
+
+### Development Environment
+
+<Alert.Root status="warning" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Common Development Mistakes</Alert.Title>
+    <Alert.Description>
+      • Using production keys in development<br/>
+      • Testing with real user data<br/>
+      • Hardcoding development URLs<br/>
+      • Not testing error scenarios<br/>
+      • Skipping webhook testing
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+### Production Environment
+
+<Alert.Root status="error" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Common Production Mistakes</Alert.Title>
+    <Alert.Description>
+      • Using test keys in production<br/>
+      • Missing webhook signature validation<br/>
+      • Insufficient error handling<br/>
+      • Not implementing retry logic<br/>
+      • Logging sensitive user data
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+<Separator my={8} />
+
+## Testing Strategies
+
+### Local Development Testing
+
+<SimpleCodeBlock
+  title="Local Testing Setup"
+  language="bash"
+  code={`# 1. Set up environment
+export FACESIGN_API_KEY=sk_test_your_key
+export NODE_ENV=development
+
+# 2. Start local server
+npm run dev
+
+# 3. Use ngrok for webhooks
+ngrok http 3000
+
+# 4. Run tests
+npm test
+
+# 5. Test with Flow Designer
+# Visit https://create.facesign.ai`}
+/>
+
+### Staging Environment
+
+Consider a staging environment that mirrors production:
+
+<SimpleCodeBlock
+  title="Staging Configuration"
+  language="javascript"
+  code={`const getEnvironment = () => {
+  switch (process.env.ENVIRONMENT) {
+    case 'development':
+      return {
+        apiKey: process.env.FACESIGN_TEST_KEY,
+        baseUrl: 'https://api.dev.facesign.ai',
+        logLevel: 'debug'
+      }
+    case 'staging':
+      return {
+        apiKey: process.env.FACESIGN_TEST_KEY,  // Still use test keys
+        baseUrl: 'https://api.dev.facesign.ai',
+        logLevel: 'info'
+      }
+    case 'production':
+      return {
+        apiKey: process.env.FACESIGN_LIVE_KEY,
+        baseUrl: 'https://api.facesign.ai',
+        logLevel: 'error'
+      }
+  }
+}`}
+/>
+
+<Separator my={8} />
+
+## Monitoring and Debugging
+
+### Development Debugging
+
+<SimpleCodeBlock
+  title="Enhanced Development Logging"
+  language="javascript"
+  code={`if (process.env.NODE_ENV === 'development') {
+  // Log all API requests
+  client.on('request', (config) => {
+    console.log('API Request:', {
+      method: config.method,
+      url: config.url,
+      data: config.data
+    })
+  })
+
+  // Log all responses
+  client.on('response', (response) => {
+    console.log('API Response:', {
+      status: response.status,
+      data: response.data
+    })
+  })
+
+  // Log all errors
+  client.on('error', (error) => {
+    console.error('API Error:', error)
+  })
+}`}
+/>
+
+### Production Monitoring
+
+<SimpleCodeBlock
+  title="Production Metrics Tracking"
+  language="javascript"
+  code={`// Track key metrics in production
+class MetricsCollector {
+  trackSession(event, data) {
+    if (process.env.NODE_ENV === 'production') {
+      // Send to your analytics service
+      analytics.track({
+        event: \`facesign_\${event}\`,
+        properties: {
+          sessionId: data.sessionId,
+          duration: data.duration,
+          success: data.success,
+          // Never log PII
+        }
+      })
+    }
+  }
+
+  trackError(error) {
+    if (process.env.NODE_ENV === 'production') {
+      // Send to error tracking service
+      sentry.captureException(error, {
+        tags: {
+          service: 'facesign',
+          environment: 'production'
+        }
+      })
+    }
+  }
+}`}
+/>
+
+<Separator my={8} />
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/api-keys"
+    title="API Keys"
+    description="Get your development keys"
+  />
+  <DocLinkCard
+    href="/flow-designer"
+    title="Flow Designer"
+    description="Start building in sandbox"
+  />
+  <DocLinkCard
+    href="/migration"
+    title="Migration Guide"
+    description="Move to production safely"
+  />
+</SimpleGrid>
+
+</Prose>
