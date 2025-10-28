@@ -57,18 +57,30 @@ const navigation: NavSection[] = [
     title: 'Getting Started',
     items: [
       { label: 'Introduction', href: '/docs#introduction' },
-      { label: 'Installation', href: '/docs#installation' },
-      { label: 'Authentication', href: '/docs#authentication' },
-      { label: 'First Session', href: '/docs#first-session' },
+      { label: 'Quick Start', href: '/quickstart' },
+      { label: 'API Keys', href: '/api-keys' },
+      { label: 'Authentication', href: '/authentication' },
+      { label: 'Migration Guide', href: '/migration' },
+    ],
+  },
+  {
+    title: 'Flow Designer',
+    items: [
+      { label: 'Overview', href: '/flow-designer' },
+      { label: 'Getting Access', href: '/flow-designer#getting-access' },
+      { label: 'Building Flows', href: '/flow-designer#creating-flows-visually' },
+      { label: 'Testing', href: '/flow-designer#testing-your-flow' },
+      { label: 'Export to Production', href: '/flow-designer#exporting-flows-beta' },
     ],
   },
   {
     title: 'Core Concepts',
     items: [
-      { label: 'Sessions', href: '/docs#sessions' },
-      { label: 'Flows', href: '/docs#flows' },
-      { label: 'Modules', href: '/docs#modules' },
-      { label: 'Webhooks', href: '/docs#webhooks' },
+      { label: 'Sessions', href: '/sessions/object' },
+      { label: 'Session Report', href: '/sessions/report' },
+      { label: 'Client Secrets', href: '/sessions/client-secret' },
+      { label: 'Flows', href: '/flows/node-reference' },
+      { label: 'Webhooks', href: '/webhooks' },
     ],
   },
   {

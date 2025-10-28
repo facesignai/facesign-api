@@ -1,0 +1,308 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Separator } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+
+export const metadata = {
+  title: 'API Keys',
+  description: 'Managing authentication keys for the FaceSign API.',
+}
+
+<PageHeader title="API Keys" description="Obtain and manage your FaceSign API authentication keys." />
+
+<Prose>
+
+## Overview
+
+FaceSign uses API keys to authenticate requests. You'll need different keys for testing (Sandbox) and production environments.
+
+<Card.Root variant="outline" my={6}>
+  <Card.Body>
+    <Table.Root size="sm">
+      <Table.Header>
+        <Table.Row>
+          <Table.ColumnHeader>Environment</Table.ColumnHeader>
+          <Table.ColumnHeader>Key Format</Table.ColumnHeader>
+          <Table.ColumnHeader>Base URL</Table.ColumnHeader>
+          <Table.ColumnHeader>Purpose</Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>
+            <Badge colorPalette="blue">Sandbox</Badge>
+          </Table.Cell>
+          <Table.Cell>
+            <Code>sk_test_...</Code>
+          </Table.Cell>
+          <Table.Cell>
+            <Code size="sm">https://api.dev.facesign.ai</Code>
+          </Table.Cell>
+          <Table.Cell>Testing with sample data</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>
+            <Badge colorPalette="green">Production</Badge>
+          </Table.Cell>
+          <Table.Cell>
+            <Code>sk_live_...</Code>
+          </Table.Cell>
+          <Table.Cell>
+            <Code size="sm">https://api.facesign.ai</Code>
+          </Table.Cell>
+          <Table.Cell>Live verification</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table.Root>
+  </Card.Body>
+</Card.Root>
+
+<Separator my={8} />
+
+## Getting Your API Keys
+
+### Sandbox (Test) Keys
+
+<Card.Root variant="subtle" bg="blue.50" my={6}>
+  <Card.Body>
+    <VStack align="start" gap={3}>
+      <Heading size="md">📧 Request Sandbox Access</Heading>
+      <Text>1. Contact your FaceSign administrator for provisioning</Text>
+      <Text>2. You'll receive access credentials for the Sandbox environment</Text>
+      <Text>3. Login to Flow Designer at <Code>https://create.facesign.ai</Code></Text>
+      <Text>4. Navigate to <strong>Settings → API Keys</strong></Text>
+      <Text>5. Copy your test key (starts with <Code>sk_test_</Code>)</Text>
+    </VStack>
+  </Card.Body>
+</Card.Root>
+
+### Production Keys
+
+<Card.Root variant="subtle" bg="green.50" my={6}>
+  <Card.Body>
+    <VStack align="start" gap={3}>
+      <Heading size="md">🚀 Production Access</Heading>
+      <Text>1. Contact <Code>sales@facesign.ai</Code> for production access</Text>
+      <Text>2. Complete the onboarding process</Text>
+      <Text>3. Receive production credentials</Text>
+      <Text>4. Access your production dashboard</Text>
+      <Text>5. Generate production keys (starts with <Code>sk_live_</Code>)</Text>
+    </VStack>
+  </Card.Body>
+</Card.Root>
+
+<Alert.Root status="warning" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Security Best Practices</Alert.Title>
+    <Alert.Description>
+      • Never commit API keys to version control<br/>
+      • Use environment variables to store keys<br/>
+      • Rotate keys regularly<br/>
+      • Use different keys for different environments<br/>
+      • Restrict key permissions when possible
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+<Separator my={8} />
+
+## Using API Keys
+
+### Setting Environment Variables
+
+<SimpleCodeBlock
+  title="Local Development (.env file)"
+  language="bash"
+  code={`# Sandbox/Development
+FACESIGN_API_KEY=sk_test_your_test_key_here
+
+# Production (use separate .env.production)
+FACESIGN_API_KEY=sk_live_your_production_key_here`}
+/>
+
+### SDK Configuration
+
+<SimpleCodeBlock
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `import { Client } from '@facesignai/api'
+
+// Automatically uses correct base URL based on key type
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY,
+  // Optional: explicitly set base URL
+  serverUrl: process.env.NODE_ENV === 'production'
+    ? 'https://api.facesign.ai'
+    : 'https://api.dev.facesign.ai'
+})`,
+    python: `import os
+import facesignai
+
+# Configure client with API key
+client = facesignai.Client(
+    auth=os.environ.get('FACESIGN_API_KEY'),
+    # Optional: explicitly set base URL
+    base_url='https://api.dev.facesign.ai' if 'test' in os.environ.get('FACESIGN_API_KEY', '') else 'https://api.facesign.ai'
+)`,
+    go: `import (
+    "os"
+    facesign "github.com/facesignai/go-sdk"
+)
+
+// Configure client
+client := facesign.NewClient(
+    facesign.WithAPIKey(os.Getenv("FACESIGN_API_KEY")),
+    // Optional: explicitly set base URL
+    facesign.WithBaseURL("https://api.dev.facesign.ai"),
+)`
+  }}
+/>
+
+### Direct API Calls
+
+<SimpleCodeBlock
+  title="Using with cURL"
+  language="bash"
+  code={`# Sandbox environment
+curl -X POST https://api.dev.facesign.ai/sessions \\
+  -H "Authorization: Bearer $FACESIGN_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"flow": {...}}'
+
+# Production environment
+curl -X POST https://api.facesign.ai/sessions \\
+  -H "Authorization: Bearer $FACESIGN_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"flow": {...}}'`}
+/>
+
+<Separator my={8} />
+
+## Key Management
+
+### Rotating Keys
+
+It's recommended to rotate your API keys periodically:
+
+1. Generate a new key in your dashboard
+2. Update your application to use the new key
+3. Verify the new key is working
+4. Deactivate the old key
+
+### Revoking Keys
+
+If a key is compromised:
+
+1. Immediately revoke the key in your dashboard
+2. Generate a new key
+3. Update all applications using the compromised key
+4. Review API logs for any unauthorized usage
+
+<Separator my={8} />
+
+## Environment Detection
+
+The SDK can automatically detect which environment to use based on your key:
+
+<SimpleCodeBlock
+  title="Automatic Environment Detection"
+  language="javascript"
+  code={`// The Client automatically selects the correct base URL
+const client = new Client({
+  auth: process.env.FACESIGN_API_KEY
+})
+
+// sk_test_... → https://api.dev.facesign.ai
+// sk_live_... → https://api.facesign.ai`}
+/>
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Smart Routing</Alert.Title>
+    <Alert.Description>
+      The SDK automatically routes requests to the correct environment based on your API key prefix.
+      Test keys route to the Sandbox, live keys route to Production.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+<Separator my={8} />
+
+## Troubleshooting
+
+### Common Issues
+
+<Accordion.Root multiple={true} size="lg">
+  <Accordion.Item value="auth-error">
+    <Accordion.ItemTrigger>
+      <Accordion.ItemIndicator />
+      <Text>Authentication Error (401)</Text>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>
+      <VStack align="start" gap={2} p={4}>
+        <Text>• Check that your API key is correct</Text>
+        <Text>• Ensure the key starts with <Code>sk_test_</Code> or <Code>sk_live_</Code></Text>
+        <Text>• Verify the Authorization header format: <Code>Bearer YOUR_KEY</Code></Text>
+        <Text>• Check if the key has been revoked or expired</Text>
+      </VStack>
+    </Accordion.ItemContent>
+  </Accordion.Item>
+
+  <Accordion.Item value="wrong-env">
+    <Accordion.ItemTrigger>
+      <Accordion.ItemIndicator />
+      <Text>Wrong Environment</Text>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>
+      <VStack align="start" gap={2} p={4}>
+        <Text>• Test keys only work with <Code>api.dev.facesign.ai</Code></Text>
+        <Text>• Live keys only work with <Code>api.facesign.ai</Code></Text>
+        <Text>• Check your base URL configuration</Text>
+      </VStack>
+    </Accordion.ItemContent>
+  </Accordion.Item>
+
+  <Accordion.Item value="no-key">
+    <Accordion.ItemTrigger>
+      <Accordion.ItemIndicator />
+      <Text>Missing API Key</Text>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>
+      <VStack align="start" gap={2} p={4}>
+        <Text>• Ensure environment variables are loaded</Text>
+        <Text>• Check .env file location and format</Text>
+        <Text>• Verify the variable name matches your code</Text>
+        <Text>• Restart your development server after adding keys</Text>
+      </VStack>
+    </Accordion.ItemContent>
+  </Accordion.Item>
+</Accordion.Root>
+
+<Separator my={8} />
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/quickstart"
+    title="Quick Start"
+    description="Create your first session"
+  />
+  <DocLinkCard
+    href="/authentication"
+    title="Authentication"
+    description="Learn about request signing"
+  />
+  <DocLinkCard
+    href="/flow-designer"
+    title="Flow Designer"
+    description="Design flows in the Sandbox"
+  />
+</SimpleGrid>
+
+</Prose>

@@ -19,12 +19,6 @@
       "url": "/api-reference"
     },
     {
-      "id": "/authentication",
-      "title": "Page",
-      "content": "title: 'Authentication', description: 'Learn how to authenticate your API requests with FaceSign.', } return ( Authentication The FaceSign API uses API keys to authenticate requests. You can view and manage your API keys in the FaceSign Dashboard. API Keys FaceSign provides two types of API keys: TEST Test Mode Keys Start with sktest Perfect for development and testing. Same capabilities as production keys but won&apos;t charge your account. All sessions are clearly marked as test mode. LIVE Pro",
-      "url": "/authentication"
-    },
-    {
       "id": "/architecture",
       "title": "Architecture",
       "content": "title: 'Architecture', description: 'Understand FaceSign\\'s privacy-first architecture and deployment models.', } Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure. Two Env",
@@ -107,6 +101,66 @@
       "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
       "url": "/avatars#avatar-customization",
       "section": "Avatar customization"
+    },
+    {
+      "id": "/client-secrets",
+      "title": "Client Secrets",
+      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
+      "url": "/client-secrets"
+    },
+    {
+      "id": "/client-secrets#0",
+      "title": "Client Secrets",
+      "heading": "How client secrets work",
+      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
+      "url": "/client-secrets#how-client-secrets-work",
+      "section": "How client secrets work"
+    },
+    {
+      "id": "/client-secrets#1",
+      "title": "Client Secrets",
+      "heading": "Client secret properties",
+      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
+      "url": "/client-secrets#client-secret-properties",
+      "section": "Client secret properties"
+    },
+    {
+      "id": "/client-secrets#2",
+      "title": "Client Secrets",
+      "heading": "Creating sessions with client secrets",
+      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
+      "url": "/client-secrets#creating-sessions-with-client-secrets",
+      "section": "Creating sessions with client secrets"
+    },
+    {
+      "id": "/client-secrets#3",
+      "title": "Client Secrets",
+      "heading": "Redirecting users to verification",
+      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
+      "url": "/client-secrets#redirecting-users-to-verification",
+      "section": "Redirecting users to verification"
+    },
+    {
+      "id": "/client-secrets#5",
+      "title": "Client Secrets",
+      "heading": "Security considerations",
+      "content": "Security considerations",
+      "url": "/client-secrets#security-considerations",
+      "section": "Security considerations"
+    },
+    {
+      "id": "/client-secrets#9",
+      "title": "Client Secrets",
+      "heading": "Next steps",
+      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
+      "url": "/client-secrets#next-steps",
+      "section": "Next steps"
+    },
+    {
+      "id": "/authentication",
+      "title": "Page",
+      "content": "title: 'Authentication', description: 'Learn how to authenticate your API requests with FaceSign.', } return ( Authentication The FaceSign API uses API keys to authenticate requests. You can view and manage your API keys in the FaceSign Dashboard. API Keys FaceSign provides two types of API keys: TEST Test Mode Keys Start with sktest Perfect for development and testing. Same capabilities as production keys but won&apos;t charge your account. All sessions are clearly marked as test mode. LIVE Pro",
+      "url": "/authentication"
     },
     {
       "id": "/customization",
@@ -229,60 +283,6 @@
       "content": "Getting help Need help with persistent errors? • Check the API status page for any ongoing issues • Review your request parameters against the API documentation • Contact support with the request ID from the error response",
       "url": "/errors#getting-help",
       "section": "Getting help"
-    },
-    {
-      "id": "/client-secrets",
-      "title": "Client Secrets",
-      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
-      "url": "/client-secrets"
-    },
-    {
-      "id": "/client-secrets#0",
-      "title": "Client Secrets",
-      "heading": "How client secrets work",
-      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
-      "url": "/client-secrets#how-client-secrets-work",
-      "section": "How client secrets work"
-    },
-    {
-      "id": "/client-secrets#1",
-      "title": "Client Secrets",
-      "heading": "Client secret properties",
-      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
-      "url": "/client-secrets#client-secret-properties",
-      "section": "Client secret properties"
-    },
-    {
-      "id": "/client-secrets#2",
-      "title": "Client Secrets",
-      "heading": "Creating sessions with client secrets",
-      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
-      "url": "/client-secrets#creating-sessions-with-client-secrets",
-      "section": "Creating sessions with client secrets"
-    },
-    {
-      "id": "/client-secrets#3",
-      "title": "Client Secrets",
-      "heading": "Redirecting users to verification",
-      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
-      "url": "/client-secrets#redirecting-users-to-verification",
-      "section": "Redirecting users to verification"
-    },
-    {
-      "id": "/client-secrets#5",
-      "title": "Client Secrets",
-      "heading": "Security considerations",
-      "content": "Security considerations",
-      "url": "/client-secrets#security-considerations",
-      "section": "Security considerations"
-    },
-    {
-      "id": "/client-secrets#9",
-      "title": "Client Secrets",
-      "heading": "Next steps",
-      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
-      "url": "/client-secrets#next-steps",
-      "section": "Next steps"
     },
     {
       "id": "/flow-designer",
@@ -763,6 +763,12 @@
       "section": "Next Steps"
     },
     {
+      "id": "/sessions/client-secret",
+      "title": "Client Secret (moved)",
+      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
+      "url": "/sessions/client-secret"
+    },
+    {
       "id": "/quickstart/python-installation",
       "title": "Python SDK Installation Guide",
       "content": "Python SDK Installation Guide Get started with the FaceSign Python SDK for server-side identity verification integration. Installation Install the FaceSign Python SDK using pip: Or using poetry: Requirements - Python 3.8 or higher - HTTP library: httpx (automatically installed) - Validation: pydantic (automatically installed) Quick Start 1. Initialize the Client 2. Create a Verification Session with Custom Flow 3. Retrieve Session Status 5. List Sessions Async Usage The SDK supports async/await ",
@@ -831,12 +837,6 @@
       "content": "Next Steps - Read the API Reference for detailed endpoint documentation - Explore Session Management to understand verification flows - Check out Error Handling for comprehensive error management - Learn about Webhooks for real-time status updates",
       "url": "/quickstart/python-installation#next-steps",
       "section": "Next Steps"
-    },
-    {
-      "id": "/sessions/client-secret",
-      "title": "Client Secret (moved)",
-      "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
-      "url": "/sessions/client-secret"
     },
     {
       "id": "/sessions/object",
