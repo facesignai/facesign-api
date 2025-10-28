@@ -51,8 +51,28 @@ export default function QuickstartPage() {
           <Heading as="h2" size="lg" mb={4}>
             Step 1 — Install and set your API key
           </Heading>
+
+          <Blockquote.Root variant="subtle" colorPalette="blue" my={4}>
+            <Blockquote.Content>
+              <Heading as="h4" size="sm" mb={2}>
+                Getting an API Key
+              </Heading>
+              <Text mb={2}>
+                <strong>For Testing (Sandbox):</strong>
+              </Text>
+              <VStack align="start" gap={1} pl={4} mb={2}>
+                <Text>1. Contact your FaceSign administrator for provisioning</Text>
+                <Text>2. Once provisioned, access Flow Designer at <Link href="https://create.facesign.ai" color="blue.500">https://create.facesign.ai</Link></Text>
+                <Text>3. Find your test key (sk_test_...) in Settings → API Keys</Text>
+              </VStack>
+              <Text>
+                <strong>For Production:</strong> Contact <Link href="mailto:sales@facesign.ai" color="blue.500">sales@facesign.ai</Link> for production API credentials (sk_live_...)
+              </Text>
+            </Blockquote.Content>
+          </Blockquote.Root>
+
           <Text mb={4}>
-            Get your key from the FaceSign dashboard (Settings → API Keys). Set it for local use:
+            Set your API key for local use:
           </Text>
 
           {/* Environment variable */}
@@ -185,14 +205,21 @@ print('Hosted URL:', data['clientSecret']['url'])`
             code={`{
   "session": {
     "id": "sess_abc123",
-    "createdAt": 1705314600,
-    "status": "requiresInput",  // Waiting for user to start
-    "settings": {}
+    "createdAt": 1761594651878,  // Unix milliseconds
+    "status": "created",  // Initial status (will change to requiresInput when user opens URL)
+    "settings": {
+      "avatarId": "June_HR_public"
+    },
+    "report": {
+      "transcript": [],
+      "lang": "en",
+      "nodeReports": []
+    }
   },
   "clientSecret": {
     "secret": "csea61d44d88d345e1b91622820bb73100",
-    "createdAt": 1705314600,
-    "expireAt": 1705316400,
+    "createdAt": 1761594651878,  // Unix milliseconds
+    "expireAt": 1761601851878,   // Unix milliseconds
     "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100"  // Send user here
   }
 }`}
@@ -248,7 +275,10 @@ print('Status:', session['status'])  # requiresInput, processing, complete, canc
           />
 
           <Text mt={4}>
-            Session status values: <Code>requiresInput</Code>, <Code>processing</Code>, <Code>complete</Code>, <Code>canceled</Code>
+            Session status values: <Code>created</Code> (initial), <Code>requiresInput</Code>, <Code>processing</Code>, <Code>complete</Code>, <Code>canceled</Code>
+          </Text>
+          <Text mt={2} fontSize="sm" color="gray.600">
+            Note: All timestamps are in Unix milliseconds (not seconds)
           </Text>
         </Box>
 
