@@ -1,0 +1,193 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { SimpleGrid, Card, HStack, VStack, Text, Circle, Alert, Blockquote, Box, Heading } from '@chakra-ui/react'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { LuShield, LuServer, LuCloud, LuLock } from 'react-icons/lu'
+
+export const metadata = {
+  title: 'Architecture',
+  description: 'Understand FaceSign\'s privacy-first architecture and deployment models.',
+}
+
+<PageHeader title="Architecture" description="FaceSign provides a privacy-first identity verification engine that runs in your infrastructure." />
+
+<Prose>
+
+## Core Philosophy
+
+FaceSign is built on a fundamental principle: **Your data stays in your control**. We provide the verification engine; you provide the infrastructure and maintain complete control over your data.
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Privacy by Design</Alert.Title>
+    <Alert.Description>
+      FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Two Environments, Clear Separation
+
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={6} my={8}>
+  <Card.Root borderWidth="1px" borderColor="blue.200">
+    <Card.Header>
+      <HStack>
+        <Circle size="10" bg="blue.100" color="blue.600">
+          <LuCloud />
+        </Circle>
+        <VStack align="start" gap={0}>
+          <Text fontWeight="bold" fontSize="lg">Flow Designer (Sandbox)</Text>
+          <Text fontSize="sm" color="gray.600">Testing & Prototyping</Text>
+        </VStack>
+      </HStack>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={3}>
+        <Text>• FaceSign-hosted environment</Text>
+        <Text>• Design and test verification flows</Text>
+        <Text>• Create demos and POCs</Text>
+        <Text fontWeight="bold" color="orange.600">• NO real PII - test data only</Text>
+        <Text>• Access: https://create.facesign.ai</Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root borderWidth="1px" borderColor="green.200">
+    <Card.Header>
+      <HStack>
+        <Circle size="10" bg="green.100" color="green.600">
+          <LuServer />
+        </Circle>
+        <VStack align="start" gap={0}>
+          <Text fontWeight="bold" fontSize="lg">Production API</Text>
+          <Text fontSize="sm" color="gray.600">Live Verification</Text>
+        </VStack>
+      </HStack>
+    </Card.Header>
+    <Card.Body>
+      <VStack align="start" gap={3}>
+        <Text>• Your infrastructure</Text>
+        <Text>• Process real verifications</Text>
+        <Text>• Handle actual user data</Text>
+        <Text fontWeight="bold" color="green.600">• You control all data</Text>
+        <Text>• Integrate via SDK/API</Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+## How It Works
+
+### 1. Design Phase (Sandbox)
+Use the Flow Designer to visually create and test your verification flows with sample data. This environment is perfect for:
+- Prototyping user journeys
+- Testing different verification combinations
+- Creating demos for stakeholders
+- Training team members
+
+### 2. Implementation Phase
+Export your flow configuration from the Sandbox and implement it in your application:
+- Use the FaceSign SDK in your codebase
+- Configure flows programmatically
+- Set up your infrastructure
+
+### 3. Production Phase
+Deploy and run verifications in your environment:
+- All data stays in your systems
+- FaceSign API processes verification logic
+- You maintain complete control and compliance
+
+## Data Privacy & Security
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} my={8}>
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="purple.100" color="purple.600" flexShrink={0}>
+          <LuLock />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">No PII Storage</Text>
+          <Text fontSize="sm" color="gray.600">
+            We never store user PII on FaceSign servers
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="purple.100" color="purple.600" flexShrink={0}>
+          <LuShield />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Client-Side Processing</Text>
+          <Text fontSize="sm" color="gray.600">
+            Verification happens in your infrastructure
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <HStack gap={3} align="start">
+        <Circle size="10" bg="purple.100" color="purple.600" flexShrink={0}>
+          <LuServer />
+        </Circle>
+        <VStack align="start" gap={1}>
+          <Text fontWeight="semibold">Your Compliance</Text>
+          <Text fontSize="sm" color="gray.600">
+            Meet your regulatory requirements
+          </Text>
+        </VStack>
+      </HStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+## Key Benefits
+
+- **Complete Data Control**: Your data never leaves your infrastructure
+- **Regulatory Compliance**: Meet GDPR, CCPA, and other requirements in your jurisdiction
+- **Flexible Deployment**: Deploy on-premise or in your cloud environment
+- **Scalable Architecture**: Handle verification at any scale
+- **Privacy-First Design**: Built for maximum user privacy
+
+<Blockquote.Root variant="subtle" colorPalette="blue" my={6}>
+  <Blockquote.Content>
+    <Text fontWeight="semibold" mb={2}>
+      Important: Sandbox Limitations
+    </Text>
+    <Text>
+      The Flow Designer (Sandbox) is strictly for testing and demonstration purposes. Never input real user data,
+      PII, or sensitive information in the Sandbox environment. Use test data and sample identities only.
+    </Text>
+  </Blockquote.Content>
+</Blockquote.Root>
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/architecture/sandbox-vs-production"
+    title="Sandbox vs Production"
+    description="Detailed comparison of environments"
+  />
+  <DocLinkCard
+    href="/architecture/workflow"
+    title="Development Workflow"
+    description="From design to deployment"
+  />
+  <DocLinkCard
+    href="/flow-designer"
+    title="Flow Designer"
+    description="Learn about the visual design tool"
+  />
+</SimpleGrid>
+
+</Prose>

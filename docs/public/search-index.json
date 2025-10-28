@@ -13,64 +13,54 @@
       "url": "/api"
     },
     {
-      "id": "/client-secrets",
-      "title": "Client Secrets",
-      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
-      "url": "/client-secrets"
-    },
-    {
-      "id": "/client-secrets#0",
-      "title": "Client Secrets",
-      "heading": "How client secrets work",
-      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
-      "url": "/client-secrets#how-client-secrets-work",
-      "section": "How client secrets work"
-    },
-    {
-      "id": "/client-secrets#1",
-      "title": "Client Secrets",
-      "heading": "Client secret properties",
-      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
-      "url": "/client-secrets#client-secret-properties",
-      "section": "Client secret properties"
-    },
-    {
-      "id": "/client-secrets#2",
-      "title": "Client Secrets",
-      "heading": "Creating sessions with client secrets",
-      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
-      "url": "/client-secrets#creating-sessions-with-client-secrets",
-      "section": "Creating sessions with client secrets"
-    },
-    {
-      "id": "/client-secrets#3",
-      "title": "Client Secrets",
-      "heading": "Redirecting users to verification",
-      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
-      "url": "/client-secrets#redirecting-users-to-verification",
-      "section": "Redirecting users to verification"
-    },
-    {
-      "id": "/client-secrets#5",
-      "title": "Client Secrets",
-      "heading": "Security considerations",
-      "content": "Security considerations",
-      "url": "/client-secrets#security-considerations",
-      "section": "Security considerations"
-    },
-    {
-      "id": "/client-secrets#9",
-      "title": "Client Secrets",
-      "heading": "Next steps",
-      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
-      "url": "/client-secrets#next-steps",
-      "section": "Next steps"
+      "id": "/api-reference",
+      "title": "Page",
+      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
+      "url": "/api-reference"
     },
     {
       "id": "/authentication",
       "title": "Page",
       "content": "title: 'Authentication', description: 'Learn how to authenticate your API requests with FaceSign.', } return ( Authentication The FaceSign API uses API keys to authenticate requests. You can view and manage your API keys in the FaceSign Dashboard. API Keys FaceSign provides two types of API keys: TEST Test Mode Keys Start with sktest Perfect for development and testing. Same capabilities as production keys but won&apos;t charge your account. All sessions are clearly marked as test mode. LIVE Pro",
       "url": "/authentication"
+    },
+    {
+      "id": "/architecture",
+      "title": "Architecture",
+      "content": "title: 'Architecture', description: 'Understand FaceSign\\'s privacy-first architecture and deployment models.', } Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure. Two Env",
+      "url": "/architecture"
+    },
+    {
+      "id": "/architecture#0",
+      "title": "Architecture",
+      "heading": "Core Philosophy",
+      "content": "Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PI",
+      "url": "/architecture#core-philosophy",
+      "section": "Core Philosophy"
+    },
+    {
+      "id": "/architecture#1",
+      "title": "Architecture",
+      "heading": "Two Environments, Clear Separation",
+      "content": "Two Environments, Clear Separation Flow Designer (Sandbox) Testing & Prototyping • FaceSign-hosted environment • Design and test verification flows • Create demos and POCs • NO real PII - test data only • Access: https://create.facesign.ai Production API Live Verification • Your infrastructure • Pro",
+      "url": "/architecture#two-environments,-clear-separation",
+      "section": "Two Environments, Clear Separation"
+    },
+    {
+      "id": "/architecture#6",
+      "title": "Architecture",
+      "heading": "Data Privacy & Security",
+      "content": "Data Privacy & Security No PII Storage We never store user PII on FaceSign servers Client-Side Processing Verification happens in your infrastructure Your Compliance Meet your regulatory requirements",
+      "url": "/architecture#data-privacy-&-security",
+      "section": "Data Privacy & Security"
+    },
+    {
+      "id": "/architecture#7",
+      "title": "Architecture",
+      "heading": "Key Benefits",
+      "content": "Key Benefits - Complete Data Control: Your data never leaves your infrastructure - Regulatory Compliance: Meet GDPR, CCPA, and other requirements in your jurisdiction - Flexible Deployment: Deploy on-premise or in your cloud environment - Scalable Architecture: Handle verification at any scale - Pri",
+      "url": "/architecture#key-benefits",
+      "section": "Key Benefits"
     },
     {
       "id": "/avatars",
@@ -117,12 +107,6 @@
       "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
       "url": "/avatars#avatar-customization",
       "section": "Avatar customization"
-    },
-    {
-      "id": "/api-reference",
-      "title": "Page",
-      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
-      "url": "/api-reference"
     },
     {
       "id": "/customization",
@@ -247,6 +231,138 @@
       "section": "Getting help"
     },
     {
+      "id": "/client-secrets",
+      "title": "Client Secrets",
+      "content": "title: 'Client Secrets', description: 'Learn how to use client secrets for secure frontend integration with FaceSign.', } Client Secrets Client secrets are secure, session-specific tokens that allow your end users to access FaceSign's hosted verification interface. Unlike your API key, client secrets are safe to expose in URLs and are automatically included when you create a session. {{ className: 'lead' }} How client secrets work Client secrets provide a secure way to redirect users to the veri",
+      "url": "/client-secrets"
+    },
+    {
+      "id": "/client-secrets#0",
+      "title": "Client Secrets",
+      "heading": "How client secrets work",
+      "content": "How client secrets work Client secrets provide a secure way to redirect users to the verification flow: 1. Server-side session creation - Use your API key to create a session on your backend 2. Client secret returned - FaceSign returns a session-specific client secret with embedded URL 3. Redirect u",
+      "url": "/client-secrets#how-client-secrets-work",
+      "section": "How client secrets work"
+    },
+    {
+      "id": "/client-secrets#1",
+      "title": "Client Secrets",
+      "heading": "Client secret properties",
+      "content": "Client secret properties The client secret token to use in frontend integrations. Unix timestamp when the client secret was created. Unix timestamp when the client secret expires (2 hours from creation). Pre-built URL for hosted verification flow including the client secret. ---",
+      "url": "/client-secrets#client-secret-properties",
+      "section": "Client secret properties"
+    },
+    {
+      "id": "/client-secrets#2",
+      "title": "Client Secrets",
+      "heading": "Creating sessions with client secrets",
+      "content": "Creating sessions with client secrets Use your backend SDK to create a session and get the client secret URL: ---",
+      "url": "/client-secrets#creating-sessions-with-client-secrets",
+      "section": "Creating sessions with client secrets"
+    },
+    {
+      "id": "/client-secrets#3",
+      "title": "Client Secrets",
+      "heading": "Redirecting users to verification",
+      "content": "Redirecting users to verification Once you have the client secret, redirect your users to the hosted verification interface: { // Create session on backend const { session, clientSecret } = await client.session.create({ clientReferenceId: req.user.id, metadata: { userId: req.user.id }, flow: { nodes",
+      "url": "/client-secrets#redirecting-users-to-verification",
+      "section": "Redirecting users to verification"
+    },
+    {
+      "id": "/client-secrets#5",
+      "title": "Client Secrets",
+      "heading": "Security considerations",
+      "content": "Security considerations",
+      "url": "/client-secrets#security-considerations",
+      "section": "Security considerations"
+    },
+    {
+      "id": "/client-secrets#9",
+      "title": "Client Secrets",
+      "heading": "Next steps",
+      "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
+      "url": "/client-secrets#next-steps",
+      "section": "Next steps"
+    },
+    {
+      "id": "/flow-designer",
+      "title": "Flow Designer",
+      "content": "title: 'Flow Designer', description: 'Visual tool for designing and testing verification flows in the FaceSign Sandbox.', } What is Flow Designer? Flow Designer is a visual design and testing tool for creating identity verification workflows. It runs in the FaceSign Sandbox environment and is intended for: - ✅ Prototyping verification flows - ✅ Testing flow logic with sample data - ✅ Creating demos for stakeholders - ❌ NOT for production use - ❌ NOT for real user data or PII Sandbox Environment ",
+      "url": "/flow-designer"
+    },
+    {
+      "id": "/flow-designer#0",
+      "title": "Flow Designer",
+      "heading": "What is Flow Designer?",
+      "content": "What is Flow Designer? Flow Designer is a visual design and testing tool for creating identity verification workflows. It runs in the FaceSign Sandbox environment and is intended for: - ✅ Prototyping verification flows - ✅ Testing flow logic with sample data - ✅ Creating demos for stakeholders - ❌ N",
+      "url": "/flow-designer#what-is-flow-designer?",
+      "section": "What is Flow Designer?"
+    },
+    {
+      "id": "/flow-designer#1",
+      "title": "Flow Designer",
+      "heading": "Getting Access",
+      "content": "Getting Access To use Flow Designer, you need access to the FaceSign Sandbox: 1. Request Access: Contact your FaceSign administrator for provisioning 2. Receive Credentials: You'll get access to the Sandbox environment 3. Access Flow Designer: Navigate to https://create.facesign.ai 4. Find Your API ",
+      "url": "/flow-designer#getting-access",
+      "section": "Getting Access"
+    },
+    {
+      "id": "/flow-designer#2",
+      "title": "Flow Designer",
+      "heading": "Creating Flows Visually",
+      "content": "Creating Flows Visually Flow Designer provides a drag-and-drop interface for building verification flows:",
+      "url": "/flow-designer#creating-flows-visually",
+      "section": "Creating Flows Visually"
+    },
+    {
+      "id": "/flow-designer#6",
+      "title": "Flow Designer",
+      "heading": "Testing Your Flow",
+      "content": "Testing Your Flow Once your flow is designed, test it with sample data:",
+      "url": "/flow-designer#testing-your-flow",
+      "section": "Testing Your Flow"
+    },
+    {
+      "id": "/flow-designer#9",
+      "title": "Flow Designer",
+      "heading": "Exporting Flows (BETA)",
+      "content": "Exporting Flows (BETA) Once you've designed and tested your flow, you can export it for use with the production API:",
+      "url": "/flow-designer#exporting-flows-(beta)",
+      "section": "Exporting Flows (BETA)"
+    },
+    {
+      "id": "/flow-designer#12",
+      "title": "Flow Designer",
+      "heading": "Next Steps: Implement with the API",
+      "content": "Next Steps: Implement with the API After designing and exporting your flow, implement it in your application:",
+      "url": "/flow-designer#next-steps:-implement-with-the-api",
+      "section": "Next Steps: Implement with the API"
+    },
+    {
+      "id": "/flow-designer#16",
+      "title": "Flow Designer",
+      "heading": "Common Flow Patterns",
+      "content": "Common Flow Patterns Here are some common verification flow patterns you can create in Flow Designer:",
+      "url": "/flow-designer#common-flow-patterns",
+      "section": "Common Flow Patterns"
+    },
+    {
+      "id": "/flow-designer#20",
+      "title": "Flow Designer",
+      "heading": "Limitations and Considerations",
+      "content": "Limitations and Considerations",
+      "url": "/flow-designer#limitations-and-considerations",
+      "section": "Limitations and Considerations"
+    },
+    {
+      "id": "/flow-designer#23",
+      "title": "Flow Designer",
+      "heading": "Support and Resources",
+      "content": "Support and Resources",
+      "url": "/flow-designer#support-and-resources",
+      "section": "Support and Resources"
+    },
+    {
       "id": "/languages",
       "title": "Languages",
       "content": "title: 'Languages', description: 'Learn how to retrieve and use supported languages for FaceSign verification sessions.', } Languages FaceSign supports multiple languages for the verification interface, allowing you to provide a localized experience for users worldwide. The /langs endpoint returns all available languages that can be used in your verification sessions. {{ className: 'lead' }} Supported languages English (Default) en Spanish (Español) es French (Français) fr German (Deutsch) de It",
@@ -295,7 +411,7 @@
     {
       "id": "/quickstart",
       "title": "Quick Start",
-      "content": "Badge, Box, Heading, HStack, Span, Text, VStack, Code, Link, Separator, Blockquote, SimpleGrid } from '@chakra-ui/react' title: 'Quick Start', description: 'Get up and running with the FaceSign API in under 5 minutes.', } return ( {/ Header /} Quick Start This quickstart shows a minimal 3-step Dev flow to get a hosted verification session running. Keep your API keys server-side and use environment variables. {/ Step 1 /} Step 1 — Install and set your API key Get your key from the FaceSign dashbo",
+      "content": "Badge, Box, Heading, HStack, Span, Text, VStack, Code, Link, Separator, Blockquote, SimpleGrid } from '@chakra-ui/react' title: 'Quick Start', description: 'Get up and running with the FaceSign API in under 5 minutes.', } return ( {/ Header /} Quick Start This quickstart shows a minimal 3-step Dev flow to get a hosted verification session running. Keep your API keys server-side and use environment variables. {/ Step 1 /} Step 1 — Install and set your API key Getting an API Key For Testing (Sandb",
       "url": "/quickstart"
     },
     {
@@ -311,6 +427,106 @@
       "content": "Quick Start Guides {{ id: 'quick-start-guides' }} Get up and running quickly with our comprehensive installation guides: - Python Installation Guide - Complete setup guide for Python SDK with Django, Flask, and FastAPI examples - Go Installation Guide - Step-by-step guide for Go SDK with framework i",
       "url": "/sdks#quick-start-guides",
       "section": "Quick Start Guides"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production",
+      "title": "Sandbox vs Production",
+      "content": "title: 'Sandbox vs Production', description: 'Understand the differences between FaceSign Sandbox and Production environments.', } Environment Comparison Aspect Sandbox (Flow Designer) Production API Purpose Testing, demos, prototyping Live identity verification Hosting FaceSign-hosted Client-hosted Data Type Test data only (NO PII) Real user data (PII) Access URL https://create.facesign.ai Your infrastructure API Endpoint https://api.dev.facesign.ai https://api.facesign.ai Interface Visual Flow",
+      "url": "/architecture/sandbox-vs-production"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#0",
+      "title": "Sandbox vs Production",
+      "heading": "Environment Comparison",
+      "content": "Environment Comparison Aspect Sandbox (Flow Designer) Production API Purpose Testing, demos, prototyping Live identity verification Hosting FaceSign-hosted Client-hosted Data Type Test data only (NO PII) Real user data (PII) Access URL https://create.facesign.ai Your infrastructure API Endpoint http",
+      "url": "/architecture/sandbox-vs-production#environment-comparison",
+      "section": "Environment Comparison"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#1",
+      "title": "Sandbox vs Production",
+      "heading": "When to Use Each Environment",
+      "content": "When to Use Each Environment",
+      "url": "/architecture/sandbox-vs-production#when-to-use-each-environment",
+      "section": "When to Use Each Environment"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#4",
+      "title": "Sandbox vs Production",
+      "heading": "API Differences",
+      "content": "API Differences While both environments use the same API structure, there are key differences:",
+      "url": "/architecture/sandbox-vs-production#api-differences",
+      "section": "API Differences"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#8",
+      "title": "Sandbox vs Production",
+      "heading": "Security Considerations",
+      "content": "Security Considerations",
+      "url": "/architecture/sandbox-vs-production#security-considerations",
+      "section": "Security Considerations"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#11",
+      "title": "Sandbox vs Production",
+      "heading": "Migration Path",
+      "content": "Migration Path From Sandbox to Production 1. Design & Test in Sandbox with sample data 2. Export flow configuration (BETA feature) 3. Implement in your application using the SDK 4. Configure production API credentials 5. Deploy to your infrastructure 6. Monitor real verifications Flow Export (BETA) ",
+      "url": "/architecture/sandbox-vs-production#migration-path",
+      "section": "Migration Path"
+    },
+    {
+      "id": "/architecture/workflow",
+      "title": "Development Workflow",
+      "content": "title: 'Development Workflow', description: 'Step-by-step guide from flow design to production deployment.', } Overview The FaceSign development workflow follows a clear path from design to deployment, ensuring you can test thoroughly before handling real user data. 1. Design 2. Test 3. Export 4. Implement 5. Deploy Phase 1: Design Your Flow Access Flow Designer First, get access to the Flow Designer (Sandbox): 1. Request Access: Contact FaceSign admin for provisioning 2. Login: Access at https:",
+      "url": "/architecture/workflow"
+    },
+    {
+      "id": "/architecture/workflow#0",
+      "title": "Development Workflow",
+      "heading": "Overview",
+      "content": "Overview The FaceSign development workflow follows a clear path from design to deployment, ensuring you can test thoroughly before handling real user data. 1. Design 2. Test 3. Export 4. Implement 5. Deploy",
+      "url": "/architecture/workflow#overview",
+      "section": "Overview"
+    },
+    {
+      "id": "/architecture/workflow#1",
+      "title": "Development Workflow",
+      "heading": "Phase 1: Design Your Flow",
+      "content": "Phase 1: Design Your Flow",
+      "url": "/architecture/workflow#phase-1:-design-your-flow",
+      "section": "Phase 1: Design Your Flow"
+    },
+    {
+      "id": "/architecture/workflow#4",
+      "title": "Development Workflow",
+      "heading": "Phase 2: Test with Sample Data",
+      "content": "Phase 2: Test with Sample Data",
+      "url": "/architecture/workflow#phase-2:-test-with-sample-data",
+      "section": "Phase 2: Test with Sample Data"
+    },
+    {
+      "id": "/architecture/workflow#7",
+      "title": "Development Workflow",
+      "heading": "Phase 3: Export Flow Configuration (BETA)",
+      "content": "Phase 3: Export Flow Configuration (BETA)",
+      "url": "/architecture/workflow#phase-3:-export-flow-configuration-(beta)",
+      "section": "Phase 3: Export Flow Configuration (BETA)"
+    },
+    {
+      "id": "/architecture/workflow#9",
+      "title": "Development Workflow",
+      "heading": "Phase 4: Implement in Your Application",
+      "content": "Phase 4: Implement in Your Application",
+      "url": "/architecture/workflow#phase-4:-implement-in-your-application",
+      "section": "Phase 4: Implement in Your Application"
+    },
+    {
+      "id": "/architecture/workflow#13",
+      "title": "Development Workflow",
+      "heading": "Phase 5: Deploy to Production",
+      "content": "Phase 5: Deploy to Production",
+      "url": "/architecture/workflow#phase-5:-deploy-to-production",
+      "section": "Phase 5: Deploy to Production"
     },
     {
       "id": "/docs/flows",
@@ -371,6 +587,12 @@
       "section": "Example event payload"
     },
     {
+      "id": "/flows/fsnode",
+      "title": "FSNode (moved)",
+      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
+      "url": "/flows/fsnode"
+    },
+    {
       "id": "/flows/mapping",
       "title": "Flow Builder → FSFlow Mapping",
       "content": "title: 'Flow Builder → FSFlow Mapping', description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.', } Flow Builder → FSFlow Mapping This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (SessionSettings.flow). Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail ",
@@ -417,10 +639,58 @@
       "section": "Using the FSFlow with the API"
     },
     {
-      "id": "/flows/fsnode",
-      "title": "FSNode (moved)",
-      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
-      "url": "/flows/fsnode"
+      "id": "/flows/node-reference",
+      "title": "Node Reference",
+      "content": "title: 'Node Reference', description: 'Complete reference for all FaceSign verification node types.', } Overview FaceSign flows are composed of nodes connected by edges. Each node represents a specific verification step or logical operation. This reference provides complete documentation for all available node types. Node Structure All nodes share a common base structure: Node Types Enum --- Flow Control Nodes START Node Purpose: Required entry point for every flow. This is where verification be",
+      "url": "/flows/node-reference"
+    },
+    {
+      "id": "/flows/node-reference#0",
+      "title": "Node Reference",
+      "heading": "Overview",
+      "content": "Overview FaceSign flows are composed of nodes connected by edges. Each node represents a specific verification step or logical operation. This reference provides complete documentation for all available node types.",
+      "url": "/flows/node-reference#overview",
+      "section": "Overview"
+    },
+    {
+      "id": "/flows/node-reference#1",
+      "title": "Node Reference",
+      "heading": "Node Structure",
+      "content": "Node Structure All nodes share a common base structure:",
+      "url": "/flows/node-reference#node-structure",
+      "section": "Node Structure"
+    },
+    {
+      "id": "/flows/node-reference#15",
+      "title": "Node Reference",
+      "heading": "Connecting Nodes with Edges",
+      "content": "Connecting Nodes with Edges Nodes are connected using edges to define the flow path: Example Flow with Edges:",
+      "url": "/flows/node-reference#connecting-nodes-with-edges",
+      "section": "Connecting Nodes with Edges"
+    },
+    {
+      "id": "/flows/node-reference#16",
+      "title": "Node Reference",
+      "heading": "Transitions and Conditions",
+      "content": "Transitions and Conditions Some nodes support conditional transitions based on user input or verification results:",
+      "url": "/flows/node-reference#transitions-and-conditions",
+      "section": "Transitions and Conditions"
+    },
+    {
+      "id": "/flows/node-reference#24",
+      "title": "Node Reference",
+      "heading": "Error Handling",
+      "content": "Error Handling Each node type has specific failure outcomes. Always handle: - User cancellation - Timeouts - Technical failures - Validation failures",
+      "url": "/flows/node-reference#error-handling",
+      "section": "Error Handling"
+    },
+    {
+      "id": "/flows/node-reference#25",
+      "title": "Node Reference",
+      "heading": "Next Steps",
+      "content": "Next Steps - Flow Designer - Design flows visually - API Reference - Complete API documentation - Development Workflow - From design to deployment",
+      "url": "/flows/node-reference#next-steps",
+      "section": "Next Steps"
     },
     {
       "id": "/quickstart/go-installation",
@@ -563,16 +833,16 @@
       "section": "Next Steps"
     },
     {
-      "id": "/sessions/object",
-      "title": "Session Object (moved)",
-      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
-      "url": "/sessions/object"
-    },
-    {
       "id": "/sessions/client-secret",
       "title": "Client Secret (moved)",
       "content": "title: 'Client Secret (moved)', description: 'This page has moved to /docs/sessionsclient-secret.', } {redirect('/docs/sessionsclient-secret')}",
       "url": "/sessions/client-secret"
+    },
+    {
+      "id": "/sessions/object",
+      "title": "Session Object (moved)",
+      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
+      "url": "/sessions/object"
     },
     {
       "id": "/webhooks/signed-headers",

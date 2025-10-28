@@ -1,0 +1,350 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Separator, SimpleGrid, Blockquote } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+
+export const metadata = {
+  title: 'Flow Designer',
+  description: 'Visual tool for designing and testing verification flows in the FaceSign Sandbox.',
+}
+
+<PageHeader title="Flow Designer" description="Design and test verification flows visually before implementing with the API." />
+
+<Prose>
+
+## What is Flow Designer?
+
+Flow Designer is a **visual design and testing tool** for creating identity verification workflows. It runs in the FaceSign Sandbox environment and is intended for:
+
+- ✅ **Prototyping** verification flows
+- ✅ **Testing** flow logic with sample data
+- ✅ **Creating demos** for stakeholders
+- ❌ **NOT for production use**
+- ❌ **NOT for real user data or PII**
+
+<Alert.Root status="warning" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Sandbox Environment Only</Alert.Title>
+    <Alert.Description>
+      Flow Designer is part of the FaceSign Sandbox. Never input real user data, actual identity documents,
+      or any personally identifiable information. Use test data and sample identities only.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Getting Access
+
+To use Flow Designer, you need access to the FaceSign Sandbox:
+
+1. **Request Access**: Contact your FaceSign administrator for provisioning
+2. **Receive Credentials**: You'll get access to the Sandbox environment
+3. **Access Flow Designer**: Navigate to https://create.facesign.ai
+4. **Find Your API Key**: Once logged in, go to Settings → API Keys
+
+Your Sandbox API key will look like: `sk_test_...`
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Flow Designer Login Page - Shows the login screen at create.facesign.ai]</Text>
+</Box>
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[API Key Location - Shows where to find your test API key in Settings]</Text>
+</Box>
+
+<Separator my={8} />
+
+## Creating Flows Visually
+
+Flow Designer provides a drag-and-drop interface for building verification flows:
+
+### Node Library
+
+The left panel contains all available verification nodes:
+
+- **Start/End**: Required entry and exit points
+- **Conversation**: AI-powered conversational interactions
+- **Document Scan**: Identity document verification
+- **Liveness Detection**: Anti-spoofing checks
+- **Email Entry**: Email collection and verification
+- **Face Scan**: Facial recognition/matching
+- **Two Factor**: SMS/Email OTP verification
+- **Data Validation**: Conditional logic nodes
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Empty Canvas - Shows the blank Flow Designer workspace with node library on the left]</Text>
+</Box>
+
+### Building Your Flow
+
+1. **Drag nodes** from the library onto the canvas
+2. **Connect nodes** by dragging from output to input ports
+3. **Configure each node** by clicking to open properties panel
+4. **Set conditions** for branching logic
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Drag and Drop - Shows dragging a Document Scan node onto the canvas]</Text>
+</Box>
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Connecting Nodes - Shows drawing an edge between two nodes]</Text>
+</Box>
+
+### Configuring Nodes
+
+Click any node to configure its properties:
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Node Configuration - Shows the properties panel for a Document Scan node with options for document types, regions, etc.]</Text>
+</Box>
+
+<Separator my={8} />
+
+## Testing Your Flow
+
+Once your flow is designed, test it with sample data:
+
+### Test Mode
+
+1. Click the **Test** button in the top toolbar
+2. Select a test identity or create a custom one
+3. Step through the flow as an end user would
+4. Observe the flow execution and outcomes
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Test Mode Interface - Shows the test panel with sample identity selection]</Text>
+</Box>
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Test Session Running - Shows a test verification session in progress]</Text>
+</Box>
+
+### Test Data Guidelines
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Use Test Data Only</Alert.Title>
+    <Alert.Description>
+      Always use sample identities and test documents provided by FaceSign. Never upload real identity
+      documents or enter actual personal information during testing.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+<Separator my={8} />
+
+## Exporting Flows (BETA)
+
+Once you've designed and tested your flow, you can export it for use with the production API:
+
+### Export Process
+
+1. Open your tested flow in Flow Designer
+2. Click the **Export** button in the toolbar
+3. Choose export format (currently JSON only)
+4. Copy the exported configuration
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Export Button - Shows the Export button in the Flow Designer toolbar]</Text>
+</Box>
+
+### Exported Flow Format
+
+The exported JSON contains your complete flow configuration:
+
+<SimpleCodeBlock
+  title="Example Exported Flow"
+  language="json"
+  code={`{
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "start_1",
+      "type": "start"
+    },
+    {
+      "id": "email_1",
+      "type": "enter_email",
+      "config": {
+        "required": true,
+        "validation": "email"
+      },
+      "outcomes": {
+        "emailEntered": "doc_1",
+        "canceled": "end_1"
+      }
+    },
+    {
+      "id": "doc_1",
+      "type": "document_scan",
+      "config": {
+        "documentTypes": ["passport", "driver_license", "id_card"],
+        "regions": ["US", "CA", "EU"],
+        "requireLiveness": true
+      },
+      "outcomes": {
+        "scanSuccess": "end_1",
+        "userCancelled": "end_1",
+        "timeout": "end_1"
+      }
+    },
+    {
+      "id": "end_1",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "start_1", "target": "email_1" },
+    { "id": "e2", "source": "email_1", "target": "doc_1", "outcome": "emailEntered" },
+    { "id": "e3", "source": "email_1", "target": "end_1", "outcome": "canceled" },
+    { "id": "e4", "source": "doc_1", "target": "end_1" }
+  ]
+}`}
+/>
+
+<Blockquote.Root variant="subtle" colorPalette="orange" my={6}>
+  <Blockquote.Content>
+    <Text fontWeight="semibold">Beta Feature Notice</Text>
+    <Text>
+      Flow export is currently in beta. The exported format may change in future releases.
+      Always validate and test exported flows before using in production.
+    </Text>
+  </Blockquote.Content>
+</Blockquote.Root>
+
+<Box my={6} p={4} bg="gray.50" borderRadius="md">
+  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
+  <Text fontSize="sm" color="gray.600">[Export Dialog - Shows the export dialog with JSON output]</Text>
+</Box>
+
+<Separator my={8} />
+
+## Next Steps: Implement with the API
+
+After designing and exporting your flow, implement it in your application:
+
+### 1. Install the SDK
+
+<SimpleCodeBlock
+  defaultLanguage="npm"
+  languageSwitcher="tabs"
+  codeExamples={{
+    npm: "npm install @facesignai/api",
+    yarn: "yarn add @facesignai/api",
+    python: "pip install facesignai",
+  }}
+/>
+
+### 2. Use Your Exported Flow
+
+<SimpleCodeBlock
+  title="Implement in Production"
+  language="javascript"
+  code={`import { Client } from '@facesignai/api'
+import flowConfig from './exported-flow.json'
+
+const client = new Client({
+  auth: process.env.FACESIGN_LIVE_KEY, // Production key: sk_live_...
+  serverUrl: 'https://api.facesign.ai'
+})
+
+// Create a session with your exported flow
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: userId,
+  metadata: { source: 'onboarding' },
+  flow: flowConfig  // Your exported flow configuration
+})
+
+// Direct user to verification
+console.log('Verification URL:', clientSecret.url)`}
+/>
+
+### 3. Handle Production Data
+
+Remember the key difference:
+
+- **Sandbox (Flow Designer)**: Test data only, no PII
+- **Production (Your App)**: Real user data, full security
+
+<Alert.Root status="success" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Ready for Production</Alert.Title>
+    <Alert.Description>
+      Your flow is now designed, tested, and ready to be implemented in your production environment
+      where you control all user data.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Common Flow Patterns
+
+Here are some common verification flow patterns you can create in Flow Designer:
+
+### Basic KYC Flow
+```
+Start → Email → Document Scan → Liveness → End
+```
+
+### Enhanced Verification
+```
+Start → Email → Document → Face Match → Two Factor → End
+```
+
+### Progressive Verification
+```
+Start → Email → Data Validation → (if high risk) → Document → End
+                                 → (if low risk) → End
+```
+
+## Limitations and Considerations
+
+### Sandbox Limitations
+
+- **Rate limits**: Lower than production
+- **Data retention**: Test data cleared regularly
+- **Features**: Some production features may not be available
+- **Performance**: Not representative of production performance
+
+### Production Considerations
+
+When moving to production:
+
+- Implement proper error handling
+- Add monitoring and logging
+- Set up webhook handlers
+- Configure retry logic
+- Plan for scale
+
+## Support and Resources
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/architecture"
+    title="Architecture Overview"
+    description="Understand the Sandbox vs Production model"
+  />
+  <DocLinkCard
+    href="/flows/node-reference"
+    title="Node Reference"
+    description="Detailed documentation for each node type"
+  />
+  <DocLinkCard
+    href="/api"
+    title="API Reference"
+    description="Complete API documentation"
+  />
+</SimpleGrid>
+
+</Prose>

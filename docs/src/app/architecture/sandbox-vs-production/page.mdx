@@ -1,0 +1,269 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Table, Badge, Alert, Card, Code, VStack, Text, Heading, Box } from '@chakra-ui/react'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleGrid } from '@chakra-ui/react'
+
+export const metadata = {
+  title: 'Sandbox vs Production',
+  description: 'Understand the differences between FaceSign Sandbox and Production environments.',
+}
+
+<PageHeader title="Sandbox vs Production" description="Clear separation between testing and live verification environments." />
+
+<Prose>
+
+## Environment Comparison
+
+<Card.Root variant="outline" my={6}>
+  <Card.Body>
+    <Table.Root size="sm">
+      <Table.Header>
+        <Table.Row>
+          <Table.ColumnHeader>Aspect</Table.ColumnHeader>
+          <Table.ColumnHeader>Sandbox (Flow Designer)</Table.ColumnHeader>
+          <Table.ColumnHeader>Production API</Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Purpose</Table.Cell>
+          <Table.Cell>Testing, demos, prototyping</Table.Cell>
+          <Table.Cell>Live identity verification</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Hosting</Table.Cell>
+          <Table.Cell>
+            <Badge colorPalette="blue">FaceSign-hosted</Badge>
+          </Table.Cell>
+          <Table.Cell>
+            <Badge colorPalette="green">Client-hosted</Badge>
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Data Type</Table.Cell>
+          <Table.Cell>
+            <Text color="orange.600" fontWeight="bold">Test data only (NO PII)</Text>
+          </Table.Cell>
+          <Table.Cell>Real user data (PII)</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Access URL</Table.Cell>
+          <Table.Cell>
+            <Code>https://create.facesign.ai</Code>
+          </Table.Cell>
+          <Table.Cell>Your infrastructure</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">API Endpoint</Table.Cell>
+          <Table.Cell>
+            <Code>https://api.dev.facesign.ai</Code>
+          </Table.Cell>
+          <Table.Cell>
+            <Code>https://api.facesign.ai</Code>
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Interface</Table.Cell>
+          <Table.Cell>Visual Flow Designer UI</Table.Cell>
+          <Table.Cell>SDK/API integration</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Use Cases</Table.Cell>
+          <Table.Cell>
+            • Flow design<br/>
+            • Testing<br/>
+            • Demos & POCs<br/>
+            • Training
+          </Table.Cell>
+          <Table.Cell>
+            • Live verification<br/>
+            • User onboarding<br/>
+            • Authentication<br/>
+            • Compliance checks
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Data Storage</Table.Cell>
+          <Table.Cell>Temporary (for testing)</Table.Cell>
+          <Table.Cell>Your database</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">Compliance</Table.Cell>
+          <Table.Cell>N/A (no real data)</Table.Cell>
+          <Table.Cell>Your responsibility</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell fontWeight="semibold">API Key Type</Table.Cell>
+          <Table.Cell>
+            <Code size="sm">sk_test_...</Code>
+          </Table.Cell>
+          <Table.Cell>
+            <Code size="sm">sk_live_...</Code>
+          </Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table.Root>
+  </Card.Body>
+</Card.Root>
+
+## When to Use Each Environment
+
+### Use Sandbox (Flow Designer) for:
+
+<VStack align="start" gap={3} my={4} pl={4}>
+  <Text>✓ **Designing flows**: Visual interface for creating verification workflows</Text>
+  <Text>✓ **Testing logic**: Validate flow behavior before production</Text>
+  <Text>✓ **Creating demos**: Show stakeholders how verification works</Text>
+  <Text>✓ **Training staff**: Familiarize team with FaceSign capabilities</Text>
+  <Text>✓ **Rapid prototyping**: Quickly iterate on verification flows</Text>
+</VStack>
+
+### Use Production API for:
+
+<VStack align="start" gap={3} my={4} pl={4}>
+  <Text>✓ **Live verification**: Process real user identities</Text>
+  <Text>✓ **User onboarding**: Verify new customers</Text>
+  <Text>✓ **Ongoing authentication**: Re-verify existing users</Text>
+  <Text>✓ **Compliance requirements**: Meet KYC/AML obligations</Text>
+  <Text>✓ **Data sovereignty**: Keep data in your jurisdiction</Text>
+</VStack>
+
+<Alert.Root status="warning" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Critical: Data Separation</Alert.Title>
+    <Alert.Description>
+      Never input real user data, actual identity documents, or any PII into the Sandbox environment.
+      The Sandbox is strictly for testing with sample data. All real verification must happen in your
+      production environment where you control the data.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## API Differences
+
+While both environments use the same API structure, there are key differences:
+
+### Base URLs
+```javascript
+// Sandbox
+const sandboxClient = new Client({
+  auth: 'sk_test_...',
+  serverUrl: 'https://api.dev.facesign.ai'
+})
+
+// Production
+const productionClient = new Client({
+  auth: 'sk_live_...',
+  serverUrl: 'https://api.facesign.ai'
+})
+```
+
+### Webhook Validation
+
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={4} my={6}>
+  <Card.Root>
+    <Card.Header>
+      <Heading size="sm">Sandbox Webhooks</Heading>
+    </Card.Header>
+    <Card.Body>
+      <Text fontSize="sm">
+        Basic validation only. Suitable for testing webhook integration logic.
+      </Text>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Header>
+      <Heading size="sm">Production Webhooks</Heading>
+    </Card.Header>
+    <Card.Body>
+      <Text fontSize="sm">
+        Full cryptographic signature validation required for security.
+      </Text>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+### Rate Limits
+
+- **Sandbox**: Lower rate limits suitable for testing
+- **Production**: Higher rate limits based on your plan
+
+## Security Considerations
+
+### Sandbox Security
+- Use only test API keys (`sk_test_...`)
+- No real PII should ever be transmitted
+- Sessions auto-expire after testing
+- Limited retention of test data
+
+### Production Security
+- Use production API keys (`sk_live_...`)
+- Implement proper key rotation
+- Store keys securely (environment variables, secrets management)
+- Audit all access and operations
+- Implement webhook signature validation
+
+## Migration Path
+
+<Box my={6}>
+  <Heading size="md" mb={4}>From Sandbox to Production</Heading>
+
+  1. **Design & Test** in Sandbox with sample data
+  2. **Export** flow configuration (BETA feature)
+  3. **Implement** in your application using the SDK
+  4. **Configure** production API credentials
+  5. **Deploy** to your infrastructure
+  6. **Monitor** real verifications
+</Box>
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Flow Export (BETA)</Alert.Title>
+    <Alert.Description>
+      The Flow Designer now supports exporting flow configurations for use in production.
+      This feature is in beta and allows you to design visually then implement programmatically.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Best Practices
+
+### Sandbox Best Practices
+- Use realistic test scenarios
+- Test edge cases and error conditions
+- Document your test flows
+- Share demo links with stakeholders
+- Clean up test sessions regularly
+
+### Production Best Practices
+- Implement comprehensive error handling
+- Set up monitoring and alerting
+- Maintain audit logs
+- Regular security reviews
+- Plan for scaling
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/architecture/workflow"
+    title="Development Workflow"
+    description="Step-by-step from design to deployment"
+  />
+  <DocLinkCard
+    href="/flow-designer"
+    title="Flow Designer Guide"
+    description="Learn to use the visual design tool"
+  />
+  <DocLinkCard
+    href="/quickstart"
+    title="Quick Start"
+    description="Get started with the API"
+  />
+</SimpleGrid>
+
+</Prose>

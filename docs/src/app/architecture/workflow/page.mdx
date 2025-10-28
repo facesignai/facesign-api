@@ -1,0 +1,345 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Circle, SimpleGrid } from '@chakra-ui/react'
+import { DocLinkCard } from '@/components/chakra/DocLinkCard'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+import { LuArrowRight, LuCheck } from 'react-icons/lu'
+
+export const metadata = {
+  title: 'Development Workflow',
+  description: 'Step-by-step guide from flow design to production deployment.',
+}
+
+<PageHeader title="Development Workflow" description="From initial design to production verification - the complete journey." />
+
+<Prose>
+
+## Overview
+
+The FaceSign development workflow follows a clear path from design to deployment, ensuring you can test thoroughly before handling real user data.
+
+<Card.Root variant="outline" my={6}>
+  <Card.Body>
+    <VStack align="stretch" gap={4}>
+      <HStack justify="space-between" align="center">
+        <Badge colorPalette="blue" size="lg">1. Design</Badge>
+        <LuArrowRight />
+        <Badge colorPalette="purple" size="lg">2. Test</Badge>
+        <LuArrowRight />
+        <Badge colorPalette="orange" size="lg">3. Export</Badge>
+        <LuArrowRight />
+        <Badge colorPalette="green" size="lg">4. Implement</Badge>
+        <LuArrowRight />
+        <Badge colorPalette="teal" size="lg">5. Deploy</Badge>
+      </HStack>
+    </VStack>
+  </Card.Body>
+</Card.Root>
+
+## Phase 1: Design Your Flow
+
+### Access Flow Designer
+
+First, get access to the Flow Designer (Sandbox):
+
+1. **Request Access**: Contact FaceSign admin for provisioning
+2. **Login**: Access at https://create.facesign.ai
+3. **Get API Key**: Find your test key in Settings → API Keys
+
+### Create Your Verification Flow
+
+Use the visual interface to design your flow:
+
+- **Drag and drop** verification nodes onto the canvas
+- **Connect nodes** with edges to define the flow
+- **Configure each node** with specific parameters
+- **Set conditions** for branching logic
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Visual Design Benefits</Alert.Title>
+    <Alert.Description>
+      The Flow Designer lets you visualize complex verification logic, test different paths,
+      and iterate quickly without writing code.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Phase 2: Test with Sample Data
+
+### Run Test Sessions
+
+Test your flow thoroughly in the Sandbox:
+
+1. **Start a test session** using the test panel
+2. **Use sample identities** (never real PII)
+3. **Try different paths** through your flow
+4. **Validate outcomes** match expectations
+
+### Test Checklist
+
+<SimpleGrid columns={{ base: 1, md: 2 }} gap={4} my={6}>
+  <Card.Root>
+    <Card.Body>
+      <VStack align="start" gap={2}>
+        <Text fontWeight="bold">Happy Path Testing</Text>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Valid documents accepted</Text></HStack>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Liveness detection passes</Text></HStack>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Email verification works</Text></HStack>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Flow completes successfully</Text></HStack>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root>
+    <Card.Body>
+      <VStack align="start" gap={2}>
+        <Text fontWeight="bold">Error Path Testing</Text>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Invalid documents rejected</Text></HStack>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Failed liveness handled</Text></HStack>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">Timeout scenarios work</Text></HStack>
+        <HStack><Circle size="5" color="green.500"><LuCheck size={12} /></Circle><Text fontSize="sm">User cancellation handled</Text></HStack>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+## Phase 3: Export Flow Configuration (BETA)
+
+### Export Your Flow
+
+Once testing is complete, export the flow configuration:
+
+1. **Open your flow** in Flow Designer
+2. **Click Export** button (BETA feature)
+3. **Copy the JSON** configuration
+
+Example exported flow:
+
+<SimpleCodeBlock
+  title="Exported Flow Configuration"
+  language="json"
+  code={`{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "email",
+      "type": "enter_email",
+      "outcomes": {
+        "emailEntered": "document",
+        "canceled": "end"
+      }
+    },
+    {
+      "id": "document",
+      "type": "document_scan",
+      "config": {
+        "documentTypes": ["passport", "driver_license"],
+        "requireLiveness": true
+      },
+      "outcomes": {
+        "scanSuccess": "end",
+        "userCancelled": "end"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "start", "target": "email" },
+    { "id": "e2", "source": "email", "target": "document" },
+    { "id": "e3", "source": "document", "target": "end" }
+  ]
+}`}
+/>
+
+<Alert.Root status="warning" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Beta Feature</Alert.Title>
+    <Alert.Description>
+      Flow export is currently in beta. The exported format may change.
+      Always validate the exported configuration before using in production.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Phase 4: Implement in Your Application
+
+### Install the SDK
+
+<SimpleCodeBlock
+  defaultLanguage="npm"
+  languageSwitcher="tabs"
+  codeExamples={{
+    npm: "npm install @facesignai/api",
+    yarn: "yarn add @facesignai/api",
+    python: "pip install facesignai",
+  }}
+/>
+
+### Configure Production Client
+
+<SimpleCodeBlock
+  title="Production Setup"
+  defaultLanguage="javascript"
+  languageSwitcher="tabs"
+  codeExamples={{
+    javascript: `import { Client } from '@facesignai/api'
+
+const client = new Client({
+  auth: process.env.FACESIGN_LIVE_KEY, // sk_live_...
+  serverUrl: 'https://api.facesign.ai'
+})
+
+// Use your exported flow configuration
+const flow = {
+  nodes: [...], // Your exported nodes
+  edges: [...]  // Your exported edges
+}
+
+// Create a production session
+const { session, clientSecret } = await client.session.create({
+  clientReferenceId: userId,
+  metadata: { /* your metadata */ },
+  flow: flow
+})`,
+    python: `import os
+import facesignai
+
+client = facesignai.Client(
+    auth=os.environ.get('FACESIGN_LIVE_KEY'),  # sk_live_...
+    base_url='https://api.facesign.ai'
+)
+
+# Use your exported flow configuration
+flow = {
+    'nodes': [...],  # Your exported nodes
+    'edges': [...]   # Your exported edges
+}
+
+# Create a production session
+response = client.session.create(
+    client_reference_id=user_id,
+    metadata={},
+    flow=flow
+)`
+  }}
+/>
+
+### Implement Webhook Handlers
+
+Set up webhooks to receive verification updates:
+
+<SimpleCodeBlock
+  title="Webhook Handler"
+  language="javascript"
+  code={`// POST /webhooks/facesign
+export async function handleWebhook(req, res) {
+  const event = req.body
+
+  // Validate webhook signature (production only)
+  if (!validateSignature(req)) {
+    return res.status(401).send('Invalid signature')
+  }
+
+  switch (event.type) {
+    case 'session.complete':
+      await handleVerificationComplete(event.sessionId)
+      break
+    case 'session.canceled':
+      await handleVerificationCanceled(event.sessionId)
+      break
+    // Handle other events...
+  }
+
+  res.json({ received: true })
+}`}
+/>
+
+## Phase 5: Deploy to Production
+
+### Pre-Deployment Checklist
+
+<VStack align="start" gap={3} my={6} pl={4}>
+  <HStack><Circle size="5" color="gray.400"><LuCheck size={12} /></Circle><Text>Production API keys configured</Text></HStack>
+  <HStack><Circle size="5" color="gray.400"><LuCheck size={12} /></Circle><Text>Webhook endpoints set up</Text></HStack>
+  <HStack><Circle size="5" color="gray.400"><LuCheck size={12} /></Circle><Text>Error handling implemented</Text></HStack>
+  <HStack><Circle size="5" color="gray.400"><LuCheck size={12} /></Circle><Text>Monitoring configured</Text></HStack>
+  <HStack><Circle size="5" color="gray.400"><LuCheck size={12} /></Circle><Text>Security review completed</Text></HStack>
+  <HStack><Circle size="5" color="gray.400"><LuCheck size={12} /></Circle><Text>Compliance requirements met</Text></HStack>
+</VStack>
+
+### Deploy Your Application
+
+1. **Deploy your backend** with FaceSign integration
+2. **Configure production environment** variables
+3. **Set up monitoring** for verification sessions
+4. **Enable alerting** for failures
+5. **Document the flow** for your team
+
+### Monitor and Iterate
+
+Once in production:
+
+- **Monitor success rates** and failure patterns
+- **Collect user feedback** on the verification experience
+- **Iterate on the flow** based on real-world usage
+- **Update in Sandbox first**, then deploy changes
+
+## Best Practices
+
+### Development Best Practices
+
+- **Always start in Sandbox** - Never test with real PII
+- **Version your flows** - Keep track of changes
+- **Document decisions** - Why certain nodes/conditions were chosen
+- **Test edge cases** - Don't just test the happy path
+- **Review security** - Before each production deployment
+
+### Production Best Practices
+
+- **Implement retry logic** - Handle transient failures
+- **Log comprehensively** - But never log PII
+- **Monitor actively** - Set up dashboards and alerts
+- **Plan for scale** - Test load before peak usage
+- **Maintain compliance** - Regular audits and reviews
+
+<Alert.Root status="success" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Ready for Production</Alert.Title>
+    <Alert.Description>
+      Following this workflow ensures your verification flow is thoroughly tested and
+      properly implemented before handling real user data.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Next Steps
+
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={8}>
+  <DocLinkCard
+    href="/flow-designer"
+    title="Flow Designer"
+    description="Learn the visual design tool"
+  />
+  <DocLinkCard
+    href="/api"
+    title="API Reference"
+    description="Complete API documentation"
+  />
+  <DocLinkCard
+    href="/flows/node-reference"
+    title="Node Reference"
+    description="All verification node types"
+  />
+</SimpleGrid>
+
+</Prose>

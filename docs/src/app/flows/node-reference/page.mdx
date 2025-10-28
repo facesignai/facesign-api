@@ -1,0 +1,555 @@
+import { PageHeader } from '@/components/chakra/PageHeader'
+import { Prose } from '@/components/chakra/Prose'
+import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Table, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react'
+import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
+
+export const metadata = {
+  title: 'Node Reference',
+  description: 'Complete reference for all FaceSign verification node types.',
+}
+
+<PageHeader title="Node Reference" description="Detailed documentation for every verification node type available in FaceSign flows." />
+
+<Prose>
+
+## Overview
+
+FaceSign flows are composed of nodes connected by edges. Each node represents a specific verification step or logical operation. This reference provides complete documentation for all available node types.
+
+## Node Structure
+
+All nodes share a common base structure:
+
+<SimpleCodeBlock
+  title="Base Node Structure"
+  language="typescript"
+  code={`interface FSNodeBase {
+  id: string        // Unique identifier within the flow
+  type: FSNodeType  // The node type (see enum below)
+}`}
+/>
+
+## Node Types Enum
+
+<SimpleCodeBlock
+  title="FSNodeType Enum"
+  language="typescript"
+  code={`enum FSNodeType {
+  START = "start",
+  END = "end",
+  CONVERSATION = "conversation",
+  LIVENESS_DETECTION = "liveness_detection",
+  ENTER_EMAIL = "enter_email",
+  DATA_VALIDATION = "data_validation",
+  DOCUMENT_SCAN = "document_scan",
+  RECOGNITION = "recognition",
+  FACE_SCAN = "face_scan",
+  TWO_FACTOR = "two_factor"
+}`}
+/>
+
+---
+
+## Flow Control Nodes
+
+### START Node
+
+**Purpose**: Required entry point for every flow. This is where verification begins.
+
+<SimpleCodeBlock
+  title="START Node Structure"
+  language="typescript"
+  code={`interface FSStartNode {
+  id: string
+  type: "start"
+  outcome: string  // ID of the next node to execute
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "start_node",
+  "type": "start",
+  "outcome": "welcome_conversation"
+}`}
+/>
+
+---
+
+### END Node
+
+**Purpose**: Required exit point for flows. Marks successful completion of verification.
+
+<SimpleCodeBlock
+  title="END Node Structure"
+  language="typescript"
+  code={`interface FSEndNode {
+  id: string
+  type: "end"
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "end_node",
+  "type": "end"
+}`}
+/>
+
+---
+
+## Verification Nodes
+
+### CONVERSATION Node
+
+**Purpose**: AI-powered conversational interaction with the user. Can ask questions, provide information, or gather data.
+
+<SimpleCodeBlock
+  title="CONVERSATION Node Structure"
+  language="typescript"
+  code={`interface FSConversationNode {
+  id: string
+  type: "conversation"
+  prompt: string                           // The message/question to present
+  transitions: FSNodeTransition[]          // Conditional routing based on response
+  doesNotRequireReply?: boolean           // If true, continues without waiting for response
+}
+
+interface FSNodeTransition {
+  id: string
+  targetNodeId: string  // Next node to execute
+  condition: string     // JavaScript expression evaluated against response
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "ask_name",
+  "type": "conversation",
+  "prompt": "Hello! What's your full name?",
+  "transitions": [
+    {
+      "id": "has_name",
+      "targetNodeId": "verify_email",
+      "condition": "response.length > 0"
+    },
+    {
+      "id": "no_name",
+      "targetNodeId": "ask_name_again",
+      "condition": "response.length === 0"
+    }
+  ]
+}`}
+/>
+
+---
+
+### LIVENESS_DETECTION Node
+
+**Purpose**: Performs anti-spoofing checks to ensure a real person is present (not a photo, video, or deepfake).
+
+<SimpleCodeBlock
+  title="LIVENESS_DETECTION Node Structure"
+  language="typescript"
+  code={`interface FSLivenessDetectionNode {
+  id: string
+  type: "liveness_detection"
+  outcomes: {
+    livenessDetected: string    // Node ID if liveness confirmed
+    deepfakeDetected: string    // Node ID if deepfake detected
+    noFace: string             // Node ID if no face found
+  }
+}
+
+enum FSLivenessDetectionOutcome {
+  LIVENESS_DETECTED = "livenessDetected",
+  DEEPFAKE_DETECTED = "deepfakeDetected",
+  NO_FACE = "noFace"
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "liveness_check",
+  "type": "liveness_detection",
+  "outcomes": {
+    "livenessDetected": "proceed_to_document",
+    "deepfakeDetected": "verification_failed",
+    "noFace": "retry_liveness"
+  }
+}`}
+/>
+
+---
+
+### DOCUMENT_SCAN Node
+
+**Purpose**: Captures and verifies identity documents (passport, driver's license, ID card).
+
+<SimpleCodeBlock
+  title="DOCUMENT_SCAN Node Structure"
+  language="typescript"
+  code={`interface FSDocumentScanNode {
+  id: string
+  type: "document_scan"
+  config?: {
+    documentTypes?: DocumentType[]     // Allowed document types
+    regions?: string[]                 // Allowed regions/countries
+    requireLiveness?: boolean          // Require face match with document
+    scanningMode?: ScanningMode       // Capture mode
+  }
+  outcomes: {
+    scanSuccess: string        // Node ID on successful scan
+    userCancelled: string     // Node ID if user cancels
+    scanTimeout: string       // Node ID on timeout
+  }
+}
+
+enum FSDocumentScanOutcome {
+  SCAN_SUCCESS = "scanSuccess",
+  USER_CANCELLED = "userCancelled",
+  TIMEOUT = "scanTimeout"
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "document_verification",
+  "type": "document_scan",
+  "config": {
+    "documentTypes": ["passport", "driver_license", "id_card"],
+    "regions": ["US", "CA", "EU"],
+    "requireLiveness": true
+  },
+  "outcomes": {
+    "scanSuccess": "proceed_to_complete",
+    "userCancelled": "handle_cancellation",
+    "scanTimeout": "retry_scan"
+  }
+}`}
+/>
+
+---
+
+### ENTER_EMAIL Node
+
+**Purpose**: Collects and optionally validates user email address.
+
+<SimpleCodeBlock
+  title="ENTER_EMAIL Node Structure"
+  language="typescript"
+  code={`interface FSEnterEmailNode {
+  id: string
+  type: "enter_email"
+  outcomes: {
+    emailEntered: string     // Node ID after email provided
+    canceled: string        // Node ID if user cancels
+  }
+  transitions?: FSNodeTransition[]  // Optional conditional routing
+}
+
+enum FSEnterEmailOutcome {
+  EMAIL_ENTERED = "emailEntered",
+  CANCELED = "canceled"
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "collect_email",
+  "type": "enter_email",
+  "outcomes": {
+    "emailEntered": "send_verification",
+    "canceled": "handle_cancel"
+  }
+}`}
+/>
+
+---
+
+### FACE_SCAN Node
+
+**Purpose**: Captures user's face for 1:1 matching against a reference image (e.g., from document).
+
+<SimpleCodeBlock
+  title="FACE_SCAN Node Structure"
+  language="typescript"
+  code={`interface FSFaceScanNode {
+  id: string
+  type: "face_scan"
+  config?: {
+    referenceImage?: string    // Reference image for comparison
+    threshold?: number         // Match confidence threshold (0-1)
+  }
+  outcomes: {
+    matchConfirmed: string    // Node ID if faces match
+    matchFailed: string      // Node ID if no match
+    scanFailed: string       // Node ID if scan fails
+  }
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "face_matching",
+  "type": "face_scan",
+  "config": {
+    "threshold": 0.95
+  },
+  "outcomes": {
+    "matchConfirmed": "verification_complete",
+    "matchFailed": "retry_or_manual_review",
+    "scanFailed": "technical_error"
+  }
+}`}
+/>
+
+---
+
+### RECOGNITION Node
+
+**Purpose**: Performs 1:N face recognition to identify if user exists in database.
+
+<SimpleCodeBlock
+  title="RECOGNITION Node Structure"
+  language="typescript"
+  code={`interface FSRecognitionNode {
+  id: string
+  type: "recognition"
+  outcomes: {
+    recognized: string      // Node ID if user recognized
+    newUser: string        // Node ID if new user
+    noFace: string        // Node ID if no face detected
+  }
+}
+
+enum FSRecognitionOutcome {
+  RECOGNIZED = "recognized",
+  NEW_USER = "newUser",
+  NO_FACE = "noFace"
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "check_existing_user",
+  "type": "recognition",
+  "outcomes": {
+    "recognized": "welcome_back",
+    "newUser": "onboard_new_user",
+    "noFace": "retry_capture"
+  }
+}`}
+/>
+
+---
+
+### TWO_FACTOR Node
+
+**Purpose**: Implements two-factor authentication via SMS or email OTP.
+
+<SimpleCodeBlock
+  title="TWO_FACTOR Node Structure"
+  language="typescript"
+  code={`interface FSTwoFactorNode {
+  id: string
+  type: "two_factor"
+  config?: {
+    method?: "sms" | "email"     // Delivery method
+    length?: number              // OTP length (default: 6)
+    expiry?: number             // Expiry in seconds
+  }
+  outcomes: {
+    verified: string           // Node ID on successful verification
+    failed: string            // Node ID on failure
+    expired: string          // Node ID if OTP expires
+  }
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "two_factor_auth",
+  "type": "two_factor",
+  "config": {
+    "method": "sms",
+    "length": 6,
+    "expiry": 300
+  },
+  "outcomes": {
+    "verified": "complete_verification",
+    "failed": "retry_2fa",
+    "expired": "resend_code"
+  }
+}`}
+/>
+
+---
+
+### DATA_VALIDATION Node
+
+**Purpose**: Performs conditional validation and routing based on collected data.
+
+<SimpleCodeBlock
+  title="DATA_VALIDATION Node Structure"
+  language="typescript"
+  code={`interface FSDataValidationNode {
+  id: string
+  type: "data_validation"
+  transitions: FSNodeTransition[]    // Conditional routing rules
+  validation: {
+    field: string      // Field to validate
+    action: string     // Validation type (e.g., "exists", "matches", "contains")
+    value?: string    // Expected value for comparison
+  }
+}`}
+/>
+
+**Example Usage:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "id": "validate_age",
+  "type": "data_validation",
+  "validation": {
+    "field": "age",
+    "action": "greater_than",
+    "value": "18"
+  },
+  "transitions": [
+    {
+      "id": "adult",
+      "targetNodeId": "full_verification",
+      "condition": "age >= 18"
+    },
+    {
+      "id": "minor",
+      "targetNodeId": "parental_consent",
+      "condition": "age < 18"
+    }
+  ]
+}`}
+/>
+
+---
+
+## Connecting Nodes with Edges
+
+Nodes are connected using edges to define the flow path:
+
+<SimpleCodeBlock
+  title="Edge Structure"
+  language="typescript"
+  code={`interface FSEdge {
+  id: string
+  source: string      // Source node ID
+  target: string      // Target node ID
+  outcome?: string    // Optional: specific outcome that triggers this edge
+}`}
+/>
+
+**Example Flow with Edges:**
+<SimpleCodeBlock
+  language="json"
+  code={`{
+  "nodes": [
+    { "id": "start", "type": "start", "outcome": "email" },
+    { "id": "email", "type": "enter_email", "outcomes": { "emailEntered": "doc", "canceled": "end" } },
+    { "id": "doc", "type": "document_scan", "outcomes": { "scanSuccess": "end", "userCancelled": "end", "scanTimeout": "end" } },
+    { "id": "end", "type": "end" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "start", "target": "email" },
+    { "id": "e2", "source": "email", "target": "doc", "outcome": "emailEntered" },
+    { "id": "e3", "source": "email", "target": "end", "outcome": "canceled" },
+    { "id": "e4", "source": "doc", "target": "end" }
+  ]
+}`}
+/>
+
+## Transitions and Conditions
+
+Some nodes support conditional transitions based on user input or verification results:
+
+### Condition Syntax
+
+Conditions are JavaScript expressions evaluated at runtime:
+
+- `true` - Always proceed
+- `response.length > 0` - Check response has content
+- `age >= 18` - Numeric comparison
+- `country === "US"` - String comparison
+- `email.includes("@company.com")` - String contains
+
+### Transition Priority
+
+Transitions are evaluated in order. The first matching condition determines the next node.
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Best Practice</Alert.Title>
+    <Alert.Description>
+      Always include a default transition with condition "true" as the last item to handle unexpected cases.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+
+## Common Flow Patterns
+
+### Basic Identity Verification
+```
+START → ENTER_EMAIL → DOCUMENT_SCAN → LIVENESS_DETECTION → END
+```
+
+### Enhanced KYC Flow
+```
+START → ENTER_EMAIL → DOCUMENT_SCAN → FACE_SCAN → TWO_FACTOR → END
+```
+
+### Conditional Verification
+```
+START → DATA_VALIDATION → (high_risk) → DOCUMENT_SCAN → LIVENESS → END
+                        → (low_risk) → EMAIL → END
+```
+
+### Returning User Flow
+```
+START → RECOGNITION → (recognized) → TWO_FACTOR → END
+                   → (new_user) → DOCUMENT_SCAN → REGISTER → END
+```
+
+## Error Handling
+
+Each node type has specific failure outcomes. Always handle:
+
+- User cancellation
+- Timeouts
+- Technical failures
+- Validation failures
+
+## Next Steps
+
+- [Flow Designer](/flow-designer) - Design flows visually
+- [API Reference](/api) - Complete API documentation
+- [Development Workflow](/architecture/workflow) - From design to deployment
+
+</Prose>
