@@ -7,9 +7,18 @@ let highlighterPromise: Promise<Highlighter> | null = null
 
 export const shikiAdapter = createShikiAdapter({
   async load() {
-    // Return cached instance if available
+    // Check if instance exists and is not disposed
     if (highlighterInstance) {
-      return highlighterInstance
+      try {
+        // Test if the instance is still valid by calling a method
+        // If it's disposed, this will throw an error
+        highlighterInstance.getLoadedThemes()
+        return highlighterInstance
+      } catch {
+        // Instance is disposed, reset it
+        highlighterInstance = null
+        highlighterPromise = null
+      }
     }
 
     // Return in-flight promise if loading
@@ -34,23 +43,19 @@ export const shikiAdapter = createShikiAdapter({
   theme: { light: 'github-light', dark: 'github-dark' },
 })
 
-// Cleanup function for when the module is disposed (HMR, etc.)
-if (typeof window !== 'undefined') {
-  const cleanup = () => {
-    if (highlighterInstance) {
-      highlighterInstance.dispose()
-      highlighterInstance = null
-      highlighterPromise = null
-    }
-  }
-
-  // Clean up on page unload
-  window.addEventListener('beforeunload', cleanup)
-
-  // HMR cleanup (Vite/Next.js HMR support)
+// Only cleanup for HMR in development
+// Remove beforeunload listener as it causes issues with SPA navigation
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  // HMR cleanup (Next.js hot reload support)
   // @ts-expect-error - HMR API varies by bundler
   if (typeof module !== 'undefined' && module.hot) {
     // @ts-expect-error - HMR API varies by bundler
-    module.hot.dispose(cleanup)
+    module.hot.dispose(() => {
+      if (highlighterInstance) {
+        highlighterInstance.dispose()
+        highlighterInstance = null
+        highlighterPromise = null
+      }
+    })
   }
 }
