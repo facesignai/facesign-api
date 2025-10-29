@@ -17,15 +17,43 @@ function rehypeParseCodeBlocks() {
   }
 }
 
+// Singleton highlighter instance (reused across all MDX files during build)
 let highlighter
+let highlighterPromise
+
+// Create highlighter once and cache the promise to avoid race conditions
+async function getHighlighter() {
+  if (highlighter) return highlighter
+
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighter({
+      themes: ['github-light', 'github-dark'],
+      langs: [
+        'javascript',
+        'typescript',
+        'jsx',
+        'tsx',
+        'bash',
+        'shell',
+        'json',
+        'html',
+        'css',
+        'python',
+        'go',
+        'diff',
+      ],
+    }).then((h) => {
+      highlighter = h
+      return h
+    })
+  }
+
+  return highlighterPromise
+}
 
 function rehypeShiki() {
   return async (tree) => {
-    highlighter =
-      highlighter ?? (await createHighlighter({
-        themes: ['github-light', 'github-dark'],
-        langs: ['javascript', 'typescript', 'jsx', 'tsx', 'bash', 'shell', 'json', 'html', 'css', 'python', 'go', 'diff']
-      }))
+    const shiki = await getHighlighter()
 
     visit(tree, 'element', (node) => {
       if (node.tagName === 'pre' && node.children[0]?.tagName === 'code') {
@@ -36,9 +64,9 @@ function rehypeShiki() {
 
         if (node.properties.language) {
           try {
-            let html = highlighter.codeToHtml(textNode.value, {
+            let html = shiki.codeToHtml(textNode.value, {
               lang: node.properties.language,
-              theme: 'github-light'
+              theme: 'github-light',
             })
 
             // Extract just the code content, removing <pre> and <code> wrappers
@@ -50,7 +78,9 @@ function rehypeShiki() {
             }
           } catch (e) {
             // If language is not supported, leave the code as-is
-            console.warn(`Shiki: Unsupported language "${node.properties.language}"`)
+            console.warn(
+              `Shiki: Unsupported language "${node.properties.language}". Available languages can be checked at: https://shiki.style/languages`
+            )
           }
         }
       }

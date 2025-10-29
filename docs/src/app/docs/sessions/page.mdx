@@ -75,7 +75,7 @@ Sessions represent a single verification attempt. They are short‑lived and sco
     Unix timestamp when the session finished or was canceled. Null if still in progress.
   </Property>
   <Property name="status" type="string">
-    Current session status: `requiresInput`, `processing`, `complete`, or `canceled`.
+    Current session status: `created`, `requiresInput`, `processing`, `complete`, or `canceled`.
   </Property>
   <Property name="settings" type="object">
     SessionSettings object containing flow configuration and metadata. See below for details.
@@ -88,6 +88,18 @@ Sessions represent a single verification attempt. They are short‑lived and sco
   </Property>
 </Properties>
 
+### Session Status Lifecycle
+
+Sessions progress through these statuses during the verification process:
+
+- **`created`** - Session has been created on the server, but the user hasn't opened the verification URL yet
+- **`requiresInput`** - User has opened the URL and is actively providing input (filling forms, capturing photos, etc.)
+- **`processing`** - Backend is processing the verification (analyzing documents, running checks, etc.)
+- **`complete`** - Verification has finished successfully with results available in the `report` object
+- **`canceled`** - Session was canceled before completion
+
+The typical flow is: `created` → `requiresInput` → `processing` → `complete`
+
 ### SessionSettings object
 
 The `settings` object contains the flow configuration and metadata for the session.
@@ -97,7 +109,7 @@ The `settings` object contains the flow configuration and metadata for the sessi
     Your internal reference ID for this verification (e.g., your user ID).
   </Property>
   <Property name="metadata" type="object">
-    Custom key-value pairs you attached to the session.
+    Custom key-value pairs you attached to the session. Optional but recommended for tracking.
   </Property>
   <Property name="flow" type="object">
     Node-based flow definition with `nodes` and `edges` arrays. See [Custom Flows](/flows) for details.

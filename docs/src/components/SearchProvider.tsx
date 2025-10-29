@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { loadSearchIndex, search as performSearch, SearchResult } from '@/lib/search'
+import type { SearchResult } from '@/lib/search'
 
 interface SearchContextValue {
   isOpen: boolean
@@ -26,25 +26,34 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [searchModule, setSearchModule] = useState<any>(null)
 
-  // Load search index on mount
+  // Lazy load search module only when first opened
   useEffect(() => {
-    loadSearchIndex()
-      .then(() => setIsLoading(false))
-      .catch(() => setIsLoading(false))
-  }, [])
+    if (isOpen && !searchModule) {
+      setIsLoading(true)
+      import('@/lib/search')
+        .then((module) => {
+          module.loadSearchIndex().then(() => {
+            setSearchModule(module)
+            setIsLoading(false)
+          })
+        })
+        .catch(() => setIsLoading(false))
+    }
+  }, [isOpen, searchModule])
 
   // Perform search when query changes
   useEffect(() => {
-    if (!query.trim()) {
+    if (!query.trim() || !searchModule) {
       setResults([])
       return
     }
 
-    const searchResults = performSearch(query, 10)
+    const searchResults = searchModule.search(query, 10)
     setResults(searchResults)
-  }, [query])
+  }, [query, searchModule])
 
   // Handle keyboard shortcut (⌘K / Ctrl+K)
   useEffect(() => {

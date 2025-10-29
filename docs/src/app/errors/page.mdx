@@ -33,7 +33,7 @@ FaceSign returns the following HTTP status codes:
     The request requires authentication or the API key is invalid.
   </Property>
   <Property name="403 Forbidden">
-    The API key doesn't have permissions to perform the request.
+    The API key doesn't have permissions to perform the request. **Note**: The Dev environment may return 403 instead of 401 for missing authentication headers. Production consistently returns 401 for authentication issues.
   </Property>
   <Property name="404 Not Found">
     The requested resource doesn't exist.

@@ -19,8 +19,9 @@ export const viewport: Viewport = {
   themeColor: '#10b981',
 }
 
-// Force dynamic rendering to avoid SSG context issues with client-side providers
-export const dynamic = 'force-dynamic'
+// Use automatic static optimization - Next.js will statically generate
+// pages where possible while allowing client-side providers to hydrate correctly
+// (removed force-dynamic to enable static generation, removed force-static to avoid hydration errors)
 
 export default function RootLayout({
   children,

@@ -18,6 +18,8 @@ servers:
     description: Production server
   - url: https://api-staging.facesign.ai
     description: Staging server
+  - url: https://api.dev.facesign.ai
+    description: Dev server
 
 security:
   - bearerAuth: []
@@ -96,7 +98,7 @@ paths:
           description: Maximum number of sessions to return (max 100)
           schema:
             type: integer
-            minimum: 1
+            minimum: 0
             maximum: 100
             default: 25
         - name: cursor
@@ -246,6 +248,12 @@ paths:
                 $ref: '#/components/schemas/GetLangsResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '429':
           $ref: '#/components/responses/RateLimited'
 
@@ -265,6 +273,12 @@ paths:
                 $ref: '#/components/schemas/GetAvatarsResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '429':
           $ref: '#/components/responses/RateLimited'
 
@@ -362,7 +376,6 @@ components:
       type: object
       required:
         - clientReferenceId
-        - metadata
       properties:
         clientReferenceId:
           type: string
@@ -413,6 +426,13 @@ components:
         customization:
           $ref: '#/components/schemas/Customization'
           description: UI/UX customization options
+      oneOf:
+        - required: [modules]
+          not:
+            required: [flow]
+        - required: [flow]
+          not:
+            required: [modules]
 
     FSFlow:
       type: object
@@ -990,6 +1010,7 @@ components:
     SessionStatus:
       type: string
       enum:
+        - created
         - requiresInput
         - processing
         - canceled

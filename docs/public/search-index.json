@@ -7,132 +7,10 @@
       "url": "/page"
     },
     {
-      "id": "/api",
-      "title": "Page",
-      "content": "'use client' Accordion, Alert, Badge, Blockquote, Box, Card, Code, CodeBlock, Flex, Grid, Heading, HStack, IconButton, Separator, Span, Stack, Table, Text, VStack, } from '@chakra-ui/react' / DESIGN GUIDELINES FOR API DOCUMENTATION This page follows a consistent Stripe-style split-column layout pattern: 1. DARK CODE BLOCKS (bg: gray.900) - \"Copy This Code\" - Use for executable code snippets users will copy/paste - Examples: Request code (cURL, JavaScript, Python), Response JSON, Auth headers - C",
-      "url": "/api"
-    },
-    {
       "id": "/api-reference",
       "title": "Page",
-      "content": "title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
+      "content": "// Lazy load Redoc to reduce main bundle size (Redoc is ~150KB) const ApiReferenceClient = dynamic(() => import('./client').then(mod => mod.ApiReferenceClient), { loading: () => ( ), ssr: false, // Client-only rendering for Redoc }) title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
       "url": "/api-reference"
-    },
-    {
-      "id": "/api-versioning",
-      "title": "API Versioning",
-      "content": "title: 'API Versioning', description: 'Understanding FaceSign API versions, deprecation policy, and migration strategy.', } Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19 Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released. Version History 2024-12-1",
-      "url": "/api-versioning"
-    },
-    {
-      "id": "/api-versioning#0",
-      "title": "API Versioning",
-      "heading": "Current Version",
-      "content": "Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19",
-      "url": "/api-versioning#current-version",
-      "section": "Current Version"
-    },
-    {
-      "id": "/api-versioning#1",
-      "title": "API Versioning",
-      "heading": "Version Header",
-      "content": "Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released.",
-      "url": "/api-versioning#version-header",
-      "section": "Version Header"
-    },
-    {
-      "id": "/api-versioning#2",
-      "title": "API Versioning",
-      "heading": "Version History",
-      "content": "Version History 2024-12-18 v1.0.18 Current Two-Factor Authentication Split Breaking changes for improved 2FA flexibility Breaking Split TWOFACTOR into TWOFACTOREMAIL and TWOFACTORSMS Enhancement Standardized timestamp format to Unix milliseconds Deprecated Removed testMode in favor of environment-ba",
-      "url": "/api-versioning#version-history",
-      "section": "Version History"
-    },
-    {
-      "id": "/api-versioning#6",
-      "title": "API Versioning",
-      "heading": "Deprecation Policy",
-      "content": "Deprecation Policy ⏰ Deprecation Timeline 6 Months Deprecation Notice Feature marked as deprecated in documentation and API responses 3 Months Warning Headers API returns deprecation warnings in response headers 0 Months Feature Removed Deprecated feature is removed from the API",
-      "url": "/api-versioning#deprecation-policy",
-      "section": "Deprecation Policy"
-    },
-    {
-      "id": "/api-versioning#8",
-      "title": "API Versioning",
-      "heading": "Backward Compatibility",
-      "content": "Backward Compatibility",
-      "url": "/api-versioning#backward-compatibility",
-      "section": "Backward Compatibility"
-    },
-    {
-      "id": "/api-versioning#15",
-      "title": "API Versioning",
-      "heading": "Version Support Matrix",
-      "content": "Version Support Matrix 1.0.19 2024-12-18, 2024-10-15 Current Full Support 1.0.18 2024-12-18, 2024-10-15 Current Full Support 1.0.17 2024-10-15, 2024-08-20 Maintenance Security Updates Only 1.0.16 2024-08-20, 2024-06-10 Deprecated Until June 2025 &lt; 1.0.16 2024-03-01 Unsupported No Support",
-      "url": "/api-versioning#version-support-matrix",
-      "section": "Version Support Matrix"
-    },
-    {
-      "id": "/api-versioning#16",
-      "title": "API Versioning",
-      "heading": "Subscribing to Updates",
-      "content": "Subscribing to Updates",
-      "url": "/api-versioning#subscribing-to-updates",
-      "section": "Subscribing to Updates"
-    },
-    {
-      "id": "/api-versioning#19",
-      "title": "API Versioning",
-      "heading": "Best Practices",
-      "content": "Best Practices ✅ Version Management Best Practices Always Pin Versions in Production Explicitly set the API version to avoid unexpected changes Test New Versions in Sandbox First Use test API keys to validate changes before production Monitor Deprecation Warnings Check response headers for deprecati",
-      "url": "/api-versioning#best-practices",
-      "section": "Best Practices"
-    },
-    {
-      "id": "/api-versioning#20",
-      "title": "API Versioning",
-      "heading": "Getting Help",
-      "content": "Getting Help For version-related questions: - Migration Support: migration@facesign.ai - Technical Support: support@facesign.ai - Dashboard: dashboard.facesign.ai/versions - Status Page: status.facesign.ai",
-      "url": "/api-versioning#getting-help",
-      "section": "Getting Help"
-    },
-    {
-      "id": "/architecture",
-      "title": "Architecture",
-      "content": "title: 'Architecture', description: 'Understand FaceSign\\'s privacy-first architecture and deployment models.', } Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure. Two Env",
-      "url": "/architecture"
-    },
-    {
-      "id": "/architecture#0",
-      "title": "Architecture",
-      "heading": "Core Philosophy",
-      "content": "Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PI",
-      "url": "/architecture#core-philosophy",
-      "section": "Core Philosophy"
-    },
-    {
-      "id": "/architecture#1",
-      "title": "Architecture",
-      "heading": "Two Environments, Clear Separation",
-      "content": "Two Environments, Clear Separation Flow Designer (Sandbox) Testing & Prototyping • FaceSign-hosted environment • Design and test verification flows • Create demos and POCs • NO real PII - test data only • Access: https://create.facesign.ai Production API Live Verification • Your infrastructure • Pro",
-      "url": "/architecture#two-environments,-clear-separation",
-      "section": "Two Environments, Clear Separation"
-    },
-    {
-      "id": "/architecture#6",
-      "title": "Architecture",
-      "heading": "Data Privacy & Security",
-      "content": "Data Privacy & Security No PII Storage We never store user PII on FaceSign servers Client-Side Processing Verification happens in your infrastructure Your Compliance Meet your regulatory requirements",
-      "url": "/architecture#data-privacy-&-security",
-      "section": "Data Privacy & Security"
-    },
-    {
-      "id": "/architecture#7",
-      "title": "Architecture",
-      "heading": "Key Benefits",
-      "content": "Key Benefits - Complete Data Control: Your data never leaves your infrastructure - Regulatory Compliance: Meet GDPR, CCPA, and other requirements in your jurisdiction - Flexible Deployment: Deploy on-premise or in your cloud environment - Scalable Architecture: Handle verification at any scale - Pri",
-      "url": "/architecture#key-benefits",
-      "section": "Key Benefits"
     },
     {
       "id": "/authentication",
@@ -179,6 +57,52 @@
       "content": "Troubleshooting Authentication Error (401) • Check that your API key is correct • Ensure the key starts with sktest or sklive • Verify the Authorization header format: Bearer YOURKEY • Check if the key has been revoked or expired Wrong Environment • Test keys only work with api.dev.facesign.ai • Liv",
       "url": "/authentication#troubleshooting",
       "section": "Troubleshooting"
+    },
+    {
+      "id": "/avatars",
+      "title": "Avatars",
+      "content": "title: 'Avatars', description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.', } Avatars FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }} How avatars work FaceSign avatars are AI-powered virtual assistants tha",
+      "url": "/avatars"
+    },
+    {
+      "id": "/avatars#0",
+      "title": "Avatars",
+      "heading": "How avatars work",
+      "content": "How avatars work FaceSign avatars are AI-powered virtual assistants that: - Guide users through each step of the verification process - Adapt their conversation based on the flow nodes you've configured - Speak multiple languages and adjust their communication style accordingly - Provide real-time f",
+      "url": "/avatars#how-avatars-work",
+      "section": "How avatars work"
+    },
+    {
+      "id": "/avatars#1",
+      "title": "Avatars",
+      "heading": "Avatar object",
+      "content": "Avatar object Unique identifier for the avatar. Human-readable name of the avatar. Avatar gender: male, female, or unknown. URL to the avatar's profile image for display in your interface. ---",
+      "url": "/avatars#avatar-object",
+      "section": "Avatar object"
+    },
+    {
+      "id": "/avatars#2",
+      "title": "Avatars",
+      "heading": "Get available avatars",
+      "content": "Get available avatars Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience. GET /avatars } languageSwitcher=\"dropdown\" size=\"lg\" codeExamples={{ curl: curl https://api.dev.facesign.ai/avatars \\\\\\n -H \"Aut",
+      "url": "/avatars#get-available-avatars",
+      "section": "Get available avatars"
+    },
+    {
+      "id": "/avatars#3",
+      "title": "Avatars",
+      "heading": "Choosing the right avatar",
+      "content": "Choosing the right avatar",
+      "url": "/avatars#choosing-the-right-avatar",
+      "section": "Choosing the right avatar"
+    },
+    {
+      "id": "/avatars#6",
+      "title": "Avatars",
+      "heading": "Avatar customization",
+      "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
+      "url": "/avatars#avatar-customization",
+      "section": "Avatar customization"
     },
     {
       "id": "/client-secrets",
@@ -281,56 +205,16 @@
       "section": "Implementation"
     },
     {
+      "id": "/api",
+      "title": "Page",
+      "content": "'use client' Accordion, Alert, Badge, Blockquote, Box, Card, Code, CodeBlock, Flex, Grid, Heading, HStack, IconButton, Separator, Span, Stack, Table, Text, VStack, } from '@chakra-ui/react' / DESIGN GUIDELINES FOR API DOCUMENTATION This page follows a consistent Stripe-style split-column layout pattern: 1. DARK CODE BLOCKS (bg: gray.900) - \"Copy This Code\" - Use for executable code snippets users will copy/paste - Examples: Request code (cURL, JavaScript, Python), Response JSON, Auth headers - C",
+      "url": "/api"
+    },
+    {
       "id": "/docs",
       "title": "Page",
       "content": "'use client' return ( FaceSign Documentation Build white‑label verification flows with FaceSign. Guides, concepts, and tutorials. Sessions Create and manage verification sessions; lifecycle, statuses, best practices. Flows Compose verification nodes with branching and outcomes. Webhooks Receive real‑time updates about session status changes securely. Need endpoint details? Open API Reference ) }",
       "url": "/docs"
-    },
-    {
-      "id": "/avatars",
-      "title": "Avatars",
-      "content": "title: 'Avatars', description: 'Learn how to retrieve and use AI avatars for conversational verification experiences.', } Avatars FaceSign uses AI-powered avatars to create natural, conversational verification experiences. These virtual assistants guide users through the verification process with human-like interactions, making the experience more engaging and less intimidating than traditional forms. {{ className: 'lead' }} How avatars work FaceSign avatars are AI-powered virtual assistants tha",
-      "url": "/avatars"
-    },
-    {
-      "id": "/avatars#0",
-      "title": "Avatars",
-      "heading": "How avatars work",
-      "content": "How avatars work FaceSign avatars are AI-powered virtual assistants that: - Guide users through each step of the verification process - Adapt their conversation based on the flow nodes you've configured - Speak multiple languages and adjust their communication style accordingly - Provide real-time f",
-      "url": "/avatars#how-avatars-work",
-      "section": "How avatars work"
-    },
-    {
-      "id": "/avatars#1",
-      "title": "Avatars",
-      "heading": "Avatar object",
-      "content": "Avatar object Unique identifier for the avatar. Human-readable name of the avatar. Avatar gender: male, female, or unknown. URL to the avatar's profile image for display in your interface. ---",
-      "url": "/avatars#avatar-object",
-      "section": "Avatar object"
-    },
-    {
-      "id": "/avatars#2",
-      "title": "Avatars",
-      "heading": "Get available avatars",
-      "content": "Get available avatars Returns a list of all available AI avatars that can be used in verification sessions. Choose an avatar that best fits your brand and target audience. GET /avatars } languageSwitcher=\"dropdown\" size=\"lg\" codeExamples={{ curl: curl https://api.dev.facesign.ai/avatars \\\\\\n -H \"Aut",
-      "url": "/avatars#get-available-avatars",
-      "section": "Get available avatars"
-    },
-    {
-      "id": "/avatars#3",
-      "title": "Avatars",
-      "heading": "Choosing the right avatar",
-      "content": "Choosing the right avatar",
-      "url": "/avatars#choosing-the-right-avatar",
-      "section": "Choosing the right avatar"
-    },
-    {
-      "id": "/avatars#6",
-      "title": "Avatars",
-      "heading": "Avatar customization",
-      "content": "Avatar customization Avatars adapt their conversational style based on the verification flow nodes you configure. Different node types (conversation, liveness detection, document scan) will trigger different avatar behaviors and messaging.",
-      "url": "/avatars#avatar-customization",
-      "section": "Avatar customization"
     },
     {
       "id": "/errors",
@@ -401,6 +285,122 @@
       "content": "Getting help Need help with persistent errors? • Check the API status page for any ongoing issues • Review your request parameters against the API documentation • Contact support with the request ID from the error response",
       "url": "/errors#getting-help",
       "section": "Getting help"
+    },
+    {
+      "id": "/architecture",
+      "title": "Architecture",
+      "content": "title: 'Architecture', description: 'Understand FaceSign\\'s privacy-first architecture and deployment models.', } Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure. Two Env",
+      "url": "/architecture"
+    },
+    {
+      "id": "/architecture#0",
+      "title": "Architecture",
+      "heading": "Core Philosophy",
+      "content": "Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PI",
+      "url": "/architecture#core-philosophy",
+      "section": "Core Philosophy"
+    },
+    {
+      "id": "/architecture#1",
+      "title": "Architecture",
+      "heading": "Two Environments, Clear Separation",
+      "content": "Two Environments, Clear Separation Flow Designer (Sandbox) Testing & Prototyping • FaceSign-hosted environment • Design and test verification flows • Create demos and POCs • NO real PII - test data only • Access: https://create.facesign.ai Production API Live Verification • Your infrastructure • Pro",
+      "url": "/architecture#two-environments,-clear-separation",
+      "section": "Two Environments, Clear Separation"
+    },
+    {
+      "id": "/architecture#6",
+      "title": "Architecture",
+      "heading": "Data Privacy & Security",
+      "content": "Data Privacy & Security No PII Storage We never store user PII on FaceSign servers Client-Side Processing Verification happens in your infrastructure Your Compliance Meet your regulatory requirements",
+      "url": "/architecture#data-privacy-&-security",
+      "section": "Data Privacy & Security"
+    },
+    {
+      "id": "/architecture#7",
+      "title": "Architecture",
+      "heading": "Key Benefits",
+      "content": "Key Benefits - Complete Data Control: Your data never leaves your infrastructure - Regulatory Compliance: Meet GDPR, CCPA, and other requirements in your jurisdiction - Flexible Deployment: Deploy on-premise or in your cloud environment - Scalable Architecture: Handle verification at any scale - Pri",
+      "url": "/architecture#key-benefits",
+      "section": "Key Benefits"
+    },
+    {
+      "id": "/api-versioning",
+      "title": "API Versioning",
+      "content": "title: 'API Versioning', description: 'Understanding FaceSign API versions, deprecation policy, and migration strategy.', } Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19 Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released. Version History 2024-12-1",
+      "url": "/api-versioning"
+    },
+    {
+      "id": "/api-versioning#0",
+      "title": "API Versioning",
+      "heading": "Current Version",
+      "content": "Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19",
+      "url": "/api-versioning#current-version",
+      "section": "Current Version"
+    },
+    {
+      "id": "/api-versioning#1",
+      "title": "API Versioning",
+      "heading": "Version Header",
+      "content": "Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released.",
+      "url": "/api-versioning#version-header",
+      "section": "Version Header"
+    },
+    {
+      "id": "/api-versioning#2",
+      "title": "API Versioning",
+      "heading": "Version History",
+      "content": "Version History 2024-12-18 v1.0.18 Current Two-Factor Authentication Split Breaking changes for improved 2FA flexibility Breaking Split TWOFACTOR into TWOFACTOREMAIL and TWOFACTORSMS Enhancement Standardized timestamp format to Unix milliseconds Deprecated Removed testMode in favor of environment-ba",
+      "url": "/api-versioning#version-history",
+      "section": "Version History"
+    },
+    {
+      "id": "/api-versioning#6",
+      "title": "API Versioning",
+      "heading": "Deprecation Policy",
+      "content": "Deprecation Policy ⏰ Deprecation Timeline 6 Months Deprecation Notice Feature marked as deprecated in documentation and API responses 3 Months Warning Headers API returns deprecation warnings in response headers 0 Months Feature Removed Deprecated feature is removed from the API",
+      "url": "/api-versioning#deprecation-policy",
+      "section": "Deprecation Policy"
+    },
+    {
+      "id": "/api-versioning#8",
+      "title": "API Versioning",
+      "heading": "Backward Compatibility",
+      "content": "Backward Compatibility",
+      "url": "/api-versioning#backward-compatibility",
+      "section": "Backward Compatibility"
+    },
+    {
+      "id": "/api-versioning#15",
+      "title": "API Versioning",
+      "heading": "Version Support Matrix",
+      "content": "Version Support Matrix 1.0.19 2024-12-18, 2024-10-15 Current Full Support 1.0.18 2024-12-18, 2024-10-15 Current Full Support 1.0.17 2024-10-15, 2024-08-20 Maintenance Security Updates Only 1.0.16 2024-08-20, 2024-06-10 Deprecated Until June 2025 &lt; 1.0.16 2024-03-01 Unsupported No Support",
+      "url": "/api-versioning#version-support-matrix",
+      "section": "Version Support Matrix"
+    },
+    {
+      "id": "/api-versioning#16",
+      "title": "API Versioning",
+      "heading": "Subscribing to Updates",
+      "content": "Subscribing to Updates",
+      "url": "/api-versioning#subscribing-to-updates",
+      "section": "Subscribing to Updates"
+    },
+    {
+      "id": "/api-versioning#19",
+      "title": "API Versioning",
+      "heading": "Best Practices",
+      "content": "Best Practices ✅ Version Management Best Practices Always Pin Versions in Production Explicitly set the API version to avoid unexpected changes Test New Versions in Sandbox First Use test API keys to validate changes before production Monitor Deprecation Warnings Check response headers for deprecati",
+      "url": "/api-versioning#best-practices",
+      "section": "Best Practices"
+    },
+    {
+      "id": "/api-versioning#20",
+      "title": "API Versioning",
+      "heading": "Getting Help",
+      "content": "Getting Help For version-related questions: - Migration Support: migration@facesign.ai - Technical Support: support@facesign.ai - Dashboard: dashboard.facesign.ai/versions - Status Page: status.facesign.ai",
+      "url": "/api-versioning#getting-help",
+      "section": "Getting Help"
     },
     {
       "id": "/environments",
@@ -489,21 +489,13 @@
     {
       "id": "/flow-designer#6",
       "title": "Flow Designer",
-      "heading": "Testing Your Flow",
-      "content": "Testing Your Flow Once your flow is designed, test it with sample data:",
-      "url": "/flow-designer#testing-your-flow",
-      "section": "Testing Your Flow"
-    },
-    {
-      "id": "/flow-designer#9",
-      "title": "Flow Designer",
       "heading": "Exporting Flows (BETA)",
       "content": "Exporting Flows (BETA) Once you've designed and tested your flow, you can export it for use with the production API:",
       "url": "/flow-designer#exporting-flows-(beta)",
       "section": "Exporting Flows (BETA)"
     },
     {
-      "id": "/flow-designer#12",
+      "id": "/flow-designer#9",
       "title": "Flow Designer",
       "heading": "Next Steps: Implement with the API",
       "content": "Next Steps: Implement with the API After designing and exporting your flow, implement it in your application:",
@@ -511,15 +503,15 @@
       "section": "Next Steps: Implement with the API"
     },
     {
-      "id": "/flow-designer#16",
+      "id": "/flow-designer#13",
       "title": "Flow Designer",
       "heading": "Common Flow Patterns",
-      "content": "Common Flow Patterns Here are some common verification flow patterns you can create in Flow Designer:",
+      "content": "Common Flow Patterns Here are some common verification flow patterns you can create in Flow Designer: Basic KYC Standard Start → Email Entry → Document Scan → Liveness Check → End Standard identity verification flow for most use cases. Enhanced Security Advanced Start → Email Entry → Document Scan →",
       "url": "/flow-designer#common-flow-patterns",
       "section": "Common Flow Patterns"
     },
     {
-      "id": "/flow-designer#20",
+      "id": "/flow-designer#14",
       "title": "Flow Designer",
       "heading": "Limitations and Considerations",
       "content": "Limitations and Considerations",
@@ -527,7 +519,7 @@
       "section": "Limitations and Considerations"
     },
     {
-      "id": "/flow-designer#23",
+      "id": "/flow-designer#17",
       "title": "Flow Designer",
       "heading": "Support and Resources",
       "content": "Support and Resources",
@@ -655,6 +647,42 @@
       "section": "Quick Start Guides"
     },
     {
+      "id": "/docs/flows",
+      "title": "Page",
+      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness). Create a flow Get a flow FSNode object Node types One of start, end, conversation, livenessdetection, enteremail, datavalidation, documentscan, recognition, facescan, twofactor. Unique identifier within the flow. Minimal flow JSON Next steps",
+      "url": "/docs/flows"
+    },
+    {
+      "id": "/docs/flows#0",
+      "title": "Page",
+      "heading": "Concepts",
+      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).",
+      "url": "/docs/flows#concepts",
+      "section": "Concepts"
+    },
+    {
+      "id": "/docs/sessions",
+      "title": "Page",
+      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret. Create a session Retrieve a session Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side. Session object Top-level attributes Unique identifier for the session (e.g., \"sessabc123\"). Unix t",
+      "url": "/docs/sessions"
+    },
+    {
+      "id": "/docs/sessions#0",
+      "title": "Page",
+      "heading": "When to use sessions",
+      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret.",
+      "url": "/docs/sessions#when-to-use-sessions",
+      "section": "When to use sessions"
+    },
+    {
+      "id": "/docs/sessions#3",
+      "title": "Page",
+      "heading": "Client Secret",
+      "content": "Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side.",
+      "url": "/docs/sessions#client-secret",
+      "section": "Client Secret"
+    },
+    {
       "id": "/webhooks",
       "title": "Webhooks",
       "content": "title: 'Webhooks', description: 'Real-time event notifications for session lifecycle changes.', } Overview Webhooks allow you to receive real-time HTTP POST notifications when events occur in your FaceSign sessions. This enables you to: - Track session progress without polling - Update your database when verification completes - Handle errors and retries automatically - Send notifications to users Webhook Security Production webhooks include cryptographic signatures for validation. Always verify",
@@ -701,50 +729,26 @@
       "section": "Best Practices"
     },
     {
-      "id": "/architecture/sandbox-vs-production",
-      "title": "Sandbox vs Production",
-      "content": "title: 'Sandbox vs Production', description: 'Understand the differences between FaceSign Sandbox and Production environments.', } Environment Comparison Aspect Sandbox (Flow Designer) Production API Purpose Testing, demos, prototyping Live identity verification Hosting FaceSign-hosted Client-hosted Data Type Test data only (NO PII) Real user data (PII) Access URL https://create.facesign.ai Your infrastructure API Endpoint https://api.dev.facesign.ai https://api.facesign.ai Interface Visual Flow",
-      "url": "/architecture/sandbox-vs-production"
+      "id": "/docs/webhooks",
+      "title": "Page",
+      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing. Example event payload Configure a webhook",
+      "url": "/docs/webhooks"
     },
     {
-      "id": "/architecture/sandbox-vs-production#0",
-      "title": "Sandbox vs Production",
-      "heading": "Environment Comparison",
-      "content": "Environment Comparison Aspect Sandbox (Flow Designer) Production API Purpose Testing, demos, prototyping Live identity verification Hosting FaceSign-hosted Client-hosted Data Type Test data only (NO PII) Real user data (PII) Access URL https://create.facesign.ai Your infrastructure API Endpoint http",
-      "url": "/architecture/sandbox-vs-production#environment-comparison",
-      "section": "Environment Comparison"
+      "id": "/docs/webhooks#0",
+      "title": "Page",
+      "heading": "Overview",
+      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing.",
+      "url": "/docs/webhooks#overview",
+      "section": "Overview"
     },
     {
-      "id": "/architecture/sandbox-vs-production#1",
-      "title": "Sandbox vs Production",
-      "heading": "When to Use Each Environment",
-      "content": "When to Use Each Environment",
-      "url": "/architecture/sandbox-vs-production#when-to-use-each-environment",
-      "section": "When to Use Each Environment"
-    },
-    {
-      "id": "/architecture/sandbox-vs-production#4",
-      "title": "Sandbox vs Production",
-      "heading": "API Differences",
-      "content": "API Differences While both environments use the same API structure, there are key differences:",
-      "url": "/architecture/sandbox-vs-production#api-differences",
-      "section": "API Differences"
-    },
-    {
-      "id": "/architecture/sandbox-vs-production#8",
-      "title": "Sandbox vs Production",
-      "heading": "Security Considerations",
-      "content": "Security Considerations",
-      "url": "/architecture/sandbox-vs-production#security-considerations",
-      "section": "Security Considerations"
-    },
-    {
-      "id": "/architecture/sandbox-vs-production#11",
-      "title": "Sandbox vs Production",
-      "heading": "Migration Path",
-      "content": "Migration Path From Sandbox to Production 1. Design & Test in Sandbox with sample data 2. Export flow configuration (BETA feature) 3. Implement in your application using the SDK 4. Configure production API credentials 5. Deploy to your infrastructure 6. Monitor real verifications Flow Export (BETA) ",
-      "url": "/architecture/sandbox-vs-production#migration-path",
-      "section": "Migration Path"
+      "id": "/docs/webhooks#1",
+      "title": "Page",
+      "heading": "Example event payload",
+      "content": "Example event payload",
+      "url": "/docs/webhooks#example-event-payload",
+      "section": "Example event payload"
     },
     {
       "id": "/architecture/workflow",
@@ -801,64 +805,6 @@
       "section": "Phase 5: Deploy to Production"
     },
     {
-      "id": "/docs/flows",
-      "title": "Page",
-      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness). Create a flow Get a flow FSNode object Node types One of start, end, conversation, livenessdetection, enteremail, datavalidation, documentscan, recognition, facescan, twofactor. Unique identifier within the flow. Minimal flow JSON Next steps",
-      "url": "/docs/flows"
-    },
-    {
-      "id": "/docs/flows#0",
-      "title": "Page",
-      "heading": "Concepts",
-      "content": "Concepts A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).",
-      "url": "/docs/flows#concepts",
-      "section": "Concepts"
-    },
-    {
-      "id": "/docs/sessions",
-      "title": "Page",
-      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret. Create a session Retrieve a session Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side. Session object Top-level attributes Unique identifier for the session (e.g., \"sessabc123\"). Unix t",
-      "url": "/docs/sessions"
-    },
-    {
-      "id": "/docs/sessions#0",
-      "title": "Page",
-      "heading": "When to use sessions",
-      "content": "When to use sessions Sessions represent a single verification attempt. They are short‑lived and scoped to a flow and user context. Sessions should be created server‑side and handed to your client using a client secret.",
-      "url": "/docs/sessions#when-to-use-sessions",
-      "section": "When to use sessions"
-    },
-    {
-      "id": "/docs/sessions#3",
-      "title": "Page",
-      "heading": "Client Secret",
-      "content": "Client Secret Client secrets are short-lived tokens embedded in the hosted URL. Send your user to the URL; do not expose your API key client-side.",
-      "url": "/docs/sessions#client-secret",
-      "section": "Client Secret"
-    },
-    {
-      "id": "/docs/webhooks",
-      "title": "Page",
-      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing. Example event payload Configure a webhook",
-      "url": "/docs/webhooks"
-    },
-    {
-      "id": "/docs/webhooks#0",
-      "title": "Page",
-      "heading": "Overview",
-      "content": "Overview FaceSign sends POST requests to your webhook URL when a session changes status. Verify signatures and use idempotency to avoid duplicate processing.",
-      "url": "/docs/webhooks#overview",
-      "section": "Overview"
-    },
-    {
-      "id": "/docs/webhooks#1",
-      "title": "Page",
-      "heading": "Example event payload",
-      "content": "Example event payload",
-      "url": "/docs/webhooks#example-event-payload",
-      "section": "Example event payload"
-    },
-    {
       "id": "/flows/mapping",
       "title": "Flow Builder → FSFlow Mapping",
       "content": "title: 'Flow Builder → FSFlow Mapping', description: 'How to translate FaceSign Flow Builder nodes/edges into the FSFlow JSON used by the API.', } Flow Builder → FSFlow Mapping This guide shows how to convert a Flow Builder configuration into the FSFlow JSON accepted by the API (SessionSettings.flow). Node type mapping | Flow Builder | FSNode type | | --- | --- | | Start | start | | End | end | | Conversation | conversation | | Liveness Detection | livenessdetection | | Enter Email | enteremail ",
@@ -903,12 +849,6 @@
       "content": "Using the FSFlow with the API On success you receive { session, clientSecret }; send users to clientSecret.url.",
       "url": "/flows/mapping#using-the-fsflow-with-the-api",
       "section": "Using the FSFlow with the API"
-    },
-    {
-      "id": "/flows/fsnode",
-      "title": "FSNode (moved)",
-      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
-      "url": "/flows/fsnode"
     },
     {
       "id": "/flows/node-reference",
@@ -1035,6 +975,52 @@
       "section": "Next Steps"
     },
     {
+      "id": "/architecture/sandbox-vs-production",
+      "title": "Sandbox vs Production",
+      "content": "title: 'Sandbox vs Production', description: 'Understand the differences between FaceSign Sandbox and Production environments.', } Environment Comparison Aspect Sandbox (Flow Designer) Production API Purpose Testing, demos, prototyping Live identity verification Hosting FaceSign-hosted Client-hosted Data Type Test data only (NO PII) Real user data (PII) Access URL https://create.facesign.ai Your infrastructure API Endpoint https://api.dev.facesign.ai https://api.facesign.ai Interface Visual Flow",
+      "url": "/architecture/sandbox-vs-production"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#0",
+      "title": "Sandbox vs Production",
+      "heading": "Environment Comparison",
+      "content": "Environment Comparison Aspect Sandbox (Flow Designer) Production API Purpose Testing, demos, prototyping Live identity verification Hosting FaceSign-hosted Client-hosted Data Type Test data only (NO PII) Real user data (PII) Access URL https://create.facesign.ai Your infrastructure API Endpoint http",
+      "url": "/architecture/sandbox-vs-production#environment-comparison",
+      "section": "Environment Comparison"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#1",
+      "title": "Sandbox vs Production",
+      "heading": "When to Use Each Environment",
+      "content": "When to Use Each Environment",
+      "url": "/architecture/sandbox-vs-production#when-to-use-each-environment",
+      "section": "When to Use Each Environment"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#4",
+      "title": "Sandbox vs Production",
+      "heading": "API Differences",
+      "content": "API Differences While both environments use the same API structure, there are key differences:",
+      "url": "/architecture/sandbox-vs-production#api-differences",
+      "section": "API Differences"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#8",
+      "title": "Sandbox vs Production",
+      "heading": "Security Considerations",
+      "content": "Security Considerations",
+      "url": "/architecture/sandbox-vs-production#security-considerations",
+      "section": "Security Considerations"
+    },
+    {
+      "id": "/architecture/sandbox-vs-production#11",
+      "title": "Sandbox vs Production",
+      "heading": "Migration Path",
+      "content": "Migration Path From Sandbox to Production 1. Design & Test in Sandbox with sample data 2. Export flow configuration (BETA feature) 3. Implement in your application using the SDK 4. Configure production API credentials 5. Deploy to your infrastructure 6. Monitor real verifications Flow Export (BETA) ",
+      "url": "/architecture/sandbox-vs-production#migration-path",
+      "section": "Migration Path"
+    },
+    {
       "id": "/quickstart/python-installation",
       "title": "Python SDK Installation Guide",
       "content": "Python SDK Installation Guide Get started with the FaceSign Python SDK for server-side identity verification integration. Installation Install the FaceSign Python SDK using pip: Or using poetry: Requirements - Python 3.8 or higher - HTTP library: httpx (automatically installed) - Validation: pydantic (automatically installed) Quick Start 1. Initialize the Client 2. Create a Verification Session with Custom Flow 3. Retrieve Session Status 5. List Sessions Async Usage The SDK supports async/await ",
@@ -1105,12 +1091,6 @@
       "section": "Next Steps"
     },
     {
-      "id": "/sessions/object",
-      "title": "Session Object (moved)",
-      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
-      "url": "/sessions/object"
-    },
-    {
       "id": "/webhooks/signed-headers",
       "title": "Webhook Signed Headers",
       "content": "title: 'Webhook Signed Headers', description: 'Design for signing FaceSign webhook deliveries and verifying signatures on your server.', } Webhook Signed Headers This page describes a recommended, Stripe-style design for signing webhook deliveries and verifying them on your server. Dev currently sends unsigned webhooks; this guide is future-facing for when signatures are enabled. Header format - Header: FaceSign-Signature - Value: t={unixts},v1={hexhmacsha256(rawbody, whsec...)} - t: Unix timest",
@@ -1163,6 +1143,18 @@
       "content": "Rotation & rollout - Secrets: whsec... stored in env/secret manager; never log or expose client-side - Rotation: dual-signing window (two v1= values) or scheduled cutover; remove old key when consumers rotate - Current Dev behavior: unsigned; verify by fetching the session via sessionId for now",
       "url": "/webhooks/signed-headers#rotation-&-rollout",
       "section": "Rotation & rollout"
+    },
+    {
+      "id": "/sessions/object",
+      "title": "Session Object (moved)",
+      "content": "title: 'Session Object (moved)', description: 'This page has moved to /docs/sessionssession-object.', } {redirect('/docs/sessionssession-object')}",
+      "url": "/sessions/object"
+    },
+    {
+      "id": "/flows/fsnode",
+      "title": "FSNode (moved)",
+      "content": "title: 'FSNode (moved)', description: 'This page has moved to /docs/flowsfsnode.', } redirect('/docs/flowsfsnode') }",
+      "url": "/flows/fsnode"
     }
   ]
 }

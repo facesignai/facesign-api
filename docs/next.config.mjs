@@ -20,12 +20,69 @@ const withMDX = nextMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
+
+  // Enable SWC minification for faster builds
+  swcMinify: true,
+
+  // Optimize for Vercel deployment
+  poweredByHeader: false,
+  reactStrictMode: true,
+
+  // Image optimization
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000,
+  },
+
+  // Caching headers for static assets
+  async headers() {
+    return [
+      {
+        source: '/search-index.json',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
+        source: '/openapi.yaml',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
+        source: '/:path*.(ico|jpg|jpeg|png|gif|svg|webp|avif)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:path*.(js|css|woff|woff2|ttf|otf)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ]
+  },
+
   experimental: {
     outputFileTracingIncludes: {
       '/**/*': ['./src/app/**/*.mdx'],
     },
   },
-  webpack: (config) => {
+
+  webpack: (config, { isServer }) => {
     // Copy root openapi.yaml into docs/public for Redoc
     const repoRoot = path.resolve(__dirname, '..')
     const src = path.join(repoRoot, 'openapi.yaml')
@@ -38,6 +95,7 @@ const nextConfig = {
     } catch (e) {
       console.warn('openapi copy failed:', e?.message)
     }
+
     return config
   },
 }
