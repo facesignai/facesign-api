@@ -3,7 +3,6 @@ import { Prose } from '@/components/chakra/Prose'
 import { Card, Code, VStack, Text, Heading, Box, Alert, Badge, HStack, Separator, SimpleGrid, Blockquote } from '@chakra-ui/react'
 import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { DocLinkCard } from '@/components/chakra/DocLinkCard'
-
 export const metadata = {
   title: 'Flow Designer',
   description: 'Visual tool for designing and testing verification flows in the FaceSign Sandbox.',
@@ -45,15 +44,7 @@ To use Flow Designer, you need access to the FaceSign Sandbox:
 
 Your Sandbox API key will look like: `sk_test_...`
 
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Flow Designer Login Page - Shows the login screen at create.facesign.ai]</Text>
-</Box>
-
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[API Key Location - Shows where to find your test API key in Settings]</Text>
-</Box>
+![API Key Location - Shows where to find your test API key in Settings](/images/flow_designer_api_key.png)
 
 <Separator my={8} />
 
@@ -65,19 +56,149 @@ Flow Designer provides a drag-and-drop interface for building verification flows
 
 The left panel contains all available verification nodes:
 
-- **Start/End**: Required entry and exit points
-- **Conversation**: AI-powered conversational interactions
-- **Document Scan**: Identity document verification
-- **Liveness Detection**: Anti-spoofing checks
-- **Email Entry**: Email collection and verification
-- **Face Scan**: Facial recognition/matching
-- **Two Factor**: SMS/Email OTP verification
-- **Data Validation**: Conditional logic nodes
+<SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={3} mt={4} mb={6}>
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Conversation</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          AI-powered conversational interactions
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
 
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Empty Canvas - Shows the blank Flow Designer workspace with node library on the left]</Text>
-</Box>
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Document Scan</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          Identity document verification
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Liveness Detection</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          Anti-spoofing checks
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Data Collect</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          Data collection and input
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Face Scan</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          Facial recognition/matching
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Two Factor</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          SMS/Email OTP verification
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.400", bg: "gray.50" }}
+    transition="all 0.15s"
+    size="sm"
+  >
+    <Card.Body p={4}>
+      <VStack align="start" gap={2}>
+        <Heading as="h4" size="xs" fontWeight="semibold">Data Validation</Heading>
+        <Text fontSize="xs" color="gray.600" lineHeight="1.5">
+          Conditional logic nodes
+        </Text>
+      </VStack>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
+
+![Empty Canvas - Shows the blank Flow Designer workspace with node library on the left](/images/flow_designer_empty_flow.png)
 
 ### Building Your Flow
 
@@ -86,15 +207,7 @@ The left panel contains all available verification nodes:
 3. **Configure each node** by clicking to open properties panel
 4. **Set conditions** for branching logic
 
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Drag and Drop - Shows dragging a Document Scan node onto the canvas]</Text>
-</Box>
-
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Connecting Nodes - Shows drawing an edge between two nodes]</Text>
-</Box>
+![Connecting Nodes - Shows drawing an edge between two nodes](/images/flow_designer_connect_node.png)
 
 ### Configuring Nodes
 
@@ -104,42 +217,6 @@ Click any node to configure its properties:
   <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
   <Text fontSize="sm" color="gray.600">[Node Configuration - Shows the properties panel for a Document Scan node with options for document types, regions, etc.]</Text>
 </Box>
-
-<Separator my={8} />
-
-## Testing Your Flow
-
-Once your flow is designed, test it with sample data:
-
-### Test Mode
-
-1. Click the **Test** button in the top toolbar
-2. Select a test identity or create a custom one
-3. Step through the flow as an end user would
-4. Observe the flow execution and outcomes
-
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Test Mode Interface - Shows the test panel with sample identity selection]</Text>
-</Box>
-
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Test Session Running - Shows a test verification session in progress]</Text>
-</Box>
-
-### Test Data Guidelines
-
-<Alert.Root status="info" variant="subtle" my={6}>
-  <Alert.Indicator />
-  <Alert.Content>
-    <Alert.Title>Use Test Data Only</Alert.Title>
-    <Alert.Description>
-      Always use sample identities and test documents provided by FaceSign. Never upload real identity
-      documents or enter actual personal information during testing.
-    </Alert.Description>
-  </Alert.Content>
-</Alert.Root>
 
 <Separator my={8} />
 
@@ -223,10 +300,7 @@ The exported JSON contains your complete flow configuration:
   </Blockquote.Content>
 </Blockquote.Root>
 
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Export Dialog - Shows the export dialog with JSON output]</Text>
-</Box>
+![Export Dialog - Shows the export dialog with JSON output and copy functionality](/images/flow_designer_export_flow.png)
 
 <Separator my={8} />
 
@@ -292,21 +366,118 @@ Remember the key difference:
 
 Here are some common verification flow patterns you can create in Flow Designer:
 
-### Basic KYC Flow
-```
-Start → Email → Document Scan → Liveness → End
-```
+<SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={6}>
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.300", boxShadow: "sm" }}
+    transition="all 0.2s"
+  >
+    <Card.Body p={5}>
+      <HStack justify="space-between" mb={3}>
+        <Heading as="h4" size="sm" fontWeight="semibold">
+          Basic KYC
+        </Heading>
+        <Badge size="sm" variant="subtle" colorPalette="gray">
+          Standard
+        </Badge>
+      </HStack>
 
-### Enhanced Verification
-```
-Start → Email → Document → Face Match → Two Factor → End
-```
+      <Box
+        bg="gray.50"
+        p={3}
+        borderRadius="md"
+        fontSize="xs"
+        fontFamily="mono"
+        color="gray.700"
+        lineHeight="1.6"
+      >
+        Start → Email Entry → Document Scan → Liveness Check → End
+      </Box>
 
-### Progressive Verification
-```
-Start → Email → Data Validation → (if high risk) → Document → End
-                                 → (if low risk) → End
-```
+      <Text fontSize="sm" color="gray.600" mt={3}>
+        Standard identity verification flow for most use cases.
+      </Text>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.300", boxShadow: "sm" }}
+    transition="all 0.2s"
+  >
+    <Card.Body p={5}>
+      <HStack justify="space-between" mb={3}>
+        <Heading as="h4" size="sm" fontWeight="semibold">
+          Enhanced Security
+        </Heading>
+        <Badge size="sm" variant="subtle" colorPalette="gray">
+          Advanced
+        </Badge>
+      </HStack>
+
+      <Box
+        bg="gray.50"
+        p={3}
+        borderRadius="md"
+        fontSize="xs"
+        fontFamily="mono"
+        color="gray.700"
+        lineHeight="1.6"
+      >
+        Start → Email Entry → Document Scan → Face Match → Two Factor Auth → End
+      </Box>
+
+      <Text fontSize="sm" color="gray.600" mt={3}>
+        High-security verification with multiple verification layers.
+      </Text>
+    </Card.Body>
+  </Card.Root>
+
+  <Card.Root
+    variant="outline"
+    borderWidth="1px"
+    borderColor="gray.200"
+    bg="white"
+    boxShadow="none"
+    _hover={{ borderColor: "gray.300", boxShadow: "sm" }}
+    transition="all 0.2s"
+  >
+    <Card.Body p={5}>
+      <HStack justify="space-between" mb={3}>
+        <Heading as="h4" size="sm" fontWeight="semibold">
+          Progressive
+        </Heading>
+        <Badge size="sm" variant="subtle" colorPalette="gray">
+          Risk-Based
+        </Badge>
+      </HStack>
+
+      <Box
+        bg="gray.50"
+        p={3}
+        borderRadius="md"
+        fontSize="xs"
+        fontFamily="mono"
+        color="gray.700"
+        lineHeight="1.6"
+      >
+        Start → Email Entry → Data Validation → (high risk) → Document | (low risk) → End
+      </Box>
+
+      <Text fontSize="sm" color="gray.600" mt={3}>
+        Risk-based verification with conditional branching.
+      </Text>
+    </Card.Body>
+  </Card.Root>
+</SimpleGrid>
 
 ## Limitations and Considerations
 

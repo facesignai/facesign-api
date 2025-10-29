@@ -42,7 +42,7 @@ The most basic flow for verifying a person is physically present and not using a
 <SimpleCodeBlock
   title="Basic Liveness Detection"
   language="typescript"
-  code={`import { Client, FSNodeType } from '@facesignai/api'
+  code={`import { Client, FSNodeType, FSTwoFactorChannel } from '@facesignai/api'
 
 const client = new Client({
   auth: process.env.FACESIGN_API_KEY
@@ -170,21 +170,29 @@ Combine email and SMS verification with biometric checks.
       },
       {
         id: 'email_otp',
-        type: FSNodeType.TWO_FACTOR_EMAIL,
+        type: FSNodeType.TWO_FACTOR,
+        channels: [FSTwoFactorChannel.EMAIL],
+        contactSource: 'session_data',
         outcomes: {
           verified: 'sms_otp',
-          maxAttemptsReached: 'end',
-          expired: 'end'
+          failed_unverified: 'end',
+          delivery_failed: 'end',
+          cancelled: 'end',
+          error: 'end'
         }
       },
       {
         id: 'sms_otp',
-        type: FSNodeType.TWO_FACTOR_SMS,
-        phoneNumber: '+1234567890',  // Pre-filled from metadata
+        type: FSNodeType.TWO_FACTOR,
+        channels: [FSTwoFactorChannel.SMS],
+        contactSource: 'session_data',
+        staticPhone: '+1234567890',  // Pre-filled phone number
         outcomes: {
           verified: 'liveness',
-          maxAttemptsReached: 'end',
-          expired: 'end'
+          failed_unverified: 'end',
+          delivery_failed: 'end',
+          cancelled: 'end',
+          error: 'end'
         }
       },
       {
@@ -692,12 +700,16 @@ const buildRiskBasedFlow = (risk: string) => {
       },
       {
         id: 'sms',
-        type: FSNodeType.TWO_FACTOR_SMS,
-        phoneNumber: userPhone,
+        type: FSNodeType.TWO_FACTOR,
+        channels: [FSTwoFactorChannel.SMS],
+        contactSource: 'session_data',
+        staticPhone: userPhone,
         outcomes: {
           verified: 'end',
-          maxAttemptsReached: 'end',
-          expired: 'end'
+          failed_unverified: 'end',
+          delivery_failed: 'end',
+          cancelled: 'end',
+          error: 'end'
         }
       }
     )

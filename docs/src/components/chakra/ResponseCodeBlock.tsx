@@ -58,7 +58,7 @@ export function ResponseCodeBlock({ responses }: ResponseCodeBlockProps) {
               </CodeBlock.CopyTrigger>
             </CodeBlock.Control>
           </CodeBlock.Header>
-          <CodeBlock.Content bg="bg">
+          <CodeBlock.Content maxH="400px" overflowY="auto" bg="bg">
             <Tabs.Content pt="0" value={activeStatusCode} overflow="hidden">
               <CodeBlock.Code fontSize="xs" overflowX="auto">
                 <CodeBlock.CodeText />
