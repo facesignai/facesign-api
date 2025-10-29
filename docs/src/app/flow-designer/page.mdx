@@ -215,10 +215,16 @@ The left panel contains all available verification nodes:
 
 Click any node to configure its properties:
 
-<Box my={6} p={4} bg="gray.50" borderRadius="md">
-  <Text fontWeight="bold" mb={2}>📍 SCREENSHOT PLACEHOLDER</Text>
-  <Text fontSize="sm" color="gray.600">[Node Configuration - Shows the properties panel for a Document Scan node with options for document types, regions, etc.]</Text>
-</Box>
+<div>
+<SimpleGrid columns={{ base: 1, lg: 2 }} gap={4} my={6}>
+  <Box>
+    ![Start Node Settings - Configuration panel showing AI Video Analysis toggle, Avatar selection (June hr), Permissions Screen settings, Background Type options (Solid Color/Avatar Image), and User Controls for mic, camera, and language selection](/images/flow_designer_node_start_settings.png)
+  </Box>
+  <Box>
+    ![Document Scan Settings - Configuration panel showing Scanning Mode options (Single Side/Automatic), Scanning Settings checkboxes for Torch Button, Camera Switch, and Mirror Camera Button, and Allowed Document Types including Consular Id, Id, Multipurpose Id, and Mykad](/images/flow_designer_node_docscan_settings.png)
+  </Box>
+</SimpleGrid>
+</div>
 
 <Separator my={8} />
 
