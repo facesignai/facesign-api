@@ -278,3 +278,69 @@ curl -X POST https://api.dev.facesign.ai/sessions \
 - What triggers transition from "created" to "requiresInput"?
 - Should "created" be added to official status list?
 - Is there documentation about status transitions?
+
+---
+
+## 2025-10-29 Audit — Dev Verification (Docs/API Spec Findings)
+
+Source of truth: backend (facesign-api + facesign-ff + facesign-types). This section catalogs mismatches in public docs/OpenAPI vs backend behavior and suggests improvements. No code changes implied here.
+
+### Environment
+- Base URL: https://api.dev.facesign.ai
+- Auth: Bearer API key
+
+### Endpoint findings
+
+- POST /sessions (createSession)
+  - Observed: 200 with status="created"; request succeeds without `metadata`; accepts both `modules` and `flow` together.
+  - Docs/spec gaps:
+    - SessionStatus enum omits "created".
+    - `SessionSettings.required` includes `metadata` (backend optional).
+    - Exclusivity of `modules` vs `flow` not explicit.
+  - Suggestions:
+    - Docs: add lifecycle (created → requiresInput → processing → complete); mark `metadata` optional; clarify modules XOR flow or explicitly state both allowed.
+    - Spec: add "created" to SessionStatus; remove `metadata` from required; encode XOR via oneOf.
+
+- GET /sessions (listSessions)
+  - Observed: `limit=0` returns 200; results may contain a session with `invalid_type` node.
+  - Docs/spec gaps: minimum documented as 1; no note on validation of returned node types.
+  - Suggestions: clarify accepted range or note backend behavior; add a note on result data validation expectations.
+
+- GET /sessions/{sessionId} (getSession)
+  - Observed: status="created" after create.
+  - Suggest: refer to lifecycle clarification above.
+
+- GET /sessions/{sessionId}/refresh (createClientSecret)
+  - Observed: returns { secret, url, createdAt, expireAt }.
+  - Suggest: include explicit example and note on hosted session URL usage.
+
+- GET /langs (getLangs)
+  - Observed: 403 on missing Authorization in Dev (with auth: 200).
+  - Docs/spec gap: docs/spec indicate 401.
+  - Suggest: document Dev’s 403 as a known variance; keep 401 as target.
+
+- GET /avatars (getAvatars)
+  - Observed: 200 authorized; likely same 403 behavior unauthorized.
+  - Suggest: add explicit unauthorized behavior note mirroring /langs.
+
+### Cross-cutting
+- Dev server URL: using https://api.dev.facesign.ai; not consistently documented. Suggest adding Dev base URL in quickstart/auth.
+- Versioning header: `Facesign-Version` appears in examples but not declared. Suggest a short “Versioning” note indicating optionality/semantics.
+- FSNodeType in results: listing shows `invalid_type` for a session. Suggest docs note on validation guarantees vs historical data.
+
+### Documentation improvements (suggestions only)
+- Sessions page: add lifecycle incl. "created"; mark `metadata` optional; link to flows policy.
+- Flows page: state modules XOR flow; prefer `flow`; explain legacy status of `modules`.
+- Quickstart/Auth: add Dev base URL.
+- Errors/Auth: note Dev may return 403 for missing Authorization (target is 401).
+- Examples: provide curl/JS/Python tabs that match backend response shapes.
+
+### Spec improvements (suggestions only)
+- Add Dev server to `servers`.
+- Add "created" to `SessionStatus`.
+- Make `metadata` optional in `SessionSettings`; add oneOf for modules XOR flow.
+- Relax `listSessions.limit.minimum` to 0 if backend won’t change.
+- Add 403 to `GET /langs` and `GET /avatars` (keep 401 as target).
+
+### Next (documentation-only)
+- Add SDK-focused issues section after JS/TS and Python wrappers are sanity-checked against Dev: import style, base URL config, error mapping, retry behavior, and type accuracy.

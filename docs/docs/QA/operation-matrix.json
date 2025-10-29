@@ -1,0 +1,109 @@
+{
+  "generatedAt": "2025-10-29T16:32:30.325Z",
+  "count": 6,
+  "rows": [
+    {
+      "operationId": "listSessions",
+      "method": "GET",
+      "path": "/sessions",
+      "requiredParams": [],
+      "hasRequestBody": false,
+      "responses": [
+        "200",
+        "401",
+        "429"
+      ],
+      "tags": [
+        "Sessions"
+      ],
+      "summary": "List sessions"
+    },
+    {
+      "operationId": "createSession",
+      "method": "POST",
+      "path": "/sessions",
+      "requiredParams": [],
+      "hasRequestBody": true,
+      "responses": [
+        "200",
+        "400",
+        "401",
+        "429"
+      ],
+      "tags": [
+        "Sessions"
+      ],
+      "summary": "Create a verification session"
+    },
+    {
+      "operationId": "getSession",
+      "method": "GET",
+      "path": "/sessions/{sessionId}",
+      "requiredParams": [
+        "path:sessionId"
+      ],
+      "hasRequestBody": false,
+      "responses": [
+        "200",
+        "401",
+        "404",
+        "429"
+      ],
+      "tags": [
+        "Sessions"
+      ],
+      "summary": "Retrieve a session"
+    },
+    {
+      "operationId": "createClientSecret",
+      "method": "GET",
+      "path": "/sessions/{sessionId}/refresh",
+      "requiredParams": [
+        "path:sessionId"
+      ],
+      "hasRequestBody": false,
+      "responses": [
+        "200",
+        "401",
+        "404",
+        "429"
+      ],
+      "tags": [
+        "Sessions"
+      ],
+      "summary": "Create a client secret"
+    },
+    {
+      "operationId": "getLangs",
+      "method": "GET",
+      "path": "/langs",
+      "requiredParams": [],
+      "hasRequestBody": false,
+      "responses": [
+        "200",
+        "401",
+        "429"
+      ],
+      "tags": [
+        "Languages"
+      ],
+      "summary": "Get supported languages"
+    },
+    {
+      "operationId": "getAvatars",
+      "method": "GET",
+      "path": "/avatars",
+      "requiredParams": [],
+      "hasRequestBody": false,
+      "responses": [
+        "200",
+        "401",
+        "429"
+      ],
+      "tags": [
+        "Avatars"
+      ],
+      "summary": "Get available avatars"
+    }
+  ]
+}
