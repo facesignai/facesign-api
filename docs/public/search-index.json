@@ -13,6 +13,128 @@
       "url": "/api"
     },
     {
+      "id": "/api-versioning",
+      "title": "API Versioning",
+      "content": "title: 'API Versioning', description: 'Understanding FaceSign API versions, deprecation policy, and migration strategy.', } Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19 Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released. Version History 2024-12-1",
+      "url": "/api-versioning"
+    },
+    {
+      "id": "/api-versioning#0",
+      "title": "API Versioning",
+      "heading": "Current Version",
+      "content": "Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19",
+      "url": "/api-versioning#current-version",
+      "section": "Current Version"
+    },
+    {
+      "id": "/api-versioning#1",
+      "title": "API Versioning",
+      "heading": "Version Header",
+      "content": "Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released.",
+      "url": "/api-versioning#version-header",
+      "section": "Version Header"
+    },
+    {
+      "id": "/api-versioning#2",
+      "title": "API Versioning",
+      "heading": "Version History",
+      "content": "Version History 2024-12-18 v1.0.18 Current Two-Factor Authentication Split Breaking changes for improved 2FA flexibility Breaking Split TWOFACTOR into TWOFACTOREMAIL and TWOFACTORSMS Enhancement Standardized timestamp format to Unix milliseconds Deprecated Removed testMode in favor of environment-ba",
+      "url": "/api-versioning#version-history",
+      "section": "Version History"
+    },
+    {
+      "id": "/api-versioning#6",
+      "title": "API Versioning",
+      "heading": "Deprecation Policy",
+      "content": "Deprecation Policy ⏰ Deprecation Timeline 6 Months Deprecation Notice Feature marked as deprecated in documentation and API responses 3 Months Warning Headers API returns deprecation warnings in response headers 0 Months Feature Removed Deprecated feature is removed from the API",
+      "url": "/api-versioning#deprecation-policy",
+      "section": "Deprecation Policy"
+    },
+    {
+      "id": "/api-versioning#8",
+      "title": "API Versioning",
+      "heading": "Backward Compatibility",
+      "content": "Backward Compatibility",
+      "url": "/api-versioning#backward-compatibility",
+      "section": "Backward Compatibility"
+    },
+    {
+      "id": "/api-versioning#15",
+      "title": "API Versioning",
+      "heading": "Version Support Matrix",
+      "content": "Version Support Matrix 1.0.19 2024-12-18, 2024-10-15 Current Full Support 1.0.18 2024-12-18, 2024-10-15 Current Full Support 1.0.17 2024-10-15, 2024-08-20 Maintenance Security Updates Only 1.0.16 2024-08-20, 2024-06-10 Deprecated Until June 2025 &lt; 1.0.16 2024-03-01 Unsupported No Support",
+      "url": "/api-versioning#version-support-matrix",
+      "section": "Version Support Matrix"
+    },
+    {
+      "id": "/api-versioning#16",
+      "title": "API Versioning",
+      "heading": "Subscribing to Updates",
+      "content": "Subscribing to Updates",
+      "url": "/api-versioning#subscribing-to-updates",
+      "section": "Subscribing to Updates"
+    },
+    {
+      "id": "/api-versioning#19",
+      "title": "API Versioning",
+      "heading": "Best Practices",
+      "content": "Best Practices ✅ Version Management Best Practices Always Pin Versions in Production Explicitly set the API version to avoid unexpected changes Test New Versions in Sandbox First Use test API keys to validate changes before production Monitor Deprecation Warnings Check response headers for deprecati",
+      "url": "/api-versioning#best-practices",
+      "section": "Best Practices"
+    },
+    {
+      "id": "/api-versioning#20",
+      "title": "API Versioning",
+      "heading": "Getting Help",
+      "content": "Getting Help For version-related questions: - Migration Support: migration@facesign.ai - Technical Support: support@facesign.ai - Dashboard: dashboard.facesign.ai/versions - Status Page: status.facesign.ai",
+      "url": "/api-versioning#getting-help",
+      "section": "Getting Help"
+    },
+    {
+      "id": "/api-reference",
+      "title": "Page",
+      "content": "// Lazy load Redoc to reduce main bundle size (Redoc is ~150KB) const ApiReferenceClient = dynamic(() => import('./client').then(mod => mod.ApiReferenceClient), { loading: () => ( ), ssr: false, // Client-only rendering for Redoc }) title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
+      "url": "/api-reference"
+    },
+    {
+      "id": "/architecture",
+      "title": "Architecture",
+      "content": "title: 'Architecture', description: 'Understand FaceSign\\'s privacy-first architecture and deployment models.', } Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure. Two Env",
+      "url": "/architecture"
+    },
+    {
+      "id": "/architecture#0",
+      "title": "Architecture",
+      "heading": "Core Philosophy",
+      "content": "Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PI",
+      "url": "/architecture#core-philosophy",
+      "section": "Core Philosophy"
+    },
+    {
+      "id": "/architecture#1",
+      "title": "Architecture",
+      "heading": "Two Environments, Clear Separation",
+      "content": "Two Environments, Clear Separation Flow Designer (Sandbox) Testing & Prototyping • FaceSign-hosted environment • Design and test verification flows • Create demos and POCs • NO real PII - test data only • Access: https://create.facesign.ai Production API Live Verification • Your infrastructure • Pro",
+      "url": "/architecture#two-environments,-clear-separation",
+      "section": "Two Environments, Clear Separation"
+    },
+    {
+      "id": "/architecture#6",
+      "title": "Architecture",
+      "heading": "Data Privacy & Security",
+      "content": "Data Privacy & Security No PII Storage We never store user PII on FaceSign servers Client-Side Processing Verification happens in your infrastructure Your Compliance Meet your regulatory requirements",
+      "url": "/architecture#data-privacy-&-security",
+      "section": "Data Privacy & Security"
+    },
+    {
+      "id": "/architecture#7",
+      "title": "Architecture",
+      "heading": "Key Benefits",
+      "content": "Key Benefits - Complete Data Control: Your data never leaves your infrastructure - Regulatory Compliance: Meet GDPR, CCPA, and other requirements in your jurisdiction - Flexible Deployment: Deploy on-premise or in your cloud environment - Scalable Architecture: Handle verification at any scale - Pri",
+      "url": "/architecture#key-benefits",
+      "section": "Key Benefits"
+    },
+    {
       "id": "/authentication",
       "title": "Authentication",
       "content": "title: 'Authentication', description: 'Learn how to authenticate your API requests with FaceSign.', } Overview FaceSign uses API keys to authenticate requests. You'll need different keys for testing (Sandbox) and production environments. Environment Key Format Base URL Purpose Sandbox sktest... https://api.dev.facesign.ai Testing and development Production sklive... https://api.facesign.ai Live verification Getting API Keys Sandbox Keys Request Sandbox Access Contact your FaceSign administrator ",
@@ -57,44 +179,6 @@
       "content": "Troubleshooting Authentication Error (401) • Check that your API key is correct • Ensure the key starts with sktest or sklive • Verify the Authorization header format: Bearer YOURKEY • Check if the key has been revoked or expired Wrong Environment • Test keys only work with api.dev.facesign.ai • Liv",
       "url": "/authentication#troubleshooting",
       "section": "Troubleshooting"
-    },
-    {
-      "id": "/architecture",
-      "title": "Architecture",
-      "content": "title: 'Architecture', description: 'Understand FaceSign\\'s privacy-first architecture and deployment models.', } Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PII) on our servers. All production verification happens in your infrastructure. Two Env",
-      "url": "/architecture"
-    },
-    {
-      "id": "/architecture#0",
-      "title": "Architecture",
-      "heading": "Core Philosophy",
-      "content": "Core Philosophy FaceSign is built on a fundamental principle: Your data stays in your control. We provide the verification engine; you provide the infrastructure and maintain complete control over your data. Privacy by Design FaceSign never stores or processes personally identifiable information (PI",
-      "url": "/architecture#core-philosophy",
-      "section": "Core Philosophy"
-    },
-    {
-      "id": "/architecture#1",
-      "title": "Architecture",
-      "heading": "Two Environments, Clear Separation",
-      "content": "Two Environments, Clear Separation Flow Designer (Sandbox) Testing & Prototyping • FaceSign-hosted environment • Design and test verification flows • Create demos and POCs • NO real PII - test data only • Access: https://create.facesign.ai Production API Live Verification • Your infrastructure • Pro",
-      "url": "/architecture#two-environments,-clear-separation",
-      "section": "Two Environments, Clear Separation"
-    },
-    {
-      "id": "/architecture#6",
-      "title": "Architecture",
-      "heading": "Data Privacy & Security",
-      "content": "Data Privacy & Security No PII Storage We never store user PII on FaceSign servers Client-Side Processing Verification happens in your infrastructure Your Compliance Meet your regulatory requirements",
-      "url": "/architecture#data-privacy-&-security",
-      "section": "Data Privacy & Security"
-    },
-    {
-      "id": "/architecture#7",
-      "title": "Architecture",
-      "heading": "Key Benefits",
-      "content": "Key Benefits - Complete Data Control: Your data never leaves your infrastructure - Regulatory Compliance: Meet GDPR, CCPA, and other requirements in your jurisdiction - Flexible Deployment: Deploy on-premise or in your cloud environment - Scalable Architecture: Handle verification at any scale - Pri",
-      "url": "/architecture#key-benefits",
-      "section": "Key Benefits"
     },
     {
       "id": "/avatars",
@@ -195,90 +279,6 @@
       "content": "Next steps - Sessions - Learn about the session lifecycle and flow configuration - Webhooks - Get real-time updates about verification progress - Custom Flows - Build sophisticated verification flows with node-based system",
       "url": "/client-secrets#next-steps",
       "section": "Next steps"
-    },
-    {
-      "id": "/api-versioning",
-      "title": "API Versioning",
-      "content": "title: 'API Versioning', description: 'Understanding FaceSign API versions, deprecation policy, and migration strategy.', } Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19 Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released. Version History 2024-12-1",
-      "url": "/api-versioning"
-    },
-    {
-      "id": "/api-versioning#0",
-      "title": "API Versioning",
-      "heading": "Current Version",
-      "content": "Current Version Current Stable Version 2024-12-18 Stable Released December 18, 2024 SDK Version: 1.0.19",
-      "url": "/api-versioning#current-version",
-      "section": "Current Version"
-    },
-    {
-      "id": "/api-versioning#1",
-      "title": "API Versioning",
-      "heading": "Version Header",
-      "content": "Version Header All API requests should include the version header to ensure consistent behavior: Version Pinning Recommended We recommend explicitly setting the API version in production to avoid unexpected changes when new versions are released.",
-      "url": "/api-versioning#version-header",
-      "section": "Version Header"
-    },
-    {
-      "id": "/api-versioning#2",
-      "title": "API Versioning",
-      "heading": "Version History",
-      "content": "Version History 2024-12-18 v1.0.18 Current Two-Factor Authentication Split Breaking changes for improved 2FA flexibility Breaking Split TWOFACTOR into TWOFACTOREMAIL and TWOFACTORSMS Enhancement Standardized timestamp format to Unix milliseconds Deprecated Removed testMode in favor of environment-ba",
-      "url": "/api-versioning#version-history",
-      "section": "Version History"
-    },
-    {
-      "id": "/api-versioning#6",
-      "title": "API Versioning",
-      "heading": "Deprecation Policy",
-      "content": "Deprecation Policy ⏰ Deprecation Timeline 6 Months Deprecation Notice Feature marked as deprecated in documentation and API responses 3 Months Warning Headers API returns deprecation warnings in response headers 0 Months Feature Removed Deprecated feature is removed from the API",
-      "url": "/api-versioning#deprecation-policy",
-      "section": "Deprecation Policy"
-    },
-    {
-      "id": "/api-versioning#8",
-      "title": "API Versioning",
-      "heading": "Backward Compatibility",
-      "content": "Backward Compatibility",
-      "url": "/api-versioning#backward-compatibility",
-      "section": "Backward Compatibility"
-    },
-    {
-      "id": "/api-versioning#15",
-      "title": "API Versioning",
-      "heading": "Version Support Matrix",
-      "content": "Version Support Matrix 1.0.19 2024-12-18, 2024-10-15 Current Full Support 1.0.18 2024-12-18, 2024-10-15 Current Full Support 1.0.17 2024-10-15, 2024-08-20 Maintenance Security Updates Only 1.0.16 2024-08-20, 2024-06-10 Deprecated Until June 2025 &lt; 1.0.16 2024-03-01 Unsupported No Support",
-      "url": "/api-versioning#version-support-matrix",
-      "section": "Version Support Matrix"
-    },
-    {
-      "id": "/api-versioning#16",
-      "title": "API Versioning",
-      "heading": "Subscribing to Updates",
-      "content": "Subscribing to Updates",
-      "url": "/api-versioning#subscribing-to-updates",
-      "section": "Subscribing to Updates"
-    },
-    {
-      "id": "/api-versioning#19",
-      "title": "API Versioning",
-      "heading": "Best Practices",
-      "content": "Best Practices ✅ Version Management Best Practices Always Pin Versions in Production Explicitly set the API version to avoid unexpected changes Test New Versions in Sandbox First Use test API keys to validate changes before production Monitor Deprecation Warnings Check response headers for deprecati",
-      "url": "/api-versioning#best-practices",
-      "section": "Best Practices"
-    },
-    {
-      "id": "/api-versioning#20",
-      "title": "API Versioning",
-      "heading": "Getting Help",
-      "content": "Getting Help For version-related questions: - Migration Support: migration@facesign.ai - Technical Support: support@facesign.ai - Dashboard: dashboard.facesign.ai/versions - Status Page: status.facesign.ai",
-      "url": "/api-versioning#getting-help",
-      "section": "Getting Help"
-    },
-    {
-      "id": "/api-reference",
-      "title": "Page",
-      "content": "// Lazy load Redoc to reduce main bundle size (Redoc is ~150KB) const ApiReferenceClient = dynamic(() => import('./client').then(mod => mod.ApiReferenceClient), { loading: () => ( ), ssr: false, // Client-only rendering for Redoc }) title: 'API Reference - FaceSign API Documentation', description: 'Complete API reference for the FaceSign identity verification API', } return }",
-      "url": "/api-reference"
     },
     {
       "id": "/customization",
