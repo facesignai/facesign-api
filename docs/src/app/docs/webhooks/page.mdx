@@ -10,9 +10,9 @@ import { NextPrevNav } from '@/components/chakra/NextPrevNav'
 
 ## Overview
 
-FaceSign sends POST requests to your webhook URL when a session changes status.
+Webhooks notify your backend about changes in session state. Fetch the session after receiving webhooks.
 
-<Callout type="warning">Verify signatures and use idempotency to avoid duplicate processing.</Callout>
+<Callout type="info">FaceSign sends POST requests to your webhook URL when a session changes status.</Callout>
 
 ## Example event payload
 

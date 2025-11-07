@@ -75,7 +75,7 @@ Sessions represent a single verification attempt. They are short‑lived and sco
     Unix timestamp when the session finished or was canceled. Null if still in progress.
   </Property>
   <Property name="status" type="string">
-    Current session status: `created`, `requiresInput`, `processing`, `complete`, or `canceled`.
+    Current session status: `created`, `inProgress`, `incomplete`, or `complete`.
   </Property>
   <Property name="settings" type="object">
     SessionSettings object containing flow configuration and metadata. See below for details.
@@ -92,13 +92,12 @@ Sessions represent a single verification attempt. They are short‑lived and sco
 
 Sessions progress through these statuses during the verification process:
 
-- **`created`** - Session has been created on the server, but the user hasn't opened the verification URL yet
-- **`requiresInput`** - User has opened the URL and is actively providing input (filling forms, capturing photos, etc.)
-- **`processing`** - Backend is processing the verification (analyzing documents, running checks, etc.)
-- **`complete`** - Verification has finished successfully with results available in the `report` object
-- **`canceled`** - Session was canceled before completion
+- **`created`** - Customer has created the session, but user hasn't opened the URL yet
+- **`inProgress`** - User started interaction with FaceSign
+- **`incomplete`** - User closed browser tab before flow ended
+- **`complete`** - User completed the flow, end node reached
 
-The typical flow is: `created` → `requiresInput` → `processing` → `complete`
+The typical flow is: `created` → `inProgress` → `complete`
 
 ### SessionSettings object
 
@@ -111,8 +110,8 @@ The `settings` object contains the flow configuration and metadata for the sessi
   <Property name="metadata" type="object">
     Custom key-value pairs you attached to the session. Optional but recommended for tracking.
   </Property>
-  <Property name="flow" type="object">
-    Node-based flow definition with `nodes` and `edges` arrays. See [Custom Flows](/flows) for details.
+  <Property name="flow" type="array">
+    Array of flow nodes that define the avatar behavior and session logic. See [Custom Flows](/flows) for details.
   </Property>
   <Property name="providedData" type="object" nullable>
     Pre-filled user data (name, email, phone, etc.) provided when creating the session.
@@ -181,40 +180,26 @@ The `report` object contains verification results and is only present when the s
       "userId": "123",
       "source": "web-app"
     },
-    "flow": {
-      "nodes": [
-        {
-          "id": "start",
-          "type": "start",
-          "outcome": "liveness"
-        },
-        {
-          "id": "liveness",
-          "type": "liveness_detection",
-          "outcomes": {
-            "livenessDetected": "end",
-            "deepfakeDetected": "end",
-            "noFace": "end"
-          }
-        },
-        {
-          "id": "end",
-          "type": "end"
+    "flow": [
+      {
+        "id": "start",
+        "type": "start",
+        "outcome": "liveness"
+      },
+      {
+        "id": "liveness",
+        "type": "liveness_detection",
+        "outcomes": {
+          "livenessDetected": "end",
+          "deepfakeDetected": "end",
+          "noFace": "end"
         }
-      ],
-      "edges": [
-        {
-          "id": "e1",
-          "source": "start",
-          "target": "liveness"
-        },
-        {
-          "id": "e2",
-          "source": "liveness",
-          "target": "end"
-        }
-      ]
-    },
+      },
+      {
+        "id": "end",
+        "type": "end"
+      }
+    ],
     "avatarId": "June_HR_public",
     "defaultLang": "en",
     "zone": "es",

@@ -34,13 +34,13 @@ export default function QuickstartPage() {
             Quick Start
           </Heading>
           <Text fontSize="xl" color="gray.600">
-            This quickstart shows a minimal 3-step Dev flow to get a hosted verification session running.
+            This quickstart shows a minimal 3-step Dev flow to integrate FaceSign into your application.
           </Text>
         </Box>
 
         <Blockquote.Root variant="subtle" my={6}>
           <Blockquote.Content>
-            Keep your API keys server-side and use environment variables.
+            Your API keys carry many privileges and access to sensitive data, so be sure to keep them secure!
           </Blockquote.Content>
         </Blockquote.Root>
 
@@ -49,21 +49,17 @@ export default function QuickstartPage() {
         {/* Step 1 */}
         <Box>
           <Heading as="h2" size="lg" mb={4}>
-            Step 1 — Install and set your API key
+            Step 1 — Getting an API Key
           </Heading>
 
           <Blockquote.Root variant="subtle" colorPalette="blue" my={4}>
             <Blockquote.Content>
-              <Heading as="h4" size="sm" mb={2}>
-                Getting an API Key
-              </Heading>
               <Text mb={2}>
                 <strong>For Testing (Sandbox):</strong>
               </Text>
               <VStack align="start" gap={1} pl={4} mb={2}>
                 <Text>1. Contact your FaceSign administrator for provisioning</Text>
-                <Text>2. Once provisioned, access Flow Designer at <Link href="https://create.facesign.ai" color="blue.500">https://create.facesign.ai</Link></Text>
-                <Text>3. Find your test key (sk_test_...) in Settings → API Keys</Text>
+                <Text>2. Receive your test key (sk_test_...)</Text>
               </VStack>
               <Text>
                 <strong>For Production:</strong> Contact <Link href="mailto:sales@facesign.ai" color="blue.500">sales@facesign.ai</Link> for production API credentials (sk_live_...)
@@ -72,7 +68,7 @@ export default function QuickstartPage() {
           </Blockquote.Root>
 
           <Text mb={4}>
-            Set your API key for local use:
+            Set your API key for local use (optional):
           </Text>
 
           {/* Environment variable */}
@@ -101,11 +97,11 @@ export default function QuickstartPage() {
               What are Flows?
             </Heading>
             <Text mb={2}>
-              Flows define the verification journey using a node-graph system:
+              Flows define the avatar behavior and session logic using a node-based system:
             </Text>
             <VStack align="start" gap={1} pl={4}>
-              <Text>• <strong>Nodes</strong> are verification steps (start, end, email, document scan, etc.)</Text>
-              <Text>• <strong>Edges</strong> connect nodes to define the path through verification</Text>
+              <Text>• <strong>Nodes</strong> are steps in the flow (start, end, email, document scan, etc.)</Text>
+              <Text>• Each node has an <strong>outcome</strong> that points to the next node</Text>
               <Text>• The example below uses the simplest flow: start → end</Text>
             </VStack>
             <Text mt={2}>
@@ -139,15 +135,10 @@ export default function QuickstartPage() {
   -d '{
     "clientReferenceId": "user-123",
     "metadata": { "source": "quickstart" },
-    "flow": {
-      "nodes": [
-        { "id": "start", "type": "start" },  // Entry point
-        { "id": "end", "type": "end" }        // Exit point
-      ],
-      "edges": [
-        { "id": "e1", "source": "start", "target": "end" }  // Connect start to end
-      ]
-    }
+    "flow": [
+      { "id": "startNodeId", "type": "start", "outcome": "endNodeId" },  // Entry point
+      { "id": "endNodeId", "type": "end" }        // Exit point
+    ]
   }'`,
               javascript: `const res = await fetch('https://api.dev.facesign.ai/sessions', {
   method: 'POST',
@@ -158,15 +149,10 @@ export default function QuickstartPage() {
   body: JSON.stringify({
     clientReferenceId: 'user-123',
     metadata: { source: 'quickstart' },
-    flow: {
-      nodes: [
-        { id: 'start', type: 'start' },  // Entry point
-        { id: 'end', type: 'end' }        // Exit point
-      ],
-      edges: [
-        { id: 'e1', source: 'start', target: 'end' }  // Connect start to end
-      ]
-    }
+    flow: [
+      { id: 'startNodeId', type: 'start', outcome: 'endNodeId' },  // Entry point
+      { id: 'endNodeId', type: 'end' }        // Exit point
+    ]
   }),
 })
 const { session, clientSecret } = await res.json()
@@ -177,15 +163,10 @@ console.log('Hosted URL:', clientSecret.url)`,
 payload = {
   "clientReferenceId": "user-123",
   "metadata": { "source": "quickstart" },
-  "flow": {
-    "nodes": [
-      { "id": "start", "type": "start" },  # Entry point
-      { "id": "end", "type": "end" }        # Exit point
-    ],
-    "edges": [
-      { "id": "e1", "source": "start", "target": "end" }  # Connect start to end
-    ]
-  }
+  "flow": [
+    { "id": "startNodeId", "type": "start", "outcome": "endNodeId" },  # Entry point
+    { "id": "endNodeId", "type": "end" }        # Exit point
+  ]
 }
 r = requests.post(
   'https://api.dev.facesign.ai/sessions',
@@ -204,23 +185,25 @@ print('Hosted URL:', data['clientSecret']['url'])`
             title="CreateSessionResponse"
             code={`{
   "session": {
-    "id": "sess_abc123",
-    "createdAt": 1761594651878,  // Unix milliseconds
-    "status": "created",  // Initial status (will change to requiresInput when user opens URL)
+    "id": "XCuCa03d57koRXXieHfy",
+    "createdAt": 1762343497093,
+    "status": "created",
     "settings": {
+      "clientReferenceId": "user-123",
+      "metadata": { "source": "quickstart" },
+      "flow": [
+        { "id": "startNodeId", "type": "start", "outcome": "endNodeId" },
+        { "id": "endNodeId", "type": "end" }
+      ],
       "avatarId": "June_HR_public"
     },
-    "report": {
-      "transcript": [],
-      "lang": "en",
-      "nodeReports": []
-    }
+    "report": { "transcript": [], "lang": "en", "nodeReports": [] }
   },
   "clientSecret": {
-    "secret": "csea61d44d88d345e1b91622820bb73100",
-    "createdAt": 1761594651878,  // Unix milliseconds
-    "expireAt": 1761601851878,   // Unix milliseconds
-    "url": "https://session.dev.facesign.ai?cs=csea61d44d88d345e1b91622820bb73100"  // Send user here
+    "secret": "csd2f18a89e0c5429aad0e247ff97e12bd",
+    "createdAt": 1762343497092,
+    "url": "https://session.dev.facesign.ai?cs=csd2f18a89e0c5429aad0e247ff97e12bd",
+    "expireAt": 1762350697092
   }
 }`}
             language="json"
@@ -230,10 +213,25 @@ print('Hosted URL:', data['clientSecret']['url'])`
         {/* Step 3 */}
         <Box>
           <Heading as="h2" size="lg" mb={4}>
-            Step 3 — Open the hosted URL
+            Step 3 — Embed with iframe
           </Heading>
-          <Text>
-            Send your user to the <Code>clientSecret.url</Code> to complete verification.
+          <Text mb={4}>
+            Use the <Code>clientSecret.url</Code> as the iframe src to embed FaceSign into your application:
+          </Text>
+
+          <DocsCodeBlock
+            title="Embed FaceSign"
+            code={`<iframe
+  allow='camera; microphone'
+  src={clientSecret.url}
+  width='100%'
+  height='100%'
+/>`}
+            language="html"
+          />
+
+          <Text mt={4} fontSize="sm" color="gray.600">
+            Note: The <Code>allow</Code> attribute is required for camera and microphone access.
           </Text>
         </Box>
 
@@ -264,18 +262,18 @@ print('Hosted URL:', data['clientSecret']['url'])`
   headers: { Authorization: \`Bearer \${process.env.FACESIGN_API_KEY}\` },
 })
 const session = await res.json()
-console.log('Status:', session.status)  // requiresInput, processing, complete, canceled`,
+console.log('Status:', session.status)  // created, inProgress, incomplete, complete`,
               python: `r = requests.get(
   'https://api.dev.facesign.ai/sessions/sess_abc123',
   headers={'Authorization': f'Bearer {os.environ.get("FACESIGN_API_KEY","")}'}
 )
 session = r.json()
-print('Status:', session['status'])  # requiresInput, processing, complete, canceled`
+print('Status:', session['status'])  # created, inProgress, incomplete, complete`
             }}
           />
 
           <Text mt={4}>
-            Session status values: <Code>created</Code> (initial), <Code>requiresInput</Code>, <Code>processing</Code>, <Code>complete</Code>, <Code>canceled</Code>
+            Session status values: <Code>created</Code> (initial), <Code>inProgress</Code>, <Code>incomplete</Code>, <Code>complete</Code>
           </Text>
           <Text mt={2} fontSize="sm" color="gray.600">
             Note: All timestamps are in Unix milliseconds (not seconds)
@@ -289,7 +287,7 @@ print('Status:', session['status'])  # requiresInput, processing, complete, canc
           </Heading>
           <Blockquote.Root variant="subtle" colorPalette="gray" my={3}>
             <Blockquote.Content>
-              Dev webhooks use basic validation. Verify events by fetching the session and checking your clientReferenceId or metadata.
+              Webhooks notify your backend about changes in session state. Fetch the session after receiving webhooks.
             </Blockquote.Content>
           </Blockquote.Root>
 

@@ -8,26 +8,38 @@ export const metadata = {
   description: 'Visual tool for designing and testing verification flows in the FaceSign Sandbox.',
 }
 
-<PageHeader title="Flow Designer" description="Design and test verification flows visually before implementing with the API." />
+<PageHeader title="Flow Designer (Demo Tool)" description="Visual testing tool for prototyping flows in the Sandbox environment." />
 
 <Prose>
 
 ## What is Flow Designer?
 
-Flow Designer is a **visual design and testing tool** for creating identity verification workflows. It runs in the FaceSign Sandbox environment and is intended for:
+Flow Designer is a **demo and testing tool** for exploring FaceSign capabilities. It runs in the FaceSign Sandbox environment and is intended for:
 
-- ✅ **Prototyping** verification flows
-- ✅ **Testing** flow logic with sample data
-- ✅ **Creating demos** for stakeholders
-- ❌ **NOT for production use**
+- ✅ **Demos** to showcase FaceSign features
+- ✅ **Learning** about available node types
+- ✅ **Testing** basic flow concepts
+- ❌ **NOT required for production implementation**
 - ❌ **NOT for real user data or PII**
+- ❌ **NOT the primary way to create flows** (use the API directly)
+
+<Alert.Root status="info" variant="subtle" my={6}>
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Demo Tool Notice</Alert.Title>
+    <Alert.Description>
+      Flow Designer is a demo tool for exploring FaceSign. For production implementation, create flows directly using the API.
+      See the <Code>quickstart</Code> guide for production flow creation.
+    </Alert.Description>
+  </Alert.Content>
+</Alert.Root>
 
 <Alert.Root status="warning" variant="subtle" my={6}>
   <Alert.Indicator />
   <Alert.Content>
     <Alert.Title>Sandbox Environment Only</Alert.Title>
     <Alert.Description>
-      Flow Designer is part of the FaceSign Sandbox. Never input real user data, actual identity documents,
+      Never input real user data, actual identity documents,
       or any personally identifiable information. Use test data and sample identities only.
     </Alert.Description>
   </Alert.Content>
@@ -249,53 +261,38 @@ Once you've designed and tested your flow, you can export it for use with the pr
 The exported JSON contains your complete flow configuration:
 
 <SimpleCodeBlock
-  title="Example Exported Flow"
+  title="Example Flow Configuration"
   language="json"
-  code={`{
-  "version": "1.0",
-  "nodes": [
-    {
-      "id": "start_1",
-      "type": "start"
+  code={`[
+  {
+    "id": "start_1",
+    "type": "start",
+    "outcome": "email_1"
+  },
+  {
+    "id": "email_1",
+    "type": "enter_email",
+    "config": {
+      "required": true,
+      "validation": "email"
     },
-    {
-      "id": "email_1",
-      "type": "enter_email",
-      "config": {
-        "required": true,
-        "validation": "email"
-      },
-      "outcomes": {
-        "emailEntered": "doc_1",
-        "canceled": "end_1"
-      }
+    "outcome": "doc_1"
+  },
+  {
+    "id": "doc_1",
+    "type": "document_scan",
+    "config": {
+      "documentTypes": ["passport", "driver_license", "id_card"],
+      "regions": ["US", "CA", "EU"],
+      "requireLiveness": true
     },
-    {
-      "id": "doc_1",
-      "type": "document_scan",
-      "config": {
-        "documentTypes": ["passport", "driver_license", "id_card"],
-        "regions": ["US", "CA", "EU"],
-        "requireLiveness": true
-      },
-      "outcomes": {
-        "scanSuccess": "end_1",
-        "userCancelled": "end_1",
-        "timeout": "end_1"
-      }
-    },
-    {
-      "id": "end_1",
-      "type": "end"
-    }
-  ],
-  "edges": [
-    { "id": "e1", "source": "start_1", "target": "email_1" },
-    { "id": "e2", "source": "email_1", "target": "doc_1", "outcome": "emailEntered" },
-    { "id": "e3", "source": "email_1", "target": "end_1", "outcome": "canceled" },
-    { "id": "e4", "source": "doc_1", "target": "end_1" }
-  ]
-}`}
+    "outcome": "end_1"
+  },
+  {
+    "id": "end_1",
+    "type": "end"
+  }
+]`}
 />
 
 <Blockquote.Root variant="subtle" colorPalette="orange" my={6}>

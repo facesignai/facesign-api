@@ -6,13 +6,13 @@ import { SimpleCodeBlock } from '@/components/chakra/SimpleCodeBlock'
 import { SimpleGrid } from '@chakra-ui/react'
 import { DocLinkCard } from '@/components/chakra/DocLinkCard'
 
-<PageHeader title="Flows" description="Compose verification steps as nodes with conditional branching." />
+<PageHeader title="Flows" description="Define avatar behavior and session logic using a node-based system." />
 
 <Prose>
 
 ## Concepts
 
-A flow defines the ordered (or conditional) nodes a user must complete (e.g., Email, Document, Liveness).
+Flows define the avatar behavior and session logic using nodes. Each node represents a step in the flow (e.g., Email, Document, Liveness) and has an outcome that determines the next node to execute.
 
 ## Create a flow
 
@@ -44,17 +44,11 @@ A flow defines the ordered (or conditional) nodes a user must complete (e.g., Em
 <SimpleCodeBlock
   title="Minimal FSFlow"
   language="json"
-  code={`{
-  "nodes": [
-    { "id": "start", "type": "start", "outcome": "conv1" },
-    { "id": "conv1", "type": "conversation", "prompt": "Hello!", "transitions": [{ "id": "any", "condition": "true" }] },
-    { "id": "end", "type": "end" }
-  ],
-  "edges": [
-    { "id": "e1", "source": "start", "target": "conv1" },
-    { "id": "e2", "source": "conv1", "target": "end" }
-  ]
-}`}
+  code={`[
+  { "id": "start", "type": "start", "outcome": "conv1" },
+  { "id": "conv1", "type": "conversation", "prompt": "Hello!", "outcome": "end" },
+  { "id": "end", "type": "end" }
+]`}
 />
 
 ## Next steps

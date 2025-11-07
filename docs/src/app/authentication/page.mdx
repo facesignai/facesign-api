@@ -88,7 +88,7 @@ FaceSign uses API keys to authenticate requests. You'll need different keys for 
 </Card.Root>
 
 <Warning title="Security Warning">
-  Keep your API keys secure! Never commit them to version control or expose them in client-side code.
+  Your API keys carry many privileges and access to sensitive data, so be sure to keep them secure!
 </Warning>
 
 <Separator my={8} />
@@ -162,7 +162,10 @@ const client = new Client({
 const { session, clientSecret } = await client.session.create({
   clientReferenceId: 'user-123',
   metadata: {},
-  flow: { nodes: [...], edges: [...] }
+  flow: [
+    { id: 'start', type: 'start', outcome: 'end' },
+    { id: 'end', type: 'end' }
+  ]
 })
 
 // Send clientSecret to your frontend
