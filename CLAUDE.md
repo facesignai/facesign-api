@@ -153,7 +153,7 @@ The `/api` page uses a **consistent split-column layout**:
 1. **`openapi.yaml`** - PRIMARY SOURCE for:
    - All endpoint paths, methods, parameters
    - Request/response schemas
-   - Session statuses: `requiresInput`, `processing`, `complete`, `canceled`
+   - Session statuses: `created`, `inProgress`, `incomplete`, `complete`
    - Error types: `authentication_error`, `validation_error`, `not_found_error`, `rate_limit_error`, `server_error`
    - Field names, types, descriptions
 
@@ -179,7 +179,8 @@ Before committing documentation changes, verify:
 
 ❌ **Session Statuses**:
 - Don't use "verified"/"failed" (NOT in spec)
-- Use: `requiresInput`, `processing`, `complete`, `canceled`
+- Don't use "requiresInput", "processing", "canceled" (old statuses)
+- Use: `created`, `inProgress`, `incomplete`, `complete`
 
 ❌ **Error Types**:
 - Don't use `invalid_request_error` (use `validation_error`)
