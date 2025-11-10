@@ -46,6 +46,7 @@
     "remark-mdx": "^3.0.0",
     "shiki": "^2.0.0",
     "simple-functional-loader": "^1.2.1",
+    "styled-components": "^6.1.0",
     "typescript": "^5.3.3",
     "unist-util-filter": "^5.0.1",
     "unist-util-visit": "^5.0.0"
