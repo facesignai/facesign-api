@@ -1,11 +1,15 @@
-export interface Device {
+export interface Device extends Record<string, unknown> {
+  isYaBrowser: boolean
+  isAuthoritative: boolean
   isMobile: boolean
   isMobileNative: boolean
   isTablet: boolean
   isiPad: boolean
   isiPod: boolean
   isiPhone: boolean
+  isiPhoneNative: boolean
   isAndroid: boolean
+  isAndroidNative: boolean
   isBlackberry: boolean
   isOpera: boolean
   isIE: boolean
@@ -20,10 +24,10 @@ export interface Device {
   isSeaMonkey: boolean
   isFlock: boolean
   isAmaya: boolean
+  isPhantomJS: boolean
   isEpiphany: boolean
   isDesktop: boolean
   isWindows: boolean
-  isWindowsPhone: boolean
   isLinux: boolean
   isLinux64: boolean
   isMac: boolean
@@ -31,7 +35,7 @@ export interface Device {
   isBada: boolean
   isSamsung: boolean
   isRaspberry: boolean
-  isBot: boolean
+  isBot: boolean | string
   isCurl: boolean
   isAndroidTablet: boolean
   isWinJs: boolean
@@ -39,11 +43,19 @@ export interface Device {
   isSilk: boolean
   isCaptive: boolean
   isSmartTV: boolean
+  isUC: boolean
+  isFacebook: boolean
+  isAlamoFire: boolean
+  isElectron: boolean
   silkAccelerated: boolean
   browser: string
-  version: string
+  version: string | number
   os: string
   platform: string
-  geoIp: { [key: string]: unknown }
+  geoIp: Record<string, string | string[]>
   source: string
+  isWechat: boolean
+  isWindowsPhone: boolean
+  electronVersion: string
+  SilkAccelerated?: boolean
 }
