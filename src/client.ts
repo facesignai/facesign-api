@@ -42,12 +42,14 @@ class Client {
   #fetch = nodeFetch
   #serverUrl = 'https://api.facesign.ai'
 
-  public constructor (options?: ClientOptions) {
+  public constructor(options?: ClientOptions) {
     this.#auth = options?.auth
     this.#timeoutMs = options?.timeoutMs ?? 10000
 
     if (options?.serverUrl) {
       this.#serverUrl = options.serverUrl
+    } else if (options?.auth) {
+      this.#serverUrl = this.getServerUrlFromApiKey(options.auth)
     }
 
     if (options && options.logLevel) {
@@ -57,7 +59,19 @@ class Client {
     }
   }
 
-  private setLogLevel (logLevel: ILogLevel) {
+  private getServerUrlFromApiKey(apiKey: string): string {
+    if (apiKey.startsWith('sk_live_')) {
+      return 'https://api.facesign.ai'
+    } else if (apiKey.startsWith('sk_test_')) {
+      return 'https://api.dev.facesign.ai'
+    }
+
+    // Default fallback for keys without prefix (backward compatibility)
+    log.warn('API key does not have a recognized prefix (sk_live_ or sk_test_). Using default production URL.')
+    return 'https://api.facesign.ai'
+  }
+
+  private setLogLevel(logLevel: ILogLevel) {
     switch (logLevel) {
       case ILogLevel.DEBUG: {
         log.setLevel(log.levels.DEBUG)
@@ -86,7 +100,7 @@ class Client {
     }
   }
 
-  private async request<ResponseBody> ({
+  private async request<ResponseBody>({
     path,
     method,
     query,
