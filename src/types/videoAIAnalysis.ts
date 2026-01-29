@@ -4,12 +4,6 @@ export enum CriterionEvaluation {
   highFraudRisk = "highFraudRisk",
 }
 
-export type CriterionAnalysis = {
-  observation: string
-  confidence: number
-  evaluation: CriterionEvaluation
-}
-
 export type Criterion =
   | "behavioralAnomalies"
   | "environmentalConsistency"
@@ -22,4 +16,11 @@ export type Criterion =
   | "useOfExternalDevices"
   | string
 
-export type VideoAIAnalysis = Partial<Record<Criterion, CriterionAnalysis>>
+export type CriterionAnalysis = {
+  criterion: Criterion
+  observation: string
+  confidence: number
+  evaluation: CriterionEvaluation
+}
+
+export type VideoAIAnalysis = CriterionAnalysis[]
