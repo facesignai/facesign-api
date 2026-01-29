@@ -10,16 +10,16 @@ export type CriterionAnalysis = {
   evaluation: CriterionEvaluation
 }
 
-export enum Criterion {
-  behavioralAnomalies = "behavioralAnomalies",
-  environmentalConsistency = "environmentalConsistency",
-  eyeAndHeadMovement = "eyeAndHeadMovement",
-  faceAuthenticity = "faceAuthenticity",
-  facialExpressionAndMovement = "facialExpressionAndMovement",
-  interactionConfidence = "interactionConfidence",
-  lipSyncAccuracy = "lipSyncAccuracy",
-  presenceOfSuspiciousObjectsOrPeople = "presenceOfSuspiciousObjectsOrPeople",
-  useOfExternalDevices = "useOfExternalDevices",
-}
+export type Criterion =
+  | "behavioralAnomalies"
+  | "environmentalConsistency"
+  | "eyeAndHeadMovement"
+  | "faceAuthenticity"
+  | "facialExpressionAndMovement"
+  | "interactionConfidence"
+  | "lipSyncAccuracy"
+  | "presenceOfSuspiciousObjectsOrPeople"
+  | "useOfExternalDevices"
+  | string
 
-export type VideoAIAnalysis = Record<Criterion, CriterionAnalysis>
+export type VideoAIAnalysis = Partial<Record<Criterion, CriterionAnalysis>>

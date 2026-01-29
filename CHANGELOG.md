@@ -2,12 +2,14 @@
 
 All notable changes to the Facesign API will be documented in this file.
 
-## [Unreleased]
+## [1.0.29] - 2026-01-29
 
+- VideoAIAnalysis object keys can be extended with any string key
 
 ## [1.0.16] - 2025-01-29
 
 ### Added
+
 - Two-Factor Authentication node support:
   - `FSTwoFactorChannel` enum with EMAIL and SMS channel options
   - `FSTwoFactorContactSource` enum for session_data, module_settings, and recognition_match sources
