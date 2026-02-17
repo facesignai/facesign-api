@@ -87,6 +87,14 @@ export type SessionReportAIAnalysis = {
   analysis: SessionReportAIAnalysisSection[]
 }
 
+export interface SessionMedia {
+  id: string
+  createdAt: number
+  expireAt?: number
+  contentType?: string
+  url: string
+}
+
 export interface SessionReport {
   transcript: Phrase[]
   aiAnalysis?: SessionReportAIAnalysis
@@ -95,6 +103,11 @@ export interface SessionReport {
   lang?: string
   nodeReports?: NodeReport[]
   videoAIAnalysis?: VideoAIAnalysis
+  media?: {
+    screenshots?: SessionMedia[]
+    userVideo?: SessionMedia
+    avatarVideo?: SessionMedia
+  }
 }
 
 export interface Session {
