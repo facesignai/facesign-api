@@ -7,6 +7,7 @@ import {
   FSRecognitionOutcome,
   FSFaceScanOutcome,
   FSTwoFactorOutcome,
+  FSPermissionsOutcome,
 } from "./nodes"
 
 import { DocumentScanReport } from "./docScanning"
@@ -95,6 +96,11 @@ export type ConversationNodeReport = NodeReportBase & {
   outcome: FSNodeId
 }
 
+export type PermissionsNodeReport = NodeReportBase & {
+  type: FSNodeType.PERMISSIONS
+  outcome: FSPermissionsOutcome
+}
+
 export type NodeReport =
   | ConversationNodeReport
   | LivenessDetectionNodeReport
@@ -105,3 +111,4 @@ export type NodeReport =
   | TwoFactorEmailNodeReport
   | TwoFactorSMSNodeReport
   | FaceScanNodeReport
+  | PermissionsNodeReport

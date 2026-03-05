@@ -14,6 +14,7 @@ export enum FSNodeType {
   FACE_SCAN = "face_scan",
   TWO_FACTOR_EMAIL = "two_factor_email",
   TWO_FACTOR_SMS = "two_factor_sms",
+  PERMISSIONS = "permissions",
 }
 
 export interface FSNodeBase {
@@ -166,6 +167,20 @@ export interface FSTwoFactorNodeEmail extends FSTwoFactorNode {
 export interface FSTwoFactorNodeSMS extends FSTwoFactorNode {
   type: FSNodeType.TWO_FACTOR_SMS
   smsTemplate?: string
+}
+
+export interface FSPermissionsNode extends FSNodeBase {
+  type: FSNodeType.PERMISSIONS
+  permissions: {
+    camera?: boolean
+    microphone?: boolean
+  }
+  outcomes: Record<FSPermissionsOutcome, FSNodeId>
+}
+
+export enum FSPermissionsOutcome {
+  PERMISSIONS_GRANTED = "permissionsGranted",
+  PERMISSIONS_DENIED = "permissionsDenied",
 }
 
 export type FSNode =
