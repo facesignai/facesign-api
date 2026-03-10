@@ -170,6 +170,7 @@ export interface FSTwoFactorNodeSMS extends FSTwoFactorNode {
 }
 
 export interface FSPermissionsNode extends FSNodeBase {
+  prompt?: string
   type: FSNodeType.PERMISSIONS
   permissions: {
     camera?: boolean
