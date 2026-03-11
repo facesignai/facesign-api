@@ -23,6 +23,10 @@ export interface FSNodeBase {
 }
 
 export type FSNodeId = string
+/**
+ * The entry point of every flow. Each flow must have exactly one START node.
+ * It has a single `outcome` that points to the first node in the flow.
+ */
 export interface FSStartNode extends FSNodeBase {
   type: FSNodeType.START
   outcome: FSNodeId
@@ -34,6 +38,19 @@ export interface FSConditionalOutcome {
   condition: string
 }
 
+/**
+ * The avatar speaks to the user using the `prompt` text and routes the flow based on the user's response.
+ * The session stays on this node until one of the outcome conditions matches, enabling multi-turn dialog.
+ *
+ * The `prompt` supports two modes:
+ * - Direct speech: "Say: Hi, how are you doing?"
+ * - Goal-driven behavior: "Chat with the user and assess their medical knowledge."
+ *
+ * When using goal-driven prompts, always include realistic exit conditions in the outcomes
+ * (e.g., user didn't respond after 3 attempts, dialog reached N exchanges, user refuses to answer).
+ *
+ * Set `doesNotRequireReply: true` for final messages before an END node where no user response is needed.
+ */
 export interface FSConversationNode extends FSNodeBase {
   type: FSNodeType.CONVERSATION
   prompt: string
@@ -47,6 +64,15 @@ export enum FSLivenessDetectionOutcome {
   NO_FACE = "noFace",
 }
 
+/**
+ * Checks whether the user is a real person or a deepfake by analyzing the video feed.
+ *
+ * Requires camera access. Needs several seconds of video for analysis —
+ * do not place immediately after a PERMISSIONS node. Add a CONVERSATION node
+ * in between to accumulate video data.
+ *
+ * Recommended flow order: PERMISSIONS → CONVERSATION → LIVENESS_DETECTION
+ */
 export interface FSLivenessDetectionNode extends FSNodeBase {
   type: FSNodeType.LIVENESS_DETECTION
   outcomes: Record<FSLivenessDetectionOutcome, FSNodeId>
@@ -56,11 +82,20 @@ export enum FSEnterEmailOutcome {
   EMAIL_ENTERED = "emailEntered",
   CANCELED = "canceled",
 }
+/**
+ * Displays a UI for the user to enter their email address.
+ * The collected email can be used later in the flow for two-factor authentication or data collection.
+ */
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
   outcomes: Record<FSEnterEmailOutcome, FSNodeId>
 }
 
+/**
+ * Validates data collected during the session and routes the flow based on the result.
+ * Uses a `validation` object to specify which field to check, what action to perform,
+ * and an optional expected value. Uses conditional outcomes to branch the flow.
+ */
 export interface FSDataValidationNode extends FSNodeBase {
   type: FSNodeType.DATA_VALIDATION
   outcomes: NonEmptyArray<FSConditionalOutcome>
@@ -77,6 +112,13 @@ export enum FSRecognitionOutcome {
   NO_FACE = "noFace",
 }
 
+/**
+ * Performs biometric face recognition to identify the user.
+ * Compares the user's face against previously registered faces.
+ *
+ * Requires camera access. Like LIVENESS_DETECTION, needs several seconds of video —
+ * do not place immediately after a PERMISSIONS node. Add a CONVERSATION node in between.
+ */
 export interface FSRecognitionNode extends FSNodeBase {
   type: FSNodeType.RECOGNITION
   outcomes: Record<FSRecognitionOutcome, FSNodeId>
@@ -95,6 +137,14 @@ export enum FSDocumentScanOutcome {
 
 export type FSDocumentScanMode = ScanningMode
 
+/**
+ * Opens a document scanning UI powered by Microblink. The user can scan identity documents
+ * using their camera. Extracted data becomes available in the session report.
+ *
+ * `scanningMode`:
+ * - "single" — scan only one side of the document
+ * - "automatic" — automatically determine how many sides need to be scanned
+ */
 export interface FSDocumentScanNode extends FSNodeBase {
   type: FSNodeType.DOCUMENT_SCAN
   scanningMode: FSDocumentScanMode
@@ -106,6 +156,10 @@ export interface FSDocumentScanNode extends FSNodeBase {
   showMirrorCameraButton?: boolean // // Default: true
 }
 
+/**
+ * The terminal node of a flow. A flow can have multiple END nodes
+ * (e.g., one for success path, one for failure path). It has no outcomes.
+ */
 export interface FSEndNode extends FSNodeBase {
   type: FSNodeType.END
 }
@@ -117,6 +171,13 @@ export enum FSFaceScanOutcome {
   ERROR = "error",
 }
 
+/**
+ * Performs 1:1 biometric face matching. Captures the user's face and compares it
+ * against a reference image to verify their identity.
+ *
+ * Requires camera access. Like LIVENESS_DETECTION, needs several seconds of video —
+ * do not place immediately after a PERMISSIONS node.
+ */
 export interface FSFaceScanNode extends FSNodeBase {
   type: FSNodeType.FACE_SCAN
   outcomes: Record<FSFaceScanOutcome, FSNodeId>
@@ -146,6 +207,12 @@ export enum FSTwoFactorOutcome {
   ERROR = "error",
 }
 
+/**
+ * Base interface for two-factor authentication nodes (email and SMS).
+ * Sends a one-time password (OTP) and verifies the code the user enters.
+ * If the required contact info (email or phone) was not provided via `providedData`
+ * or collected by a previous node, it will be requested automatically during this node.
+ */
 export interface FSTwoFactorNode extends FSNodeBase {
   outcomes: Record<FSTwoFactorOutcome, FSNodeId>
 
@@ -169,6 +236,15 @@ export interface FSTwoFactorNodeSMS extends FSTwoFactorNode {
   smsTemplate?: string
 }
 
+/**
+ * Requests camera and/or microphone permissions from the user.
+ * Use when you need a custom prompt or want to handle the denied case with a specific flow path.
+ * If the flow has no PERMISSIONS node, permissions are requested automatically.
+ *
+ * The `prompt` uses direct speech mode (e.g., "Say: Could you please enable your microphone so I can hear you.").
+ * If the site already has permanent permissions granted, the avatar will not say this phrase
+ * and the flow continues directly via the `permissionsGranted` outcome.
+ */
 export interface FSPermissionsNode extends FSNodeBase {
   prompt?: string
   type: FSNodeType.PERMISSIONS
