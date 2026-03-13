@@ -349,6 +349,57 @@ Sends a one-time password (OTP) to the user's email address and verifies the cod
 }
 ```
 
+### FACE_COMPARE Node
+
+Compares faces from two different sources to verify they belong to the same person. Unlike FACE_SCAN (which captures a photo and compares it against a single reference), this node takes already-existing images from different session sources and compares them.
+
+**Available sources:**
+- `sessionVideo` — a frame captured from the live video feed during the session
+- `faceScan` — a higher-quality photo from a FACE_SCAN node (oval capture). Uses the most recent completed FACE_SCAN node in the session.
+- `providedData` — an image URL from a `providedData` field. Requires `providedDataKey` to specify which field contains the URL.
+- `documentPhoto` — a photo extracted from a scanned document (DOCUMENT_SCAN node). Uses the most recent completed DOCUMENT_SCAN node in the session.
+
+**Configuration:**
+- `sourceA` — first image source
+- `sourceB` — second image source
+- `similarityThreshold` — optional minimum similarity score (0–1) required for a match
+
+**Outcomes:**
+- `match` — faces from both sources match
+- `noMatch` — faces do not match
+- `imageUnavailable` — at least one image could not be obtained (e.g., no person detected on camera, missing `providedData` field, no photo on document, etc.)
+
+**Example — compare live video with a photo from providedData:**
+```typescript
+{
+  id: "compare-faces",
+  type: "face_compare",
+  sourceA: { source: "sessionVideo" },
+  sourceB: { source: "providedData", providedDataKey: "photoUrl" },
+  similarityThreshold: 0.8,
+  outcomes: {
+    match: "next-node-id",
+    noMatch: "end-fail",
+    imageUnavailable: "end-error"
+  }
+}
+```
+
+**Example — compare face scan capture with document photo:**
+```typescript
+{
+  id: "compare-scan-vs-doc",
+  type: "face_compare",
+  sourceA: { source: "faceScan" },
+  sourceB: { source: "documentPhoto" },
+  outcomes: {
+    match: "next-node-id",
+    noMatch: "end-fail",
+    imageUnavailable: "end-error"
+  }
+}
+```
+
 ### TWO_FACTOR_SMS Node
 
 Same as TWO_FACTOR_EMAIL but sends the OTP via SMS. If no phone number was provided via `providedData` or collected by a previous node, the phone number will be requested automatically during this node.
