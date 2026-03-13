@@ -15,6 +15,7 @@ export enum FSNodeType {
   TWO_FACTOR_EMAIL = "two_factor_email",
   TWO_FACTOR_SMS = "two_factor_sms",
   PERMISSIONS = "permissions",
+  FACE_COMPARE = "face_compare",
 }
 
 export interface FSNodeBase {
@@ -260,6 +261,45 @@ export enum FSPermissionsOutcome {
   PERMISSIONS_DENIED = "permissionsDenied",
 }
 
+export enum FSFaceCompareSource {
+  SESSION_VIDEO = "sessionVideo",
+  FACE_SCAN = "faceScan",
+  PROVIDED_DATA = "providedData",
+  DOCUMENT_PHOTO = "documentPhoto",
+}
+
+export type FSFaceCompareSourceConfig =
+  | { source: FSFaceCompareSource.SESSION_VIDEO }
+  | { source: FSFaceCompareSource.FACE_SCAN }
+  | { source: FSFaceCompareSource.PROVIDED_DATA; providedDataKey: string }
+  | { source: FSFaceCompareSource.DOCUMENT_PHOTO }
+
+export enum FSFaceCompareOutcome {
+  MATCH = "match",
+  NO_MATCH = "noMatch",
+  IMAGE_UNAVAILABLE = "imageUnavailable",
+}
+
+/**
+ * Compares faces from two different sources to verify they belong to the same person.
+ *
+ * Available sources:
+ * - `sessionVideo` — frame captured from the live video feed during the session
+ * - `faceScan` — higher-quality photo from a FACE_SCAN node (oval capture)
+ * - `providedData` — image URL from a `providedData` field (specify the key via `providedDataKey`)
+ * - `documentPhoto` — photo extracted from a scanned document (DOCUMENT_SCAN node)
+ *
+ * For `faceScan` and `documentPhoto`, the photo is taken from the most recent
+ * completed node of that type in the session.
+ */
+export interface FSFaceCompareNode extends FSNodeBase {
+  type: FSNodeType.FACE_COMPARE
+  sourceA: FSFaceCompareSourceConfig
+  sourceB: FSFaceCompareSourceConfig
+  outcomes: Record<FSFaceCompareOutcome, FSNodeId>
+  similarityThreshold?: number
+}
+
 export type FSNode =
   | FSStartNode
   | FSConversationNode
@@ -272,3 +312,5 @@ export type FSNode =
   | FSFaceScanNode
   | FSTwoFactorNodeEmail
   | FSTwoFactorNodeSMS
+  | FSPermissionsNode
+  | FSFaceCompareNode

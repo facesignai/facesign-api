@@ -8,6 +8,7 @@ import {
   FSFaceScanOutcome,
   FSTwoFactorOutcome,
   FSPermissionsOutcome,
+  FSFaceCompareOutcome,
 } from "./nodes"
 
 import { DocumentScanReport } from "./docScanning"
@@ -101,6 +102,20 @@ export type PermissionsNodeReport = NodeReportBase & {
   outcome: FSPermissionsOutcome
 }
 
+export type FaceCompareReport = {
+  isMatch: boolean
+  similarity?: number
+  sourceAImageFound: boolean
+  sourceBImageFound: boolean
+  error?: string
+}
+
+export type FaceCompareNodeReport = NodeReportBase & {
+  type: FSNodeType.FACE_COMPARE
+  outcome: FSFaceCompareOutcome
+  report?: FaceCompareReport
+}
+
 export type NodeReport =
   | ConversationNodeReport
   | LivenessDetectionNodeReport
@@ -112,3 +127,4 @@ export type NodeReport =
   | TwoFactorSMSNodeReport
   | FaceScanNodeReport
   | PermissionsNodeReport
+  | FaceCompareNodeReport
