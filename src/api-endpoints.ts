@@ -95,6 +95,12 @@ export interface SessionMedia {
   url: string
 }
 
+export type DocumentImageFile = {
+  side: number
+  type: "document" | "face" | "signature" | "input" | "barcodeInput"
+  file: SessionMedia
+}
+
 export interface SessionReport {
   transcript: Phrase[]
   aiAnalysis?: SessionReportAIAnalysis
@@ -107,6 +113,7 @@ export interface SessionReport {
     screenshots?: SessionMedia[]
     userVideo?: SessionMedia
     avatarVideo?: SessionMedia
+    documentImages?: DocumentImageFile[]
   }
 }
 
