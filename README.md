@@ -81,6 +81,8 @@ Set `doesNotRequireReply: true` for nodes at the end of the flow where the avata
 - `targetNodeId` — the node to navigate to
 - `condition` — natural language description of the matching criteria
 
+**Unconditional transition:** When the avatar should say a phrase and move to the next node regardless of the user's response, use a single outcome with an empty `condition` (`""`). This creates an unconditional transition — the avatar delivers the message, and whatever the user replies (or even if they don't), the flow proceeds to `targetNodeId`.
+
 **Direct speech example:**
 ```typescript
 {
@@ -181,7 +183,7 @@ Checks whether the user in front of the camera is a real person or a deepfake. T
 
 ### ENTER_EMAIL Node
 
-Displays a UI for the user to enter their email address. The collected email can be used later in the flow for two-factor authentication or data collection purposes.
+Displays a UI for the user to enter their email address without any verification or confirmation step. Use this node when you simply need to collect an email from the user as data input. Note: if your goal is to collect AND verify an email via OTP, use TWO_FACTOR_EMAIL instead — it handles email collection internally and does not require a preceding ENTER_EMAIL node.
 
 **Outcomes:**
 - `emailEntered` — user submitted their email
@@ -316,7 +318,7 @@ Performs 1:1 biometric face matching. Captures the user's face and compares it a
 
 ### TWO_FACTOR_EMAIL Node
 
-Sends a one-time password (OTP) to the user's email address and verifies the code they enter. If no email was provided via `providedData` or collected by a previous node (e.g., ENTER_EMAIL), the email will be requested automatically during this node.
+Sends a one-time password (OTP) to the user's email address and verifies the code they enter. This node manages its own sub-flow for collecting the email: if no email was provided via `providedData` or found in `publicRecognition`, the node will automatically prompt the user to enter their email. There is no need to add an ENTER_EMAIL node before this one — email collection is handled internally.
 
 - `otpLength` — number of digits in the OTP (4–8, default: 6)
 - `expirySeconds` — how long the OTP is valid (default: 300 / 5 minutes)
@@ -402,7 +404,7 @@ Compares faces from two different sources to verify they belong to the same pers
 
 ### TWO_FACTOR_SMS Node
 
-Same as TWO_FACTOR_EMAIL but sends the OTP via SMS. If no phone number was provided via `providedData` or collected by a previous node, the phone number will be requested automatically during this node.
+Same as TWO_FACTOR_EMAIL but sends the OTP via SMS. This node manages its own sub-flow for collecting the phone number: if no phone number was provided via `providedData` or found in `publicRecognition`, the node will automatically prompt the user to enter their phone number. There is no need to add a separate phone collection node before this one.
 
 - Same configuration options as TWO_FACTOR_EMAIL
 - `smsTemplate` — optional custom SMS template (instead of `emailTemplate`)
