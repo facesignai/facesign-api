@@ -48,8 +48,6 @@ class Client {
 
     if (options?.serverUrl) {
       this.#serverUrl = options.serverUrl
-    } else if (options?.auth) {
-      this.#serverUrl = this.getServerUrlFromApiKey(options.auth)
     }
 
     if (options && options.logLevel) {
@@ -57,18 +55,6 @@ class Client {
     } else {
       log.disableAll()
     }
-  }
-
-  private getServerUrlFromApiKey(apiKey: string): string {
-    if (apiKey.startsWith('sk_live_')) {
-      return 'https://api.facesign.ai'
-    } else if (apiKey.startsWith('sk_test_')) {
-      return 'https://api.dev.facesign.ai'
-    }
-
-    // Default fallback for keys without prefix (backward compatibility)
-    log.warn('API key does not have a recognized prefix (sk_live_ or sk_test_). Using default production URL.')
-    return 'https://api.facesign.ai'
   }
 
   private setLogLevel(logLevel: ILogLevel) {

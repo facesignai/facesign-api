@@ -2,6 +2,12 @@
 
 All notable changes to the Facesign API will be documented in this file.
 
+## [1.0.40] - 2026-04-14
+
+### Changed
+
+- `Client` no longer selects the server URL based on the API key prefix (`sk_live_` / `sk_test_`). If `serverUrl` is not provided in options, `https://api.facesign.ai` is used regardless of the key prefix.
+
 ## [1.0.29] - 2026-01-29
 
 - VideoAIAnalysis object keys can be extended with any string key
