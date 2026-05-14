@@ -185,6 +185,8 @@ Checks whether the user in front of the camera is a real person or a deepfake. T
 
 Displays a UI for the user to enter their email address without any verification or confirmation step. Use this node when you simply need to collect an email from the user as data input. Note: if your goal is to collect AND verify an email via OTP, use TWO_FACTOR_EMAIL instead — it handles email collection internally and does not require a preceding ENTER_EMAIL node.
 
+- `prompt` — optional phrase the avatar will say at the moment the input field appears (e.g., `"Could you please enter your email?"`).
+
 **Outcomes:**
 - `emailEntered` — user submitted their email
 - `canceled` — user canceled the email entry
@@ -193,6 +195,7 @@ Displays a UI for the user to enter their email address without any verification
 {
   id: "collect-email",
   type: "enter_email",
+  prompt: "Could you please enter your email?",
   outcomes: {
     emailEntered: "next-node-id",
     canceled: "end-canceled"
@@ -423,5 +426,59 @@ Same as TWO_FACTOR_EMAIL but sends the OTP via SMS. This node manages its own su
     cancelled: "end-canceled",
     error: "end-error"
   }
+}
+```
+
+## Transcript Data Extraction
+
+You can ask the backend to extract structured data from the session transcript using an LLM. Configure it via `SessionSettings.extractionSchema` when creating a session; results are returned in `SessionReport.extractedData`.
+
+Each entry in `extractionSchema` describes one field:
+
+- `fieldName` — key under which the extracted value will appear in `extractedData`.
+- `type` — `"string"`, `"number"`, `"boolean"`, or `"date"`. `"date"` is returned as an ISO 8601 string.
+- `description` — natural-language hint for the LLM describing what to look for. This is the primary signal for extraction, so be specific.
+- `enum` — optional list of allowed string values. When set, the LLM normalizes free-form answers (e.g., `"yeah"`, `"sure"`) into one of the listed values.
+
+Every field is treated as optional: if the transcript does not contain the data, the value in `extractedData` will be `null`. There is no `required` flag.
+
+```typescript
+const settings: SessionSettings = {
+  metadata: {},
+  flow: [/* ... */],
+  extractionSchema: [
+    {
+      fieldName: "fullName",
+      type: "string",
+      description: "Full legal name the user stated about themselves",
+    },
+    {
+      fieldName: "dateOfBirth",
+      type: "date",
+      description: "User's date of birth",
+    },
+    {
+      fieldName: "employmentStatus",
+      type: "string",
+      enum: ["employed", "self_employed", "unemployed", "student", "retired"],
+      description: "User's current employment status",
+    },
+    {
+      fieldName: "consentGiven",
+      type: "boolean",
+      description: "Did the user explicitly consent to recording?",
+    },
+  ],
+}
+```
+
+Resulting shape on the session report:
+
+```typescript
+session.report.extractedData = {
+  fullName: "Jane Doe",
+  dateOfBirth: "1990-04-12",
+  employmentStatus: "employed",
+  consentGiven: true,
 }
 ```

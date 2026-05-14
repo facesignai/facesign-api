@@ -86,10 +86,14 @@ export enum FSEnterEmailOutcome {
 /**
  * Displays a UI for the user to enter their email address.
  * The collected email can be used later in the flow for two-factor authentication or data collection.
+ *
+ * `prompt` is an optional phrase the avatar will say at the moment the input field appears
+ * (e.g., "Could you please enter your email?").
  */
 export interface FSEnterEmailNode extends FSNodeBase {
   type: FSNodeType.ENTER_EMAIL
   outcomes: Record<FSEnterEmailOutcome, FSNodeId>
+  prompt?: string
 }
 
 /**

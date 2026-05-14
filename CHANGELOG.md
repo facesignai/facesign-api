@@ -2,6 +2,16 @@
 
 All notable changes to the Facesign API will be documented in this file.
 
+## [1.0.41] - 2026-05-14
+
+### Added
+
+- Transcript data extraction:
+  - `SessionSettings.extractionSchema` — optional array of `ExtractionField` describing which fields to extract from the session transcript using an LLM.
+  - `ExtractionField` — `{ fieldName, type, description, enum? }`. Supported types: `"string"`, `"number"`, `"boolean"`, `"date"` (date is returned as an ISO 8601 string). Optional `enum` constrains the LLM to a fixed set of string values.
+  - `SessionReport.extractedData` — `Record<string, string | number | boolean | null>` with the extracted values. Every field is optional; missing data is returned as `null`.
+- `FSEnterEmailNode.prompt` — optional phrase the avatar speaks at the moment the email input field appears.
+
 ## [1.0.40] - 2026-04-14
 
 ### Changed

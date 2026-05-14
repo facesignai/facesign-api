@@ -43,6 +43,28 @@ export interface RequestedData {
   description?: string
 }
 
+/**
+ * Describes a single field to extract from the session transcript using an LLM.
+ *
+ * - `fieldName` — key under which the extracted value will appear in `SessionReport.extractedData`.
+ * - `type` — expected value type. `"date"` is returned as an ISO 8601 string.
+ * - `description` — natural-language hint for the LLM describing what to look for.
+ *   This is the primary signal for extraction, so be specific.
+ * - `enum` — optional list of allowed string values. When set, the LLM normalizes
+ *   free-form answers (e.g., "yeah", "sure") into one of the listed values.
+ *
+ * Every field is treated as optional: if the transcript does not contain the data,
+ * the value in `extractedData` will be `null`.
+ */
+export interface ExtractionField {
+  fieldName: string
+  type: "string" | "number" | "boolean" | "date"
+  description: string
+  enum?: string[]
+}
+
+export type ExtractedData = Record<string, string | number | boolean | null>
+
 export interface GetSessionParameters {
   sessionId: string
 }
@@ -109,6 +131,7 @@ export interface SessionReport {
   lang?: string
   nodeReports?: NodeReport[]
   videoAIAnalysis?: VideoAIAnalysis
+  extractedData?: ExtractedData
   media?: {
     screenshots?: SessionMedia[]
     userVideo?: SessionMedia
@@ -164,6 +187,11 @@ export interface SessionSettings {
   zone?: Zone
   customization?: Customization
   videoAIAnalysisEnabled?: boolean
+  /**
+   * Schema describing which fields the backend should extract from the session
+   * transcript using an LLM. Results are returned in `SessionReport.extractedData`.
+   */
+  extractionSchema?: ExtractionField[]
 }
 
 export interface CreateSessionResponse {
@@ -186,6 +214,7 @@ export const createSessionEndpoint = {
     "flow",
     "customization",
     "videoAIAnalysisEnabled",
+    "extractionSchema",
   ],
   path: (): string => "/sessions",
 } as const
