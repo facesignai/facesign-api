@@ -11,6 +11,8 @@ import {
   FSFaceCompareOutcome,
 } from "./nodes"
 
+// cspell:ignore Unscored
+
 import { DocumentScanReport } from "./docScanning"
 
 export type NodeReportBase = {
@@ -90,6 +92,10 @@ export type EnterEmailNodeReport = NodeReportBase & {
 export type LivenessDetectionNodeReport = NodeReportBase & {
   type: FSNodeType.LIVENESS_DETECTION
   outcome: FSLivenessDetectionOutcome
+  screenshotCount?: number
+  captureStatus?: "captured" | "capturedUnscored" | "unavailable"
+  errored?: boolean
+  errorCode?: string
 }
 
 export type ConversationNodeReport = NodeReportBase & {

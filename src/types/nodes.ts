@@ -63,7 +63,13 @@ export enum FSLivenessDetectionOutcome {
   LIVENESS_DETECTED = "livenessDetected",
   DEEPFAKE_DETECTED = "deepfakeDetected",
   NO_FACE = "noFace",
+  CAPTURE_UNAVAILABLE = "captureUnavailable",
 }
+
+type RequiredLivenessDetectionOutcome = Exclude<
+  FSLivenessDetectionOutcome,
+  FSLivenessDetectionOutcome.CAPTURE_UNAVAILABLE
+>
 
 /**
  * Checks whether the user is a real person or a deepfake by analyzing the video feed.
@@ -76,7 +82,8 @@ export enum FSLivenessDetectionOutcome {
  */
 export interface FSLivenessDetectionNode extends FSNodeBase {
   type: FSNodeType.LIVENESS_DETECTION
-  outcomes: Record<FSLivenessDetectionOutcome, FSNodeId>
+  outcomes: Record<RequiredLivenessDetectionOutcome, FSNodeId> &
+    Partial<Record<FSLivenessDetectionOutcome.CAPTURE_UNAVAILABLE, FSNodeId>>
 }
 
 export enum FSEnterEmailOutcome {

@@ -109,6 +109,13 @@ export type SessionReportAIAnalysis = {
   analysis: SessionReportAIAnalysisSection[]
 }
 
+export type VideoAIAnalysisStatus =
+  | "notRequested"
+  | "pending"
+  | "completed"
+  | "failed"
+  | "timedOut"
+
 export interface SessionMedia {
   id: string
   createdAt: number
@@ -131,6 +138,7 @@ export interface SessionReport {
   lang?: string
   nodeReports?: NodeReport[]
   videoAIAnalysis?: VideoAIAnalysis
+  videoAIAnalysisStatus?: VideoAIAnalysisStatus
   extractedData?: ExtractedData
   media?: {
     screenshots?: SessionMedia[]
