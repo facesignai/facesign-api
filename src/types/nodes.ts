@@ -16,6 +16,8 @@ export enum FSNodeType {
   TWO_FACTOR_SMS = "two_factor_sms",
   PERMISSIONS = "permissions",
   FACE_COMPARE = "face_compare",
+  EXTERNAL_CALL = "external_call",
+  FIELD_CONDITION = "field_condition",
 }
 
 export interface FSNodeBase {
@@ -40,6 +42,83 @@ export interface FSConditionalOutcome {
 }
 
 /**
+ * Where a value is read from when building an external-call payload or evaluating
+ * a field condition.
+ * - `extractedData` — a field declared in `extractionSchema`. If it has not yet
+ *   been extracted from the transcript, it is extracted on demand at the moment
+ *   it is needed.
+ * - `providedData` — a key in `session.settings.providedData` (set at creation or
+ *   written by a prior EXTERNAL_CALL / `awaitExternal` poll).
+ */
+export enum FSValueSource {
+  EXTRACTED_DATA = "extractedData",
+  PROVIDED_DATA = "providedData",
+}
+
+/** A reference to a single value held in one of the value sources. */
+export interface FSFieldRef {
+  source: FSValueSource
+  field: string
+}
+
+/** A value that is either a literal or a reference to a session value. */
+export type FSValueOperand =
+  | { type: "literal"; value: string | number | boolean }
+  | ({ type: "ref" } & FSFieldRef)
+
+export type FSExternalCallMethod = "GET" | "POST"
+
+/**
+ * One entry in the outbound request payload: a request key and where its value
+ * comes from.
+ */
+export interface FSExternalCallVar {
+  /** Key under which the value is placed in the request payload. */
+  name: string
+  /** Literal value or a reference resolved from session data. */
+  value: FSValueOperand
+}
+
+export interface FSExternalRequest {
+  /**
+   * Endpoint to call. Must pass the server-side allowlist. The current
+   * `sessionId` is appended automatically as a query parameter.
+   */
+  url: string
+  /** HTTP method. Defaults to POST (JSON body). GET sends `vars` as query params. */
+  method?: FSExternalCallMethod
+  /** Payload variables. Each resolves to a literal or a session value. */
+  vars?: FSExternalCallVar[]
+}
+
+/**
+ * Optional polling behavior for a CONVERSATION node. When present, the node
+ * converses normally while polling an external endpoint in the background until
+ * the result is ready, a timeout elapses, or the call errors — then it exits via
+ * the matching `exits` target without needing a user utterance.
+ *
+ * Readiness is signaled by the endpoint at the transport level: HTTP 200 with a
+ * JSON body means "ready" — the flat response is merged into `providedData` and
+ * the node exits via `onDataReady` (usually a FIELD_CONDITION that branches on
+ * the merged value). HTTP 202 means "still pending" — keep polling. Any other
+ * status exits via `onError`. If `poll.timeoutMs` elapses first, the node exits
+ * via `onTimeout`. Normal conversational `outcomes` remain active in parallel;
+ * whichever transition fires first wins.
+ */
+export interface FSAwaitExternalConfig {
+  request: FSExternalRequest
+  poll: {
+    intervalMs: number
+    timeoutMs: number
+  }
+  exits: {
+    onDataReady: FSNodeId
+    onTimeout: FSNodeId
+    onError: FSNodeId
+  }
+}
+
+/**
  * The avatar speaks to the user using the `prompt` text and routes the flow based on the user's response.
  * The session stays on this node until one of the outcome conditions matches, enabling multi-turn dialog.
  *
@@ -57,6 +136,13 @@ export interface FSConversationNode extends FSNodeBase {
   prompt: string
   outcomes: NonEmptyArray<FSConditionalOutcome>
   doesNotRequireReply?: boolean
+  /**
+   * When set, the node polls an external endpoint in the background while the
+   * dialog continues, and exits via `awaitExternal.exits` when the result is
+   * ready, times out, or errors — without requiring a user utterance. The
+   * conversational `outcomes` above remain active in parallel.
+   */
+  awaitExternal?: FSAwaitExternalConfig
 }
 
 export enum FSLivenessDetectionOutcome {
@@ -109,6 +195,57 @@ export interface FSDataValidationNode extends FSNodeBase {
     action: string
     value?: string
   }
+}
+
+/**
+ * Calls an external endpoint mid-session and merges the (flat, one-level) JSON
+ * response into `providedData`, then advances to `outcome`. This node never
+ * branches — branch on the stored response with a FIELD_CONDITION node.
+ *
+ * The response must be a flat object of scalar values (string | number | boolean);
+ * nested values are ignored. Response keys become `providedData` keys. Request
+ * values are resolved from `extractedData` (extracted on demand) or `providedData`.
+ */
+export interface FSExternalCallNode extends FSNodeBase {
+  type: FSNodeType.EXTERNAL_CALL
+  request: FSExternalRequest
+  /** Next node (linear advance; this node does not branch). */
+  outcome: FSNodeId
+}
+
+export enum FSConditionOperator {
+  EQUALS = "equals",
+  NOT_EQUALS = "notEquals",
+  GT = "gt",
+  LT = "lt",
+  GTE = "gte",
+  LTE = "lte",
+  EXISTS = "exists",
+  NOT_EXISTS = "notExists",
+}
+
+/**
+ * A single branching rule. `left` is a reference to a session value; `right` is a
+ * literal or another reference (omitted for `exists` / `notExists`). If the rule
+ * evaluates true, the flow routes to `outcome`.
+ */
+export interface FSFieldConditionRule {
+  left: FSFieldRef
+  operator: FSConditionOperator
+  right?: FSValueOperand
+  outcome: FSNodeId
+}
+
+/**
+ * Deterministic (no-LLM) router. Evaluates `rules` top to bottom; the first rule
+ * that matches routes to its `outcome`. If none match, routes to `default`.
+ * Equality normalizes types (compared as trimmed strings) so "1234", 1234 and
+ * " 1234 " are treated as equal.
+ */
+export interface FSFieldConditionNode extends FSNodeBase {
+  type: FSNodeType.FIELD_CONDITION
+  rules: NonEmptyArray<FSFieldConditionRule>
+  default: FSNodeId
 }
 
 export enum FSRecognitionOutcome {
@@ -318,3 +455,5 @@ export type FSNode =
   | FSTwoFactorNodeSMS
   | FSPermissionsNode
   | FSFaceCompareNode
+  | FSExternalCallNode
+  | FSFieldConditionNode

@@ -1,7 +1,7 @@
 {
   "name": "@facesignai/api",
   "package-name": "@facesignai/api",
-  "version": "1.0.41",
+  "version": "1.0.42",
   "description": "Facesign API wrapper",
   "repository": {
     "type": "git",

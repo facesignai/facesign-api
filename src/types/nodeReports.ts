@@ -81,6 +81,28 @@ export type DataValidationNodeReport = NodeReportBase & {
   outcome: FSNodeId
 }
 
+export type ExternalCallReport = {
+  url: string
+  status?: number
+  ok: boolean
+  response?: Record<string, string | number | boolean>
+  error?: string
+  attempts?: number
+}
+
+export type ExternalCallNodeReport = NodeReportBase & {
+  type: FSNodeType.EXTERNAL_CALL
+  outcome: FSNodeId
+  report?: ExternalCallReport
+}
+
+export type FieldConditionNodeReport = NodeReportBase & {
+  type: FSNodeType.FIELD_CONDITION
+  outcome: FSNodeId
+  /** Index of the first matching rule, or omitted when `default` was taken. */
+  matchedRuleIndex?: number
+}
+
 export type EnterEmailNodeReport = NodeReportBase & {
   type: FSNodeType.ENTER_EMAIL
   outcome: FSEnterEmailOutcome
@@ -128,3 +150,5 @@ export type NodeReport =
   | FaceScanNodeReport
   | PermissionsNodeReport
   | FaceCompareNodeReport
+  | ExternalCallNodeReport
+  | FieldConditionNodeReport

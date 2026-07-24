@@ -170,7 +170,7 @@ export type Avatar = {
   imageUrl: string
 }
 
-export type ProvidedData = Record<string, string> & {
+export type ProvidedData = Record<string, string | number | boolean> & {
   name?: string
   email?: string
   phone?: string
