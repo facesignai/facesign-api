@@ -5,6 +5,13 @@ export enum WebhookType {
   MEDIA_USER_VIDEO = "media.user_video",
   ANALYSIS_VIDEO = "analysis.video",
   ANALYSIS_SCREENSHOT = "analysis.screenshot",
+  /**
+   * Post-session deepfake analysis reached a terminal state (succeeded, failed
+   * or timed out). Doorbell-only, like every other webhook here: the event
+   * carries no verdict — refetch the session and read
+   * `SessionReport.deepfakeDetectionStatus` and `SessionReport.deepfakeDetection`.
+   */
+  ANALYSIS_DEEPFAKE = "analysis.deepfake",
   SETTINGS_AVATARS = "settings.avatars",
   SETTINGS_LANGS = "settings.langs",
 }

@@ -2,6 +2,40 @@
 
 All notable changes to the Facesign API will be documented in this file.
 
+## [1.0.44] - 2026-08-05
+
+### Breaking
+
+- `FSLivenessDetectionOutcome` gains a fourth member, `INCONCLUSIVE` (`"inconclusive"`).
+  Because `FSLivenessDetectionNode.outcomes` is `Record<FSLivenessDetectionOutcome, FSNodeId>`,
+  **every flow builder on this version must supply the `inconclusive` edge** — code that
+  builds a liveness node with only the three previous outcomes no longer type-checks.
+  An inconclusive check means the detector produced no verdict (it could not decide, did
+  not run, or there was nothing to analyze); it is a failure of the check, not of the user,
+  and where it routes is now your decision instead of ours.
+
+  Flows submitted without the edge are still accepted at runtime: the missing outcome is
+  filled with the node's `noFace` target, recorded in `SessionSettings.flowNormalizations`
+  and reported in `CreateSessionResponse.warnings`. Treat that as a migration aid, not as
+  the answer — a filled edge is our guess, not the flow author's decision.
+
+### Added
+
+- `ControlsCustomization.captionsOpenedByDefault` — optional. `true` opens the transcript
+  (closed-captions) panel at session start; omitted or `false` keeps today's closed state.
+  The user can still toggle the panel with the CC button either way. Ignored when
+  `showUxControls` is `false`, which is the master switch for the whole control panel.
+- `LivenessDetectionNodeReport.inconclusiveReason` and the `LivenessInconclusiveReason`
+  type (`"no_media" | "unusable_media" | "unknown_verdict" | "timeout" | "provider_error"`),
+  set only when the node outcome is `inconclusive`.
+- `DeepfakeDetectionStatus` and `SessionReport.deepfakeDetectionStatus` —
+  `pending | succeeded | failed | timed_out` plus `startedAt` / `finishedAt` / `errorCode`.
+  This distinguishes "the post-session analysis ran and found nothing" from "the analysis
+  never produced a result". Absent when the analysis was not requested.
+- `WebhookType.ANALYSIS_DEEPFAKE` (`"analysis.deepfake"`) — fired when post-session deepfake
+  analysis reaches a terminal state. Doorbell-only: refetch the session for the verdict.
+- `SessionSettings.flowNormalizations` (read-only) and `CreateSessionResponse.warnings`.
+
 ## [1.0.41] - 2026-05-14
 
 ### Added
