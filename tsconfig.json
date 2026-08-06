@@ -37,7 +37,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./node_modules/@types"]
-  }
+  },
 
-  // "include": ["src/**/*"]
+  // Tests are compiled by ts-jest, never emitted into the published build.
+  "exclude": ["build", "node_modules", "test"]
 }

@@ -145,10 +145,23 @@ export interface FSConversationNode extends FSNodeBase {
   awaitExternal?: FSAwaitExternalConfig
 }
 
+/**
+ * The four possible results of a liveness check. The set is total and
+ * non-overlapping: every check ends in exactly one of them.
+ *
+ * - `livenessDetected` — a live person is in front of the camera.
+ * - `deepfakeDetected` — a spoof or manipulation was detected.
+ * - `noFace` — frames were captured, but no face is on them.
+ * - `inconclusive` — there is no verdict: the detector could not decide, did
+ *   not run, or there was nothing to analyze. This is a failure of the check,
+ *   not of the user — route it deliberately (a retry, a step-up, a manual
+ *   review or a stop), never to the happy path by default.
+ */
 export enum FSLivenessDetectionOutcome {
   LIVENESS_DETECTED = "livenessDetected",
   DEEPFAKE_DETECTED = "deepfakeDetected",
   NO_FACE = "noFace",
+  INCONCLUSIVE = "inconclusive",
 }
 
 /**
@@ -159,6 +172,12 @@ export enum FSLivenessDetectionOutcome {
  * in between to accumulate video data.
  *
  * Recommended flow order: PERMISSIONS → CONVERSATION → LIVENESS_DETECTION
+ *
+ * Every outcome must be wired: `outcomes` is a total map over
+ * `FSLivenessDetectionOutcome`, including `inconclusive`. An inconclusive
+ * check means the detector produced no verdict — the reason is reported in
+ * `LivenessDetectionNodeReport.inconclusiveReason`, but the routing decision
+ * is yours and yours alone.
  */
 export interface FSLivenessDetectionNode extends FSNodeBase {
   type: FSNodeType.LIVENESS_DETECTION

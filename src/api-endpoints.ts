@@ -1,10 +1,13 @@
 import { Device } from "./types/deviceDetails"
 import { Location } from "./types/location"
-import { FSNode } from "./types/nodes"
+import { FSNode, FSNodeId } from "./types/nodes"
 import { Customization } from "./types/customization"
 import { NodeReport } from "./types/nodeReports"
 import { VideoAIAnalysis } from "./types/videoAIAnalysis"
-import { DeepfakeDetection } from "./types/deepfakeDetection"
+import {
+  DeepfakeDetection,
+  DeepfakeDetectionStatus,
+} from "./types/deepfakeDetection"
 
 export * from "./types/deviceDetails"
 export * from "./types/location"
@@ -134,6 +137,12 @@ export interface SessionReport {
   nodeReports?: NodeReport[]
   videoAIAnalysis?: VideoAIAnalysis
   deepfakeDetection?: DeepfakeDetection
+  /**
+   * Lifecycle of the post-session deepfake analysis. Absent when the analysis
+   * was not requested for this session. Tells "analysis succeeded and found
+   * nothing" apart from "analysis never produced a result".
+   */
+  deepfakeDetectionStatus?: DeepfakeDetectionStatus
   extractedData?: ExtractedData
   media?: {
     screenshots?: SessionMedia[]
@@ -195,11 +204,39 @@ export interface SessionSettings {
    * transcript using an LLM. Results are returned in `SessionReport.extractedData`.
    */
   extractionSchema?: ExtractionField[]
+  /**
+   * Read-only. Records outcome edges that were missing from the submitted flow
+   * and were filled in for you at session creation, so the stored graph is
+   * total. Present only when something was filled.
+   *
+   * A filled edge is our guess, not your decision — rebuild the flow with the
+   * edge wired explicitly. See `CreateSessionResponse.warnings`.
+   */
+  flowNormalizations?: FlowNormalization[]
+}
+
+/**
+ * One outcome edge that was absent from a submitted flow node and was filled
+ * in at session creation.
+ */
+export type FlowNormalization = {
+  /** The node whose `outcomes` map was incomplete. */
+  nodeId: FSNodeId
+  /** The outcome key that was missing. */
+  outcome: string
+  /** The node id it now points at. */
+  filledWith: FSNodeId
 }
 
 export interface CreateSessionResponse {
   session: Session
   clientSecret: ClientSecret
+  /**
+   * Non-fatal problems with the submitted flow. The session was created
+   * regardless. Currently emitted when an outcome edge was missing and had to
+   * be filled in — see `SessionSettings.flowNormalizations`.
+   */
+  warnings?: string[]
 }
 
 export const createSessionEndpoint = {

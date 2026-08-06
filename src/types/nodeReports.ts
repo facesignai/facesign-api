@@ -109,9 +109,28 @@ export type EnterEmailNodeReport = NodeReportBase & {
   email?: string
 }
 
+/**
+ * Why a liveness check produced no verdict. Only meaningful when the node
+ * outcome is `inconclusive`.
+ *
+ * - `no_media` — nothing was captured to analyze (camera denied or unavailable).
+ * - `unusable_media` — frames were captured but could not be analyzed.
+ * - `unknown_verdict` — the detector ran and reported that it cannot decide.
+ * - `timeout` — the analysis did not finish in time.
+ * - `provider_error` — the detection backend failed or was unavailable.
+ */
+export type LivenessInconclusiveReason =
+  | "no_media"
+  | "unusable_media"
+  | "unknown_verdict"
+  | "timeout"
+  | "provider_error"
+
 export type LivenessDetectionNodeReport = NodeReportBase & {
   type: FSNodeType.LIVENESS_DETECTION
   outcome: FSLivenessDetectionOutcome
+  /** Set only when `outcome` is `inconclusive`. */
+  inconclusiveReason?: LivenessInconclusiveReason
 }
 
 export type ConversationNodeReport = NodeReportBase & {
