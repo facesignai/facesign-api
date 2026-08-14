@@ -128,6 +128,8 @@ export type DocumentImageFile = {
   file: SessionMedia
 }
 
+export type VideoAIAnalysisStatus = "pending" | "succeeded" | "failed"
+
 export interface SessionReport {
   transcript: Phrase[]
   aiAnalysis?: SessionReportAIAnalysis
@@ -136,6 +138,12 @@ export interface SessionReport {
   lang?: string
   nodeReports?: NodeReport[]
   videoAIAnalysis?: VideoAIAnalysis
+  /**
+   * Lifecycle of the post-session video analysis. Absent when the analysis
+   * was not requested. Provider errors and internal timeouts are both exposed
+   * as `failed`.
+   */
+  videoAIAnalysisStatus?: VideoAIAnalysisStatus
   deepfakeDetection?: DeepfakeDetection
   /**
    * Lifecycle of the post-session deepfake analysis. Absent when the analysis

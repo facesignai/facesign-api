@@ -31,14 +31,11 @@ export type DeepfakeDetectionStatus = {
   /**
    * - `pending` — analysis is running.
    * - `succeeded` — analysis produced a verdict; see `deepfakeDetection`.
-   * - `failed` — the analysis backend failed; see `errorCode`.
-   * - `timed_out` — the analysis did not finish in time.
+   * - `failed` — the analysis did not produce a result.
    */
-  state: "pending" | "succeeded" | "failed" | "timed_out"
+  state: "pending" | "succeeded" | "failed"
   /** When the analysis started (ms epoch). */
   startedAt?: number
   /** When the analysis reached a terminal state (ms epoch). */
   finishedAt?: number
-  /** Machine-readable failure reason, set for `failed`. */
-  errorCode?: string
 }
