@@ -2,6 +2,20 @@
 
 All notable changes to the Facesign API will be documented in this file.
 
+## [1.0.45] - 2026-08-14
+
+### Added
+
+- `VideoAIAnalysisStatus` and `SessionReport.videoAIAnalysisStatus` expose the
+  provider-neutral lifecycle of post-session video analysis as `pending`,
+  `succeeded`, or `failed`. The field is absent when analysis was not requested.
+
+### Changed
+
+- `DeepfakeDetectionStatus` now uses the same public lifecycle. Internal timeouts
+  and provider failures are exposed as `failed`; internal failure details are no
+  longer part of the public contract.
+
 ## [1.0.44] - 2026-08-05
 
 ### Breaking
