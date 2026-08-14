@@ -84,4 +84,24 @@ describe("createSession customization pass-through", () => {
       captionsOpenedByDefault: true,
     })
   })
+
+  it("sends an exact control button subset and disables auto-hide", async () => {
+    const body = await createSession({
+      customization: {
+        controls: { buttons: ["captions"], autoHide: false },
+      },
+    })
+    expect(body.customization?.controls).toEqual({
+      buttons: ["captions"],
+      autoHide: false,
+    })
+  })
+
+  it("preserves an explicit empty control button list", async () => {
+    const body = await createSession({
+      customization: { controls: { buttons: [] } },
+    })
+
+    expect(body.customization?.controls?.buttons).toEqual([])
+  })
 })

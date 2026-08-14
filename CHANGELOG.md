@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.46] - 2026-08-14
+
+### Added
+
+- `ControlsCustomization.buttons` selects the exact in-session control buttons
+  to display. Use `["captions"]` for a captions-only control panel.
+- `ControlsCustomization.autoHide` can keep the selected controls permanently
+  visible when set to `false`.
+
 All notable changes to the Facesign API will be documented in this file.
 
 ## [1.0.45] - 2026-08-14

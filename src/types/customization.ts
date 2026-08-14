@@ -32,7 +32,30 @@ export type ControlsCustomization = {
    * along in a second language. Ignored when `showUxControls` is `false`.
    */
   captionsOpenedByDefault?: boolean
+  /**
+   * Buttons rendered in the in-session control panel. When omitted, all
+   * applicable buttons are shown, preserving the default UI. Pass an explicit
+   * subset (for example `["captions"]`) to expose only those controls. An
+   * empty array hides the control panel entirely.
+   *
+   * The `language` button is still shown only when the session has more than
+   * one available language. Ignored when `showUxControls` is `false`.
+   */
+  buttons?: ControlButton[]
+  /**
+   * Whether the control panel may automatically fade out when idle. Omitted or
+   * `true` preserves the default behaviour; `false` keeps the selected buttons
+   * visible. Ignored when `showUxControls` is `false`.
+   */
+  autoHide?: boolean
 }
+
+export type ControlButton =
+  | "microphone"
+  | "camera"
+  | "captions"
+  | "language"
+  | "close"
 
 export type Customization = {
   permissionsPage?: PermissionsPageCustomization
