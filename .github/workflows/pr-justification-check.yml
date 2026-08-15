@@ -1,0 +1,87 @@
+# Reminds the author to record why a PR merged without a second reviewer.
+#
+# Why this exists: Vanta tests github-code-change-approved-or-justified and
+# github-code-change-automated-checks-enabled, which back SOC 2 controls CHG-1
+# and CHG-2. A PR passes if someone other than the author approved it, OR if a
+# justification is recorded in Vanta. Only a human with Vanta access can enter
+# the justification, so the cheapest thing the author can do is leave the reason
+# in the PR description where it can be collected later.
+#
+# This workflow never fails the build. A merged PR cannot be un-merged, so
+# failing here would only create noise. It comments once, so the reason exists
+# in writing at the moment the author still remembers it.
+
+name: PR justification check
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment when merged without approval or a stated reason
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const pr = context.payload.pull_request;
+
+            // Only PRs into the default branch count toward the Vanta test.
+            const {data: repoData} = await github.rest.repos.get({owner, repo});
+            if (pr.base.ref !== repoData.default_branch) {
+              core.info(`Base ${pr.base.ref} is not the default branch. Nothing to do.`);
+              return;
+            }
+
+            const {data: reviews} = await github.rest.pulls.listReviews({
+              owner, repo, pull_number: pr.number
+            });
+            const approvedByOther = reviews.some(
+              r => r.state === 'APPROVED' && r.user && r.user.login !== pr.user.login
+            );
+            if (approvedByOther) {
+              core.info('Approved by someone other than the author. Nothing to do.');
+              return;
+            }
+
+            // Treat any non-empty text under the heading as a stated reason.
+            const body = pr.body || '';
+            const m = body.match(/##\s*Merged without review because\s*([\s\S]*?)(?=\n##\s|$)/i);
+            const stated = m ? m[1].replace(/<!--[\s\S]*?-->/g, '').trim() : '';
+            if (stated.length > 0) {
+              core.info('Reason already stated in the PR description.');
+              return;
+            }
+
+            // Comment once. Re-running the workflow should not spam the thread.
+            const {data: comments} = await github.rest.issues.listComments({
+              owner, repo, issue_number: pr.number
+            });
+            const marker = '<!-- vanta-justification-check -->';
+            if (comments.some(c => (c.body || '').includes(marker))) {
+              core.info('Already commented.');
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner, repo, issue_number: pr.number,
+              body: [
+                marker,
+                `@${pr.user.login} this merged into \`${repoData.default_branch}\` without an approval from anyone else, and there is no reason recorded.`,
+                '',
+                'Please edit the PR description and add:',
+                '',
+                '```',
+                '## Merged without review because',
+                'Solo release promotion, no reviewer online.',
+                '```',
+                '',
+                'One line is enough. It gets collected weekly and entered into Vanta for SOC 2 controls CHG-1 and CHG-2. Nothing is blocked in the meantime.'
+              ].join('\n')
+            });
