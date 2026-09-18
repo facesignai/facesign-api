@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.47] - 2026-09-18
+
+### Added
+
+- `SessionSettings.backgroundAssetId` selects a FaceSign-managed background
+  image to composite behind the avatar, for clients whose avatar streams
+  against a green background. Set it to the `id` of an asset uploaded in
+  the FaceSign admin console — never an external image URL, since FaceSign owns the raw
+  avatar stream and the asset's storage/ownership must stay under our
+  control. Silently ignored if the selected avatar does not support
+  background replacement, the id is unknown, or it belongs to a different
+  client.
+
 ## [1.0.46] - 2026-08-14
 
 ### Added

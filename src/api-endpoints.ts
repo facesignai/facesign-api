@@ -213,6 +213,18 @@ export interface SessionSettings {
    */
   extractionSchema?: ExtractionField[]
   /**
+   * A FaceSign-managed background image to composite behind the avatar,
+   * for clients whose avatar streams against a green background. Pass the
+   * `id` of an asset uploaded in the FaceSign admin console — never an external image
+   * URL, since FaceSign owns the raw avatar stream and the asset's
+   * storage/ownership must stay under our control.
+   *
+   * Silently ignored (no background is applied) if the selected avatar
+   * does not support background replacement, the id is unknown, or it
+   * belongs to a different client than the one creating the session.
+   */
+  backgroundAssetId?: string
+  /**
    * Read-only. Records outcome edges that were missing from the submitted flow
    * and were filled in for you at session creation, so the stored graph is
    * total. Present only when something was filled.
@@ -263,6 +275,7 @@ export const createSessionEndpoint = {
     "customization",
     "videoAIAnalysisEnabled",
     "extractionSchema",
+    "backgroundAssetId",
   ],
   path: (): string => "/sessions",
 } as const
