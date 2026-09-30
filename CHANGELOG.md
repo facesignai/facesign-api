@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.48] - Unreleased
+
+### Added
+
+- `client.backgrounds.retrieve()` (`GET /backgrounds`) lists the enabled
+  backgrounds owned by the calling client as `{ id, name }`, so an
+  integration can pick a `backgroundAssetId` by name.
+- `Avatar.supportsBackground` marks avatars that honor
+  `SessionSettings.backgroundAssetId`.
+
 ## [1.0.47] - 2026-09-18
 
 ### Added

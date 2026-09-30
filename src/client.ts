@@ -18,6 +18,8 @@ import {
   getLangsEndpoint,
   getAvatarsEndpoint,
   GetAvatarsResponse,
+  getBackgroundsEndpoint,
+  GetBackgroundsResponse,
   GetSessionsParameters,
   GetSessionsResponse,
   getSessionsEndpoint,
@@ -243,6 +245,20 @@ class Client {
       return this.request<GetAvatarsResponse>({
         path: getAvatarsEndpoint.path(),
         method: getAvatarsEndpoint.method,
+        query: {},
+        body: {},
+      })
+    },
+  }
+
+  public readonly backgrounds = {
+    /**
+     * Retrieve the enabled backgrounds owned by the calling client
+     */
+    retrieve: (): Promise<GetBackgroundsResponse> => {
+      return this.request<GetBackgroundsResponse>({
+        path: getBackgroundsEndpoint.path(),
+        method: getBackgroundsEndpoint.method,
         query: {},
         body: {},
       })

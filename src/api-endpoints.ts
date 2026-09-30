@@ -188,6 +188,20 @@ export type Avatar = {
   name: string
   gender: "male" | "female" | "unknown"
   imageUrl: string
+  /**
+   * Whether this avatar streams against a green background that FaceSign can
+   * replace. Only these avatars honor `SessionSettings.backgroundAssetId`.
+   */
+  supportsBackground?: boolean
+}
+
+/**
+ * A FaceSign-managed background image owned by the calling client. Pass its
+ * `id` as `SessionSettings.backgroundAssetId`.
+ */
+export type Background = {
+  id: string
+  name: string
 }
 
 export type ProvidedData = Record<string, string | number | boolean> & {
@@ -314,6 +328,18 @@ export const getAvatarsEndpoint = {
   queryParams: [],
   bodyParams: [],
   path: (): string => "/avatars",
+} as const
+
+export interface GetBackgroundsResponse {
+  backgrounds: Background[]
+}
+
+export const getBackgroundsEndpoint = {
+  method: Method.GET,
+  pathParams: [],
+  queryParams: [],
+  bodyParams: [],
+  path: (): string => "/backgrounds",
 } as const
 
 export const createClientSecretEndpoint = {
