@@ -1,4 +1,4 @@
-/** Experimental video + frame PAD result, including deepfake analysis when enabled. */
+/** Experimental video + frame PAD result, with visibility in v2 and enabled deepfake analysis. */
 export type PostSessionLivenessState =
   | "pending"
   | "passed"
@@ -11,7 +11,7 @@ export interface PostSessionLivenessCheck {
 }
 
 export interface PostSessionLiveness {
-  policyVersion: "video-frame-pad-v1"
+  policyVersion: "video-frame-pad-v1" | "video-frame-pad-v2"
   state: PostSessionLivenessState
   /** All timestamps are Unix milliseconds. */
   requestedAt: number
@@ -25,6 +25,11 @@ export interface PostSessionLiveness {
     video: PostSessionLivenessCheck
     framePad: PostSessionLivenessCheck
     deepfake?: PostSessionLivenessCheck
+    /** Required for a v2 pass. Usable visibility is evidence quality, not liveness. */
+    faceVisibility?: {
+      state: "passed" | "inconclusive"
+      reason: string
+    }
   }
   timings?: {
     finalizationMs: number

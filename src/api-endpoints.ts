@@ -134,7 +134,8 @@ export type VideoAIAnalysisStatus = "pending" | "succeeded" | "failed"
 
 export interface SessionReport {
   /**
-   * Opt in with metadata.postSessionLiveness = "video-frame-pad-v1".
+   * Opt in with metadata.postSessionLiveness = "video-frame-pad-v1" (baseline)
+   * or "video-frame-pad-v2" (also requires usable facial visibility).
    * Includes the deepfake check when enabled in the resolved server settings;
    * a pending, missing, unknown, or failed required check cannot produce a pass.
    * Poll after interaction completion until this field is terminal.
