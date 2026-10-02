@@ -4,6 +4,7 @@ import { FSNode, FSNodeId } from "./types/nodes"
 import { Customization } from "./types/customization"
 import { NodeReport } from "./types/nodeReports"
 import { VideoAIAnalysis } from "./types/videoAIAnalysis"
+import { PostSessionLiveness } from "./types/postSessionLiveness"
 import {
   DeepfakeDetection,
   DeepfakeDetectionStatus,
@@ -17,6 +18,7 @@ export * from "./types/nodeReports"
 export * from "./types/docScanning"
 export * from "./types/webhooks"
 export * from "./types/videoAIAnalysis"
+export * from "./types/postSessionLiveness"
 export * from "./types/deepfakeDetection"
 
 export enum ILogLevel {
@@ -131,6 +133,16 @@ export type DocumentImageFile = {
 export type VideoAIAnalysisStatus = "pending" | "succeeded" | "failed"
 
 export interface SessionReport {
+  /**
+   * Opt in with metadata.postSessionLiveness = "video-frame-pad-v1" (baseline)
+   * or "video-frame-pad-v2" (also requires usable facial visibility).
+   * Includes the deepfake check when enabled in the resolved server settings;
+   * a pending, missing, unknown, or failed required check cannot produce a pass.
+   * Poll after interaction completion until this field is terminal.
+   * Absence, pending, and inconclusive do not authorize a liveness pass.
+   * A pass does not override identity, OTP, or other FLOW failures.
+   */
+  postSessionLiveness?: PostSessionLiveness
   transcript: Phrase[]
   aiAnalysis?: SessionReportAIAnalysis
   location?: Location
