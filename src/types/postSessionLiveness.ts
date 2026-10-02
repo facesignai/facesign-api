@@ -1,4 +1,4 @@
-/** Experimental video + frame PAD result. Separate from identity and FLOW outcomes. */
+/** Experimental video + frame PAD result, including deepfake analysis when enabled. */
 export type PostSessionLivenessState =
   | "pending"
   | "passed"
@@ -19,9 +19,12 @@ export interface PostSessionLiveness {
   deadlineAt?: number
   finishedAt?: number
   reasonCodes: string[]
+  /** When true, a pass also requires the configured deepfake check to pass. */
+  deepfakeRequired?: boolean
   checks?: {
     video: PostSessionLivenessCheck
     framePad: PostSessionLivenessCheck
+    deepfake?: PostSessionLivenessCheck
   }
   timings?: {
     finalizationMs: number
