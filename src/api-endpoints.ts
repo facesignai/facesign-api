@@ -4,7 +4,10 @@ import { FSNode, FSNodeId } from "./types/nodes"
 import { Customization } from "./types/customization"
 import { NodeReport } from "./types/nodeReports"
 import { VideoAIAnalysis } from "./types/videoAIAnalysis"
-import { PostSessionLiveness } from "./types/postSessionLiveness"
+import {
+  PostSessionLiveness,
+  PostSessionLivenessPolicy,
+} from "./types/postSessionLiveness"
 import {
   DeepfakeDetection,
   DeepfakeDetectionStatus,
@@ -134,10 +137,7 @@ export type VideoAIAnalysisStatus = "pending" | "succeeded" | "failed"
 
 export interface SessionReport {
   /**
-   * Opt in with metadata.postSessionLiveness = "video-frame-pad-v1" (baseline)
-   * or "video-frame-pad-v2" (also requires usable facial visibility).
-   * Includes the deepfake check when enabled in the resolved server settings;
-   * a pending, missing, unknown, or failed required check cannot produce a pass.
+   * Opt in with `SessionSettings.postSessionLiveness`.
    * Poll after interaction completion until this field is terminal.
    * Absence, pending, and inconclusive do not authorize a liveness pass.
    * A pass does not override identity, OTP, or other FLOW failures.
@@ -212,6 +212,8 @@ export interface SessionSettings {
   clientReferenceId?: string
   metadata: object
   flow: FSNode[]
+  /** Enables post-session liveness assessment using the selected policy. */
+  postSessionLiveness?: PostSessionLivenessPolicy
   providedData?: ProvidedData
   avatarId?: string
   langs?: string[]
