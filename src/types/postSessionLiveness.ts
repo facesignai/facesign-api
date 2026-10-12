@@ -13,10 +13,7 @@ export interface PostSessionLivenessCheck {
 export interface PostSessionLiveness {
   policyVersion: "video-frame-pad-v1" | "video-frame-pad-v2"
   state: PostSessionLivenessState
-  /** All timestamps are Unix milliseconds. */
-  requestedAt: number
-  startedAt?: number
-  deadlineAt?: number
+  /** Unix timestamp in milliseconds when the assessment was finalized. */
   finishedAt?: number
   reasonCodes: string[]
   /** When true, a pass also requires the configured deepfake check to pass. */
@@ -30,10 +27,5 @@ export interface PostSessionLiveness {
       state: "passed" | "inconclusive"
       reason: string
     }
-  }
-  timings?: {
-    finalizationMs: number
-    analysisMs: number
-    totalMs: number
   }
 }
