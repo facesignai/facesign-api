@@ -47,5 +47,8 @@
   "bugs": {
     "url": "https://github.com/facesignai/facesign-api/issues"
   },
-  "homepage": "https://github.com/facesignai/facesign-api#readme"
+  "homepage": "https://github.com/facesignai/facesign-api#readme",
+  "resolutions": {
+    "argparse": "^2.0.1"
+  }
 }
