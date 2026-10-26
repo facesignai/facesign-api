@@ -23,8 +23,7 @@ updates:
       - minor
       - patch
   allow:
-  - dependency-type: direct
-    update-types:
+  - update-types:
     - version-update:semver-minor
     - version-update:semver-patch
 - package-ecosystem: npm
@@ -48,7 +47,6 @@ updates:
       - minor
       - patch
   allow:
-  - dependency-type: direct
-    update-types:
+  - update-types:
     - version-update:semver-minor
     - version-update:semver-patch
